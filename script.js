@@ -161,3 +161,28 @@
     if (event.key === 'Escape' && modal.classList.contains('is-open')) closeModal();
   });
 })();
+
+
+// DPRO WEB PHASE 1-R2: bakery iframe safety
+(() => {
+  const iframe = document.getElementById('bakery-live-iframe');
+  const fallback = document.querySelector('.bakery-fallback');
+  if (!iframe || !fallback) return;
+
+  const revealFallback = () => {
+    iframe.style.display = 'none';
+    fallback.setAttribute('aria-hidden', 'false');
+    fallback.style.zIndex = '3';
+  };
+
+  iframe.addEventListener('load', () => {
+    try {
+      const bodyText = iframe.contentDocument?.body?.innerText || '';
+      if (/404|There isn't a GitHub Pages site here/i.test(bodyText)) revealFallback();
+    } catch (_) {
+      // Cross-origin pages cannot always be inspected. In that case the iframe remains visible.
+    }
+  });
+
+  iframe.addEventListener('error', revealFallback);
+})();
