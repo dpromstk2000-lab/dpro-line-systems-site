@@ -455,3 +455,54 @@ body.modal-open{overflow:hidden}
   .screen-modal-dialog{width:100%;height:94vh;border-radius:14px}
   .screen-modal-header strong{font-size:12px}
 }
+
+
+/* STEP DPRO-WEB-5 : SALES PAGE COMPLETION */
+.live-copy{padding-block:18px}
+.live-copy>p{max-width:480px}
+.live-copy ul{max-width:430px}
+.screen-zoom-guide{margin:0 0 15px!important;color:rgba(255,255,255,.72)!important;font-size:12px!important;line-height:1.7!important}
+.button-zoom{position:relative;padding-left:42px!important;box-shadow:0 12px 28px rgba(182,37,86,.28)}
+.button-zoom:before{content:"＋";position:absolute;left:18px;top:50%;transform:translateY(-52%);font-size:17px;font-weight:400}
+.live-desktop{min-width:760px;margin-left:-30px}
+.live-desktop iframe{height:760px}
+.live-tablet{min-width:700px;margin-left:-10px}
+.live-tablet iframe{height:740px}
+.pricing-guide{background:#fff}
+.pricing-guide .section-heading>p:last-child{max-width:790px;margin:20px auto 0;color:var(--muted);font-size:16px;line-height:1.95}
+.pricing-guide-grid{width:min(100%,var(--max));margin:0 auto;display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.pricing-guide-card{position:relative;min-height:410px;padding:40px 34px;border:1px solid #e1e1e5;border-radius:28px;background:#fafafd}
+.pricing-guide-card.featured{border-color:#b62556;background:linear-gradient(155deg,#fff 0%,#fff4f8 100%);box-shadow:0 28px 70px rgba(182,37,86,.13)}
+.pricing-guide-card>span{color:#a61d49;font-size:10px;font-weight:900;letter-spacing:.14em}
+.pricing-guide-card h3{margin:22px 0 18px;font-size:29px;line-height:1.15;letter-spacing:-.035em}
+.pricing-guide-card p{color:var(--muted);font-size:14px;line-height:1.85}
+.pricing-guide-card ul{margin:28px 0 0;padding:0;display:grid;gap:12px;list-style:none}
+.pricing-guide-card li{position:relative;padding-left:22px;font-size:13px;line-height:1.6}
+.pricing-guide-card li:before{content:"✓";position:absolute;left:0;color:#a61d49;font-weight:900}
+.recommended-label{position:absolute;right:22px;top:20px;padding:7px 10px;border-radius:999px;color:#fff;background:#a61d49;font-size:8px;font-weight:900;letter-spacing:.12em}
+.pricing-guide-bottom{width:min(100%,var(--max));margin:26px auto 0;padding:30px 34px;display:flex;align-items:center;justify-content:space-between;gap:30px;border:1px solid #e1e1e5;border-radius:24px;background:#f7f7f9}
+.pricing-guide-bottom strong{display:block;font-size:19px}
+.pricing-guide-bottom p{margin:8px 0 0;color:var(--muted);font-size:13px}
+.pricing-guide-actions{display:flex;flex-wrap:wrap;gap:10px;flex-shrink:0}
+@media(max-width:1100px){
+  .live-desktop,.live-tablet{min-width:0;margin-left:0}
+  .live-desktop iframe{height:680px}
+  .live-tablet iframe{height:680px}
+}
+@media(max-width:900px){
+  .pricing-guide-grid{grid-template-columns:1fr}
+  .pricing-guide-card{min-height:0}
+  .pricing-guide-bottom{align-items:flex-start;flex-direction:column}
+}
+@media(max-width:560px){
+  .live-copy{padding-block:0}
+  .live-copy>p{font-size:14px}
+  .screen-zoom-guide{font-size:11px!important}
+  .button-zoom{width:100%;justify-content:center}
+  .live-actions .button-secondary{width:100%;text-align:center}
+  .live-desktop iframe,.live-tablet iframe{height:580px}
+  .pricing-guide-card{padding:30px 24px;border-radius:22px}
+  .pricing-guide-bottom{padding:25px 22px}
+  .pricing-guide-actions{width:100%}
+  .pricing-guide-actions .button{width:100%;text-align:center}
+}
