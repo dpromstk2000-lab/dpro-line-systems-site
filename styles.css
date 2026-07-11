@@ -739,3 +739,12 @@ linear-gradient(145deg,#19191f,#0e0e12)}
   transform:scale(.61);
   transform-origin:0 0;
 }
+
+
+/* DPRO OFFICIAL PRODUCT SITE — PHASE 2 R5 YOGA */
+.catalog-live-yoga iframe{
+  width:165%;
+  height:165%;
+  transform:scale(.61);
+  transform-origin:0 0;
+}
