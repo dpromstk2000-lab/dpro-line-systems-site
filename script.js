@@ -186,3 +186,32 @@
 
   iframe.addEventListener('error', revealFallback);
 })();
+
+
+// DPRO WEB PHASE 2: product catalog filters
+(() => {
+  const buttons = document.querySelectorAll('.catalog-filter');
+  const cards = document.querySelectorAll('.catalog-card');
+  if (!buttons.length || !cards.length) return;
+
+  const categoryMap = {
+    '美容・健康': ['ネイル','プライベートヨガ','美容サロン','エステ・リラクゼーション','整骨院・接骨院'],
+    '医療・ペット': ['ペットサロン','動物病院','歯科'],
+    '飲食・小売': ['ベーカリー','居酒屋'],
+    '教育・生活サービス': ['学習塾・習い事','不動産・賃貸内見','車検・整備']
+  };
+
+  buttons.forEach((button) => {
+    button.addEventListener('click', () => {
+      buttons.forEach((item) => item.classList.remove('is-active'));
+      button.classList.add('is-active');
+      const category = button.dataset.category;
+
+      cards.forEach((card) => {
+        const title = card.querySelector('h3')?.textContent?.trim() || '';
+        const shouldShow = category === 'all' || (categoryMap[category] || []).includes(title);
+        card.style.display = shouldShow ? '' : 'none';
+      });
+    });
+  });
+})();
