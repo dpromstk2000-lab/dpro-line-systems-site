@@ -1455,3 +1455,99 @@ small{
     letter-spacing:.11em !important;
   }
 }
+
+
+/* =========================================================
+   DPRO OFFICIAL PRODUCT SITE
+   PHASE 3-R4 — FULL HEADLINE AUDIT
+   トップ・製品一覧・全13製品ページの主要見出しを文節単位で固定
+   ========================================================= */
+
+.headline-fixed{
+  display:flex !important;
+  flex-direction:column !important;
+  align-items:flex-start !important;
+  width:auto !important;
+  max-width:100% !important;
+  text-wrap:initial !important;
+  word-break:keep-all !important;
+  overflow-wrap:normal !important;
+}
+
+.headline-fixed > span{
+  display:block !important;
+  white-space:nowrap !important;
+}
+
+/* 製品一覧ヒーロー */
+.catalog-hero-title{
+  font-size:clamp(50px,5.8vw,86px) !important;
+  line-height:1.02 !important;
+  letter-spacing:-.055em !important;
+}
+
+/* 進捗と最終CTA */
+.catalog-progress-title{
+  font-size:clamp(38px,4.2vw,62px) !important;
+  line-height:1.08 !important;
+}
+
+.catalog-cta-title{
+  align-items:center !important;
+  text-align:center !important;
+  margin-left:auto !important;
+  margin-right:auto !important;
+  font-size:clamp(38px,4.5vw,66px) !important;
+  line-height:1.08 !important;
+}
+
+/* 製品詳細の主要見出し */
+.product-hero-copy h2.headline-fixed{
+  font-size:clamp(20px,2.15vw,30px) !important;
+  line-height:1.38 !important;
+}
+
+.section-heading h2.headline-fixed{
+  align-items:center !important;
+  text-align:center !important;
+  margin-left:auto !important;
+  margin-right:auto !important;
+  font-size:clamp(30px,3.8vw,48px) !important;
+  line-height:1.18 !important;
+}
+
+.product-proof-inner h2.headline-fixed{
+  font-size:clamp(30px,3.8vw,50px) !important;
+  line-height:1.08 !important;
+}
+
+.contact-card h2.headline-fixed{
+  align-items:center !important;
+  text-align:center !important;
+  margin-left:auto !important;
+  margin-right:auto !important;
+  font-size:clamp(30px,3.8vw,50px) !important;
+  line-height:1.16 !important;
+}
+
+/* スマホでは画面幅を超える行だけ自然改行 */
+@media (max-width:760px){
+  .headline-fixed > span{
+    white-space:normal !important;
+  }
+
+  .catalog-hero-title{
+    font-size:clamp(42px,11vw,58px) !important;
+  }
+
+  .catalog-progress-title,
+  .catalog-cta-title{
+    font-size:clamp(32px,8.5vw,45px) !important;
+  }
+
+  .section-heading h2.headline-fixed,
+  .product-proof-inner h2.headline-fixed,
+  .contact-card h2.headline-fixed{
+    font-size:clamp(29px,7.8vw,40px) !important;
+  }
+}
