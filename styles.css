@@ -382,3 +382,76 @@ button { cursor: pointer; }
   .live-tablet iframe{height:560px}
   .live-browser-bar{height:36px}
 }
+
+
+/* STEP DPRO-WEB-4 : PRODUCT PAGE POLISH */
+.product-visual-live{min-height:610px;isolation:isolate}
+.hero-live-monitor{position:absolute;inset:45px 10px 75px 35px;overflow:hidden;border:10px solid #29292f;border-radius:28px;background:#fff;box-shadow:0 42px 100px rgba(0,0,0,.5)}
+.hero-live-monitor iframe{width:145%;height:145%;border:0;transform:scale(.69);transform-origin:0 0;background:#fff;pointer-events:none}
+.hero-live-phone{position:absolute;z-index:3;left:-20px;bottom:10px;width:185px;height:365px;overflow:hidden;border:9px solid #24242a;border-radius:38px;background:#fff;box-shadow:0 34px 75px rgba(0,0,0,.55)}
+.hero-live-phone:before{content:"";position:absolute;z-index:2;left:50%;top:8px;width:55px;height:7px;transform:translateX(-50%);border-radius:999px;background:#17171a}
+.hero-live-phone iframe{width:172%;height:172%;border:0;transform:scale(.58);transform-origin:0 0;pointer-events:none}
+.hero-live-tablet{position:absolute;z-index:4;right:-30px;bottom:5px;width:260px;height:205px;overflow:hidden;border:8px solid #303037;border-radius:24px;background:#fff;box-shadow:0 30px 70px rgba(0,0,0,.52)}
+.hero-live-tablet iframe{width:185%;height:185%;border:0;transform:scale(.54);transform-origin:0 0;pointer-events:none}
+.hero-live-label{position:absolute;z-index:5;right:24px;top:10px;display:grid;gap:3px;padding:11px 15px;border:1px solid rgba(255,255,255,.14);border-radius:14px;background:rgba(10,10,13,.78);backdrop-filter:blur(12px)}
+.hero-live-label span{color:#e16c94;font-size:9px;font-weight:900;letter-spacing:.16em}
+.hero-live-label strong{color:#fff;font-size:12px}
+.live-actions{display:flex;flex-wrap:wrap;gap:10px}
+.live-actions .button{cursor:pointer}
+.demo-code-card{margin:0 0 24px;padding:18px 20px;display:grid;grid-template-columns:auto 1fr;grid-template-rows:auto auto;column-gap:18px;border:1px solid rgba(255,255,255,.13);border-radius:16px;background:linear-gradient(145deg,rgba(255,255,255,.07),rgba(255,255,255,.025))}
+.demo-code-card span{grid-column:1;grid-row:1;color:#df6e94;font-size:9px;font-weight:900;letter-spacing:.18em}
+.demo-code-card strong{grid-column:1;grid-row:2;color:#fff;font-size:34px;line-height:1}
+.demo-code-card small{grid-column:2;grid-row:1/3;align-self:center;color:rgba(255,255,255,.5);font-size:12px}
+.feature-showcase{background:#f4f4f6}
+.feature-showcase .section-heading>p:last-child{max-width:720px;margin:18px auto 0;color:var(--muted);line-height:1.9}
+.feature-showcase-grid{width:min(100%,var(--max));margin:auto;display:grid;gap:34px}
+.feature-showcase-card{min-height:570px;padding:48px;display:grid;grid-template-columns:minmax(250px,.55fr) minmax(0,1.45fr);gap:55px;align-items:center;border:1px solid #e1e1e5;border-radius:32px;background:#fff;box-shadow:0 28px 80px rgba(20,20,25,.06)}
+.feature-showcase-card:nth-child(even){grid-template-columns:minmax(0,1.45fr) minmax(250px,.55fr)}
+.feature-showcase-card:nth-child(even) .feature-showcase-copy{order:2}
+.feature-showcase-card:nth-child(even) .feature-showcase-screen{order:1}
+.feature-showcase-copy>span{color:#a61d49;font-size:10px;font-weight:900;letter-spacing:.16em}
+.feature-showcase-copy h3{margin:15px 0 18px;font-size:clamp(36px,4vw,58px);line-height:1.05;letter-spacing:-.045em}
+.feature-showcase-copy p{color:var(--muted);line-height:1.9}
+.feature-showcase-copy ul{margin:24px 0 0;padding:0;display:grid;gap:9px;list-style:none}
+.feature-showcase-copy li{position:relative;padding-left:20px;font-size:14px}
+.feature-showcase-copy li:before{content:"";position:absolute;left:0;top:.55em;width:7px;height:7px;border-radius:50%;background:#b62556}
+.feature-showcase-screen{overflow:hidden;border:1px solid #d9d9df;background:#fff;box-shadow:0 24px 55px rgba(17,17,23,.12)}
+.feature-showcase-screen iframe{display:block;border:0;background:#fff}
+.feature-showcase-screen.phone{width:360px;height:680px;margin:auto;border:10px solid #29292f;border-radius:38px}
+.feature-showcase-screen.phone iframe{width:100%;height:100%}
+.feature-showcase-screen.desktop{height:520px;border-radius:22px}
+.feature-showcase-screen.desktop iframe{width:125%;height:125%;transform:scale(.8);transform-origin:0 0}
+.feature-showcase-screen.tablet{height:540px;border:8px solid #303037;border-radius:28px}
+.feature-showcase-screen.tablet iframe{width:125%;height:125%;transform:scale(.8);transform-origin:0 0}
+.screen-modal{position:fixed;z-index:9999;inset:0;display:none;align-items:center;justify-content:center;padding:30px}
+.screen-modal.is-open{display:flex}
+.screen-modal-backdrop{position:absolute;inset:0;background:rgba(0,0,0,.82);backdrop-filter:blur(9px)}
+.screen-modal-dialog{position:relative;width:min(96vw,1500px);height:min(92vh,980px);overflow:hidden;border:1px solid rgba(255,255,255,.14);border-radius:22px;background:#111116;box-shadow:0 45px 140px rgba(0,0,0,.72)}
+.screen-modal-header{height:54px;padding:0 15px 0 20px;display:flex;align-items:center;justify-content:space-between;color:#fff;background:#24242b}
+.screen-modal-header>div{display:flex;align-items:center;gap:12px}
+.screen-modal-header a{color:#fff;font-size:12px;text-decoration:underline}
+.screen-modal-header button{width:36px;height:36px;border:0;border-radius:50%;color:#fff;background:rgba(255,255,255,.08);font-size:24px;cursor:pointer}
+.screen-modal-dialog iframe{width:100%;height:calc(100% - 54px);border:0;background:#fff}
+body.modal-open{overflow:hidden}
+@media(max-width:960px){
+  .product-visual-live{min-height:520px}
+  .hero-live-monitor{inset:35px 0 80px 45px}
+  .hero-live-phone{left:0}
+  .hero-live-tablet{right:0}
+  .feature-showcase-card,.feature-showcase-card:nth-child(even){grid-template-columns:1fr;gap:36px}
+  .feature-showcase-card:nth-child(even) .feature-showcase-copy,.feature-showcase-card:nth-child(even) .feature-showcase-screen{order:initial}
+}
+@media(max-width:560px){
+  .product-visual-live{min-height:390px}
+  .hero-live-monitor{inset:20px -30px 58px 22px;border-width:6px;border-radius:18px}
+  .hero-live-monitor .live-browser-bar{display:none}
+  .hero-live-phone{left:-3px;bottom:2px;width:112px;height:230px;border-width:5px;border-radius:25px}
+  .hero-live-tablet{right:-8px;bottom:0;width:155px;height:125px;border-width:5px;border-radius:17px}
+  .hero-live-label{right:4px;top:0}
+  .feature-showcase-card{padding:26px 20px;border-radius:22px}
+  .feature-showcase-screen.phone{width:88%;height:610px}
+  .feature-showcase-screen.desktop,.feature-showcase-screen.tablet{width:calc(100vw - 80px);height:430px}
+  .screen-modal{padding:10px}
+  .screen-modal-dialog{width:100%;height:94vh;border-radius:14px}
+  .screen-modal-header strong{font-size:12px}
+}

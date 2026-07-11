@@ -122,3 +122,42 @@
   const year = document.querySelector("#year");
   if (year) year.textContent = String(new Date().getFullYear());
 })();
+
+
+// STEP DPRO-WEB-4 : screen modal
+(() => {
+  const modal = document.getElementById('screen-modal');
+  if (!modal) return;
+
+  const frame = document.getElementById('screen-modal-frame');
+  const title = document.getElementById('screen-modal-title');
+  const external = document.getElementById('screen-modal-external');
+
+  const closeModal = () => {
+    modal.classList.remove('is-open');
+    modal.setAttribute('aria-hidden', 'true');
+    document.body.classList.remove('modal-open');
+    frame.src = 'about:blank';
+  };
+
+  document.querySelectorAll('.js-screen-modal').forEach((button) => {
+    button.addEventListener('click', () => {
+      const url = button.dataset.screenUrl;
+      const screenTitle = button.dataset.screenTitle || '実画面';
+      title.textContent = screenTitle;
+      frame.src = url;
+      external.href = url;
+      modal.classList.add('is-open');
+      modal.setAttribute('aria-hidden', 'false');
+      document.body.classList.add('modal-open');
+    });
+  });
+
+  modal.querySelectorAll('[data-modal-close]').forEach((button) => {
+    button.addEventListener('click', closeModal);
+  });
+
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && modal.classList.contains('is-open')) closeModal();
+  });
+})();
