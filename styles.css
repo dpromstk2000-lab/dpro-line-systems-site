@@ -1090,3 +1090,280 @@ small{
     font-size:14px;
   }
 }
+
+
+/* =========================================================
+   DPRO OFFICIAL PRODUCT SITE
+   PHASE 3-R2 — HEADLINE LINE-BREAK CONTROL
+   単語の途中で折り返さず、意味のまとまりで読ませる
+   ========================================================= */
+
+/* Chrome系では日本語の文節を優先して改行 */
+.phase-hero-copy h1,
+.phase-live-copy h3,
+.phase-why-copy h2,
+.product-hero-copy h1,
+.product-hero-copy h2,
+.section-heading h2,
+.live-copy h3,
+.feature-showcase-copy h3,
+.product-proof-inner h2,
+.contact-card h2{
+  word-break:auto-phrase;
+  line-break:strict;
+  overflow-wrap:normal;
+  text-wrap:balance;
+}
+
+/* 手動で指定した見出し行 */
+.headline-lines{
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+}
+
+.headline-lines > span{
+  display:block;
+  white-space:nowrap;
+}
+
+/* トップヒーロー：2行を必ず維持 */
+.phase-hero-copy{
+  max-width:1180px;
+}
+
+.phase-hero-copy h1.headline-hero{
+  width:max-content;
+  max-width:100%;
+  font-size:clamp(54px,6.6vw,108px);
+  line-height:.98;
+  letter-spacing:-.055em;
+}
+
+/* 代表システム見出し：細すぎる列を解消 */
+.phase-live-copy{
+  min-width:0;
+}
+
+.phase-live-copy h3.headline-lines{
+  width:max-content;
+  max-width:100%;
+  font-size:clamp(34px,4.1vw,61px);
+  line-height:1.08;
+  letter-spacing:-.045em;
+}
+
+/* WHY DPRO：3行の意味単位を維持 */
+.phase-why-copy h2.headline-why{
+  width:max-content;
+  max-width:100%;
+  font-size:clamp(40px,5.2vw,72px);
+  line-height:1.08;
+  letter-spacing:-.045em;
+}
+
+/* 製品ページの見出しは横幅を少し広く使う */
+.product-hero-copy{
+  min-width:0;
+}
+
+.product-hero-copy h1,
+.product-hero-copy h2,
+.live-copy h3,
+.feature-showcase-copy h3{
+  max-width:100%;
+}
+
+/* 狭い画面では1行を維持できる大きさまで縮小 */
+@media (max-width: 900px){
+  .phase-hero-copy h1.headline-hero{
+    font-size:clamp(44px,9.2vw,74px);
+  }
+
+  .phase-live-copy h3.headline-lines{
+    font-size:clamp(31px,7.2vw,50px);
+  }
+
+  .phase-why-copy h2.headline-why{
+    font-size:clamp(34px,7.4vw,56px);
+  }
+}
+
+@media (max-width: 560px){
+  .headline-lines > span{
+    white-space:normal;
+  }
+
+  .phase-hero-copy h1.headline-hero{
+    width:100%;
+    font-size:clamp(39px,11.2vw,58px);
+    line-height:1.02;
+  }
+
+  .phase-live-copy h3.headline-lines{
+    width:100%;
+    font-size:clamp(30px,9vw,43px);
+    line-height:1.1;
+  }
+
+  .phase-why-copy h2.headline-why{
+    width:100%;
+    font-size:clamp(31px,8.6vw,45px);
+    line-height:1.12;
+  }
+
+  .product-hero-copy h1,
+  .product-hero-copy h2,
+  .section-heading h2,
+  .live-copy h3,
+  .feature-showcase-copy h3,
+  .product-proof-inner h2,
+  .contact-card h2{
+    word-break:auto-phrase;
+    overflow-wrap:break-word;
+  }
+}
+
+
+/* =========================================================
+   DPRO OFFICIAL PRODUCT SITE
+   PHASE 3-R2-R1 — ACTUAL HEADLINE LAYOUT FIX
+   文字を巨大化せず、見出し側の横幅を確保して文節改行を固定
+   ========================================================= */
+
+/* トップヒーロー：コピー側を広げ、2行を崩さない */
+.phase-hero{
+  grid-template-columns:minmax(560px,1.08fr) minmax(500px,.92fr) !important;
+  gap:3vw !important;
+}
+
+.phase-hero-copy{
+  max-width:none !important;
+}
+
+.phase-hero-copy h1.headline-hero{
+  width:auto !important;
+  max-width:none !important;
+  font-size:clamp(56px,5.25vw,92px) !important;
+  line-height:1.02 !important;
+  letter-spacing:-.055em !important;
+}
+
+.phase-hero-copy h1.headline-hero > span{
+  display:block !important;
+  white-space:nowrap !important;
+}
+
+/* 代表システム：見出し列が細すぎたため横幅を確保 */
+.phase-live-card{
+  grid-template-columns:minmax(360px,.88fr) minmax(520px,1.12fr) !important;
+  gap:72px !important;
+}
+
+.phase-live-card.reverse{
+  grid-template-columns:minmax(520px,1.12fr) minmax(360px,.88fr) !important;
+}
+
+.phase-live-copy h3.headline-lines{
+  width:auto !important;
+  max-width:none !important;
+  font-size:clamp(38px,3.65vw,56px) !important;
+  line-height:1.09 !important;
+  letter-spacing:-.045em !important;
+}
+
+.phase-live-copy h3.headline-lines > span{
+  display:block !important;
+  white-space:nowrap !important;
+}
+
+/* WHY DPRO：巨大な文字を抑え、3行を指定位置で維持 */
+.phase-why-copy h2.headline-why{
+  width:auto !important;
+  max-width:1200px !important;
+  font-size:clamp(42px,4.7vw,68px) !important;
+  line-height:1.1 !important;
+  letter-spacing:-.045em !important;
+}
+
+.phase-why-copy h2.headline-why > span{
+  display:block !important;
+  white-space:nowrap !important;
+}
+
+/* 画面幅が少し狭いPC・タブレット */
+@media (max-width: 1250px){
+  .phase-hero{
+    grid-template-columns:minmax(460px,1fr) minmax(460px,1fr) !important;
+  }
+
+  .phase-hero-copy h1.headline-hero{
+    font-size:clamp(50px,5.5vw,72px) !important;
+  }
+
+  .phase-live-card,
+  .phase-live-card.reverse{
+    grid-template-columns:minmax(315px,.9fr) minmax(460px,1.1fr) !important;
+    gap:48px !important;
+  }
+
+  .phase-live-card.reverse{
+    grid-template-columns:minmax(460px,1.1fr) minmax(315px,.9fr) !important;
+  }
+
+  .phase-live-copy h3.headline-lines{
+    font-size:clamp(34px,3.8vw,47px) !important;
+  }
+
+  .phase-why-copy h2.headline-why{
+    font-size:clamp(39px,5vw,58px) !important;
+  }
+}
+
+/* スマホ・縦長タブレットは1カラムで自然に読む */
+@media (max-width: 900px){
+  .phase-hero{
+    grid-template-columns:1fr !important;
+  }
+
+  .phase-hero-copy h1.headline-hero{
+    font-size:clamp(43px,10vw,66px) !important;
+  }
+
+  .phase-live-card,
+  .phase-live-card.reverse{
+    grid-template-columns:1fr !important;
+  }
+
+  .phase-live-card.reverse .phase-live-copy{
+    order:0 !important;
+  }
+
+  .phase-live-copy h3.headline-lines{
+    font-size:clamp(33px,7.8vw,48px) !important;
+  }
+
+  .phase-why-copy h2.headline-why{
+    font-size:clamp(34px,7.7vw,52px) !important;
+  }
+}
+
+@media (max-width: 560px){
+  .phase-hero-copy h1.headline-hero > span,
+  .phase-live-copy h3.headline-lines > span,
+  .phase-why-copy h2.headline-why > span{
+    white-space:normal !important;
+  }
+
+  .phase-hero-copy h1.headline-hero{
+    font-size:clamp(39px,11vw,52px) !important;
+  }
+
+  .phase-live-copy h3.headline-lines{
+    font-size:clamp(30px,9vw,40px) !important;
+  }
+
+  .phase-why-copy h2.headline-why{
+    font-size:clamp(31px,8.6vw,42px) !important;
+  }
+}
