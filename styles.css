@@ -820,3 +820,273 @@ linear-gradient(145deg,#19191f,#0e0e12)}
   transform:scale(.69);
   transform-origin:0 0;
 }
+
+
+/* =========================================================
+   DPRO OFFICIAL PRODUCT SITE
+   PHASE 3-R1 — SITE-WIDE READABILITY
+   デザインの雰囲気を維持したまま文字の可読性を改善
+   ========================================================= */
+
+/* 本文全体 */
+body{
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+}
+
+p,
+li,
+small{
+  line-height:1.8;
+}
+
+/* ヘッダー */
+.global-nav a{
+  font-size:13px;
+  font-weight:700;
+  letter-spacing:.02em;
+}
+
+.brand-copy strong{
+  font-size:12px;
+}
+
+.brand-copy small{
+  font-size:8px;
+  letter-spacing:.12em;
+}
+
+/* 製品ヒーロー */
+.product-hero-copy .eyebrow,
+.section-heading .eyebrow,
+.live-copy > span,
+.feature-showcase-copy > span{
+  font-size:11px;
+  letter-spacing:.18em;
+  font-weight:900;
+}
+
+.product-hero-copy h1{
+  font-size:clamp(38px,5vw,72px);
+  line-height:1.02;
+  letter-spacing:-.045em;
+}
+
+.product-hero-copy h2{
+  font-size:clamp(20px,2.2vw,31px);
+  line-height:1.35;
+  letter-spacing:-.025em;
+}
+
+.product-hero-copy > p{
+  max-width:620px;
+  font-size:15px;
+  line-height:1.9;
+  color:#c9c9cf;
+}
+
+/* 白背景の見出し・説明 */
+.section-heading h2{
+  font-size:clamp(30px,4vw,50px);
+  line-height:1.18;
+  letter-spacing:-.035em;
+}
+
+.section-heading > p:last-child{
+  max-width:760px;
+  margin-left:auto;
+  margin-right:auto;
+  font-size:15px;
+  line-height:1.9;
+  color:#676773;
+}
+
+.section-heading-light > p:last-child{
+  color:#b9b9c2;
+}
+
+/* 専用機能カード */
+.product-feature h3{
+  font-size:17px;
+  line-height:1.45;
+}
+
+.product-feature p{
+  font-size:13px;
+  line-height:1.85;
+  color:#656570;
+}
+
+.product-feature span{
+  font-size:11px;
+  font-weight:900;
+}
+
+/* 黒背景の実画面セクション */
+.live-copy h3{
+  font-size:clamp(28px,3.4vw,48px);
+  line-height:1.08;
+  letter-spacing:-.035em;
+}
+
+.live-copy p{
+  font-size:14px;
+  line-height:1.9;
+  color:#bdbdc6;
+}
+
+.live-copy li{
+  font-size:13px;
+  line-height:1.75;
+  color:#d7d7dd;
+}
+
+/* デモコード */
+.demo-code-card span{
+  font-size:10px;
+}
+
+.demo-code-card strong{
+  font-size:21px;
+}
+
+.demo-code-card small{
+  font-size:11px;
+  color:#b8b8c0;
+}
+
+/* ボタン */
+.button{
+  min-height:44px;
+  padding:12px 20px;
+  font-size:13px;
+  font-weight:800;
+}
+
+.text-link{
+  font-size:13px;
+  font-weight:800;
+}
+
+/* 白背景の機能紹介カード */
+.feature-showcase-copy h3{
+  font-size:clamp(26px,3vw,42px);
+  line-height:1.1;
+  letter-spacing:-.03em;
+}
+
+.feature-showcase-copy p{
+  font-size:14px;
+  line-height:1.85;
+  color:#62626d;
+}
+
+.feature-showcase-copy li{
+  font-size:13px;
+  line-height:1.75;
+  color:#383842;
+}
+
+/* 最終メッセージ */
+.product-proof-inner h2{
+  font-size:clamp(30px,4vw,52px);
+  line-height:1.05;
+}
+
+.product-proof-inner p{
+  font-size:14px;
+  line-height:1.9;
+  color:#5e5e68;
+}
+
+.contact-card h2{
+  font-size:clamp(29px,4vw,52px);
+  line-height:1.16;
+}
+
+.contact-card > p{
+  font-size:14px;
+  line-height:1.85;
+  color:#aaaab3;
+}
+
+/* 製品一覧 */
+.catalog-card-copy small{
+  font-size:10px;
+  font-weight:900;
+  letter-spacing:.12em;
+}
+
+.catalog-card-copy h3{
+  font-size:21px;
+  line-height:1.35;
+}
+
+.catalog-card-copy p{
+  font-size:13px;
+  line-height:1.75;
+  color:#aaaab2;
+}
+
+.catalog-card-cta{
+  font-size:12px;
+}
+
+/* フッター */
+.site-footer p,
+.site-footer a{
+  font-size:12px;
+  line-height:1.7;
+}
+
+/* スマートフォン */
+@media (max-width: 760px){
+  .product-hero-copy h1{
+    font-size:40px;
+  }
+
+  .product-hero-copy h2{
+    font-size:21px;
+  }
+
+  .product-hero-copy > p,
+  .section-heading > p:last-child,
+  .live-copy p,
+  .feature-showcase-copy p,
+  .product-proof-inner p,
+  .contact-card > p{
+    font-size:14px;
+    line-height:1.85;
+  }
+
+  .section-heading h2{
+    font-size:32px;
+  }
+
+  .live-copy h3{
+    font-size:31px;
+  }
+
+  .feature-showcase-copy h3{
+    font-size:29px;
+  }
+
+  .product-feature h3{
+    font-size:16px;
+  }
+
+  .product-feature p,
+  .live-copy li,
+  .feature-showcase-copy li{
+    font-size:13px;
+  }
+
+  .button{
+    font-size:13px;
+    min-height:46px;
+  }
+
+  .global-nav a{
+    font-size:14px;
+  }
+}
