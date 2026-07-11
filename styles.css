@@ -802,3 +802,12 @@ linear-gradient(145deg,#19191f,#0e0e12)}
   transform:scale(.69);
   transform-origin:0 0;
 }
+
+
+/* DPRO OFFICIAL PRODUCT SITE — PHASE 2 R12 ESTATE */
+.catalog-live-estate iframe{
+  width:145%;
+  height:145%;
+  transform:scale(.69);
+  transform-origin:0 0;
+}
