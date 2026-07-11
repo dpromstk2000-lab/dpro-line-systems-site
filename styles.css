@@ -1551,3 +1551,268 @@ small{
     font-size:clamp(29px,7.8vw,40px) !important;
   }
 }
+
+
+/* =========================================================
+   DPRO OFFICIAL PRODUCT SITE
+   PHASE 3-R5 — PREMIUM POLISH
+   余白・カード・ボタン・影・ホバー・アニメーションを統一
+   ========================================================= */
+
+/* ---------- 全体の余白リズム ---------- */
+.section{
+  padding-top:clamp(88px,9vw,150px) !important;
+  padding-bottom:clamp(88px,9vw,150px) !important;
+}
+
+.section-heading{
+  margin-bottom:clamp(48px,5vw,82px) !important;
+}
+
+.section-heading h2{
+  margin-bottom:20px !important;
+}
+
+.section-heading > p:last-child{
+  margin-top:0 !important;
+}
+
+/* ---------- カードの質感 ---------- */
+.product-feature,
+.catalog-card,
+.feature-showcase-card,
+.phase-category-card,
+.phase-value-card{
+  transition:
+    transform .28s cubic-bezier(.2,.75,.25,1),
+    box-shadow .28s ease,
+    border-color .28s ease,
+    background-color .28s ease !important;
+}
+
+.product-feature,
+.feature-showcase-card,
+.phase-category-card,
+.phase-value-card{
+  box-shadow:
+    0 12px 30px rgba(14,14,20,.055),
+    0 2px 8px rgba(14,14,20,.035) !important;
+}
+
+.catalog-card{
+  box-shadow:
+    0 16px 34px rgba(0,0,0,.22),
+    inset 0 1px 0 rgba(255,255,255,.045) !important;
+}
+
+@media (hover:hover){
+  .product-feature:hover,
+  .feature-showcase-card:hover,
+  .phase-category-card:hover,
+  .phase-value-card:hover{
+    transform:translateY(-6px);
+    box-shadow:
+      0 24px 54px rgba(14,14,20,.11),
+      0 6px 16px rgba(14,14,20,.06) !important;
+  }
+
+  .catalog-card:hover{
+    transform:translateY(-8px);
+    border-color:rgba(255,79,131,.38) !important;
+    box-shadow:
+      0 30px 70px rgba(0,0,0,.36),
+      0 0 0 1px rgba(255,79,131,.08),
+      inset 0 1px 0 rgba(255,255,255,.065) !important;
+  }
+}
+
+/* ---------- 実画面・デバイス表示 ---------- */
+.product-visual-live,
+.live-device,
+.feature-showcase-screen,
+.phase-live-frame{
+  transition:
+    transform .32s cubic-bezier(.2,.75,.25,1),
+    box-shadow .32s ease,
+    border-color .32s ease !important;
+}
+
+.product-visual-live,
+.live-device,
+.feature-showcase-screen{
+  box-shadow:
+    0 28px 70px rgba(0,0,0,.24),
+    0 10px 28px rgba(0,0,0,.12) !important;
+}
+
+@media (hover:hover){
+  .live-product:hover .live-device,
+  .feature-showcase-card:hover .feature-showcase-screen{
+    transform:translateY(-4px) scale(1.01);
+    box-shadow:
+      0 40px 92px rgba(0,0,0,.28),
+      0 14px 34px rgba(0,0,0,.16) !important;
+  }
+
+  .catalog-card:hover .catalog-visual{
+    transform:scale(1.018);
+  }
+}
+
+.catalog-visual{
+  transition:transform .32s cubic-bezier(.2,.75,.25,1) !important;
+}
+
+/* ---------- ボタン ---------- */
+.button{
+  min-height:48px !important;
+  border-radius:999px !important;
+  padding:13px 23px !important;
+  letter-spacing:.01em !important;
+  box-shadow:0 9px 22px rgba(0,0,0,.12);
+  transition:
+    transform .2s ease,
+    box-shadow .2s ease,
+    filter .2s ease !important;
+}
+
+.button-primary,
+.button-line{
+  box-shadow:
+    0 12px 28px rgba(255,31,99,.22),
+    0 5px 14px rgba(0,0,0,.12) !important;
+}
+
+.button-line{
+  box-shadow:
+    0 12px 30px rgba(6,199,85,.24),
+    0 5px 14px rgba(0,0,0,.12) !important;
+}
+
+@media (hover:hover){
+  .button:hover{
+    transform:translateY(-2px);
+    filter:brightness(1.045);
+  }
+
+  .button-primary:hover,
+  .button-line:hover{
+    box-shadow:
+      0 18px 38px rgba(255,31,99,.28),
+      0 7px 18px rgba(0,0,0,.15) !important;
+  }
+
+  .button-line:hover{
+    box-shadow:
+      0 18px 40px rgba(6,199,85,.31),
+      0 7px 18px rgba(0,0,0,.15) !important;
+  }
+}
+
+/* ---------- リンク ---------- */
+.text-link,
+.phase-live-copy a,
+.catalog-card-cta{
+  transition:opacity .2s ease, transform .2s ease, color .2s ease !important;
+}
+
+@media (hover:hover){
+  .text-link:hover,
+  .phase-live-copy a:hover,
+  .catalog-card:hover .catalog-card-cta{
+    opacity:.82;
+  }
+}
+
+/* ---------- 黒背景セクション ---------- */
+.section-dark,
+.phase-live,
+.contact{
+  background:
+    radial-gradient(circle at 50% 0%, rgba(155,18,73,.10), transparent 34%),
+    #09090c !important;
+}
+
+/* ---------- 最終CTA ---------- */
+.contact-card{
+  border:1px solid rgba(255,255,255,.08) !important;
+  box-shadow:
+    0 34px 100px rgba(0,0,0,.34),
+    inset 0 1px 0 rgba(255,255,255,.05) !important;
+}
+
+/* ---------- スクロール表示 ---------- */
+.reveal{
+  transition:
+    opacity .72s ease,
+    transform .72s cubic-bezier(.2,.75,.25,1) !important;
+}
+
+.reveal:not(.is-visible){
+  transform:translateY(24px);
+}
+
+/* ---------- ヘッダー ---------- */
+.site-header{
+  backdrop-filter:blur(18px) saturate(135%) !important;
+  -webkit-backdrop-filter:blur(18px) saturate(135%) !important;
+  background:rgba(8,8,11,.82) !important;
+  border-bottom:1px solid rgba(255,255,255,.055) !important;
+}
+
+.nav-cta{
+  box-shadow:0 8px 22px rgba(255,31,99,.16);
+}
+
+/* ---------- 製品一覧フィルター ---------- */
+.catalog-filter button{
+  min-height:38px;
+  transition:
+    transform .18s ease,
+    box-shadow .18s ease,
+    background-color .18s ease !important;
+}
+
+@media (hover:hover){
+  .catalog-filter button:hover{
+    transform:translateY(-2px);
+    box-shadow:0 8px 20px rgba(0,0,0,.1);
+  }
+}
+
+/* ---------- スマホ ---------- */
+@media (max-width:760px){
+  .section{
+    padding-top:76px !important;
+    padding-bottom:76px !important;
+  }
+
+  .section-heading{
+    margin-bottom:42px !important;
+  }
+
+  .button{
+    min-height:48px !important;
+    padding:13px 20px !important;
+  }
+
+  .product-feature,
+  .feature-showcase-card,
+  .catalog-card{
+    box-shadow:
+      0 14px 34px rgba(0,0,0,.13),
+      0 3px 10px rgba(0,0,0,.06) !important;
+  }
+}
+
+/* 動きを減らす設定 */
+@media (prefers-reduced-motion:reduce){
+  *,
+  *::before,
+  *::after{
+    scroll-behavior:auto !important;
+    transition-duration:.01ms !important;
+    animation-duration:.01ms !important;
+    animation-iteration-count:1 !important;
+  }
+}
