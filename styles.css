@@ -1367,3 +1367,91 @@ small{
     font-size:clamp(31px,8.6vw,42px) !important;
   }
 }
+
+
+/* =========================================================
+   DPRO OFFICIAL PRODUCT SITE
+   PHASE 3-R3 — ACCENT TEXT READABILITY
+   赤い小見出し・ラベルの視認性を改善
+   ========================================================= */
+
+/* 共通の赤アクセント文字 */
+.eyebrow,
+.phase-live-copy > span,
+.live-copy > span,
+.feature-showcase-copy > span,
+.catalog-card-copy small,
+.product-breadcrumb,
+.product-symbol,
+.catalog-code{
+  font-weight:900 !important;
+}
+
+/* トップページの黒背景内ラベル */
+.phase-live-copy > span{
+  display:inline-block !important;
+  font-size:14px !important;
+  line-height:1.35 !important;
+  letter-spacing:.12em !important;
+  margin-bottom:10px !important;
+  color:#ff4f83 !important;
+}
+
+/* トップヒーロー、WHY DPRO、カテゴリ見出し */
+.phase-hero .eyebrow,
+.phase-category .eyebrow,
+.phase-live .eyebrow,
+.phase-why .eyebrow,
+.phase-contact .eyebrow{
+  font-size:13px !important;
+  line-height:1.4 !important;
+  letter-spacing:.14em !important;
+  color:#ff4f83 !important;
+}
+
+/* 製品詳細ページの赤いラベル */
+.product-hero-copy .eyebrow,
+.section-heading .eyebrow,
+.live-copy > span,
+.feature-showcase-copy > span,
+.product-proof .eyebrow,
+.contact-card .eyebrow{
+  font-size:13px !important;
+  line-height:1.4 !important;
+  letter-spacing:.14em !important;
+  color:#ff4f83 !important;
+}
+
+/* 製品カード内のカテゴリ */
+.catalog-card-copy small{
+  font-size:12px !important;
+  line-height:1.4 !important;
+  letter-spacing:.1em !important;
+  color:#ff4f83 !important;
+}
+
+/* 小さな製品コード */
+.catalog-code,
+.product-symbol{
+  font-size:12px !important;
+  line-height:1 !important;
+}
+
+/* スマホではさらに少し大きく */
+@media (max-width:760px){
+  .phase-live-copy > span,
+  .phase-hero .eyebrow,
+  .phase-category .eyebrow,
+  .phase-live .eyebrow,
+  .phase-why .eyebrow,
+  .phase-contact .eyebrow,
+  .product-hero-copy .eyebrow,
+  .section-heading .eyebrow,
+  .live-copy > span,
+  .feature-showcase-copy > span,
+  .product-proof .eyebrow,
+  .contact-card .eyebrow{
+    font-size:14px !important;
+    letter-spacing:.11em !important;
+  }
+}
