@@ -188,7 +188,7 @@
 })();
 
 
-// DPRO WEB PHASE 2: product catalog filters
+// DPRO WEB PHASE 4-R2: product catalog filters + direct category links
 (() => {
   const buttons = document.querySelectorAll('.catalog-filter');
   const cards = document.querySelectorAll('.catalog-card');
@@ -201,17 +201,52 @@
     '教育・生活サービス': ['学習塾・習い事','不動産・賃貸内見','車検・整備']
   };
 
+  const applyCategory = (category, updateUrl = false) => {
+    const safeCategory = categoryMap[category] ? category : 'all';
+
+    buttons.forEach((button) => {
+      button.classList.toggle('is-active', button.dataset.category === safeCategory);
+    });
+
+    cards.forEach((card) => {
+      const title = card.querySelector('h3')?.textContent?.trim() || '';
+      const shouldShow = safeCategory === 'all' || categoryMap[safeCategory].includes(title);
+      card.style.display = shouldShow ? '' : 'none';
+    });
+
+    if (updateUrl) {
+      const url = new URL(window.location.href);
+      if (safeCategory === 'all') {
+        url.searchParams.delete('category');
+      } else {
+        url.searchParams.set('category', safeCategory);
+      }
+      url.hash = 'catalog';
+      history.replaceState(null, '', url);
+    }
+  };
+
   buttons.forEach((button) => {
     button.addEventListener('click', () => {
-      buttons.forEach((item) => item.classList.remove('is-active'));
-      button.classList.add('is-active');
-      const category = button.dataset.category;
-
-      cards.forEach((card) => {
-        const title = card.querySelector('h3')?.textContent?.trim() || '';
-        const shouldShow = category === 'all' || (categoryMap[category] || []).includes(title);
-        card.style.display = shouldShow ? '' : 'none';
+      applyCategory(button.dataset.category, true);
+      document.getElementById('catalog')?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
       });
     });
   });
+
+  const requestedCategory = new URLSearchParams(window.location.search).get('category');
+  if (requestedCategory && categoryMap[requestedCategory]) {
+    applyCategory(requestedCategory, false);
+
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        document.getElementById('catalog')?.scrollIntoView({
+          behavior: 'auto',
+          block: 'start'
+        });
+      });
+    });
+  }
 })();
