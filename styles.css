@@ -1816,3 +1816,15 @@ small{
     animation-iteration-count:1 !important;
   }
 }
+
+
+/* =========================================================
+   DPRO OFFICIAL PRODUCT SITE v1.1
+   PHASE 4-R1 — TAKEOUT
+   ========================================================= */
+.catalog-live-takeout iframe{
+  width:145%;
+  height:145%;
+  transform:scale(.69);
+  transform-origin:0 0;
+}
