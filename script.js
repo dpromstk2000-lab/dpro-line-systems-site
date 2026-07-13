@@ -1,252 +1,206 @@
-(() => {
-  "use strict";
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="DPRO LINE SYSTEMS。15業種の完成済みLINEシステムを、実際のスマホ・PC・iPad画面で体験できます。">
+  <meta name="theme-color" content="#0b0b0d">
+  <title>DPRO LINE SYSTEMS｜実際に触れる業種専用LINEシステム</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
 
-  const menuButton = document.querySelector(".menu-button");
-  const globalNav = document.querySelector(".global-nav");
-  const backToTop = document.querySelector(".back-to-top");
-  const filterButtons = document.querySelectorAll(".filter-button");
-  const systemCards = document.querySelectorAll(".system-card");
-  const screenTabs = document.querySelectorAll(".screen-tab");
-  const screenPreview = document.querySelector("#screen-preview");
+<body class="brand-home">
+<header class="site-header phase-header" id="top">
+  <div class="header-inner">
+    <a class="brand" href="#top" aria-label="DPRO LINE SYSTEMS トップへ">
+      <span class="brand-mark">D</span>
+      <span class="brand-copy"><strong>DPRO LINE SYSTEMS</strong><small>OFFICIAL PRODUCT SITE</small></span>
+    </a>
+    <button class="menu-button" type="button" aria-expanded="false" aria-controls="global-nav" aria-label="メニューを開く"><span></span><span></span><span></span></button>
+    <nav class="global-nav" id="global-nav" aria-label="メインナビゲーション">
+      <a href="#industries">業種から探す</a>
+      <a href="#live">実画面</a>
+      <a href="#why">DPROについて</a>
+      <a href="systems.html">製品一覧</a>
+      <a class="nav-cta" href="https://lin.ee/YxJGXV6D" target="_blank" rel="noopener">LINEでデモを見る</a>
+    </nav>
+  </div>
+</header>
 
-  const screenContent = {
-    customer: {
-      label: "Customer Experience",
-      title: "LINEから、すぐ予約。",
-      text: "空き状況を確認し、そのまま予約。会員証や次回予定もひとつの画面で確認できます。",
-      ui: `
-        <span>LINE予約</span>
-        <strong>ご希望の日時を選択</strong>
-        <button>7月18日 10:30</button>
-        <button>7月18日 13:00</button>
-        <button>7月19日 11:00</button>
-      `
-    },
-    owner: {
-      label: "Owner Experience",
-      title: "店舗全体を、ひとつの画面で。",
-      text: "予約、顧客、設定、フォロー業務をまとめて確認。今日やることがすぐ分かります。",
-      ui: `
-        <span>オーナー管理</span>
-        <strong>本日の状況</strong>
-        <button>予約 12件</button>
-        <button>対応待ち 4件</button>
-        <button>顧客検索</button>
-      `
-    },
-    staff: {
-      label: "Staff Experience",
-      title: "現場では、必要な操作だけ。",
-      text: "受付、来店確認、ステータス更新など、スタッフが使う機能を大きくシンプルに表示します。",
-      ui: `
-        <span>スタッフ画面</span>
-        <strong>今日の予定</strong>
-        <button>10:00 山田様</button>
-        <button>11:30 佐藤様</button>
-        <button>13:00 田中様</button>
-      `
-    }
-  };
+<main>
+<section class="phase-hero" aria-labelledby="phase-hero-title">
+  <div class="phase-hero-glow glow-a"></div>
+  <div class="phase-hero-glow glow-b"></div>
+  <div class="phase-hero-copy reveal">
+    <p class="eyebrow">DPRO OFFICIAL PRODUCT SITE</p>
+    <h1 id="phase-hero-title" class="headline-lines headline-hero">
+      <span>店舗運営を、</span>
+      <span>もっとスマートに。</span>
+    </h1>
+    <p class="phase-hero-lead">LINEを入口に、予約・受付・顧客管理まで。<br>完成済みの業種専用システムを、そのまま体験できます。</p><p class="phase-brand-statement">DPROは、店舗運営向けLINEシステムを自社で設計・開発・改善しているブランドです。</p>
+    <div class="phase-hero-actions">
+      <a class="button button-primary button-line-demo" href="https://lin.ee/YxJGXV6D" target="_blank" rel="noopener">LINEでデモを見る</a>
+      <a class="button button-secondary" href="#live">実際の画面を見る</a>
+    </div>
+    <p class="phase-mini-proof"><span>15業種</span><span>スマホ・PC・iPad</span><span>実画面デモ</span></p>
+  </div>
 
-  if (menuButton && globalNav) {
-    menuButton.addEventListener("click", () => {
-      const isOpen = menuButton.classList.toggle("open");
-      globalNav.classList.toggle("open", isOpen);
-      menuButton.setAttribute("aria-expanded", String(isOpen));
-      menuButton.setAttribute("aria-label", isOpen ? "メニューを閉じる" : "メニューを開く");
-    });
+  <div class="phase-device-stage reveal" aria-label="DPROの実画面プレビュー">
+    <div class="phase-monitor">
+      <div class="live-browser-bar"><span></span><span></span><span></span><b>受付・店舗管理</b></div>
+      <iframe title="DPRO 動物病院受付PCデモ" loading="eager" src="https://dpromstk2000-lab.github.io/DPRO-VET-QR/scan-pc.html?v=step-vet-52-5v"></iframe>
+    </div>
+    <div class="phase-phone">
+      <iframe title="DPRO ペットサロン会員画面デモ" loading="eager" src="https://dpromstk2000-lab.github.io/dpro-pet-salon-liff/member.html?phone=08000002004&amp;v=petsalon-photo-1c"></iframe>
+    </div>
+    <div class="phase-tablet">
+      <iframe title="DPRO ペットサロンiPad画面デモ" loading="eager" src="https://dpromstk2000-lab.github.io/dpro-pet-salon-liff/owner-ipad.html?v=petsalon-photo-1d-r2"></iframe>
+    </div>
+    <div class="phase-live-badge"><i></i><span>LIVE PRODUCT</span><strong>実際に動いています</strong></div>
+  </div>
+  <a class="scroll-indicator" href="#numbers"><span>SCROLL</span><i></i></a>
+</section>
 
-    globalNav.querySelectorAll("a").forEach((link) => {
-      link.addEventListener("click", () => {
-        menuButton.classList.remove("open");
-        globalNav.classList.remove("open");
-        menuButton.setAttribute("aria-expanded", "false");
-      });
-    });
-  }
-
-  const revealObserver = new IntersectionObserver((entries, observer) => {
-    entries.forEach((entry) => {
-      if (!entry.isIntersecting) return;
-      entry.target.classList.add("visible");
-      observer.unobserve(entry.target);
-    });
-  }, { threshold: 0.12 });
-
-  document.querySelectorAll(".reveal").forEach((element) => revealObserver.observe(element));
-
-  filterButtons.forEach((button) => {
-    button.addEventListener("click", () => {
-      const filter = button.dataset.filter;
-      filterButtons.forEach((item) => item.classList.remove("active"));
-      button.classList.add("active");
-
-      systemCards.forEach((card) => {
-        const shouldShow = filter === "all" || card.dataset.category === filter;
-        card.classList.toggle("is-hidden", !shouldShow);
-      });
-    });
-  });
-
-  screenTabs.forEach((tab) => {
-    tab.addEventListener("click", () => {
-      const key = tab.dataset.screen;
-      const content = screenContent[key];
-      if (!content || !screenPreview) return;
-
-      screenTabs.forEach((item) => item.classList.remove("active"));
-      tab.classList.add("active");
-
-      screenPreview.innerHTML = `
-        <div class="preview-copy">
-          <small>${content.label}</small>
-          <h3>${content.title}</h3>
-          <p>${content.text}</p>
-        </div>
-        <div class="preview-device ${key}-preview">
-          <div class="preview-ui">${content.ui}</div>
-        </div>
-      `;
-    });
-  });
-
-  window.addEventListener("scroll", () => {
-    if (!backToTop) return;
-    backToTop.classList.toggle("visible", window.scrollY > 700);
-  }, { passive: true });
-
-  backToTop?.addEventListener("click", () => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  });
-
-  const year = document.querySelector("#year");
-  if (year) year.textContent = String(new Date().getFullYear());
-})();
+<section class="phase-numbers section" id="numbers">
+  <div class="phase-number-grid">
+    <article class="phase-number reveal"><strong>15</strong><span>完成済みシステム</span><p>業種ごとの店舗運用に合わせた製品を公開。</p></article>
+    <article class="phase-number reveal"><strong>3</strong><span>お客様・店舗・スタッフ画面</span><p>スマホ・PC・iPadを一つの運用につなぎます。</p></article>
+    <article class="phase-number reveal"><strong>LIVE</strong><span>今すぐ操作できるデモ</span><p>説明だけでなく、本物の画面をその場で体験。</p></article>
+  </div>
+</section>
 
 
-// STEP DPRO-WEB-4 : screen modal
-(() => {
-  const modal = document.getElementById('screen-modal');
-  if (!modal) return;
+<section class="owner-problems section section-soft" id="owner-problems">
+<div class="section-heading reveal">
+<p class="eyebrow">FOR STORE OWNERS</p>
+<h2 class="headline-lines headline-fixed"><span>こんなお悩み、</span><span>ありませんか？</span></h2>
+<p>DPROは、店舗ごとの日常業務に合わせて、LINEを入口に運営を整理します。</p>
+</div>
+<div class="owner-problem-grid">
+<article class="owner-problem-card reveal"><span>01</span><h3>電話対応を減らしたい</h3><p>予約・注文・欠席連絡などをLINEから受け付け、管理画面へ集約します。</p></article>
+<article class="owner-problem-card reveal"><span>02</span><h3>紙や複数画面をまとめたい</h3><p>顧客・予約・会員・カルテ・車両など、業種に必要な情報を一元管理します。</p></article>
+<article class="owner-problem-card reveal"><span>03</span><h3>スタッフ間の確認を簡単にしたい</h3><p>PC・iPad・スマートフォンで、同じ情報と進行状況を共有できます。</p></article>
+<article class="owner-problem-card reveal"><span>04</span><h3>再来店・次回案内を続けたい</h3><p>来店履歴や利用状況を確認し、次の連絡につなげやすくします。</p></article>
+</div>
+</section>
+<section class="phase-industries section section-soft" id="industries">
+  <div class="section-heading reveal">
+    <p class="eyebrow">FIND YOUR BUSINESS</p>
+    <h2 class="headline-lines headline-fixed">
+  <span>あなたのお店は、</span>
+  <span>どちらですか？</span>
+</h2>
+    <p>業種を選ぶと、実際に完成しているDPROシステムを確認できます。</p>
+  </div>
+  <div class="industry-selector">
+    <a class="industry-panel reveal" href="systems.html?category=%E7%BE%8E%E5%AE%B9%E3%83%BB%E5%81%A5%E5%BA%B7#catalog"><span>01</span><small>BEAUTY & WELLNESS</small><h3>美容・健康</h3><p>美容サロン、ネイル、エステ、ヨガ、整骨院</p><b>該当システムを見る →</b></a>
+    <a class="industry-panel reveal" href="systems.html?category=%E5%8C%BB%E7%99%82%E3%83%BB%E3%83%9A%E3%83%83%E3%83%88#catalog"><span>02</span><small>MEDICAL & PET</small><h3>医療・ペット</h3><p>動物病院、ペットサロン、歯科</p><b>該当システムを見る →</b></a>
+    <a class="industry-panel reveal" href="systems.html?category=%E9%A3%B2%E9%A3%9F%E3%83%BB%E5%B0%8F%E5%A3%B2#catalog"><span>03</span><small>FOOD & RETAIL</small><h3>飲食・小売</h3><p>ベーカリー、居酒屋、テイクアウト</p><b>該当システムを見る →</b></a>
+    <a class="industry-panel reveal" href="systems.html?category=%E6%95%99%E8%82%B2%E3%83%BB%E7%94%9F%E6%B4%BB%E3%82%B5%E3%83%BC%E3%83%93%E3%82%B9#catalog"><span>04</span><small>EDUCATION & SERVICE</small><h3>教育・生活サービス</h3><p>学習塾、不動産、車検・整備、修理受付</p><b>該当システムを見る →</b></a>
+  </div><div class="catalog-more-link reveal"><a class="button button-primary" href="systems.html">15システムをすべて見る</a></div>
+</section>
 
-  const frame = document.getElementById('screen-modal-frame');
-  const title = document.getElementById('screen-modal-title');
-  const external = document.getElementById('screen-modal-external');
+<section class="phase-live section section-dark" id="live">
+  <div class="section-heading section-heading-light reveal">
+    <p class="eyebrow">REAL SCREEN, REAL OPERATION</p>
+    <h2 class="headline-lines headline-fixed">
+  <span>説明するだけではなく、</span>
+  <span>実際に動いています。</span>
+</h2>
+    <p>代表的な完成システムを、ページ内でそのまま確認できます。</p>
+  </div>
 
-  const closeModal = () => {
-    modal.classList.remove('is-open');
-    modal.setAttribute('aria-hidden', 'true');
-    document.body.classList.remove('modal-open');
-    frame.src = 'about:blank';
-  };
+  <div class="phase-live-grid">
+    <article class="phase-live-card reveal">
+      <div class="phase-live-copy"><span>PET SALON</span><h3 class="headline-lines">
+      <span>予約・顧客・</span>
+      <span>ペット情報を、</span>
+      <span>ひとつに。</span>
+    </h3><p>お客様用会員画面から、PC・iPadの店舗管理まで。</p><a href="systems/pet-salon.html">製品ページを見る →</a></div>
+      <div class="phase-live-frame phone"><iframe title="ペットサロン会員画面" loading="lazy" src="https://dpromstk2000-lab.github.io/dpro-pet-salon-liff/member.html?phone=08000002004&amp;v=petsalon-photo-1c"></iframe></div>
+    </article>
+    <article class="phase-live-card reverse reveal">
+      <div class="phase-live-copy"><span>PET CARE</span><h3 class="headline-lines">
+      <span>受付前から、</span>
+      <span>診察・会計待ちまで。</span>
+    </h3><p>LINE診察券、順番受付、受付PC・iPad、医師画面が連動。</p><a href="systems/pet-care.html">製品ページを見る →</a></div>
+      <div class="phase-live-frame desktop"><iframe title="動物病院受付PC画面" loading="lazy" src="https://dpromstk2000-lab.github.io/DPRO-VET-QR/scan-pc.html?v=step-vet-52-5v"></iframe></div>
+    </article>
+    <article class="phase-live-card reveal">
+      <div class="phase-live-copy"><span>BAKERY</span><h3 class="headline-lines">
+      <span>会員証・取り置き・</span>
+      <span>ECOレスキュー。</span>
+    </h3><p>店舗とお客様をLINEでつなぐ、パン屋向けシステム。</p><div class="phase-live-links"><a href="systems/bakery.html">製品ページを見る →</a><a href="https://dpromstk2000-lab.github.io/bakery-line-system/wallet.html?shop_code=bakery_demo&api=https%3A%2F%2Fdpro-bakery-wallet-api.dpromstk2000.workers.dev&v=bakery-phone-2" target="_blank" rel="noopener">実画面を別タブで開く →</a></div></div>
+      <div class="phase-live-frame desktop bakery-live-frame">
+  <iframe id="bakery-live-iframe" title="ベーカリーシステム画面" loading="lazy" src="https://dpromstk2000-lab.github.io/bakery-line-system/wallet.html?shop_code=bakery_demo&api=https%3A%2F%2Fdpro-bakery-wallet-api.dpromstk2000.workers.dev&v=bakery-phone-2"></iframe>
+  <div class="iframe-fallback bakery-fallback" aria-hidden="true">
+    <div class="iframe-fallback-mark">BK</div>
+    <p class="eyebrow">DPRO BAKERY LINE</p>
+    <h4>会員証・取り置き・<br>ECOレスキュー</h4>
+    <p>実画面が読み込めない場合は、製品ページからデモを開けます。</p>
+    <a href="systems/bakery.html">ベーカリー製品ページを見る →</a>
+  </div>
+</div>
+    </article>
+  </div>
+</section>
 
-  document.querySelectorAll('.js-screen-modal').forEach((button) => {
-    button.addEventListener('click', () => {
-      const url = button.dataset.screenUrl;
-      const screenTitle = button.dataset.screenTitle || '実画面';
-      title.textContent = screenTitle;
-      frame.src = url;
-      external.href = url;
-      modal.classList.add('is-open');
-      modal.setAttribute('aria-hidden', 'false');
-      document.body.classList.add('modal-open');
-    });
-  });
+<section class="phase-why section" id="why">
+  <div class="phase-why-copy reveal">
+    <p class="eyebrow">WHY DPRO</p>
+    <h2 class="headline-lines headline-why">
+      <span>現場で本当に使われる</span>
+      <span>システムを、</span>
+      <span>自社で設計・改善しています。</span>
+    </h2>
+    <p>見た目だけの予約フォームではありません。LINEから店舗のPC・iPadまで、毎日の運用が一つにつながるように作っています。</p>
+  </div>
+  <div class="phase-why-flow reveal">
+    <div><span>LINE</span><small>お客様の入口</small></div><i></i>
+    <div><span>予約・受付</span><small>来店前の手続き</small></div><i></i>
+    <div><span>顧客管理</span><small>情報を蓄積</small></div><i></i>
+    <div><span>PC / iPad</span><small>店舗で活用</small></div>
+  </div>
+  <div class="phase-principles">
+    <article class="reveal"><span>01</span><h3>業種専用</h3><p>共通テンプレートではなく、各業種の仕事の流れに合わせます。</p></article>
+    <article class="reveal"><span>02</span><h3>実際に触れる</h3><p>完成済みの画面を、導入前にそのまま体験できます。</p></article>
+    <article class="reveal"><span>03</span><h3>導入後も改善</h3><p>店舗の運用に合わせて、画面や機能を育てられます。</p></article>
+  </div>
+</section>
 
-  modal.querySelectorAll('[data-modal-close]').forEach((button) => {
-    button.addEventListener('click', closeModal);
-  });
+<section class="phase-cta section section-dark" id="contact">
+  <div class="phase-cta-inner reveal">
+    <p class="eyebrow">START WITH A DEMO</p>
+    <h2 class="headline-lines headline-fixed">
+  <span>実際のシステムを、</span>
+  <span>触ってみませんか？</span>
+</h2>
+    <p>完成済みのデモをご案内します。まずはLINEで、気になる業種をお知らせください。</p>
+    <a class="button button-line-demo large" href="https://lin.ee/YxJGXV6D" target="_blank" rel="noopener">LINEでデモを見る</a>
+    <small>友だち追加後、「デモ希望」と送るだけで大丈夫です。</small>
+  </div>
+</section>
+</main>
 
-  document.addEventListener('keydown', (event) => {
-    if (event.key === 'Escape' && modal.classList.contains('is-open')) closeModal();
-  });
-})();
+<footer class="site-footer">
+    <div>
+      <a class="brand footer-brand" href="#top">
+        <span class="brand-mark">D</span>
+        <span class="brand-copy"><strong>DPRO LINE SYSTEMS</strong><small>BUSINESS SOLUTION</small></span>
+      </a>
+      <p>店舗業務を、LINEでもっと簡単に。</p>
+    </div>
+    <nav aria-label="フッターナビゲーション">
+      <a href="systems.html">システム一覧</a>
+      <a href="#features">特徴</a>
+      <a href="#flow">導入の流れ</a>
+      <a href="#contact">お問い合わせ</a>
+    </nav>
+    <p class="copyright">© <span id="year"></span> DPRO SHOP</p>
+  </footer>
 
+  <button class="back-to-top" type="button" aria-label="ページ上部へ戻る">↑</button>
+  <script src="script.js"></script>
+</body>
+</html>
 
-// DPRO WEB PHASE 1-R2: bakery iframe safety
-(() => {
-  const iframe = document.getElementById('bakery-live-iframe');
-  const fallback = document.querySelector('.bakery-fallback');
-  if (!iframe || !fallback) return;
-
-  const revealFallback = () => {
-    iframe.style.display = 'none';
-    fallback.setAttribute('aria-hidden', 'false');
-    fallback.style.zIndex = '3';
-  };
-
-  iframe.addEventListener('load', () => {
-    try {
-      const bodyText = iframe.contentDocument?.body?.innerText || '';
-      if (/404|There isn't a GitHub Pages site here/i.test(bodyText)) revealFallback();
-    } catch (_) {
-      // Cross-origin pages cannot always be inspected. In that case the iframe remains visible.
-    }
-  });
-
-  iframe.addEventListener('error', revealFallback);
-})();
-
-
-// DPRO WEB PHASE 4-R2: product catalog filters + direct category links
-(() => {
-  const buttons = document.querySelectorAll('.catalog-filter');
-  const cards = document.querySelectorAll('.catalog-card');
-  if (!buttons.length || !cards.length) return;
-
-  const categoryMap = {
-    '美容・健康': ['ネイル','プライベートヨガ','美容サロン','エステ・リラクゼーション','整骨院・接骨院'],
-    '医療・ペット': ['ペットサロン','動物病院','歯科'],
-    '飲食・小売': ['ベーカリー','居酒屋','テイクアウト'],
-    '教育・生活サービス': ['学習塾・習い事','不動産・賃貸内見','車検・整備']
-  };
-
-  const applyCategory = (category, updateUrl = false) => {
-    const safeCategory = categoryMap[category] ? category : 'all';
-
-    buttons.forEach((button) => {
-      button.classList.toggle('is-active', button.dataset.category === safeCategory);
-    });
-
-    cards.forEach((card) => {
-      const title = card.querySelector('h3')?.textContent?.trim() || '';
-      const shouldShow = safeCategory === 'all' || categoryMap[safeCategory].includes(title);
-      card.style.display = shouldShow ? '' : 'none';
-    });
-
-    if (updateUrl) {
-      const url = new URL(window.location.href);
-      if (safeCategory === 'all') {
-        url.searchParams.delete('category');
-      } else {
-        url.searchParams.set('category', safeCategory);
-      }
-      url.hash = 'catalog';
-      history.replaceState(null, '', url);
-    }
-  };
-
-  buttons.forEach((button) => {
-    button.addEventListener('click', () => {
-      applyCategory(button.dataset.category, true);
-      document.getElementById('catalog')?.scrollIntoView({
-        behavior: 'smooth',
-        block: 'start'
-      });
-    });
-  });
-
-  const requestedCategory = new URLSearchParams(window.location.search).get('category');
-  if (requestedCategory && categoryMap[requestedCategory]) {
-    applyCategory(requestedCategory, false);
-
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        document.getElementById('catalog')?.scrollIntoView({
-          behavior: 'auto',
-          block: 'start'
-        });
-      });
-    });
-  }
-})();

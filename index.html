@@ -1,206 +1,289 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="DPRO LINE SYSTEMS。14業種の完成済みLINEシステムを、実際のスマホ・PC・iPad画面で体験できます。">
-  <meta name="theme-color" content="#0b0b0d">
-  <title>DPRO LINE SYSTEMS｜実際に触れる業種専用LINEシステム</title>
-  <link rel="stylesheet" href="styles.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="修理店向けDPRO 修理受付 LINEの相談受付、預かり写真、見積もり、進捗、引渡し・支払い・保証管理を実画面で紹介。">
+<title>DPRO 修理受付 LINE｜受付・写真・見積もり・進捗・引渡し管理</title>
+<link rel="stylesheet" href="../styles.css">
+<script>
+(() => {
+  const session = JSON.stringify({
+    shop_code: 'repair_demo',
+    admin_key: '1234',
+    saved_at: new Date().toISOString()
+  });
+  try {
+    sessionStorage.setItem('dpro_repair_owner_admin_session_v1', session);
+    sessionStorage.setItem('dpro_repair_ipad_admin_session_v1', session);
+  } catch (_) {}
+})();
+</script>
 </head>
-
-<body class="brand-home">
-<header class="site-header phase-header" id="top">
-  <div class="header-inner">
-    <a class="brand" href="#top" aria-label="DPRO LINE SYSTEMS トップへ">
-      <span class="brand-mark">D</span>
-      <span class="brand-copy"><strong>DPRO LINE SYSTEMS</strong><small>OFFICIAL PRODUCT SITE</small></span>
-    </a>
-    <button class="menu-button" type="button" aria-expanded="false" aria-controls="global-nav" aria-label="メニューを開く"><span></span><span></span><span></span></button>
-    <nav class="global-nav" id="global-nav" aria-label="メインナビゲーション">
-      <a href="#industries">業種から探す</a>
-      <a href="#live">実画面</a>
-      <a href="#why">DPROについて</a>
-      <a href="systems.html">製品一覧</a>
-      <a class="nav-cta" href="https://lin.ee/YxJGXV6D" target="_blank" rel="noopener">LINEでデモを見る</a>
-    </nav>
-  </div>
+<body>
+<header class="site-header" id="top">
+<div class="header-inner">
+<a class="brand" href="../index.html"><span class="brand-mark">D</span><span class="brand-copy"><strong>DPRO LINE SYSTEMS</strong><small>OFFICIAL PRODUCT SITE</small></span></a>
+<button class="menu-button" type="button" aria-expanded="false" aria-controls="global-nav" aria-label="メニューを開く"><span></span><span></span><span></span></button>
+<nav class="global-nav" id="global-nav">
+<a href="../systems.html">システム一覧</a>
+<a href="#experience">実画面</a>
+<a href="../index.html#why">DPROについて</a>
+<a class="nav-cta" href="https://lin.ee/YxJGXV6D" target="_blank" rel="noopener">LINEでデモを見る</a>
+</nav>
+</div>
 </header>
 
 <main>
-<section class="phase-hero" aria-labelledby="phase-hero-title">
-  <div class="phase-hero-glow glow-a"></div>
-  <div class="phase-hero-glow glow-b"></div>
-  <div class="phase-hero-copy reveal">
-    <p class="eyebrow">DPRO OFFICIAL PRODUCT SITE</p>
-    <h1 id="phase-hero-title" class="headline-lines headline-hero">
-      <span>店舗運営を、</span>
-      <span>もっとスマートに。</span>
-    </h1>
-    <p class="phase-hero-lead">LINEを入口に、予約・受付・顧客管理まで。<br>完成済みの業種専用システムを、そのまま体験できます。</p><p class="phase-brand-statement">DPROは、店舗運営向けLINEシステムを自社で設計・開発・改善しているブランドです。</p>
-    <div class="phase-hero-actions">
-      <a class="button button-primary button-line-demo" href="https://lin.ee/YxJGXV6D" target="_blank" rel="noopener">LINEでデモを見る</a>
-      <a class="button button-secondary" href="#live">実際の画面を見る</a>
-    </div>
-    <p class="phase-mini-proof"><span>14業種</span><span>スマホ・PC・iPad</span><span>実画面デモ</span></p>
-  </div>
+<section class="product-hero">
+<div class="product-hero-copy reveal">
+<div class="product-breadcrumb"><a href="../systems.html">システム一覧</a><span>/</span><span>修理受付</span></div>
+<span class="product-symbol">RP</span>
+<p class="eyebrow">修理店・リペアサービス専用 LINE SYSTEM</p>
+<h1>DPRO 修理受付 LINE</h1>
+<h2 class="headline-lines headline-fixed">
+<span>受付、写真、見積もり、進捗、</span>
+<span>引渡しまでを一つに。</span>
+</h2>
+<p>お客様のLINE相談と、PC・iPadの店舗業務をつなぐ、修理受付・預かり管理専用システムです。</p>
+<div class="hero-actions">
+<a class="button button-primary" href="#experience">実画面を体験する</a>
+<a class="button button-secondary" href="https://lin.ee/YxJGXV6D" target="_blank" rel="noopener">LINEでデモを見る</a>
+</div>
+</div>
 
-  <div class="phase-device-stage reveal" aria-label="DPROの実画面プレビュー">
-    <div class="phase-monitor">
-      <div class="live-browser-bar"><span></span><span></span><span></span><b>受付・店舗管理</b></div>
-      <iframe title="DPRO 動物病院受付PCデモ" loading="eager" src="https://dpromstk2000-lab.github.io/DPRO-VET-QR/scan-pc.html?v=step-vet-52-5v"></iframe>
-    </div>
-    <div class="phase-phone">
-      <iframe title="DPRO ペットサロン会員画面デモ" loading="eager" src="https://dpromstk2000-lab.github.io/dpro-pet-salon-liff/member.html?phone=08000002004&amp;v=petsalon-photo-1c"></iframe>
-    </div>
-    <div class="phase-tablet">
-      <iframe title="DPRO ペットサロンiPad画面デモ" loading="eager" src="https://dpromstk2000-lab.github.io/dpro-pet-salon-liff/owner-ipad.html?v=petsalon-photo-1d-r2"></iframe>
-    </div>
-    <div class="phase-live-badge"><i></i><span>LIVE PRODUCT</span><strong>実際に動いています</strong></div>
-  </div>
-  <a class="scroll-indicator" href="#numbers"><span>SCROLL</span><i></i></a>
+<div class="product-visual product-visual-live reveal">
+<div class="hero-live-monitor">
+<div class="live-browser-bar"><span></span><span></span><span></span><b>PC修理進捗管理画面</b></div>
+<iframe title="DPRO修理受付 PC管理画面プレビュー" loading="eager" src="https://dpromstk2000-lab.github.io/dpro-repair-line-liff/owner.html?shop_code=repair_demo&amp;v=repair-17"></iframe>
+</div>
+<div class="hero-live-phone">
+<iframe title="DPRO修理受付 お客様相談画面プレビュー" loading="eager" src="https://dpromstk2000-lab.github.io/dpro-repair-line-liff/index.html?shop_code=repair_demo&amp;v=repair-17"></iframe>
+</div>
+<div class="hero-live-tablet">
+<iframe title="DPRO修理受付 iPad受付画面プレビュー" loading="eager" src="https://dpromstk2000-lab.github.io/dpro-repair-line-liff/owner-ipad.html?shop_code=repair_demo&amp;v=repair-17"></iframe>
+</div>
+<div class="hero-live-label"><span>LIVE DEMO</span><strong>実際に動く完成画面</strong></div>
+</div>
 </section>
 
-<section class="phase-numbers section" id="numbers">
-  <div class="phase-number-grid">
-    <article class="phase-number reveal"><strong>14</strong><span>完成済みシステム</span><p>業種ごとの店舗運用に合わせた製品を公開。</p></article>
-    <article class="phase-number reveal"><strong>3</strong><span>お客様・店舗・スタッフ画面</span><p>スマホ・PC・iPadを一つの運用につなぎます。</p></article>
-    <article class="phase-number reveal"><strong>LIVE</strong><span>今すぐ操作できるデモ</span><p>説明だけでなく、本物の画面をその場で体験。</p></article>
-  </div>
-</section>
-
-
-<section class="owner-problems section section-soft" id="owner-problems">
+<section class="sales-summary section">
 <div class="section-heading reveal">
-<p class="eyebrow">FOR STORE OWNERS</p>
-<h2 class="headline-lines headline-fixed"><span>こんなお悩み、</span><span>ありませんか？</span></h2>
-<p>DPROは、店舗ごとの日常業務に合わせて、LINEを入口に運営を整理します。</p>
+<p class="eyebrow">UNDERSTAND IN 30 SECONDS</p>
+<h2 class="headline-lines headline-fixed"><span>30秒で分かる、</span><span>このシステムの価値。</span></h2>
+<p>誰に向いていて、どんな悩みを解決できるのかを先に確認できます。</p>
 </div>
-<div class="owner-problem-grid">
-<article class="owner-problem-card reveal"><span>01</span><h3>電話対応を減らしたい</h3><p>予約・注文・欠席連絡などをLINEから受け付け、管理画面へ集約します。</p></article>
-<article class="owner-problem-card reveal"><span>02</span><h3>紙や複数画面をまとめたい</h3><p>顧客・予約・会員・カルテ・車両など、業種に必要な情報を一元管理します。</p></article>
-<article class="owner-problem-card reveal"><span>03</span><h3>スタッフ間の確認を簡単にしたい</h3><p>PC・iPad・スマートフォンで、同じ情報と進行状況を共有できます。</p></article>
-<article class="owner-problem-card reveal"><span>04</span><h3>再来店・次回案内を続けたい</h3><p>来店履歴や利用状況を確認し、次の連絡につなげやすくします。</p></article>
+<div class="sales-summary-grid">
+<article class="sales-summary-card reveal"><span class="sales-summary-number">01</span><h3>30秒で分かる</h3><ul><li>相談受付から引渡しまで一元管理</li><li>預かり時の写真と付属品を記録</li><li>見積もり・進捗・支払い・保証を共有</li></ul></article>
+<article class="sales-summary-card reveal"><span class="sales-summary-number">02</span><h3>こんなお店におすすめ</h3><ul><li>スマートフォン・パソコン修理店</li><li>時計・靴・バッグ・アクセサリー修理店</li><li>家電・自転車・工具の修理受付</li><li>電話・店頭・LINE受付をまとめたい店舗</li></ul></article>
+</div>
+<div class="sales-problems reveal">
+<div class="sales-problems-heading"><span class="sales-summary-number">03</span><h3>よくある悩み → 解決</h3><p>修理受付で起きやすい確認漏れを、DPROの仕組みで整理します。</p></div>
+<div class="sales-problem-grid"><article class="sales-problem-card">
+<div class="sales-problem-before"><span>悩み</span><strong>預かり時の傷や付属品で認識がずれる</strong></div>
+<div class="sales-problem-arrow">↓</div>
+<div class="sales-problem-after"><span>解決</span><strong>iPad写真と預かり記録を案件に保存</strong></div>
+</article><article class="sales-problem-card">
+<div class="sales-problem-before"><span>悩み</span><strong>修理状況の問い合わせ対応が多い</strong></div>
+<div class="sales-problem-arrow">↓</div>
+<div class="sales-problem-after"><span>解決</span><strong>お客様が会員ページで進捗を確認</strong></div>
+</article><article class="sales-problem-card">
+<div class="sales-problem-before"><span>悩み</span><strong>見積もり・支払い・保証が別管理</strong></div>
+<div class="sales-problem-arrow">↓</div>
+<div class="sales-problem-after"><span>解決</span><strong>受付案件にまとめて記録・確認</strong></div>
+</article></div>
 </div>
 </section>
-<section class="phase-industries section section-soft" id="industries">
-  <div class="section-heading reveal">
-    <p class="eyebrow">FIND YOUR BUSINESS</p>
-    <h2 class="headline-lines headline-fixed">
-  <span>あなたのお店は、</span>
-  <span>どちらですか？</span>
-</h2>
-    <p>業種を選ぶと、実際に完成しているDPROシステムを確認できます。</p>
-  </div>
-  <div class="industry-selector">
-    <a class="industry-panel reveal" href="systems.html?category=%E7%BE%8E%E5%AE%B9%E3%83%BB%E5%81%A5%E5%BA%B7#catalog"><span>01</span><small>BEAUTY & WELLNESS</small><h3>美容・健康</h3><p>美容サロン、ネイル、エステ、ヨガ、整骨院</p><b>該当システムを見る →</b></a>
-    <a class="industry-panel reveal" href="systems.html?category=%E5%8C%BB%E7%99%82%E3%83%BB%E3%83%9A%E3%83%83%E3%83%88#catalog"><span>02</span><small>MEDICAL & PET</small><h3>医療・ペット</h3><p>動物病院、ペットサロン、歯科</p><b>該当システムを見る →</b></a>
-    <a class="industry-panel reveal" href="systems.html?category=%E9%A3%B2%E9%A3%9F%E3%83%BB%E5%B0%8F%E5%A3%B2#catalog"><span>03</span><small>FOOD & RETAIL</small><h3>飲食・小売</h3><p>ベーカリー、居酒屋、テイクアウト</p><b>該当システムを見る →</b></a>
-    <a class="industry-panel reveal" href="systems.html?category=%E6%95%99%E8%82%B2%E3%83%BB%E7%94%9F%E6%B4%BB%E3%82%B5%E3%83%BC%E3%83%93%E3%82%B9#catalog"><span>04</span><small>EDUCATION & SERVICE</small><h3>教育・生活サービス</h3><p>学習塾、不動産、車検・整備</p><b>該当システムを見る →</b></a>
-  </div><div class="catalog-more-link reveal"><a class="button button-primary" href="systems.html">14システムをすべて見る</a></div>
-</section>
 
-<section class="phase-live section section-dark" id="live">
-  <div class="section-heading section-heading-light reveal">
-    <p class="eyebrow">REAL SCREEN, REAL OPERATION</p>
-    <h2 class="headline-lines headline-fixed">
-  <span>説明するだけではなく、</span>
-  <span>実際に動いています。</span>
+<section class="product-intro section">
+<div class="section-heading reveal">
+<p class="eyebrow">BUILT FOR REPAIR SERVICE</p>
+<h2 class="headline-lines headline-fixed">
+<span>相談受付から修理・引渡しまで、</span>
+<span>現場の流れに沿った専用機能。</span>
 </h2>
-    <p>代表的な完成システムを、ページ内でそのまま確認できます。</p>
-  </div>
-
-  <div class="phase-live-grid">
-    <article class="phase-live-card reveal">
-      <div class="phase-live-copy"><span>PET SALON</span><h3 class="headline-lines">
-      <span>予約・顧客・</span>
-      <span>ペット情報を、</span>
-      <span>ひとつに。</span>
-    </h3><p>お客様用会員画面から、PC・iPadの店舗管理まで。</p><a href="systems/pet-salon.html">製品ページを見る →</a></div>
-      <div class="phase-live-frame phone"><iframe title="ペットサロン会員画面" loading="lazy" src="https://dpromstk2000-lab.github.io/dpro-pet-salon-liff/member.html?phone=08000002004&amp;v=petsalon-photo-1c"></iframe></div>
-    </article>
-    <article class="phase-live-card reverse reveal">
-      <div class="phase-live-copy"><span>PET CARE</span><h3 class="headline-lines">
-      <span>受付前から、</span>
-      <span>診察・会計待ちまで。</span>
-    </h3><p>LINE診察券、順番受付、受付PC・iPad、医師画面が連動。</p><a href="systems/pet-care.html">製品ページを見る →</a></div>
-      <div class="phase-live-frame desktop"><iframe title="動物病院受付PC画面" loading="lazy" src="https://dpromstk2000-lab.github.io/DPRO-VET-QR/scan-pc.html?v=step-vet-52-5v"></iframe></div>
-    </article>
-    <article class="phase-live-card reveal">
-      <div class="phase-live-copy"><span>BAKERY</span><h3 class="headline-lines">
-      <span>会員証・取り置き・</span>
-      <span>ECOレスキュー。</span>
-    </h3><p>店舗とお客様をLINEでつなぐ、パン屋向けシステム。</p><div class="phase-live-links"><a href="systems/bakery.html">製品ページを見る →</a><a href="https://dpromstk2000-lab.github.io/bakery-line-system/wallet.html?shop_code=bakery_demo&api=https%3A%2F%2Fdpro-bakery-wallet-api.dpromstk2000.workers.dev&v=bakery-phone-2" target="_blank" rel="noopener">実画面を別タブで開く →</a></div></div>
-      <div class="phase-live-frame desktop bakery-live-frame">
-  <iframe id="bakery-live-iframe" title="ベーカリーシステム画面" loading="lazy" src="https://dpromstk2000-lab.github.io/bakery-line-system/wallet.html?shop_code=bakery_demo&api=https%3A%2F%2Fdpro-bakery-wallet-api.dpromstk2000.workers.dev&v=bakery-phone-2"></iframe>
-  <div class="iframe-fallback bakery-fallback" aria-hidden="true">
-    <div class="iframe-fallback-mark">BK</div>
-    <p class="eyebrow">DPRO BAKERY LINE</p>
-    <h4>会員証・取り置き・<br>ECOレスキュー</h4>
-    <p>実画面が読み込めない場合は、製品ページからデモを開けます。</p>
-    <a href="systems/bakery.html">ベーカリー製品ページを見る →</a>
-  </div>
+<p>LINE・電話・店頭受付、写真、見積もり、作業・部品、引取予約、支払い・保証までを一つにまとめます。</p>
 </div>
-    </article>
-  </div>
+<div class="product-feature-grid">
+<article class="product-feature reveal"><span>01</span><h3>LINE相談・仮受付</h3><p>修理品、症状、希望内容、来店希望をスマートフォンから送信。</p></article>
+<article class="product-feature reveal"><span>02</span><h3>電話・店頭受付</h3><p>LINE以外の相談も、同じ顧客・修理案件として登録。</p></article>
+<article class="product-feature reveal"><span>03</span><h3>写真・預かり記録</h3><p>外観、傷、動作、付属品をiPadから撮影・確認。</p></article>
+<article class="product-feature reveal"><span>04</span><h3>見積もり・承認</h3><p>作業内容と金額を登録し、お客様の確認状況まで管理。</p></article>
+<article class="product-feature reveal"><span>05</span><h3>進捗・作業・部品</h3><p>受付、診断、見積もり、修理中、完成までを店舗で共有。</p></article>
+<article class="product-feature reveal"><span>06</span><h3>引渡し・支払い・保証</h3><p>引取予約、残額、付属品返却、修理保証をまとめて記録。</p></article>
+</div>
 </section>
 
-<section class="phase-why section" id="why">
-  <div class="phase-why-copy reveal">
-    <p class="eyebrow">WHY DPRO</p>
-    <h2 class="headline-lines headline-why">
-      <span>現場で本当に使われる</span>
-      <span>システムを、</span>
-      <span>自社で設計・改善しています。</span>
-    </h2>
-    <p>見た目だけの予約フォームではありません。LINEから店舗のPC・iPadまで、毎日の運用が一つにつながるように作っています。</p>
-  </div>
-  <div class="phase-why-flow reveal">
-    <div><span>LINE</span><small>お客様の入口</small></div><i></i>
-    <div><span>予約・受付</span><small>来店前の手続き</small></div><i></i>
-    <div><span>顧客管理</span><small>情報を蓄積</small></div><i></i>
-    <div><span>PC / iPad</span><small>店舗で活用</small></div>
-  </div>
-  <div class="phase-principles">
-    <article class="reveal"><span>01</span><h3>業種専用</h3><p>共通テンプレートではなく、各業種の仕事の流れに合わせます。</p></article>
-    <article class="reveal"><span>02</span><h3>実際に触れる</h3><p>完成済みの画面を、導入前にそのまま体験できます。</p></article>
-    <article class="reveal"><span>03</span><h3>導入後も改善</h3><p>店舗の運用に合わせて、画面や機能を育てられます。</p></article>
-  </div>
-</section>
-
-<section class="phase-cta section section-dark" id="contact">
-  <div class="phase-cta-inner reveal">
-    <p class="eyebrow">START WITH A DEMO</p>
-    <h2 class="headline-lines headline-fixed">
-  <span>実際のシステムを、</span>
-  <span>触ってみませんか？</span>
+<section class="experience-section section section-dark" id="experience">
+<div class="section-heading section-heading-light reveal">
+<p class="eyebrow">LIVE PRODUCT EXPERIENCE</p>
+<h2 class="headline-lines headline-fixed">
+<span>お客様の相談から店舗の修理管理まで、</span>
+<span>本物の画面で確認。</span>
 </h2>
-    <p>完成済みのデモをご案内します。まずはLINEで、気になる業種をお知らせください。</p>
-    <a class="button button-line-demo large" href="https://lin.ee/YxJGXV6D" target="_blank" rel="noopener">LINEでデモを見る</a>
-    <small>友だち追加後、「デモ希望」と送るだけで大丈夫です。</small>
-  </div>
+<p>製品紹介画面では、営業デモ用の修理案件を表示します。管理画面のデモコードは1234です。</p>
+</div>
+
+<div class="live-showcase">
+<article class="live-product reveal">
+<div class="live-copy">
+<span>01 / CUSTOMER INTAKE</span>
+<h3>お客様用<br>LINE修理相談画面</h3>
+<p>修理品、メーカー・型番、症状、写真、来店希望をスマートフォンから送信できます。</p>
+<ul><li>修理品・症状入力</li><li>写真・希望内容</li><li>来店希望・連絡先</li></ul>
+<div class="live-actions">
+<button class="button button-primary button-zoom js-screen-modal" type="button" data-screen-title="お客様用LINE修理相談画面" data-screen-url="https://dpromstk2000-lab.github.io/dpro-repair-line-liff/index.html?shop_code=repair_demo&amp;v=repair-17">画面を拡大表示</button>
+<a class="button button-secondary" href="https://dpromstk2000-lab.github.io/dpro-repair-line-liff/index.html?shop_code=repair_demo&amp;v=repair-17" target="_blank" rel="noopener">別タブで開く</a>
+</div>
+</div>
+<div class="live-device live-phone"><iframe title="お客様用LINE修理相談画面" loading="lazy" src="https://dpromstk2000-lab.github.io/dpro-repair-line-liff/index.html?shop_code=repair_demo&amp;v=repair-17"></iframe></div>
+</article>
+
+<article class="live-product live-product-reverse reveal">
+<div class="live-copy">
+<span>02 / MEMBER STATUS</span>
+<h3>お客様用<br>修理状況確認画面</h3>
+<p>受付内容、見積もり、修理進捗、引取予約、支払い・保証をお客様側から確認できます。</p>
+<ul><li>現在の修理状況</li><li>見積もり・履歴</li><li>引取予約・保証確認</li></ul>
+<div class="live-actions">
+<button id="repair-member-modal-button" class="button button-primary button-zoom js-screen-modal" type="button" data-screen-title="お客様用修理状況確認画面" data-screen-url="https://dpromstk2000-lab.github.io/dpro-repair-line-liff/member.html?shop_code=repair_demo&amp;v=repair-17">画面を拡大表示</button>
+<a id="repair-member-external" class="button button-secondary" href="https://dpromstk2000-lab.github.io/dpro-repair-line-liff/member.html?shop_code=repair_demo&amp;v=repair-17" target="_blank" rel="noopener">別タブで開く</a>
+</div>
+</div>
+<div class="live-device live-phone"><iframe data-repair-member-frame title="お客様用修理状況確認画面" loading="lazy" src="https://dpromstk2000-lab.github.io/dpro-repair-line-liff/member.html?shop_code=repair_demo&amp;v=repair-17"></iframe></div>
+</article>
+
+<article class="live-product reveal">
+<div class="live-copy">
+<span>03 / OWNER PC</span>
+<h3>PCオーナー<br>修理進捗管理画面</h3>
+<p>本日の案件、見積もり待ち、修理中、引渡し待ちを確認し、作業・部品・連絡を管理できます。</p>
+<ul><li>案件一覧・進捗変更</li><li>見積もり・作業・部品</li><li>支払い・保証・顧客情報</li></ul>
+<div class="demo-code-card"><span>DEMO CODE</span><strong>1234</strong><small>製品紹介画面では自動設定</small></div>
+<div class="live-actions">
+<button class="button button-primary button-zoom js-screen-modal" type="button" data-screen-title="PCオーナー修理進捗管理画面" data-screen-url="https://dpromstk2000-lab.github.io/dpro-repair-line-liff/owner.html?shop_code=repair_demo&amp;v=repair-17">画面を拡大表示</button>
+<a class="button button-secondary" href="https://dpromstk2000-lab.github.io/dpro-repair-line-liff/owner.html?shop_code=repair_demo&amp;v=repair-17" target="_blank" rel="noopener">別タブで開く</a>
+</div>
+</div>
+<div class="live-device live-desktop">
+<div class="live-browser-bar"><span></span><span></span><span></span><b>PCオーナー修理進捗管理画面</b></div>
+<iframe title="PCオーナー修理進捗管理画面" loading="lazy" src="https://dpromstk2000-lab.github.io/dpro-repair-line-liff/owner.html?shop_code=repair_demo&amp;v=repair-17"></iframe>
+</div>
+</article>
+
+<article class="live-product live-product-reverse reveal">
+<div class="live-copy">
+<span>04 / RECEPTION iPAD</span>
+<h3>iPad受付・<br>写真撮影画面</h3>
+<p>電話・店頭受付、預かり確認、端末カメラでの写真撮影、付属品確認、引渡しを現場で操作できます。</p>
+<ul><li>電話・店頭受付</li><li>預かり写真・付属品</li><li>引渡し・会計・保証</li></ul>
+<div class="demo-code-card"><span>DEMO CODE</span><strong>1234</strong><small>製品紹介画面では自動設定</small></div>
+<div class="live-actions">
+<button class="button button-primary button-zoom js-screen-modal" type="button" data-screen-title="iPad受付・写真撮影画面" data-screen-url="https://dpromstk2000-lab.github.io/dpro-repair-line-liff/owner-ipad.html?shop_code=repair_demo&amp;v=repair-17">画面を拡大表示</button>
+<a class="button button-secondary" href="https://dpromstk2000-lab.github.io/dpro-repair-line-liff/owner-ipad.html?shop_code=repair_demo&amp;v=repair-17" target="_blank" rel="noopener">別タブで開く</a>
+</div>
+</div>
+<div class="live-device live-tablet">
+<div class="live-browser-bar"><span></span><span></span><span></span><b>iPad受付・写真撮影画面</b></div>
+<iframe title="iPad受付・写真撮影画面" loading="lazy" src="https://dpromstk2000-lab.github.io/dpro-repair-line-liff/owner-ipad.html?shop_code=repair_demo&amp;v=repair-17"></iframe>
+</div>
+</article>
+</div>
+</section>
+
+<section class="feature-showcase section">
+<div class="section-heading reveal">
+<p class="eyebrow">KEY OPERATIONS</p>
+<h2 class="headline-lines headline-fixed">
+<span>受付台帳だけでなく、</span>
+<span>預かり・修理・引渡しまで。</span>
+</h2>
+<p>修理品の状態とお客様への案内を、同じ案件データでつなぎます。</p>
+</div>
+
+<div class="feature-showcase-grid">
+<article class="feature-showcase-card reveal">
+<div class="feature-showcase-copy"><span>01 / INTAKE PHOTO</span><h3>預かり写真・付属品</h3><p>受付時の外観、傷、動作、付属品をiPadで確認し、案件へ保存できます。</p><ul><li>端末カメラ撮影</li><li>既存写真との比較</li><li>付属品・状態確認</li></ul></div>
+<div class="feature-showcase-screen tablet"><iframe title="預かり写真・付属品画面" loading="lazy" src="https://dpromstk2000-lab.github.io/dpro-repair-line-liff/owner-ipad.html?shop_code=repair_demo&amp;v=repair-17"></iframe></div>
+</article>
+
+<article class="feature-showcase-card reveal">
+<div class="feature-showcase-copy"><span>02 / WORKFLOW</span><h3>見積もり・作業・部品</h3><p>診断結果、見積もり、作業記録、使用部品、担当者を一つの案件で管理できます。</p><ul><li>見積もり履歴</li><li>作業ログ・担当者</li><li>部品発注・入荷・使用</li></ul></div>
+<div class="feature-showcase-screen desktop"><iframe title="見積もり・作業・部品管理画面" loading="lazy" src="https://dpromstk2000-lab.github.io/dpro-repair-line-liff/owner.html?shop_code=repair_demo&amp;v=repair-17"></iframe></div>
+</article>
+
+<article class="feature-showcase-card reveal">
+<div class="feature-showcase-copy"><span>03 / DELIVERY</span><h3>引渡し・支払い・保証</h3><p>引取日時、代理人、付属品返却、未払い残額、保証期間まで最終確認できます。</p><ul><li>引取予約</li><li>支払い・残額</li><li>付属品返却・保証</li></ul></div>
+<div class="feature-showcase-screen desktop"><iframe title="引渡し・支払い・保証管理画面" loading="lazy" src="https://dpromstk2000-lab.github.io/dpro-repair-line-liff/owner.html?shop_code=repair_demo&amp;v=repair-17"></iframe></div>
+</article>
+</div>
+</section>
+
+<section class="product-proof section">
+<div class="product-proof-inner reveal">
+<div><p class="eyebrow">REAL SCREEN, REAL OPERATION</p>
+<h2 class="headline-lines headline-fixed"><span>受付だけでなく、</span><span>預かり・修理・引渡しまで。</span></h2></div>
+<div><p>お客様のLINE相談と、PC・iPadの修理管理を同じ案件データでつなぎます。</p>
+<div class="proof-actions"><a class="text-link" href="https://dpromstk2000-lab.github.io/dpro-repair-line-liff/index.html?shop_code=repair_demo&amp;v=repair-17" target="_blank" rel="noopener">修理相談を体験する →</a><a class="text-link" href="https://dpromstk2000-lab.github.io/dpro-repair-line-liff/system-check.html?shop_code=repair_demo&amp;v=repair-17" target="_blank" rel="noopener">営業前チェックを見る →</a></div></div>
+</div>
+</section>
+
+<section class="contact section" id="contact">
+<div class="contact-card reveal">
+<p class="eyebrow">START WITH A DEMO</p>
+<h2 class="headline-lines headline-fixed"><span>修理受付システムを、</span><span>実際に触ってみませんか。</span></h2>
+<p>完成済みのLINE相談・会員ページ・PC管理・iPad写真撮影画面をご案内します。</p>
+<div class="contact-actions"><a class="button button-line" href="https://lin.ee/YxJGXV6D" target="_blank" rel="noopener">LINEでデモを見る</a><a class="button button-secondary-light" href="https://dpromstk2000-lab.github.io/dpro-repair-line-liff/index.html?shop_code=repair_demo&amp;v=repair-17" target="_blank" rel="noopener">修理相談画面を開く</a></div>
+</div>
 </section>
 </main>
 
 <footer class="site-footer">
-    <div>
-      <a class="brand footer-brand" href="#top">
-        <span class="brand-mark">D</span>
-        <span class="brand-copy"><strong>DPRO LINE SYSTEMS</strong><small>BUSINESS SOLUTION</small></span>
-      </a>
-      <p>店舗業務を、LINEでもっと簡単に。</p>
-    </div>
-    <nav aria-label="フッターナビゲーション">
-      <a href="systems.html">システム一覧</a>
-      <a href="#features">特徴</a>
-      <a href="#flow">導入の流れ</a>
-      <a href="#contact">お問い合わせ</a>
-    </nav>
-    <p class="copyright">© <span id="year"></span> DPRO SHOP</p>
-  </footer>
+<div><a class="brand footer-brand" href="../index.html"><span class="brand-mark">D</span><span class="brand-copy"><strong>DPRO LINE SYSTEMS</strong><small>OFFICIAL PRODUCT SITE</small></span></a><p>店舗業務を、LINEでもっと簡単に。</p></div>
+<nav><a href="../systems.html">システム一覧</a><a href="../index.html#why">DPROについて</a><a href="https://lin.ee/YxJGXV6D" target="_blank" rel="noopener">LINEでデモを見る</a></nav>
+<p class="copyright">© <span id="year"></span> DPRO SHOP</p>
+</footer>
 
-  <button class="back-to-top" type="button" aria-label="ページ上部へ戻る">↑</button>
-  <script src="script.js"></script>
+<button class="back-to-top" type="button">↑</button>
+<div class="screen-modal" id="screen-modal" aria-hidden="true"><div class="screen-modal-backdrop" data-modal-close></div><div class="screen-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="screen-modal-title"><div class="screen-modal-header"><strong id="screen-modal-title">実画面</strong><div><a id="screen-modal-external" href="#" target="_blank" rel="noopener">別タブで開く</a><button type="button" data-modal-close aria-label="閉じる">×</button></div></div><iframe id="screen-modal-frame" title="拡大したシステム画面"></iframe></div></div>
+<script src="../script.js"></script>
+<script>
+(() => {
+  const API_BASE = 'https://dpro-repair-line-api.dpromstk2000.workers.dev';
+  const MEMBER_BASE = 'https://dpromstk2000-lab.github.io/dpro-repair-line-liff/member.html';
+
+  async function setMemberDemo() {
+    try {
+      const dashboardResponse = await fetch(`${API_BASE}/api/admin/dashboard?shop_code=repair_demo&admin_key=1234`);
+      if (!dashboardResponse.ok) return;
+      const dashboard = await dashboardResponse.json();
+      const orders = Array.isArray(dashboard.orders) ? dashboard.orders : [];
+      const order = orders.find((item) => item && item.id) || null;
+      if (!order) return;
+
+      const detailResponse = await fetch(`${API_BASE}/api/orders/${encodeURIComponent(order.id)}?shop_code=repair_demo&admin_key=1234`);
+      if (!detailResponse.ok) return;
+      const detail = await detailResponse.json();
+      const repairOrder = detail.order || detail;
+      if (!repairOrder?.id || !repairOrder?.public_token) return;
+
+      const memberUrl = `${MEMBER_BASE}?shop_code=repair_demo&order_id=${encodeURIComponent(repairOrder.id)}&order_number=${encodeURIComponent(repairOrder.order_number || '')}&public_token=${encodeURIComponent(repairOrder.public_token)}&v=repair-17`;
+      document.querySelectorAll('[data-repair-member-frame]').forEach((frame) => { frame.src = memberUrl; });
+      const button = document.getElementById('repair-member-modal-button');
+      const external = document.getElementById('repair-member-external');
+      if (button) button.dataset.screenUrl = memberUrl;
+      if (external) external.href = memberUrl;
+    } catch (_) {
+      // 営業デモ案件を取得できない場合は、会員ページの入口をそのまま表示します。
+    }
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', setMemberDemo, { once: true });
+  } else {
+    setMemberDemo();
+  }
+})();
+</script>
 </body>
 </html>
-
