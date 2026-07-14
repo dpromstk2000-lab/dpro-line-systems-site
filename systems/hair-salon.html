@@ -14,11 +14,42 @@ try {
 } catch (_) {}
 </script>
 <style>
-.product-hero.hair-hero{background:radial-gradient(circle at 83% 12%,rgba(186,149,105,.18),transparent 28%),linear-gradient(135deg,#f7f2eb 0%,#fff 48%,#edf4f0 100%)}
-.hair-hero .product-symbol{background:linear-gradient(135deg,#173f34,#b99363)}
-.hair-accent{color:#a77b43}.hair-note{margin-top:14px;padding:12px 14px;border:1px solid rgba(167,123,67,.28);border-radius:14px;background:#fffaf2;color:#66543f;font-size:.84rem;line-height:1.7}
+.product-hero.hair-hero{
+  color:#173f34;
+  background:
+    radial-gradient(circle at 83% 12%,rgba(186,149,105,.18),transparent 28%),
+    linear-gradient(135deg,#f7f2eb 0%,#fff 48%,#edf4f0 100%);
+}
+.hair-hero .product-symbol{background:linear-gradient(135deg,#173f34,#b99363);color:#fff}
+.hair-hero .product-breadcrumb,
+.hair-hero .product-breadcrumb a{color:#66736e}
+.hair-hero .product-hero-copy .eyebrow{color:#c63768}
+.hair-hero .product-hero-copy h1{color:#173f34;text-shadow:0 1px 0 rgba(255,255,255,.75)}
+.hair-hero .product-hero-copy h2{color:#273a33}
+.hair-hero .product-hero-copy > p:not(.eyebrow){color:#56645f}
+.hair-hero .product-hero-copy > p.hair-note{
+  margin-top:14px;
+  padding:14px 16px;
+  border:1px solid rgba(167,123,67,.32);
+  border-radius:14px;
+  background:rgba(255,250,242,.94);
+  color:#5f4d38;
+  font-size:.84rem;
+  line-height:1.75;
+  box-shadow:0 12px 30px rgba(72,51,31,.07);
+}
+.hair-hero .button-secondary{
+  color:#173f34;
+  border-color:rgba(23,63,52,.28);
+  background:rgba(255,255,255,.82);
+}
+.hair-hero .button-secondary:hover{background:#fff;border-color:rgba(23,63,52,.48)}
+.hair-accent{color:#a77b43}
 .catalog-live-hair iframe{width:125%;height:125%;transform:scale(.8);transform-origin:0 0}
-@media(max-width:760px){.catalog-live-hair iframe{width:145%;height:145%;transform:scale(.69)}}
+@media(max-width:760px){
+  .hair-hero .product-hero-copy > p.hair-note{padding:13px 14px}
+  .catalog-live-hair iframe{width:145%;height:145%;transform:scale(.69)}
+}
 </style>
 </head>
 <body>
