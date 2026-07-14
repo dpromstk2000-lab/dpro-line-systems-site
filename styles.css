@@ -542,6 +542,7 @@ body.modal-open{overflow:hidden}
 .phase-number span{display:block;margin-top:22px;font-size:17px;font-weight:800}
 .phase-number p{margin:10px 0 0;color:var(--muted);font-size:13px;line-height:1.7}
 .industry-selector{width:min(100%,var(--max));margin:auto;display:grid;grid-template-columns:repeat(2,1fr);gap:18px}
+.industry-panel-wide{grid-column:1/-1}
 .industry-panel{position:relative;min-height:290px;padding:42px;border:1px solid #dedee4;border-radius:28px;background:#fff;transition:.3s}
 .industry-panel:hover{transform:translateY(-6px);box-shadow:0 30px 65px rgba(20,20,25,.1)}
 .industry-panel>span{position:absolute;right:28px;top:25px;color:#d4d4da;font-size:42px;font-weight:900}
@@ -1881,3 +1882,7 @@ small{
 
 /* STEP BEAUTY-WEB-1: hair salon catalog preview */
 .catalog-live-hair iframe{width:125%;height:125%;transform:scale(.8);transform-origin:0 0;}
+
+/* STEP CONSULT-WEB-1 */
+.catalog-live-consult iframe{width:135%;height:135%;transform:scale(.74);transform-origin:0 0}
+@media(max-width:760px){.industry-panel-wide{grid-column:auto}.catalog-live-consult iframe{width:150%;height:150%;transform:scale(.67)}}
