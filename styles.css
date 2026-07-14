@@ -1878,3 +1878,6 @@ small{
   transform:scale(.61);
   transform-origin:0 0;
 }
+
+/* STEP BEAUTY-WEB-1: hair salon catalog preview */
+.catalog-live-hair iframe{width:125%;height:125%;transform:scale(.8);transform-origin:0 0;}
