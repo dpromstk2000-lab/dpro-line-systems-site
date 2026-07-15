@@ -1886,3 +1886,8 @@ small{
 /* STEP CONSULT-WEB-1 */
 .catalog-live-consult iframe{width:135%;height:135%;transform:scale(.74);transform-origin:0 0}
 @media(max-width:760px){.industry-panel-wide{grid-column:auto}.catalog-live-consult iframe{width:150%;height:150%;transform:scale(.67)}}
+
+
+/* STEP FUNERAL-WEB-1: 葬儀・法要サポート製品カード */
+.catalog-live-funeral iframe{width:135%;height:135%;transform:scale(.74);transform-origin:0 0;}
+@media(max-width:760px){.catalog-live-funeral iframe{width:150%;height:150%;transform:scale(.67);}}
