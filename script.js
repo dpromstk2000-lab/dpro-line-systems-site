@@ -1,6 +1,6 @@
 (() => {
   "use strict";
-  // STEP REFORM-WEB-1: add reform product and housing/construction category
+  // STEP CAKE-WEB-1: add cake and pastry shop product
 
   const menuButton = document.querySelector(".menu-button");
   const globalNav = document.querySelector(".global-nav");
@@ -198,7 +198,7 @@
   const categoryMap = {
     '美容・健康': ['美容室','ネイル','プライベートヨガ','美容サロン','エステ・リラクゼーション','整骨院・接骨院'],
     '医療・ペット': ['ペットサロン','動物病院','歯科'],
-    '飲食・小売': ['ベーカリー','居酒屋','テイクアウト'],
+    '飲食・小売': ['ベーカリー','ケーキ・洋菓子店','居酒屋','テイクアウト'],
     '買取・リユース': ['買取・査定'],
     '住まい・建築': ['不動産・賃貸内見','リフォーム・工務店'],
     '教育・生活サービス': ['学習塾・習い事','車検・整備','修理受付','クリーニング','デイサービス','葬儀・法要サポート','写真館・フォトスタジオ'],
