@@ -1,6 +1,6 @@
 (() => {
   "use strict";
-  // STEP CAKE-WEB-1: add cake and pastry shop product
+  // STEP TAX-WEB-1: add tax and accounting office product
 
   const menuButton = document.querySelector(".menu-button");
   const globalNav = document.querySelector(".global-nav");
@@ -202,7 +202,7 @@
     '買取・リユース': ['買取・査定'],
     '住まい・建築': ['不動産・賃貸内見','リフォーム・工務店'],
     '教育・生活サービス': ['学習塾・習い事','車検・整備','修理受付','クリーニング','デイサービス','葬儀・法要サポート','写真館・フォトスタジオ'],
-    '士業・企業支援': ['社労士・顧問先対応']
+    '士業・企業支援': ['社労士・顧問先対応','税理士・会計事務所']
   };
 
   const applyCategory = (category, updateUrl = false) => {
