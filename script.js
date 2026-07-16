@@ -1,6 +1,6 @@
 (() => {
   "use strict";
-  // STEP PHOTO-WEB-1: add photo studio product to lifestyle services
+  // STEP REFORM-WEB-1: add reform product and housing/construction category
 
   const menuButton = document.querySelector(".menu-button");
   const globalNav = document.querySelector(".global-nav");
@@ -200,7 +200,8 @@
     '医療・ペット': ['ペットサロン','動物病院','歯科'],
     '飲食・小売': ['ベーカリー','居酒屋','テイクアウト'],
     '買取・リユース': ['買取・査定'],
-    '教育・生活サービス': ['学習塾・習い事','不動産・賃貸内見','車検・整備','修理受付','クリーニング','デイサービス','葬儀・法要サポート','写真館・フォトスタジオ'],
+    '住まい・建築': ['不動産・賃貸内見','リフォーム・工務店'],
+    '教育・生活サービス': ['学習塾・習い事','車検・整備','修理受付','クリーニング','デイサービス','葬儀・法要サポート','写真館・フォトスタジオ'],
     '士業・企業支援': ['社労士・顧問先対応']
   };
 
