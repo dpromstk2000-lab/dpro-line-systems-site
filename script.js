@@ -1,5 +1,6 @@
 (() => {
   "use strict";
+  // STEP BUYBACK-WEB-1: add buyback product and category filter
 
   const menuButton = document.querySelector(".menu-button");
   const globalNav = document.querySelector(".global-nav");
@@ -198,6 +199,7 @@
     '美容・健康': ['美容室','ネイル','プライベートヨガ','美容サロン','エステ・リラクゼーション','整骨院・接骨院'],
     '医療・ペット': ['ペットサロン','動物病院','歯科'],
     '飲食・小売': ['ベーカリー','居酒屋','テイクアウト'],
+    '買取・リユース': ['買取・査定'],
     '教育・生活サービス': ['学習塾・習い事','不動産・賃貸内見','車検・整備','修理受付','クリーニング','デイサービス','葬儀・法要サポート'],
     '士業・企業支援': ['社労士・顧問先対応']
   };
