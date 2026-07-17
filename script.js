@@ -1,7 +1,7 @@
 (() => {
   "use strict";
 
-  // STEP HOUKAGO-WEB-1 / 33 PRODUCTS / PRESERVE ALL 32 PRODUCTS / 20260717
+  // STEP STAY-WEB-1 / 34 PRODUCTS / PRESERVE ALL 33 PRODUCTS / 20260717
 
   const menuButton = document.querySelector(".menu-button");
   const globalNav = document.querySelector(".global-nav");
@@ -136,7 +136,7 @@
     });
   }
 
-  const productCount = 33;
+  const productCount = 34;
   const setFirstText = (selector, value) => {
     const node = document.querySelector(selector);
     if (node) node.textContent = value;
@@ -187,6 +187,7 @@
   appendDescription("教育・生活サービス", "ハウスクリーニング・家事代行");
   appendDescription("教育・生活サービス", "不用品回収・遺品整理");
   appendDescription("教育・生活サービス", "放課後等デイサービス");
+  appendDescription("教育・生活サービス", "宿泊・民泊");
   appendDescription("士業・企業支援", "行政書士・許認可申請");
   appendDescription("士業・企業支援", "土地家屋調査士");
 
@@ -226,7 +227,8 @@
     ["systems/gym.html","PG","catalog-live-gym","パーソナルジム実画面プレビュー","https://dpromstk2000-lab.github.io/liff-gym-demo/dashboard.html?demo=1&v=gym-5-final","美容・健康","パーソナルジム","体験予約・会員管理・回数券・来店進行・継続フォロー。"],
     ["systems/chosashi.html","CH","catalog-live-chosashi","土地家屋調査士実画面プレビュー","https://dpromstk2000-lab.github.io/dpro-chosashi-line-liff/owner.html?demo=1&v=chosashi-8-r3-final","士業・企業支援","土地家屋調査士","相談受付・案件進捗・必要書類・境界管理・現場報告・写真保存。"],
     ["systems/yakiniku.html","YK","catalog-live-yakiniku","焼肉店 予約・順番受付実画面プレビュー","https://dpromstk2000-lab.github.io/dpro-yakiniku-line-liff/index.html?demo=1&v=YAKINIKU-7-R1","飲食・小売","焼肉店 予約・順番受付","日時予約・当日順番受付・呼び出し・テーブル回転・顧客・分析管理。"],
-    ["systems/houkago-dayservice.html","HG","catalog-live-houkago","放課後等デイサービス実画面プレビュー","https://dpromstk2000-lab.github.io/dpro-houkago-dayservice-line/member.html?demo=1&v=houkago-11","教育・生活サービス","放課後等デイサービス","保護者連絡・利用予定・送迎・日常確認・5領域活動記録・支援計画期限。"]
+    ["systems/houkago-dayservice.html","HG","catalog-live-houkago","放課後等デイサービス実画面プレビュー","https://dpromstk2000-lab.github.io/dpro-houkago-dayservice-line/member.html?demo=1&v=houkago-11","教育・生活サービス","放課後等デイサービス","保護者連絡・利用予定・送迎・日常確認・5領域活動記録・支援計画期限。"],
+    ["systems/stay.html","ST","catalog-live-stay","宿泊・民泊実画面プレビュー","https://dpromstk2000-lab.github.io/dpro-stay-line/member.html?demo=1&v=STAY-11","教育・生活サービス","宿泊・民泊","予約確認・到着時間・滞在案内・問い合わせ・清掃・客室・忘れ物管理。"]
   ];
 
   products.forEach(([href,code,previewClass,previewTitle,previewUrl,category,title,description]) => {
@@ -249,7 +251,7 @@
       "学習塾・習い事", "車検・整備", "修理受付", "クリーニング",
       "デイサービス", "葬儀・法要サポート", "写真館・フォトスタジオ",
       "ハウスクリーニング・家事代行", "不用品回収・遺品整理",
-      "放課後等デイサービス"
+      "放課後等デイサービス", "宿泊・民泊"
     ],
     "士業・企業支援": [
       "社労士・顧問先対応", "税理士・会計事務所", "行政書士・許認可申請",
