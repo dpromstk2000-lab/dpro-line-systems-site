@@ -1,7 +1,7 @@
 (() => {
   "use strict";
 
-  // STEP YAKINIKU-WEB-2 / 32 PRODUCTS / PRESERVE CHOSASHI / 20260717
+  // STEP HOUKAGO-WEB-1 / 33 PRODUCTS / PRESERVE ALL 32 PRODUCTS / 20260717
 
   const menuButton = document.querySelector(".menu-button");
   const globalNav = document.querySelector(".global-nav");
@@ -49,7 +49,6 @@
   const year = document.querySelector("#year");
   if (year) year.textContent = String(new Date().getFullYear());
 
-  // Legacy page filter support
   const filterButtons = document.querySelectorAll(".filter-button");
   const systemCards = document.querySelectorAll(".system-card");
 
@@ -67,7 +66,6 @@
     });
   });
 
-  // Legacy screen tab support
   const screenTabs = document.querySelectorAll(".screen-tab");
   const screenPreview = document.querySelector("#screen-preview");
   const screenContent = {
@@ -103,7 +101,6 @@
     });
   });
 
-  // Screen modal
   const modal = document.getElementById("screen-modal");
   if (modal) {
     const frame = document.getElementById("screen-modal-frame");
@@ -139,8 +136,7 @@
     });
   }
 
-  // Product count
-  const productCount = 32;
+  const productCount = 33;
   const setFirstText = (selector, value) => {
     const node = document.querySelector(selector);
     if (node) node.textContent = value;
@@ -176,7 +172,6 @@
   const progressCopySmall = document.querySelector(".catalog-progress-copy > small");
   if (progressCopySmall) progressCopySmall.textContent = `${productCount} / ${productCount} 製品ページ公開済み`;
 
-  // Add product names to category introduction copy
   const appendDescription = (titleText, productText) => {
     const panel = Array.from(document.querySelectorAll(".industry-panel")).find(
       (item) => item.querySelector("h3")?.textContent?.trim() === titleText
@@ -191,10 +186,10 @@
   appendDescription("飲食・小売", "焼肉店");
   appendDescription("教育・生活サービス", "ハウスクリーニング・家事代行");
   appendDescription("教育・生活サービス", "不用品回収・遺品整理");
+  appendDescription("教育・生活サービス", "放課後等デイサービス");
   appendDescription("士業・企業支援", "行政書士・許認可申請");
   appendDescription("士業・企業支援", "土地家屋調査士");
 
-  // Add recently completed product cards. Existing cards are never duplicated.
   const catalogGrid = document.querySelector(".catalog-grid");
 
   const appendCatalogCard = ({
@@ -224,86 +219,37 @@
     catalogGrid.appendChild(card);
   };
 
-  appendCatalogCard({
-    href: "systems/housekeep.html",
-    code: "HK",
-    previewClass: "catalog-live-housekeep",
-    previewTitle: "ハウスクリーニング・家事代行実画面プレビュー",
-    previewUrl: "https://dpromstk2000-lab.github.io/dpro-housekeep-line-liff/owner.html?demo=1&v=housekeep-8",
-    category: "教育・生活サービス",
-    title: "ハウスクリーニング・家事代行",
-    description: "予約・見積り・定期訪問・担当割当・作業チェック・写真報告。"
+  const products = [
+    ["systems/housekeep.html","HK","catalog-live-housekeep","ハウスクリーニング・家事代行実画面プレビュー","https://dpromstk2000-lab.github.io/dpro-housekeep-line-liff/owner.html?demo=1&v=housekeep-8","教育・生活サービス","ハウスクリーニング・家事代行","予約・見積り・定期訪問・担当割当・作業チェック・写真報告。"],
+    ["systems/disposal.html","DS","catalog-live-disposal","不用品回収・遺品整理実画面プレビュー","https://dpromstk2000-lab.github.io/dpro-disposal-line-liff/owner.html?demo=1&v=disposal-8-r2","教育・生活サービス","不用品回収・遺品整理","写真相談・現地見積り・正式見積り・買取相殺・作業進捗・写真報告。"],
+    ["systems/gyosei.html","GY","catalog-live-gyosei","行政書士・許認可申請実画面プレビュー","https://dpromstk2000-lab.github.io/dpro-gyosei-permit-line/owner.html?demo=1&v=GYOSEI-10","士業・企業支援","行政書士・許認可申請","相談受付・必要書類・案件進捗・申請・期限・更新管理。"],
+    ["systems/gym.html","PG","catalog-live-gym","パーソナルジム実画面プレビュー","https://dpromstk2000-lab.github.io/liff-gym-demo/dashboard.html?demo=1&v=gym-5-final","美容・健康","パーソナルジム","体験予約・会員管理・回数券・来店進行・継続フォロー。"],
+    ["systems/chosashi.html","CH","catalog-live-chosashi","土地家屋調査士実画面プレビュー","https://dpromstk2000-lab.github.io/dpro-chosashi-line-liff/owner.html?demo=1&v=chosashi-8-r3-final","士業・企業支援","土地家屋調査士","相談受付・案件進捗・必要書類・境界管理・現場報告・写真保存。"],
+    ["systems/yakiniku.html","YK","catalog-live-yakiniku","焼肉店 予約・順番受付実画面プレビュー","https://dpromstk2000-lab.github.io/dpro-yakiniku-line-liff/index.html?demo=1&v=YAKINIKU-7-R1","飲食・小売","焼肉店 予約・順番受付","日時予約・当日順番受付・呼び出し・テーブル回転・顧客・分析管理。"],
+    ["systems/houkago-dayservice.html","HG","catalog-live-houkago","放課後等デイサービス実画面プレビュー","https://dpromstk2000-lab.github.io/dpro-houkago-dayservice-line/member.html?demo=1&v=houkago-11","教育・生活サービス","放課後等デイサービス","保護者連絡・利用予定・送迎・日常確認・5領域活動記録・支援計画期限。"]
+  ];
+
+  products.forEach(([href,code,previewClass,previewTitle,previewUrl,category,title,description]) => {
+    appendCatalogCard({href,code,previewClass,previewTitle,previewUrl,category,title,description});
   });
 
-  appendCatalogCard({
-    href: "systems/disposal.html",
-    code: "DS",
-    previewClass: "catalog-live-disposal",
-    previewTitle: "不用品回収・遺品整理実画面プレビュー",
-    previewUrl: "https://dpromstk2000-lab.github.io/dpro-disposal-line-liff/owner.html?demo=1&v=disposal-8-r2",
-    category: "教育・生活サービス",
-    title: "不用品回収・遺品整理",
-    description: "写真相談・現地見積り・正式見積り・買取相殺・作業進捗・写真報告。"
-  });
-
-  appendCatalogCard({
-    href: "systems/gyosei.html",
-    code: "GY",
-    previewClass: "catalog-live-gyosei",
-    previewTitle: "行政書士・許認可申請実画面プレビュー",
-    previewUrl: "https://dpromstk2000-lab.github.io/dpro-gyosei-permit-line/owner.html?demo=1&v=GYOSEI-10",
-    category: "士業・企業支援",
-    title: "行政書士・許認可申請",
-    description: "相談受付・必要書類・案件進捗・申請・期限・更新管理。"
-  });
-
-  appendCatalogCard({
-    href: "systems/gym.html",
-    code: "PG",
-    previewClass: "catalog-live-gym",
-    previewTitle: "パーソナルジム実画面プレビュー",
-    previewUrl: "https://dpromstk2000-lab.github.io/liff-gym-demo/dashboard.html?demo=1&v=gym-5-final",
-    category: "美容・健康",
-    title: "パーソナルジム",
-    description: "体験予約・会員管理・回数券・来店進行・継続フォロー。"
-  });
-
-  appendCatalogCard({
-    href: "systems/chosashi.html",
-    code: "CH",
-    previewClass: "catalog-live-chosashi",
-    previewTitle: "土地家屋調査士実画面プレビュー",
-    previewUrl: "https://dpromstk2000-lab.github.io/dpro-chosashi-line-liff/owner.html?demo=1&v=chosashi-8-r3-final",
-    category: "士業・企業支援",
-    title: "土地家屋調査士",
-    description: "相談受付・案件進捗・必要書類・境界管理・現場報告・写真保存。"
-  });
-
-  appendCatalogCard({
-    href: "systems/yakiniku.html",
-    code: "YK",
-    previewClass: "catalog-live-yakiniku",
-    previewTitle: "焼肉店 予約・順番受付実画面プレビュー",
-    previewUrl: "https://dpromstk2000-lab.github.io/dpro-yakiniku-line-liff/index.html?demo=1&v=YAKINIKU-7-R1",
-    category: "飲食・小売",
-    title: "焼肉店 予約・順番受付",
-    description: "日時予約・当日順番受付・呼び出し・テーブル回転・顧客・分析管理。"
-  });
-
-  // Product catalog filters
   const categoryMap = {
     "美容・健康": [
       "美容室", "ネイル", "プライベートヨガ", "美容サロン",
       "エステ・リラクゼーション", "整骨院・接骨院", "パーソナルジム"
     ],
     "医療・ペット": ["ペットサロン", "動物病院", "歯科"],
-    "飲食・小売": ["ベーカリー", "ケーキ・洋菓子店", "居酒屋", "テイクアウト", "焼肉店 予約・順番受付"],
+    "飲食・小売": [
+      "ベーカリー", "ケーキ・洋菓子店", "居酒屋", "テイクアウト",
+      "焼肉店 予約・順番受付"
+    ],
     "買取・リユース": ["買取・査定", "中古車買取・販売"],
     "住まい・建築": ["不動産・賃貸内見", "リフォーム・工務店"],
     "教育・生活サービス": [
       "学習塾・習い事", "車検・整備", "修理受付", "クリーニング",
       "デイサービス", "葬儀・法要サポート", "写真館・フォトスタジオ",
-      "ハウスクリーニング・家事代行", "不用品回収・遺品整理"
+      "ハウスクリーニング・家事代行", "不用品回収・遺品整理",
+      "放課後等デイサービス"
     ],
     "士業・企業支援": [
       "社労士・顧問先対応", "税理士・会計事務所", "行政書士・許認可申請",
