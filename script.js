@@ -1,6 +1,6 @@
 (() => {
   "use strict";
-  // STEP HOUSEKEEP-WEB-1: add DPRO House Cleaning & Housekeeping LINE as product 27
+  // STEP DISPOSAL-WEB-1: add DPRO Disposal & Estate Clearance LINE as product 28
 
   const menuButton = document.querySelector(".menu-button");
   const globalNav = document.querySelector(".global-nav");
@@ -120,31 +120,36 @@
     });
   }
 
-  // Product 27 visual count update
+  // Product 28 visual count update
   const setFirstText = (selector, value) => {
     const node = document.querySelector(selector);
     if (node) node.textContent = value;
   };
-  setFirstText(".phase-mini-proof span:first-child", "27業種");
-  setFirstText(".phase-number-grid .phase-number:first-child strong", "27");
-  setFirstText(".catalog-orbit .orbit-core", "27");
-  setFirstText(".catalog-summary-grid article:first-child strong", "27");
+  setFirstText(".phase-mini-proof span:first-child", "28業種");
+  setFirstText(".phase-number-grid .phase-number:first-child strong", "28");
+  setFirstText(".catalog-orbit .orbit-core", "28");
+  setFirstText(".catalog-summary-grid article:first-child strong", "28");
 
   const catalogHeroText = document.querySelector(".catalog-hero-inner > p:not(.eyebrow)");
-  if (catalogHeroText) catalogHeroText.innerHTML = catalogHeroText.innerHTML.replace(/26業種/g, "27業種");
+  if (catalogHeroText) catalogHeroText.innerHTML = catalogHeroText.innerHTML.replace(/26業種/g, "28業種");
   const moreLink = document.querySelector(".catalog-more-link a");
-  if (moreLink) moreLink.textContent = "27システムをすべて見る";
+  if (moreLink) moreLink.textContent = "28システムをすべて見る";
 
   const metaDescription = document.querySelector('meta[name="description"]');
-  if (metaDescription) metaDescription.content = metaDescription.content.replace(/26業種/g, "27業種");
+  if (metaDescription) metaDescription.content = metaDescription.content.replace(/26業種/g, "28業種");
 
   const lifePanel = Array.from(document.querySelectorAll(".industry-panel")).find((panel) =>
     panel.querySelector("h3")?.textContent?.trim() === "教育・生活サービス"
   );
   if (lifePanel) {
     const description = lifePanel.querySelector("p");
-    if (description && !description.textContent.includes("ハウスクリーニング")) {
-      description.textContent = `${description.textContent}、ハウスクリーニング・家事代行`;
+    if (description) {
+      if (!description.textContent.includes("ハウスクリーニング")) {
+        description.textContent = `${description.textContent}、ハウスクリーニング・家事代行`;
+      }
+      if (!description.textContent.includes("不用品回収")) {
+        description.textContent = `${description.textContent}、不用品回収・遺品整理`;
+      }
     }
   }
 
@@ -173,6 +178,29 @@
     catalogGrid.appendChild(card);
   }
 
+  if (catalogGrid && !catalogGrid.querySelector('a[href="systems/disposal.html"]')) {
+    const card = document.createElement("a");
+    card.className = "catalog-card reveal visible is-live";
+    card.href = "systems/disposal.html";
+    card.innerHTML = `
+      <div class="catalog-card-top">
+        <span class="catalog-code">DS</span>
+        <span class="catalog-status">公開中</span>
+      </div>
+      <div class="catalog-visual catalog-live-visual catalog-live-disposal">
+        <iframe title="不用品回収・遺品整理実画面プレビュー" loading="lazy"
+          src="https://dpromstk2000-lab.github.io/dpro-disposal-line-liff/owner.html?demo=1&amp;v=disposal-8-r1"></iframe>
+        <span class="catalog-live-badge">実画面あり</span>
+      </div>
+      <div class="catalog-card-copy">
+        <small>教育・生活サービス</small>
+        <h3>不用品回収・遺品整理</h3>
+        <p>写真相談・現地見積り・正式見積り・買取相殺・作業進捗・写真報告。</p>
+        <b class="catalog-card-cta">今すぐ製品ページを見る →</b>
+      </div>`;
+    catalogGrid.appendChild(card);
+  }
+
   // Catalog filters + direct category links
   const categoryMap = {
     "美容・健康": ["美容室","ネイル","プライベートヨガ","美容サロン","エステ・リラクゼーション","整骨院・接骨院"],
@@ -180,7 +208,7 @@
     "飲食・小売": ["ベーカリー","ケーキ・洋菓子店","居酒屋","テイクアウト"],
     "買取・リユース": ["買取・査定","中古車買取・販売"],
     "住まい・建築": ["不動産・賃貸内見","リフォーム・工務店"],
-    "教育・生活サービス": ["学習塾・習い事","車検・整備","修理受付","クリーニング","デイサービス","葬儀・法要サポート","写真館・フォトスタジオ","ハウスクリーニング・家事代行"],
+    "教育・生活サービス": ["学習塾・習い事","車検・整備","修理受付","クリーニング","デイサービス","葬儀・法要サポート","写真館・フォトスタジオ","ハウスクリーニング・家事代行","不用品回収・遺品整理"],
     "士業・企業支援": ["社労士・顧問先対応","税理士・会計事務所"]
   };
   const categoryButtons = document.querySelectorAll(".catalog-filter");
