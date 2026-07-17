@@ -153,6 +153,19 @@
     }
   }
 
+  // STEP DISPOSAL-WEB-1-R1: keep every visible product total at 28
+  const progressTitleFirst = document.querySelector(".catalog-progress-title span:first-child");
+  if (progressTitleFirst) progressTitleFirst.textContent = "28製品すべて、";
+
+  const progressCopyText = document.querySelector(".catalog-progress-copy > p");
+  if (progressCopyText) {
+    progressCopyText.textContent =
+      "28製品すべての詳細ページを公開しました。業種別の完成済みシステムを、実画面で確認できます。";
+  }
+
+  const progressCopySmall = document.querySelector(".catalog-progress-copy > small");
+  if (progressCopySmall) progressCopySmall.textContent = "28 / 28 製品ページ公開済み";
+
   // Insert the new card into the catalog only once
   const catalogGrid = document.querySelector(".catalog-grid");
   if (catalogGrid && !catalogGrid.querySelector('a[href="systems/housekeep.html"]')) {
