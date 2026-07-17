@@ -1,7 +1,7 @@
 (() => {
   "use strict";
 
-  // STEP CHOSASHI-WEB-1 / 31 PRODUCTS / 20260717
+  // STEP YAKINIKU-WEB-2 / 32 PRODUCTS / PRESERVE CHOSASHI / 20260717
 
   const menuButton = document.querySelector(".menu-button");
   const globalNav = document.querySelector(".global-nav");
@@ -140,40 +140,41 @@
   }
 
   // Product count
+  const productCount = 32;
   const setFirstText = (selector, value) => {
     const node = document.querySelector(selector);
     if (node) node.textContent = value;
   };
 
-  setFirstText(".phase-mini-proof span:first-child", "31業種");
-  setFirstText(".phase-number-grid .phase-number:first-child strong", "31");
-  setFirstText(".catalog-orbit .orbit-core", "31");
-  setFirstText(".catalog-summary-grid article:first-child strong", "31");
+  setFirstText(".phase-mini-proof span:first-child", `${productCount}業種`);
+  setFirstText(".phase-number-grid .phase-number:first-child strong", String(productCount));
+  setFirstText(".catalog-orbit .orbit-core", String(productCount));
+  setFirstText(".catalog-summary-grid article:first-child strong", String(productCount));
 
   const catalogHeroText = document.querySelector(".catalog-hero-inner > p:not(.eyebrow)");
   if (catalogHeroText) {
-    catalogHeroText.innerHTML = catalogHeroText.innerHTML.replace(/\d+業種/g, "31業種");
+    catalogHeroText.innerHTML = catalogHeroText.innerHTML.replace(/\d+業種/g, `${productCount}業種`);
   }
 
   const moreLink = document.querySelector(".catalog-more-link a");
-  if (moreLink) moreLink.textContent = "31システムをすべて見る";
+  if (moreLink) moreLink.textContent = `${productCount}システムをすべて見る`;
 
   const metaDescription = document.querySelector('meta[name="description"]');
   if (metaDescription) {
-    metaDescription.content = metaDescription.content.replace(/\d+業種/g, "31業種");
+    metaDescription.content = metaDescription.content.replace(/\d+業種/g, `${productCount}業種`);
   }
 
   const progressTitleFirst = document.querySelector(".catalog-progress-title span:first-child");
-  if (progressTitleFirst) progressTitleFirst.textContent = "31製品すべて、";
+  if (progressTitleFirst) progressTitleFirst.textContent = `${productCount}製品すべて、`;
 
   const progressCopyText = document.querySelector(".catalog-progress-copy > p");
   if (progressCopyText) {
     progressCopyText.textContent =
-      "31製品すべての詳細ページを公開しました。業種別の完成済みシステムを、実画面で確認できます。";
+      `${productCount}製品すべての詳細ページを公開しました。業種別の完成済みシステムを、実画面で確認できます。`;
   }
 
   const progressCopySmall = document.querySelector(".catalog-progress-copy > small");
-  if (progressCopySmall) progressCopySmall.textContent = "31 / 31 製品ページ公開済み";
+  if (progressCopySmall) progressCopySmall.textContent = `${productCount} / ${productCount} 製品ページ公開済み`;
 
   // Add product names to category introduction copy
   const appendDescription = (titleText, productText) => {
@@ -187,6 +188,7 @@
   };
 
   appendDescription("美容・健康", "パーソナルジム");
+  appendDescription("飲食・小売", "焼肉店");
   appendDescription("教育・生活サービス", "ハウスクリーニング・家事代行");
   appendDescription("教育・生活サービス", "不用品回収・遺品整理");
   appendDescription("士業・企業支援", "行政書士・許認可申請");
@@ -277,6 +279,17 @@
     description: "相談受付・案件進捗・必要書類・境界管理・現場報告・写真保存。"
   });
 
+  appendCatalogCard({
+    href: "systems/yakiniku.html",
+    code: "YK",
+    previewClass: "catalog-live-yakiniku",
+    previewTitle: "焼肉店 予約・順番受付実画面プレビュー",
+    previewUrl: "https://dpromstk2000-lab.github.io/dpro-yakiniku-line-liff/index.html?demo=1&v=YAKINIKU-7-R1",
+    category: "飲食・小売",
+    title: "焼肉店 予約・順番受付",
+    description: "日時予約・当日順番受付・呼び出し・テーブル回転・顧客・分析管理。"
+  });
+
   // Product catalog filters
   const categoryMap = {
     "美容・健康": [
@@ -284,7 +297,7 @@
       "エステ・リラクゼーション", "整骨院・接骨院", "パーソナルジム"
     ],
     "医療・ペット": ["ペットサロン", "動物病院", "歯科"],
-    "飲食・小売": ["ベーカリー", "ケーキ・洋菓子店", "居酒屋", "テイクアウト"],
+    "飲食・小売": ["ベーカリー", "ケーキ・洋菓子店", "居酒屋", "テイクアウト", "焼肉店 予約・順番受付"],
     "買取・リユース": ["買取・査定", "中古車買取・販売"],
     "住まい・建築": ["不動産・賃貸内見", "リフォーム・工務店"],
     "教育・生活サービス": [
