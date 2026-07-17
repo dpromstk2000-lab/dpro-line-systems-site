@@ -1,6 +1,6 @@
 (() => {
   "use strict";
-  // STEP TAX-WEB-1: add tax and accounting office product
+  // STEP CAR-WEB-1: add used car buyback and sales product
 
   const menuButton = document.querySelector(".menu-button");
   const globalNav = document.querySelector(".global-nav");
@@ -199,7 +199,7 @@
     '美容・健康': ['美容室','ネイル','プライベートヨガ','美容サロン','エステ・リラクゼーション','整骨院・接骨院'],
     '医療・ペット': ['ペットサロン','動物病院','歯科'],
     '飲食・小売': ['ベーカリー','ケーキ・洋菓子店','居酒屋','テイクアウト'],
-    '買取・リユース': ['買取・査定'],
+    '買取・リユース': ['買取・査定','中古車買取・販売'],
     '住まい・建築': ['不動産・賃貸内見','リフォーム・工務店'],
     '教育・生活サービス': ['学習塾・習い事','車検・整備','修理受付','クリーニング','デイサービス','葬儀・法要サポート','写真館・フォトスタジオ'],
     '士業・企業支援': ['社労士・顧問先対応','税理士・会計事務所']
