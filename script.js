@@ -1,7 +1,7 @@
 (() => {
   "use strict";
 
-  // STEP GYM-WEB-1 / 30 PRODUCTS / 20260717
+  // STEP CHOSASHI-WEB-1 / 31 PRODUCTS / 20260717
 
   const menuButton = document.querySelector(".menu-button");
   const globalNav = document.querySelector(".global-nav");
@@ -145,35 +145,35 @@
     if (node) node.textContent = value;
   };
 
-  setFirstText(".phase-mini-proof span:first-child", "30業種");
-  setFirstText(".phase-number-grid .phase-number:first-child strong", "30");
-  setFirstText(".catalog-orbit .orbit-core", "30");
-  setFirstText(".catalog-summary-grid article:first-child strong", "30");
+  setFirstText(".phase-mini-proof span:first-child", "31業種");
+  setFirstText(".phase-number-grid .phase-number:first-child strong", "31");
+  setFirstText(".catalog-orbit .orbit-core", "31");
+  setFirstText(".catalog-summary-grid article:first-child strong", "31");
 
   const catalogHeroText = document.querySelector(".catalog-hero-inner > p:not(.eyebrow)");
   if (catalogHeroText) {
-    catalogHeroText.innerHTML = catalogHeroText.innerHTML.replace(/\d+業種/g, "30業種");
+    catalogHeroText.innerHTML = catalogHeroText.innerHTML.replace(/\d+業種/g, "31業種");
   }
 
   const moreLink = document.querySelector(".catalog-more-link a");
-  if (moreLink) moreLink.textContent = "30システムをすべて見る";
+  if (moreLink) moreLink.textContent = "31システムをすべて見る";
 
   const metaDescription = document.querySelector('meta[name="description"]');
   if (metaDescription) {
-    metaDescription.content = metaDescription.content.replace(/\d+業種/g, "30業種");
+    metaDescription.content = metaDescription.content.replace(/\d+業種/g, "31業種");
   }
 
   const progressTitleFirst = document.querySelector(".catalog-progress-title span:first-child");
-  if (progressTitleFirst) progressTitleFirst.textContent = "30製品すべて、";
+  if (progressTitleFirst) progressTitleFirst.textContent = "31製品すべて、";
 
   const progressCopyText = document.querySelector(".catalog-progress-copy > p");
   if (progressCopyText) {
     progressCopyText.textContent =
-      "30製品すべての詳細ページを公開しました。業種別の完成済みシステムを、実画面で確認できます。";
+      "31製品すべての詳細ページを公開しました。業種別の完成済みシステムを、実画面で確認できます。";
   }
 
   const progressCopySmall = document.querySelector(".catalog-progress-copy > small");
-  if (progressCopySmall) progressCopySmall.textContent = "30 / 30 製品ページ公開済み";
+  if (progressCopySmall) progressCopySmall.textContent = "31 / 31 製品ページ公開済み";
 
   // Add product names to category introduction copy
   const appendDescription = (titleText, productText) => {
@@ -190,6 +190,7 @@
   appendDescription("教育・生活サービス", "ハウスクリーニング・家事代行");
   appendDescription("教育・生活サービス", "不用品回収・遺品整理");
   appendDescription("士業・企業支援", "行政書士・許認可申請");
+  appendDescription("士業・企業支援", "土地家屋調査士");
 
   // Add recently completed product cards. Existing cards are never duplicated.
   const catalogGrid = document.querySelector(".catalog-grid");
@@ -265,6 +266,17 @@
     description: "体験予約・会員管理・回数券・来店進行・継続フォロー。"
   });
 
+  appendCatalogCard({
+    href: "systems/chosashi.html",
+    code: "CH",
+    previewClass: "catalog-live-chosashi",
+    previewTitle: "土地家屋調査士実画面プレビュー",
+    previewUrl: "https://dpromstk2000-lab.github.io/dpro-chosashi-line-liff/owner.html?demo=1&v=chosashi-8-r3-final",
+    category: "士業・企業支援",
+    title: "土地家屋調査士",
+    description: "相談受付・案件進捗・必要書類・境界管理・現場報告・写真保存。"
+  });
+
   // Product catalog filters
   const categoryMap = {
     "美容・健康": [
@@ -281,7 +293,8 @@
       "ハウスクリーニング・家事代行", "不用品回収・遺品整理"
     ],
     "士業・企業支援": [
-      "社労士・顧問先対応", "税理士・会計事務所", "行政書士・許認可申請"
+      "社労士・顧問先対応", "税理士・会計事務所", "行政書士・許認可申請",
+      "土地家屋調査士"
     ]
   };
 
