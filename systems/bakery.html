@@ -3,11 +3,42 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="description" content="パン屋向けDPRO BAKERY LINEの会員証・取り置き・ECOレスキュー・店舗管理を実画面で紹介。">
-<title>DPRO BAKERY LINE｜パン屋向けLINE会員証・取り置き・ECOレスキュー</title>
+<meta name="description" content="パンの写真・価格・説明を公式カタログとして公開し、そのままLINE取り置きへつなげるDPRO BAKERY LINE。会員証・ECOレスキュー・店舗管理にも対応。">
+<title>DPRO BAKERY LINE｜写真付きパンカタログからLINE取り置きへ</title>
 <link rel="stylesheet" href="../styles.css">
+<style>
+  .bakery-value-strip{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:22px 0 0}
+  .bakery-value-strip div{padding:15px;border:1px solid rgba(180,83,9,.24);border-radius:18px;background:rgba(255,247,237,.82)}
+  .bakery-value-strip strong{display:block;font-size:15px;color:#9a3412}
+  .bakery-value-strip small{display:block;margin-top:4px;color:#78716c;line-height:1.55}
+  .bakery-catalog-callout{display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:center;border-radius:32px;padding:clamp(24px,5vw,54px);background:linear-gradient(135deg,#fff7ed,#ffedd5);border:1px solid #fed7aa;overflow:hidden}
+  .bakery-catalog-callout .catalog-copy h2{margin:10px 0 14px}
+  .bakery-catalog-callout .catalog-copy ul{display:grid;gap:9px;padding-left:20px}
+  .bakery-catalog-callout .catalog-screen{min-height:420px;border-radius:24px;overflow:hidden;background:#fff;box-shadow:0 24px 70px rgba(120,53,15,.2)}
+  .bakery-catalog-callout iframe{width:145%;height:610px;border:0;transform:scale(.69);transform-origin:0 0}
+  .bakery-flow{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-top:24px}
+  .bakery-flow article{position:relative;border-radius:22px;padding:20px;background:#fff;border:1px solid #fed7aa}
+  .bakery-flow article:not(:last-child)::after{content:"→";position:absolute;right:-18px;top:50%;transform:translateY(-50%);z-index:2;font-size:24px;color:#c2410c;font-weight:900}
+  .bakery-flow span{display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:#9a3412;color:#fff;font-weight:900}
+  .bakery-flow h3{margin:12px 0 6px}
+  .bakery-url-note{margin-top:18px;border-radius:18px;padding:16px;background:#1c1917;color:#fff7ed;word-break:break-all}
+  .bakery-url-note small{display:block;color:#fed7aa;margin-bottom:5px}
+  .bakery-url-note code{font-family:inherit;font-size:13px}
+  @media(max-width:900px){
+    .bakery-value-strip,.bakery-flow{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .bakery-catalog-callout{grid-template-columns:1fr}
+    .bakery-flow article::after{display:none}
+  }
+  @media(max-width:600px){
+    .bakery-value-strip,.bakery-flow{grid-template-columns:1fr}
+    .bakery-catalog-callout{padding:20px;border-radius:24px}
+    .bakery-catalog-callout .catalog-screen{min-height:330px}
+    .bakery-catalog-callout iframe{width:175%;height:500px;transform:scale(.57)}
+  }
+</style>
 </head>
 <body>
+<!-- STEP BAKERY-SITE-1 / PHOTO CATALOG & LINE PREORDER / 20260720 -->
 <header class="site-header" id="top">
 <div class="header-inner">
 <a class="brand" href="../index.html">
@@ -17,6 +48,7 @@
 <button class="menu-button" type="button" aria-expanded="false" aria-controls="global-nav" aria-label="メニューを開く"><span></span><span></span><span></span></button>
 <nav class="global-nav" id="global-nav">
 <a href="../systems.html">システム一覧</a>
+<a href="#catalog">写真カタログ</a>
 <a href="#experience">実画面</a>
 <a href="../index.html#why">DPROについて</a>
 <a class="nav-cta" href="https://lin.ee/YxJGXV6D" target="_blank" rel="noopener">LINEでデモを見る</a>
@@ -29,158 +61,196 @@
 <div class="product-hero-copy reveal">
 <div class="product-breadcrumb"><a href="../systems.html">システム一覧</a><span>/</span><span>ベーカリー</span></div>
 <span class="product-symbol">BK</span>
-<p class="eyebrow">ベーカリー専用 LINE SYSTEM</p>
+<p class="eyebrow">PHOTO CATALOG × LINE PREORDER</p>
 <h1>DPRO BAKERY LINE</h1>
 <h2 class="headline-lines headline-fixed">
-  <span>会員証、取り置き、</span>
-  <span>ECOレスキューをLINEで。</span>
+  <span>パンの魅力を写真で伝え、</span>
+  <span>そのままLINEで取り置きへ。</span>
 </h2>
-<p>毎日の来店促進と食品ロス削減を支える、パン屋向けLINE会員証・取り置き・ECOレスキューシステムです。</p>
+<p>写真・価格・説明・売り切れ情報をオーナー画面から更新。公開カタログは、店舗ホームページやSNSの商品ページとしても使えます。</p>
 <div class="hero-actions">
-<a class="button button-primary" href="#experience">実画面を体験する</a>
-<a class="button button-secondary" href="https://lin.ee/YxJGXV6D" target="_blank" rel="noopener">LINEでデモを見る</a>
+<a class="button button-primary" href="https://dpromstk2000-lab.github.io/bakery-line-system/catalog.html?shop_code=bakery_demo&catalog_api=https%3A%2F%2Fdpro-bakery-catalog-api.dpromstk2000.workers.dev&api=https%3A%2F%2Fdpro-bakery-wallet-api.dpromstk2000.workers.dev&v=32" target="_blank" rel="noopener">写真付きカタログを見る</a>
+<a class="button button-secondary" href="#experience">全画面を体験する</a>
+</div>
+<div class="bakery-value-strip">
+<div><strong>写真付き公式カタログ</strong><small>パンを写真・価格・説明で紹介</small></div>
+<div><strong>そのまま取り置き</strong><small>選んだ商品をLINEへ自動追加</small></div>
+<div><strong>店舗サイトにも掲載</strong><small>固定URLをHP・SNSで共用</small></div>
+<div><strong>画像を自動軽量化</strong><small>WebP圧縮・遅延読み込み</small></div>
 </div>
 </div>
 
 <div class="product-visual product-visual-live reveal">
 <div class="hero-live-monitor">
-<div class="live-browser-bar"><span></span><span></span><span></span><b>オーナー管理画面</b></div>
-<iframe title="DPROベーカリー オーナー管理画面プレビュー" loading="eager" src="https://dpromstk2000-lab.github.io/bakery-line-system/owner.html?shop_code=bakery_demo&api=https%3A%2F%2Fdpro-bakery-wallet-api.dpromstk2000.workers.dev&v=bakery-phone-2"></iframe>
+<div class="live-browser-bar"><span></span><span></span><span></span><b>写真付き公式商品カタログ</b></div>
+<iframe title="DPROベーカリー 写真付き商品カタログ" loading="eager" src="https://dpromstk2000-lab.github.io/bakery-line-system/catalog.html?shop_code=bakery_demo&amp;catalog_api=https%3A%2F%2Fdpro-bakery-catalog-api.dpromstk2000.workers.dev&amp;api=https%3A%2F%2Fdpro-bakery-wallet-api.dpromstk2000.workers.dev&amp;v=32"></iframe>
 </div>
 <div class="hero-live-phone">
-<iframe title="DPROベーカリー LINE会員証プレビュー" loading="eager" src="https://dpromstk2000-lab.github.io/bakery-line-system/wallet.html?shop_code=bakery_demo&api=https%3A%2F%2Fdpro-bakery-wallet-api.dpromstk2000.workers.dev&v=bakery-phone-2"></iframe>
+<iframe title="DPROベーカリー LINE取り置き画面" loading="eager" src="https://dpromstk2000-lab.github.io/bakery-line-system/wallet.html?shop_code=bakery_demo&amp;api=https%3A%2F%2Fdpro-bakery-wallet-api.dpromstk2000.workers.dev&amp;catalog_api=https%3A%2F%2Fdpro-bakery-catalog-api.dpromstk2000.workers.dev&amp;v=32"></iframe>
 </div>
 <div class="hero-live-tablet">
-<iframe title="DPROベーカリー スタッフ画面プレビュー" loading="eager" src="https://dpromstk2000-lab.github.io/bakery-line-system/staff.html?shop_code=bakery_demo&api=https%3A%2F%2Fdpro-bakery-wallet-api.dpromstk2000.workers.dev&v=bakery-phone-2"></iframe>
+<iframe title="DPROベーカリー 商品・写真管理画面" loading="eager" src="https://dpromstk2000-lab.github.io/bakery-line-system/catalog-admin.html?shop_code=bakery_demo&amp;catalog_api=https%3A%2F%2Fdpro-bakery-catalog-api.dpromstk2000.workers.dev&amp;v=32"></iframe>
 </div>
-<div class="hero-live-label"><span>LIVE DEMO</span><strong>実際に動く完成画面</strong></div>
-</div>
-</section>
-<section class="sales-summary section">
-<div class="section-heading reveal">
-<p class="eyebrow">UNDERSTAND IN 30 SECONDS</p>
-<h2 class="headline-lines headline-fixed"><span>30秒で分かる、</span><span>このシステムの価値。</span></h2>
-<p>誰に向いていて、どんな悩みを解決できるのかを先に確認できます。</p>
-</div>
-<div class="sales-summary-grid">
-<article class="sales-summary-card reveal"><span class="sales-summary-number">01</span><h3>30秒で分かる</h3><ul><li>LINE会員証で来店接点を作る</li><li>取り置き予約と受け渡しを管理</li><li>ECOレスキューで食品ロス対策</li></ul></article>
-<article class="sales-summary-card reveal"><span class="sales-summary-number">02</span><h3>こんなお店におすすめ</h3><ul><li>街のベーカリー</li><li>取り置き依頼が多い店舗</li><li>会員証をLINE化したい店舗</li><li>売れ残り対策を行いたい店舗</li></ul></article>
-</div>
-<div class="sales-problems reveal">
-<div class="sales-problems-heading"><span class="sales-summary-number">03</span><h3>よくある悩み → 解決</h3><p>現場で起きやすい課題を、DPROの仕組みで整理します。</p></div>
-<div class="sales-problem-grid"><article class="sales-problem-card">
-<div class="sales-problem-before"><span>悩み</span><strong>取り置き連絡がバラバラ</strong></div>
-<div class="sales-problem-arrow">↓</div>
-<div class="sales-problem-after"><span>解決</span><strong>LINE予約をスタッフ画面へ集約</strong></div>
-</article><article class="sales-problem-card">
-<div class="sales-problem-before"><span>悩み</span><strong>会員管理が紙やカード</strong></div>
-<div class="sales-problem-arrow">↓</div>
-<div class="sales-problem-after"><span>解決</span><strong>LINE会員証でいつでも確認</strong></div>
-</article><article class="sales-problem-card">
-<div class="sales-problem-before"><span>悩み</span><strong>売れ残りを減らしたい</strong></div>
-<div class="sales-problem-arrow">↓</div>
-<div class="sales-problem-after"><span>解決</span><strong>ECOレスキュー商品をLINEで案内</strong></div>
-</article></div>
+<div class="hero-live-label"><span>NEW VALUE</span><strong>カタログから取り置きまで連動</strong></div>
 </div>
 </section>
 
+<section class="sales-summary section">
+<div class="section-heading reveal">
+<p class="eyebrow">UNDERSTAND IN 30 SECONDS</p>
+<h2 class="headline-lines headline-fixed"><span>30秒で分かる、</span><span>新しいベーカリー集客。</span></h2>
+<p>単なる取り置きフォームではなく、商品の魅力を伝えるところから予約・店舗管理までをつなぎます。</p>
+</div>
+<div class="sales-summary-grid">
+<article class="sales-summary-card reveal"><span class="sales-summary-number">01</span><h3>写真で選ばれる</h3><ul><li>商品写真・価格・紹介文を掲載</li><li>おすすめ・新商品・売り切れを表示</li><li>カテゴリーとアレルギー情報にも対応</li></ul></article>
+<article class="sales-summary-card reveal"><span class="sales-summary-number">02</span><h3>そのまま予約へ</h3><ul><li>カタログからLINE取り置きへ移動</li><li>選んだ商品を1個自動追加</li><li>受け取り日時と数量を確認して受付</li></ul></article>
+</div>
+<div class="sales-problems reveal">
+<div class="sales-problems-heading"><span class="sales-summary-number">03</span><h3>よくある悩み → 解決</h3><p>小規模店舗でも更新しやすく、商品紹介と予約受付を一つにします。</p></div>
+<div class="sales-problem-grid">
+<article class="sales-problem-card">
+<div class="sales-problem-before"><span>悩み</span><strong>SNS投稿が流れて商品一覧にならない</strong></div>
+<div class="sales-problem-arrow">↓</div>
+<div class="sales-problem-after"><span>解決</span><strong>固定URLの公式パンカタログに集約</strong></div>
+</article>
+<article class="sales-problem-card">
+<div class="sales-problem-before"><span>悩み</span><strong>電話・DMの取り置き確認が大変</strong></div>
+<div class="sales-problem-arrow">↓</div>
+<div class="sales-problem-after"><span>解決</span><strong>写真を見て選び、LINEで予約完了</strong></div>
+</article>
+<article class="sales-problem-card">
+<div class="sales-problem-before"><span>悩み</span><strong>ホームページの商品更新が難しい</strong></div>
+<div class="sales-problem-arrow">↓</div>
+<div class="sales-problem-after"><span>解決</span><strong>オーナー画面だけで写真・価格を更新</strong></div>
+</article>
+</div>
+</div>
+</section>
+
+<section class="section section-soft" id="catalog">
+<div class="bakery-catalog-callout reveal">
+<div class="catalog-copy">
+<p class="eyebrow">OFFICIAL PRODUCT CATALOG</p>
+<h2 class="headline-lines headline-fixed"><span>ホームページを作り直さなくても、</span><span>パンの公式カタログが持てます。</span></h2>
+<p>公開URLを店舗サイト、Instagramプロフィール、Googleビジネスプロフィール、LINEリッチメニューに貼るだけ。お客様はLINEを開いていない時でも商品を閲覧できます。</p>
+<ul>
+<li>写真・価格・短い説明・詳しい説明</li>
+<li>販売中・売り切れ・非表示を即時切替</li>
+<li>取り置き可能商品と店頭販売のみを区別</li>
+<li>画像はWebPへ自動圧縮して軽量表示</li>
+</ul>
+<div class="hero-actions">
+<a class="button button-primary" href="https://dpromstk2000-lab.github.io/bakery-line-system/catalog.html?shop_code=bakery_demo&catalog_api=https%3A%2F%2Fdpro-bakery-catalog-api.dpromstk2000.workers.dev&api=https%3A%2F%2Fdpro-bakery-wallet-api.dpromstk2000.workers.dev&v=32" target="_blank" rel="noopener">実際の公開カタログを開く</a>
+<a class="button button-secondary" href="https://dpromstk2000-lab.github.io/bakery-line-system/catalog-admin.html?shop_code=bakery_demo&catalog_api=https%3A%2F%2Fdpro-bakery-catalog-api.dpromstk2000.workers.dev&v=32" target="_blank" rel="noopener">商品管理を体験する</a>
+</div>
+<div class="bakery-url-note"><small>店舗サイトやSNSにも掲載できる固定URL</small><code>https://dpromstk2000-lab.github.io/bakery-line-system/catalog.html?shop_code=bakery_demo&catalog_api=https%3A%2F%2Fdpro-bakery-catalog-api.dpromstk2000.workers.dev&api=https%3A%2F%2Fdpro-bakery-wallet-api.dpromstk2000.workers.dev&v=32</code></div>
+</div>
+<div class="catalog-screen">
+<div class="live-browser-bar"><span></span><span></span><span></span><b>店舗公式パンカタログ</b></div>
+<iframe title="店舗公式パンカタログ実画面" loading="lazy" src="https://dpromstk2000-lab.github.io/bakery-line-system/catalog.html?shop_code=bakery_demo&amp;catalog_api=https%3A%2F%2Fdpro-bakery-catalog-api.dpromstk2000.workers.dev&amp;api=https%3A%2F%2Fdpro-bakery-wallet-api.dpromstk2000.workers.dev&amp;v=32"></iframe>
+</div>
+</div>
+
+<div class="bakery-flow">
+<article class="reveal"><span>1</span><h3>商品・写真を登録</h3><p>オーナーが写真、価格、説明、公開状態を保存します。</p></article>
+<article class="reveal"><span>2</span><h3>カタログへ即時反映</h3><p>公開URLに商品写真と最新の販売状態が表示されます。</p></article>
+<article class="reveal"><span>3</span><h3>お客様が商品を選択</h3><p>写真を見て、欲しいパンの「取り置き」を押します。</p></article>
+<article class="reveal"><span>4</span><h3>LINEで予約完了</h3><p>商品が自動追加され、受取日時を選んで受付できます。</p></article>
+</div>
+</section>
 
 <section class="product-intro section">
 <div class="section-heading reveal">
 <p class="eyebrow">BUILT FOR BAKERIES</p>
-<h2 class="headline-lines headline-fixed">
-  <span>ベーカリーの毎日に合わせた、</span>
-  <span>専用機能。</span>
-</h2>
-<p>会員証だけではなく、取り置き、ECOレスキュー、受け渡し、営業日設定までを一つにします。</p>
+<h2 class="headline-lines headline-fixed"><span>カタログ、取り置き、会員施策を、</span><span>一つのベーカリー専用システムに。</span></h2>
+<p>新しい写真カタログを主役に、既存の会員証・スタッフ対応・ECOレスキューまで連動します。</p>
 </div>
 <div class="product-feature-grid">
-<article class="product-feature reveal"><span>01</span><h3>LINE会員証</h3><p>会員情報、ポイント、利用履歴をスマートフォンに表示。</p></article>
-<article class="product-feature reveal"><span>02</span><h3>取り置き予約</h3><p>商品・個数・受取時間をLINEから申し込み。</p></article>
-<article class="product-feature reveal"><span>03</span><h3>ECOレスキュー</h3><p>当日商品を無駄にしない販売導線を用意。</p></article>
-<article class="product-feature reveal"><span>04</span><h3>スタッフ画面</h3><p>受取予定、準備、受け渡しを現場で確認。</p></article>
-<article class="product-feature reveal"><span>05</span><h3>オーナー管理</h3><p>商品、注文、会員、営業日をPCで管理。</p></article>
-<article class="product-feature reveal"><span>06</span><h3>定休日自動切替</h3><p>休業日には予約可能日を安全に自動調整。</p></article>
+<article class="product-feature reveal"><span>01</span><h3>写真付き商品管理</h3><p>写真、価格、説明、カテゴリーをオーナーが更新。</p></article>
+<article class="product-feature reveal"><span>02</span><h3>公開商品カタログ</h3><p>店舗サイトやSNSでも使える固定URLを発行。</p></article>
+<article class="product-feature reveal"><span>03</span><h3>カタログ取り置き</h3><p>選んだ商品をLINE取り置き画面へ自動追加。</p></article>
+<article class="product-feature reveal"><span>04</span><h3>売り切れ・非表示</h3><p>販売状態を切り替え、案内間違いを防止。</p></article>
+<article class="product-feature reveal"><span>05</span><h3>LINE会員証</h3><p>会員情報、残高、予約履歴をスマートフォンに表示。</p></article>
+<article class="product-feature reveal"><span>06</span><h3>スタッフ受け渡し</h3><p>本日の予約、準備、受け渡し状況を店舗で共有。</p></article>
+<article class="product-feature reveal"><span>07</span><h3>ECOレスキュー</h3><p>当日商品の販売導線で食品ロス対策を支援。</p></article>
+<article class="product-feature reveal"><span>08</span><h3>定休日自動切替</h3><p>休業日や受付終了日は予約可能日を安全に調整。</p></article>
 </div>
 </section>
 
 <section class="experience-section section section-dark" id="experience">
 <div class="section-heading section-heading-light reveal">
 <p class="eyebrow">LIVE PRODUCT EXPERIENCE</p>
-<h2 class="headline-lines headline-fixed">
-  <span>会員証から店舗管理まで、</span>
-  <span>本物の画面で確認。</span>
-</h2>
-<p>各画面は拡大表示や別タブでそのまま操作できます。</p>
+<h2 class="headline-lines headline-fixed"><span>説明だけでなく、</span><span>本物のカタログと管理画面を操作。</span></h2>
+<p>公開カタログ、商品管理、LINE取り置き、店舗画面を別タブまたは拡大表示で確認できます。</p>
 </div>
 
 <div class="live-showcase">
 <article class="live-product reveal">
 <div class="live-copy">
-<span>01 / MEMBER</span>
-<h3>お客様用<br>LINEデジタル会員証</h3>
-<p>会員情報、ポイント、利用履歴、各サービスへの入口をスマートフォンで確認できます。</p>
-<ul><li>デジタル会員証</li><li>ポイント・利用履歴</li><li>取り置き・ECOレスキュー導線</li></ul>
+<span>01 / PUBLIC CATALOG</span>
+<h3>お客様向け<br>写真付きパンカタログ</h3>
+<p>写真、価格、説明、売り切れ情報から商品を選び、そのまま取り置きへ進めます。</p>
+<ul><li>写真付き商品一覧</li><li>カテゴリー・検索</li><li>取り置きボタン</li></ul>
 <div class="live-actions">
-<button class="button button-primary button-zoom js-screen-modal" type="button" data-screen-title="LINEデジタル会員証" data-screen-url="https://dpromstk2000-lab.github.io/bakery-line-system/wallet.html?shop_code=bakery_demo&api=https%3A%2F%2Fdpro-bakery-wallet-api.dpromstk2000.workers.dev&v=bakery-phone-2">画面を拡大表示</button>
-<a class="button button-secondary" href="https://dpromstk2000-lab.github.io/bakery-line-system/wallet.html?shop_code=bakery_demo&api=https%3A%2F%2Fdpro-bakery-wallet-api.dpromstk2000.workers.dev&v=bakery-phone-2" target="_blank" rel="noopener">別タブで開く</a>
+<button class="button button-primary button-zoom js-screen-modal" type="button" data-screen-title="写真付きパンカタログ" data-screen-url="https://dpromstk2000-lab.github.io/bakery-line-system/catalog.html?shop_code=bakery_demo&catalog_api=https%3A%2F%2Fdpro-bakery-catalog-api.dpromstk2000.workers.dev&api=https%3A%2F%2Fdpro-bakery-wallet-api.dpromstk2000.workers.dev&v=32">画面を拡大表示</button>
+<a class="button button-secondary" href="https://dpromstk2000-lab.github.io/bakery-line-system/catalog.html?shop_code=bakery_demo&catalog_api=https%3A%2F%2Fdpro-bakery-catalog-api.dpromstk2000.workers.dev&api=https%3A%2F%2Fdpro-bakery-wallet-api.dpromstk2000.workers.dev&v=32" target="_blank" rel="noopener">別タブで開く</a>
 </div>
 </div>
-<div class="live-device live-phone">
-<iframe title="DPROベーカリー LINEデジタル会員証" loading="lazy" src="https://dpromstk2000-lab.github.io/bakery-line-system/wallet.html?shop_code=bakery_demo&api=https%3A%2F%2Fdpro-bakery-wallet-api.dpromstk2000.workers.dev&v=bakery-phone-2"></iframe>
+<div class="live-device live-desktop">
+<div class="live-browser-bar"><span></span><span></span><span></span><b>公開パンカタログ</b></div>
+<iframe title="DPROベーカリー公開カタログ" loading="lazy" src="https://dpromstk2000-lab.github.io/bakery-line-system/catalog.html?shop_code=bakery_demo&amp;catalog_api=https%3A%2F%2Fdpro-bakery-catalog-api.dpromstk2000.workers.dev&amp;api=https%3A%2F%2Fdpro-bakery-wallet-api.dpromstk2000.workers.dev&amp;v=32"></iframe>
 </div>
 </article>
 
 <article class="live-product live-product-reverse reveal">
 <div class="live-copy">
-<span>02 / STAFF</span>
-<h3>受け渡し用<br>スタッフ画面</h3>
-<p>本日の取り置き、準備状況、受け渡し対応を店舗スタッフが確認できます。</p>
-<ul><li>受取予定一覧</li><li>準備・受け渡し管理</li><li>お客様確認</li></ul>
-<p class="screen-zoom-guide">細かな注文情報は、拡大画面で確認できます。</p>
+<span>02 / CATALOG ADMIN</span>
+<h3>オーナー用<br>商品・写真管理</h3>
+<p>パンごとの写真、価格、説明、取り置き可否、売り切れ状態を管理できます。</p>
+<ul><li>画像のWebP自動圧縮</li><li>商品・価格・説明編集</li><li>公開状態・表示順管理</li></ul>
+<div class="demo-code-card"><span>DEMO CODE</span><strong>1234</strong><small>画面上部の管理コード</small></div>
 <div class="live-actions">
-<button class="button button-primary button-zoom js-screen-modal" type="button" data-screen-title="スタッフ画面" data-screen-url="https://dpromstk2000-lab.github.io/bakery-line-system/staff.html?shop_code=bakery_demo&api=https%3A%2F%2Fdpro-bakery-wallet-api.dpromstk2000.workers.dev&v=bakery-phone-2">画面を拡大表示</button>
-<a class="button button-secondary" href="https://dpromstk2000-lab.github.io/bakery-line-system/staff.html?shop_code=bakery_demo&api=https%3A%2F%2Fdpro-bakery-wallet-api.dpromstk2000.workers.dev&v=bakery-phone-2" target="_blank" rel="noopener">別タブで開く</a>
+<button class="button button-primary button-zoom js-screen-modal" type="button" data-screen-title="商品・写真・カタログ管理" data-screen-url="https://dpromstk2000-lab.github.io/bakery-line-system/catalog-admin.html?shop_code=bakery_demo&catalog_api=https%3A%2F%2Fdpro-bakery-catalog-api.dpromstk2000.workers.dev&v=32">画面を拡大表示</button>
+<a class="button button-secondary" href="https://dpromstk2000-lab.github.io/bakery-line-system/catalog-admin.html?shop_code=bakery_demo&catalog_api=https%3A%2F%2Fdpro-bakery-catalog-api.dpromstk2000.workers.dev&v=32" target="_blank" rel="noopener">別タブで開く</a>
 </div>
 </div>
-<div class="live-device live-tablet">
-<div class="live-browser-bar"><span></span><span></span><span></span><b>スタッフ画面</b></div>
-<iframe title="DPROベーカリー スタッフ画面" loading="lazy" src="https://dpromstk2000-lab.github.io/bakery-line-system/staff.html?shop_code=bakery_demo&api=https%3A%2F%2Fdpro-bakery-wallet-api.dpromstk2000.workers.dev&v=bakery-phone-2"></iframe>
+<div class="live-device live-desktop">
+<div class="live-browser-bar"><span></span><span></span><span></span><b>商品・写真・カタログ管理</b></div>
+<iframe title="DPROベーカリー商品カタログ管理" loading="lazy" src="https://dpromstk2000-lab.github.io/bakery-line-system/catalog-admin.html?shop_code=bakery_demo&amp;catalog_api=https%3A%2F%2Fdpro-bakery-catalog-api.dpromstk2000.workers.dev&amp;v=32"></iframe>
 </div>
 </article>
 
 <article class="live-product reveal">
 <div class="live-copy">
-<span>03 / OWNER</span>
-<h3>PCオーナー<br>管理画面</h3>
-<p>商品、取り置き、ECOレスキュー、会員、営業日設定を一つの管理画面で確認できます。</p>
-<ul><li>注文・商品管理</li><li>会員・ポイント管理</li><li>営業日・定休日設定</li></ul>
-<div class="demo-code-card"><span>DEMO CODE</span><strong>1234</strong><small>管理画面を開いた後に入力</small></div>
+<span>03 / LINE PREORDER</span>
+<h3>お客様用<br>会員証・取り置き画面</h3>
+<p>カタログで選択した商品を自動追加し、受け取り日と時間を確認して予約できます。</p>
+<ul><li>LINEデジタル会員証</li><li>商品・数量・受取日時</li><li>いつものパン・予約履歴</li></ul>
 <div class="live-actions">
-<button class="button button-primary button-zoom js-screen-modal" type="button" data-screen-title="オーナー管理画面" data-screen-url="https://dpromstk2000-lab.github.io/bakery-line-system/owner.html?shop_code=bakery_demo&api=https%3A%2F%2Fdpro-bakery-wallet-api.dpromstk2000.workers.dev&v=bakery-phone-2">画面を拡大表示</button>
-<a class="button button-secondary" href="https://dpromstk2000-lab.github.io/bakery-line-system/owner.html?shop_code=bakery_demo&api=https%3A%2F%2Fdpro-bakery-wallet-api.dpromstk2000.workers.dev&v=bakery-phone-2" target="_blank" rel="noopener">別タブで開く</a>
+<button class="button button-primary button-zoom js-screen-modal" type="button" data-screen-title="LINE会員証・取り置き" data-screen-url="https://dpromstk2000-lab.github.io/bakery-line-system/wallet.html?shop_code=bakery_demo&api=https%3A%2F%2Fdpro-bakery-wallet-api.dpromstk2000.workers.dev&catalog_api=https%3A%2F%2Fdpro-bakery-catalog-api.dpromstk2000.workers.dev&v=32">画面を拡大表示</button>
+<a class="button button-secondary" href="https://dpromstk2000-lab.github.io/bakery-line-system/wallet.html?shop_code=bakery_demo&api=https%3A%2F%2Fdpro-bakery-wallet-api.dpromstk2000.workers.dev&catalog_api=https%3A%2F%2Fdpro-bakery-catalog-api.dpromstk2000.workers.dev&v=32" target="_blank" rel="noopener">別タブで開く</a>
 </div>
 </div>
-<div class="live-device live-desktop">
-<div class="live-browser-bar"><span></span><span></span><span></span><b>PCオーナー管理画面</b></div>
-<iframe title="DPROベーカリー オーナー管理画面" loading="lazy" src="https://dpromstk2000-lab.github.io/bakery-line-system/owner.html?shop_code=bakery_demo&api=https%3A%2F%2Fdpro-bakery-wallet-api.dpromstk2000.workers.dev&v=bakery-phone-2"></iframe>
+<div class="live-device live-phone">
+<iframe title="DPROベーカリーLINE会員証・取り置き" loading="lazy" src="https://dpromstk2000-lab.github.io/bakery-line-system/wallet.html?shop_code=bakery_demo&amp;api=https%3A%2F%2Fdpro-bakery-wallet-api.dpromstk2000.workers.dev&amp;catalog_api=https%3A%2F%2Fdpro-bakery-catalog-api.dpromstk2000.workers.dev&amp;v=32"></iframe>
 </div>
 </article>
 
 <article class="live-product live-product-reverse reveal">
 <div class="live-copy">
-<span>04 / CASHIER</span>
-<h3>レジ・店頭用<br>会員確認画面</h3>
-<p>店頭で会員情報やポイントを確認し、来店時の対応をスムーズにします。</p>
-<ul><li>会員検索</li><li>ポイント確認</li><li>店頭対応</li></ul>
+<span>04 / STORE OPERATION</span>
+<h3>店舗用<br>オーナー・スタッフ画面</h3>
+<p>商品、予約、会員、ECOレスキュー、営業日と店頭の受け渡しを管理します。</p>
+<ul><li>予約・商品・会員管理</li><li>受け渡し進行</li><li>定休日・臨時休業</li></ul>
+<div class="demo-code-card"><span>DEMO CODE</span><strong>1234</strong><small>オーナー管理画面で使用</small></div>
 <div class="live-actions">
-<button class="button button-primary button-zoom js-screen-modal" type="button" data-screen-title="レジ・店頭画面" data-screen-url="https://dpromstk2000-lab.github.io/bakery-line-system/cashier.html?shop_code=bakery_demo&api=https%3A%2F%2Fdpro-bakery-wallet-api.dpromstk2000.workers.dev&v=bakery-phone-2">画面を拡大表示</button>
-<a class="button button-secondary" href="https://dpromstk2000-lab.github.io/bakery-line-system/cashier.html?shop_code=bakery_demo&api=https%3A%2F%2Fdpro-bakery-wallet-api.dpromstk2000.workers.dev&v=bakery-phone-2" target="_blank" rel="noopener">別タブで開く</a>
+<button class="button button-primary button-zoom js-screen-modal" type="button" data-screen-title="ベーカリーオーナー管理画面" data-screen-url="https://dpromstk2000-lab.github.io/bakery-line-system/owner.html?shop_code=bakery_demo&api=https%3A%2F%2Fdpro-bakery-wallet-api.dpromstk2000.workers.dev&catalog_api=https%3A%2F%2Fdpro-bakery-catalog-api.dpromstk2000.workers.dev&v=32">画面を拡大表示</button>
+<a class="button button-secondary" href="https://dpromstk2000-lab.github.io/bakery-line-system/owner.html?shop_code=bakery_demo&api=https%3A%2F%2Fdpro-bakery-wallet-api.dpromstk2000.workers.dev&catalog_api=https%3A%2F%2Fdpro-bakery-catalog-api.dpromstk2000.workers.dev&v=32" target="_blank" rel="noopener">別タブで開く</a>
 </div>
 </div>
 <div class="live-device live-desktop">
-<div class="live-browser-bar"><span></span><span></span><span></span><b>レジ・店頭画面</b></div>
-<iframe title="DPROベーカリー レジ・店頭画面" loading="lazy" src="https://dpromstk2000-lab.github.io/bakery-line-system/cashier.html?shop_code=bakery_demo&api=https%3A%2F%2Fdpro-bakery-wallet-api.dpromstk2000.workers.dev&v=bakery-phone-2"></iframe>
+<div class="live-browser-bar"><span></span><span></span><span></span><b>PCオーナー管理画面</b></div>
+<iframe title="DPROベーカリーオーナー管理画面" loading="lazy" src="https://dpromstk2000-lab.github.io/bakery-line-system/owner.html?shop_code=bakery_demo&amp;api=https%3A%2F%2Fdpro-bakery-wallet-api.dpromstk2000.workers.dev&amp;catalog_api=https%3A%2F%2Fdpro-bakery-catalog-api.dpromstk2000.workers.dev&amp;v=32"></iframe>
 </div>
 </article>
 </div>
@@ -189,39 +259,21 @@
 <section class="feature-showcase section">
 <div class="section-heading reveal">
 <p class="eyebrow">KEY OPERATIONS</p>
-<h2 class="headline-lines headline-fixed">
-  <span>売るだけではなく、</span>
-  <span>来店と食品ロス対策をつなぐ。</span>
-</h2>
-<p>日常の販売業務に合わせて、会員施策と取り置き・ECOレスキューを運用できます。</p>
+<h2 class="headline-lines headline-fixed"><span>「見てもらう」から、</span><span>「取り置いてもらう」まで。</span></h2>
+<p>商品写真を入口に、予約受付、店舗準備、受け渡し、再来店へつなげます。</p>
 </div>
-
 <div class="feature-showcase-grid">
 <article class="feature-showcase-card reveal">
-<div class="feature-showcase-copy">
-<span>01 / MEMBERSHIP</span><h3>デジタル会員証</h3>
-<p>紙カードを持ち歩かず、LINEからいつでも会員情報を確認できます。</p>
-<ul><li>ポイント表示</li><li>利用履歴</li><li>サービスへの入口</li></ul>
-</div>
-<div class="feature-showcase-screen phone"><iframe title="ベーカリー会員証画面" loading="lazy" src="https://dpromstk2000-lab.github.io/bakery-line-system/wallet.html?shop_code=bakery_demo&api=https%3A%2F%2Fdpro-bakery-wallet-api.dpromstk2000.workers.dev&v=bakery-phone-2"></iframe></div>
+<div class="feature-showcase-copy"><span>01 / DISCOVERY</span><h3>商品を写真で見つける</h3><p>店頭へ来る前に、パンの見た目・価格・特徴を確認できます。</p><ul><li>商品写真</li><li>説明・価格</li><li>おすすめ・新商品</li></ul></div>
+<div class="feature-showcase-screen desktop"><iframe title="写真付き商品カタログ" loading="lazy" src="https://dpromstk2000-lab.github.io/bakery-line-system/catalog.html?shop_code=bakery_demo&amp;catalog_api=https%3A%2F%2Fdpro-bakery-catalog-api.dpromstk2000.workers.dev&amp;api=https%3A%2F%2Fdpro-bakery-wallet-api.dpromstk2000.workers.dev&amp;v=32"></iframe></div>
 </article>
-
 <article class="feature-showcase-card reveal">
-<div class="feature-showcase-copy">
-<span>02 / PREORDER</span><h3>取り置きと受け渡し</h3>
-<p>注文受付から準備、店頭での受け渡しまでをスタッフ画面で管理します。</p>
-<ul><li>受取時間管理</li><li>準備状況</li><li>受け渡し完了</li></ul>
-</div>
-<div class="feature-showcase-screen tablet"><iframe title="取り置きスタッフ画面" loading="lazy" src="https://dpromstk2000-lab.github.io/bakery-line-system/staff.html?shop_code=bakery_demo&api=https%3A%2F%2Fdpro-bakery-wallet-api.dpromstk2000.workers.dev&v=bakery-phone-2"></iframe></div>
+<div class="feature-showcase-copy"><span>02 / PREORDER</span><h3>そのままLINE取り置き</h3><p>選んだ商品を数量1で引き継ぎ、受け取り日時を指定できます。</p><ul><li>商品自動引き継ぎ</li><li>数量・日時選択</li><li>予約履歴</li></ul></div>
+<div class="feature-showcase-screen phone"><iframe title="カタログ連携取り置き画面" loading="lazy" src="https://dpromstk2000-lab.github.io/bakery-line-system/wallet.html?shop_code=bakery_demo&amp;api=https%3A%2F%2Fdpro-bakery-wallet-api.dpromstk2000.workers.dev&amp;catalog_api=https%3A%2F%2Fdpro-bakery-catalog-api.dpromstk2000.workers.dev&amp;v=32"></iframe></div>
 </article>
-
 <article class="feature-showcase-card reveal">
-<div class="feature-showcase-copy">
-<span>03 / STORE CONTROL</span><h3>営業日・定休日管理</h3>
-<p>定休日や臨時休業を設定し、予約可能日を安全に切り替えます。</p>
-<ul><li>定休日設定</li><li>臨時休業</li><li>休業日の自動切替</li></ul>
-</div>
-<div class="feature-showcase-screen desktop"><iframe title="ベーカリー店舗設定画面" loading="lazy" src="https://dpromstk2000-lab.github.io/bakery-line-system/owner.html?shop_code=bakery_demo&api=https%3A%2F%2Fdpro-bakery-wallet-api.dpromstk2000.workers.dev&v=bakery-phone-2"></iframe></div>
+<div class="feature-showcase-copy"><span>03 / MANAGEMENT</span><h3>店舗側で素早く更新</h3><p>写真差し替えや売り切れ変更を、商品管理画面から行えます。</p><ul><li>写真アップロード</li><li>販売状態</li><li>カタログ公開</li></ul></div>
+<div class="feature-showcase-screen desktop"><iframe title="パン商品写真管理" loading="lazy" src="https://dpromstk2000-lab.github.io/bakery-line-system/catalog-admin.html?shop_code=bakery_demo&amp;catalog_api=https%3A%2F%2Fdpro-bakery-catalog-api.dpromstk2000.workers.dev&amp;v=32"></iframe></div>
 </article>
 </div>
 </section>
@@ -230,16 +282,13 @@
 <div class="product-proof-inner reveal">
 <div>
 <p class="eyebrow">REAL SCREEN, REAL OPERATION</p>
-<h2 class="headline-lines headline-fixed">
-  <span>会員証だけでなく、</span>
-  <span>店舗の運用まで。</span>
-</h2>
+<h2 class="headline-lines headline-fixed"><span>店舗の公式カタログと、</span><span>LINEの予約機能を一つに。</span></h2>
 </div>
 <div>
-<p>お客様のLINE会員証と、スタッフ・オーナー・レジ画面を同じデータでつなぎます。</p>
+<p>別々のホームページ・DM・予約フォームへ分散させず、商品紹介から店舗運用まで同じ商品データでつなぎます。</p>
 <div class="proof-actions">
-<a class="text-link" href="https://dpromstk2000-lab.github.io/bakery-line-system/wallet.html?shop_code=bakery_demo&api=https%3A%2F%2Fdpro-bakery-wallet-api.dpromstk2000.workers.dev&v=bakery-phone-2" target="_blank" rel="noopener">LINE会員証を体験する →</a>
-<a class="text-link" href="https://dpromstk2000-lab.github.io/bakery-line-system/sales-demo.html?v=bakery-phone-2" target="_blank" rel="noopener">営業デモを見る →</a>
+<a class="text-link" href="https://dpromstk2000-lab.github.io/bakery-line-system/catalog.html?shop_code=bakery_demo&catalog_api=https%3A%2F%2Fdpro-bakery-catalog-api.dpromstk2000.workers.dev&api=https%3A%2F%2Fdpro-bakery-wallet-api.dpromstk2000.workers.dev&v=32" target="_blank" rel="noopener">写真付きカタログを体験する →</a>
+<a class="text-link" href="https://dpromstk2000-lab.github.io/bakery-line-system/catalog-admin.html?shop_code=bakery_demo&catalog_api=https%3A%2F%2Fdpro-bakery-catalog-api.dpromstk2000.workers.dev&v=32" target="_blank" rel="noopener">商品管理画面を体験する →</a>
 </div>
 </div>
 </div>
@@ -248,14 +297,11 @@
 <section class="contact section" id="contact">
 <div class="contact-card reveal">
 <p class="eyebrow">START WITH A DEMO</p>
-<h2 class="headline-lines headline-fixed">
-  <span>ベーカリー向けシステムを、</span>
-  <span>実際に触ってみませんか。</span>
-</h2>
-<p>完成済みの会員証・取り置き・店舗管理画面をご案内します。</p>
+<h2 class="headline-lines headline-fixed"><span>パンの魅力を伝えるカタログから、</span><span>LINE取り置きまで体験しませんか。</span></h2>
+<p>写真付き公式カタログ、商品管理、LINE取り置き、店舗管理の完成画面をご案内します。</p>
 <div class="contact-actions">
 <a class="button button-line" href="https://lin.ee/YxJGXV6D" target="_blank" rel="noopener">LINEでデモを見る</a>
-<a class="button button-secondary-light" href="https://dpromstk2000-lab.github.io/bakery-line-system/sales-demo.html?v=bakery-phone-2" target="_blank" rel="noopener">営業デモを開く</a>
+<a class="button button-secondary-light" href="https://dpromstk2000-lab.github.io/bakery-line-system/catalog.html?shop_code=bakery_demo&catalog_api=https%3A%2F%2Fdpro-bakery-catalog-api.dpromstk2000.workers.dev&api=https%3A%2F%2Fdpro-bakery-wallet-api.dpromstk2000.workers.dev&v=32" target="_blank" rel="noopener">公開カタログを開く</a>
 </div>
 </div>
 </section>
@@ -272,6 +318,7 @@
 <nav>
 <a href="../systems.html">システム一覧</a>
 <a href="../index.html#why">DPROについて</a>
+<a href="https://dpromstk2000-lab.github.io/bakery-line-system/catalog.html?shop_code=bakery_demo&catalog_api=https%3A%2F%2Fdpro-bakery-catalog-api.dpromstk2000.workers.dev&api=https%3A%2F%2Fdpro-bakery-wallet-api.dpromstk2000.workers.dev&v=32" target="_blank" rel="noopener">パンカタログ</a>
 <a href="https://lin.ee/YxJGXV6D" target="_blank" rel="noopener">LINEでデモを見る</a>
 </nav>
 <p class="copyright">© <span id="year"></span> DPRO SHOP</p>
