@@ -1,0 +1,109 @@
+name: One-time BTYPE product site update
+
+on:
+  push:
+    paths:
+      - '.github/workflows/btype-site-update.yml'
+      - 'systems/btype.html'
+
+permissions:
+  contents: write
+
+jobs:
+  update-site:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Update top and catalog
+        shell: python
+        run: |
+          from pathlib import Path
+
+          index_path = Path("index.html")
+          systems_path = Path("systems.html")
+          product_path = Path("systems/btype.html")
+          workflow_path = Path(".github/workflows/btype-site-update.yml")
+
+          if not product_path.exists():
+              raise SystemExit("systems/btype.html is missing")
+
+          index = index_path.read_text(encoding="utf-8")
+          index_replacements = [
+              ('36業種の完成済みLINEシステム', '37業種の完成済みLINEシステム'),
+              ('36 PRODUCTS', '37 PRODUCTS'),
+              ('<span>36業種</span>', '<span>37業種</span>'),
+              ('<strong>36</strong><span>完成済みシステム', '<strong>37</strong><span>完成済みシステム'),
+              ('デイサービス、葬儀・法要、写真館', 'デイサービス、就労継続支援B型、葬儀・法要、写真館'),
+              ('>36システムをすべて見る<', '>37システムをすべて見る<'),
+          ]
+          for old, new in index_replacements:
+              if old in index:
+                  index = index.replace(old, new, 1)
+              elif new not in index:
+                  raise SystemExit(f"index marker not found: {old}")
+          index_path.write_text(index, encoding="utf-8")
+
+          systems = systems_path.read_text(encoding="utf-8")
+          systems_replacements = [
+              ('36 PRODUCTS', '37 PRODUCTS'),
+              ('36業種の完成システム', '37業種の完成システム'),
+              ('<div class="orbit-core">36</div>', '<div class="orbit-core">37</div>'),
+              ('<strong>36</strong><span>完成済みシステム', '<strong>37</strong><span>完成済みシステム'),
+              ('<span>36製品すべて、</span>', '<span>37製品すべて、</span>'),
+              ('36製品すべての詳細ページ', '37製品すべての詳細ページ'),
+              ('36 / 36 製品ページ公開済み', '37 / 37 製品ページ公開済み'),
+          ]
+          for old, new in systems_replacements:
+              if old in systems:
+                  systems = systems.replace(old, new, 1)
+              elif new not in systems:
+                  raise SystemExit(f"systems marker not found: {old}")
+
+          card = '''<a class="catalog-card reveal is-live" href="systems/btype.html">
+            <div class="catalog-card-top">
+              <span class="catalog-code">BT</span>
+              <span class="catalog-status">公開中</span>
+            </div>
+            <div class="catalog-visual catalog-live-visual">
+              <iframe title="就労継続支援B型実画面プレビュー" loading="lazy" style="width:145%;height:145%;transform:scale(.69);transform-origin:0 0" src="https://dpromstk2000-lab.github.io/dpro-btype-line-liff/"></iframe>
+              <span class="catalog-live-badge">実画面あり</span>
+            </div>
+            <div class="catalog-card-copy">
+              <small>教育・生活サービス</small>
+              <h3>就労継続支援B型</h3>
+              <p>利用相談・出欠・送迎・作業・支援記録・工賃・個別支援計画。</p>
+              <b class="catalog-card-cta">今すぐ製品ページを見る →</b>
+            </div>
+          </a>'''
+
+          if 'href="systems/btype.html"' not in systems:
+              marker = '<a class="catalog-card reveal is-live" href="systems/sharoushi.html">'
+              if marker not in systems:
+                  raise SystemExit("catalog insertion marker not found")
+              systems = systems.replace(marker, card + "\n\n" + marker, 1)
+
+          systems_path.write_text(systems, encoding="utf-8")
+
+          required = {
+              "index count": "37システムをすべて見る" in index,
+              "catalog count": "37 / 37 製品ページ公開済み" in systems,
+              "catalog card": 'href="systems/btype.html"' in systems,
+              "product title": "DPRO 就労継続支援B型 LINE" in product_path.read_text(encoding="utf-8"),
+              "system check link": "system-check.html" in product_path.read_text(encoding="utf-8"),
+          }
+          failed = [name for name, ok in required.items() if not ok]
+          if failed:
+              raise SystemExit("validation failed: " + ", ".join(failed))
+
+          workflow_path.unlink()
+
+      - name: Commit update
+        run: |
+          git config user.name "DPRO Site Automation"
+          git config user.email "actions@users.noreply.github.com"
+          git add index.html systems.html systems/btype.html .github/workflows/btype-site-update.yml
+          git commit -m "STEP BTYPE-10 add Type-B support product site"
+          git push
