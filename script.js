@@ -1,7 +1,7 @@
 (() => {
   "use strict";
 
-  // STEP FLOWER-WEB-1 / 37 PRODUCTS / PRESERVE ALL 36 PRODUCTS / 20260719
+  // STEP COSMETICS-WEB-1 / 38 PRODUCTS / PRESERVE ALL 37 PRODUCTS / 20260719
 
   const menuButton = document.querySelector(".menu-button");
   const globalNav = document.querySelector(".global-nav");
@@ -38,7 +38,6 @@
       },
       { threshold: 0.1 }
     );
-
     document
       .querySelectorAll(".reveal")
       .forEach((element) => revealObserver.observe(element));
@@ -50,9 +49,7 @@
 
   window.addEventListener(
     "scroll",
-    () => {
-      backToTop?.classList.toggle("visible", window.scrollY > 700);
-    },
+    () => backToTop?.classList.toggle("visible", window.scrollY > 700),
     { passive: true }
   );
 
@@ -113,7 +110,6 @@
     tab.addEventListener("click", () => {
       const content = screenContent[tab.dataset.screen];
       if (!content || !screenPreview) return;
-
       screenTabs.forEach((item) => item.classList.remove("active"));
       tab.classList.add("active");
       screenPreview.innerHTML =
@@ -141,7 +137,6 @@
       button.addEventListener("click", () => {
         const url = button.dataset.screenUrl;
         if (!url || !frame || !title || !external) return;
-
         title.textContent = button.dataset.screenTitle || "実画面";
         frame.src = url;
         external.href = url;
@@ -151,31 +146,25 @@
       });
     });
 
-    modal.querySelectorAll("[data-modal-close]").forEach((button) => {
-      button.addEventListener("click", closeModal);
-    });
+    modal
+      .querySelectorAll("[data-modal-close]")
+      .forEach((button) => button.addEventListener("click", closeModal));
 
     document.addEventListener("keydown", (event) => {
-      if (
-        event.key === "Escape" &&
-        modal.classList.contains("is-open")
-      ) {
+      if (event.key === "Escape" && modal.classList.contains("is-open")) {
         closeModal();
       }
     });
   }
 
-  const productCount = 37;
+  const productCount = 38;
 
   const setFirstText = (selector, value) => {
     const node = document.querySelector(selector);
     if (node) node.textContent = value;
   };
 
-  setFirstText(
-    ".phase-mini-proof span:first-child",
-    `${productCount}業種`
-  );
+  setFirstText(".phase-mini-proof span:first-child", `${productCount}業種`);
   setFirstText(
     ".phase-number-grid .phase-number:first-child strong",
     String(productCount)
@@ -255,6 +244,7 @@
 
   appendDescription("美容・健康", "パーソナルジム");
   appendDescription("美容・健康", "まつげ・眉サロン");
+  appendDescription("美容・健康", "化粧品店");
   appendDescription("飲食・小売", "焼肉店");
   appendDescription("飲食・小売", "フラワーショップ");
   appendDescription(
@@ -437,6 +427,16 @@
       "飲食・小売",
       "フラワーショップ",
       "LINE注文・電話/店頭注文・制作・完成写真・店頭受取・配達管理。"
+    ],
+    [
+      "systems/cosmetics.html",
+      "CM",
+      "catalog-live-cosmetics",
+      "化粧品店実画面プレビュー",
+      "https://dpromstk2000-lab.github.io/dpro-cosmetics-line-liff/owner.html?demo=1&v=COSMETICS-10",
+      "美容・健康",
+      "化粧品店",
+      "美容相談・商品取り置き・購入履歴・再購入・問合せ・販促管理。"
     ]
   ];
 
@@ -473,7 +473,8 @@
       "エステ・リラクゼーション",
       "整骨院・接骨院",
       "パーソナルジム",
-      "まつげ・眉サロン"
+      "まつげ・眉サロン",
+      "化粧品店"
     ],
     "医療・ペット": [
       "ペットサロン",
