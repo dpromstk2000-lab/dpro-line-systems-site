@@ -14,7 +14,7 @@
   .bakery-catalog-callout{display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:center;border-radius:32px;padding:clamp(24px,5vw,54px);background:linear-gradient(135deg,#fff7ed,#ffedd5);border:1px solid #fed7aa;overflow:hidden}
   .bakery-catalog-callout .catalog-copy h2{margin:10px 0 14px}
   .bakery-catalog-callout .catalog-copy ul{display:grid;gap:9px;padding-left:20px}
-  .bakery-catalog-callout .catalog-screen{min-height:420px;border-radius:24px;overflow:hidden;background:#fff;box-shadow:0 24px 70px rgba(120,53,15,.2)}
+  .bakery-catalog-callout .bakery-catalog-screen{height:470px;min-height:0;border-radius:24px;overflow:hidden;background:#fff;box-shadow:0 24px 70px rgba(120,53,15,.2)}
   .bakery-catalog-callout iframe{width:145%;height:610px;border:0;transform:scale(.69);transform-origin:0 0}
   .bakery-flow{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-top:24px}
   .bakery-flow article{position:relative;border-radius:22px;padding:20px;background:#fff;border:1px solid #fed7aa}
@@ -32,13 +32,13 @@
   @media(max-width:600px){
     .bakery-value-strip,.bakery-flow{grid-template-columns:1fr}
     .bakery-catalog-callout{padding:20px;border-radius:24px}
-    .bakery-catalog-callout .catalog-screen{min-height:330px}
+    .bakery-catalog-callout .bakery-catalog-screen{height:330px;min-height:0}
     .bakery-catalog-callout iframe{width:175%;height:500px;transform:scale(.57)}
   }
 </style>
 </head>
 <body>
-<!-- STEP BAKERY-SITE-1 / PHOTO CATALOG & LINE PREORDER / 20260720 -->
+<!-- STEP BAKERY-SITE-1-R2 / CATALOG EMBED HEIGHT FIX / 20260720 -->
 <header class="site-header" id="top">
 <div class="header-inner">
 <a class="brand" href="../index.html">
@@ -145,7 +145,7 @@
 </div>
 <div class="bakery-url-note"><small>店舗サイトやSNSにも掲載できる固定URL</small><code>https://dpromstk2000-lab.github.io/bakery-line-system/catalog.html?shop_code=bakery_demo&catalog_api=https%3A%2F%2Fdpro-bakery-catalog-api.dpromstk2000.workers.dev&api=https%3A%2F%2Fdpro-bakery-wallet-api.dpromstk2000.workers.dev&v=32</code></div>
 </div>
-<div class="catalog-screen">
+<div class="bakery-catalog-screen">
 <div class="live-browser-bar"><span></span><span></span><span></span><b>店舗公式パンカタログ</b></div>
 <iframe title="店舗公式パンカタログ実画面" loading="lazy" src="https://dpromstk2000-lab.github.io/bakery-line-system/catalog.html?shop_code=bakery_demo&amp;catalog_api=https%3A%2F%2Fdpro-bakery-catalog-api.dpromstk2000.workers.dev&amp;api=https%3A%2F%2Fdpro-bakery-wallet-api.dpromstk2000.workers.dev&amp;v=32"></iframe>
 </div>
