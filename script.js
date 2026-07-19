@@ -1,7 +1,7 @@
 (() => {
   "use strict";
 
-  // STEP EYE-WEB-1 / 35 PRODUCTS / PRESERVE ALL 34 PRODUCTS / 20260718
+  // STEP SHIHO-WEB-1 / 36 PRODUCTS / PRESERVE ALL 35 PRODUCTS / 20260719
 
   const menuButton = document.querySelector(".menu-button");
   const globalNav = document.querySelector(".global-nav");
@@ -136,7 +136,7 @@
     });
   }
 
-  const productCount = 35;
+  const productCount = 36;
   const setFirstText = (selector, value) => {
     const node = document.querySelector(selector);
     if (node) node.textContent = value;
@@ -191,6 +191,7 @@
   appendDescription("教育・生活サービス", "宿泊・民泊");
   appendDescription("士業・企業支援", "行政書士・許認可申請");
   appendDescription("士業・企業支援", "土地家屋調査士");
+  appendDescription("士業・企業支援", "司法書士・相続登記");
 
   const catalogGrid = document.querySelector(".catalog-grid");
 
@@ -230,7 +231,8 @@
     ["systems/yakiniku.html","YK","catalog-live-yakiniku","焼肉店 予約・順番受付実画面プレビュー","https://dpromstk2000-lab.github.io/dpro-yakiniku-line-liff/index.html?demo=1&v=YAKINIKU-7-R1","飲食・小売","焼肉店 予約・順番受付","日時予約・当日順番受付・呼び出し・テーブル回転・顧客・分析管理。"],
     ["systems/houkago-dayservice.html","HG","catalog-live-houkago","放課後等デイサービス実画面プレビュー","https://dpromstk2000-lab.github.io/dpro-houkago-dayservice-line/member.html?demo=1&v=houkago-11","教育・生活サービス","放課後等デイサービス","保護者連絡・利用予定・送迎・日常確認・5領域活動記録・支援計画期限。"],
     ["systems/stay.html","ST","catalog-live-stay","宿泊・民泊実画面プレビュー","https://dpromstk2000-lab.github.io/dpro-stay-line/member.html?demo=1&v=STAY-11","教育・生活サービス","宿泊・民泊","予約確認・到着時間・滞在案内・問い合わせ・清掃・客室・忘れ物管理。"],
-    ["systems/eye-salon.html","EY","catalog-live-eye","まつげ・眉サロン実画面プレビュー","https://dpromstk2000-lab.github.io/dpro-eye-salon-line/owner.html?demo=1&v=EYE-11","美容・健康","まつげ・眉サロン","LINE予約・まつげ/眉カルテ・施術写真・再来店・既存システム移行。"]
+    ["systems/eye-salon.html","EY","catalog-live-eye","まつげ・眉サロン実画面プレビュー","https://dpromstk2000-lab.github.io/dpro-eye-salon-line/owner.html?demo=1&v=EYE-11","美容・健康","まつげ・眉サロン","LINE予約・まつげ/眉カルテ・施術写真・再来店・既存システム移行。"],
+    ["systems/shiho.html","SH","catalog-live-gyosei","司法書士・相続登記実画面プレビュー","https://dpromstk2000-lab.github.io/dpro-shiho-inheritance-line-liff/owner.html?demo=1&v=SHIHO-11","士業・企業支援","司法書士・相続登記","相続相談・必要書類・相続人・不動産・申請・補正・期限・LINE連携管理。"]
   ];
 
   products.forEach(([href,code,previewClass,previewTitle,previewUrl,category,title,description]) => {
@@ -258,7 +260,7 @@
     ],
     "士業・企業支援": [
       "社労士・顧問先対応", "税理士・会計事務所", "行政書士・許認可申請",
-      "土地家屋調査士"
+      "土地家屋調査士", "司法書士・相続登記"
     ]
   };
 
