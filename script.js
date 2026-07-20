@@ -1,7 +1,7 @@
 (() => {
   "use strict";
 
-  // STEP COSMETICS-WEB-1 / 38 PRODUCTS / PRESERVE ALL 37 PRODUCTS / 20260719
+  // STEP HOMECARE-WEB-1 / 39 PRODUCTS / PRESERVE ALL 38 PRODUCTS / 20260720
 
   const menuButton = document.querySelector(".menu-button");
   const globalNav = document.querySelector(".global-nav");
@@ -157,7 +157,7 @@
     });
   }
 
-  const productCount = 38;
+  const productCount = 39;
 
   const setFirstText = (selector, value) => {
     const node = document.querySelector(selector);
@@ -260,6 +260,7 @@
     "放課後等デイサービス"
   );
   appendDescription("教育・生活サービス", "宿泊・民泊");
+  appendDescription("教育・生活サービス", "訪問介護・家族連絡");
   appendDescription(
     "士業・企業支援",
     "行政書士・許認可申請"
@@ -437,7 +438,17 @@
       "美容・健康",
       "化粧品店",
       "美容相談・商品取り置き・購入履歴・再購入・問合せ・販促管理。"
-    ]
+    ],
+    [
+    "systems/homecare.html",
+    "HC",
+    "catalog-live-homecare",
+    "訪問介護・家族連絡実画面プレビュー",
+    "https://dpromstk2000-lab.github.io/dpro-homecare-family-line/owner.html?demo=1&v=HOMECARE-10",
+    "教育・生活サービス",
+    "訪問介護・家族連絡",
+    "訪問予定・スタッフ記録・家族報告・申し送り・事故・問い合わせ管理。"
+  ]
   ];
 
   products.forEach(
@@ -503,6 +514,7 @@
       "修理受付",
       "クリーニング",
       "デイサービス",
+      "訪問介護・家族連絡",
       "葬儀・法要サポート",
       "写真館・フォトスタジオ",
       "ハウスクリーニング・家事代行",
