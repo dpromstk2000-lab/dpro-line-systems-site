@@ -157,7 +157,7 @@
     });
   }
 
-  const productCount = 40;
+  const productCount = 41;
 
   const setFirstText = (selector, value) => {
     const node = document.querySelector(selector);
@@ -526,13 +526,13 @@
       "修理受付",
       "クリーニング",
       "デイサービス",
-      "就労継続支援B型",
       "訪問介護・家族連絡",
       "葬儀・法要サポート",
       "写真館・フォトスタジオ",
       "ハウスクリーニング・家事代行",
       "不用品回収・遺品整理",
       "放課後等デイサービス",
+      "就労継続支援B型",
       "宿泊・民泊",
       "福祉用具レンタル・販売"
     ],
