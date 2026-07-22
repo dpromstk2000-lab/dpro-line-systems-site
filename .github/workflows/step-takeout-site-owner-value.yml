@@ -1,0 +1,112 @@
+name: STEP TAKEOUT Site Owner Value
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/step-takeout-site-owner-value.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: step-takeout-site-owner-value
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Confirm repository
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$GITHUB_REPOSITORY" = "dpromstk2000-lab/dpro-line-systems-site"
+
+      - name: Replace internal check with owner value
+        shell: bash
+        env:
+          OLD_CARD_B64: "PGFydGljbGUgY2xhc3M9ImZlYXR1cmUtc2hvd2Nhc2UtY2FyZCByZXZlYWwiPgo8ZGl2IGNsYXNzPSJmZWF0dXJlLXNob3djYXNlLWNvcHkiPjxzcGFuPjAzIC8gQ09NUExFVElPTiBHQVRFPC9zcGFuPjxoMz7mnIDntYLjgrfjgrnjg4bjg6Djg4Hjgqfjg4Pjgq88L2gzPjxwPkFQSeODu1N1cGFiYXNl44O75YWoOOeUu+mdouODu+WWtualreODh+ODouOCkuS4gOaLrOaknOafu+OBl+OAgeWujOaIkOeKtuaFi+OCkuWIpOWumuOBl+OBvuOBmeOAgjwvcD48dWw+PGxpPkFQSeiHquWLleaknOafuyA46aCF55uuPC9saT48bGk+5YWs6ZaL55S76Z2i5qSc5p+7IDjnlLvpnaI8L2xpPjxsaT7llrbmpa3jg4fjg6Lmupblgpnjg7vliJ3mnJ/ljJY8L2xpPjwvdWw+PC9kaXY+CjxkaXYgY2xhc3M9ImZlYXR1cmUtc2hvd2Nhc2Utc2NyZWVuIGRlc2t0b3AiPjxpZnJhbWUgdGl0bGU9IuacgOe1guOCt+OCueODhuODoOODgeOCp+ODg+OCr+eUu+mdoiIgbG9hZGluZz0ibGF6eSIgc3JjPSJodHRwczovL2Rwcm9tc3RrMjAwMC1sYWIuZ2l0aHViLmlvL2Rwcm8tdGFrZW91dC1saW5lLWxpZmYvc3lzdGVtLWNoZWNrLmh0bWw/cHJldmlldz0xJmFtcDt2PXRha2VvdXQtc2l0ZS0xOCI+PC9pZnJhbWU+PC9kaXY+CjwvYXJ0aWNsZT4="
+          NEW_CARD_B64: "PGFydGljbGUgY2xhc3M9ImZlYXR1cmUtc2hvd2Nhc2UtY2FyZCByZXZlYWwiPgo8ZGl2IGNsYXNzPSJmZWF0dXJlLXNob3djYXNlLWNvcHkiPjxzcGFuPjAzIC8gTVkgUEFHRSAmYW1wOyBSRVBFQVQgT1JERVI8L3NwYW4+PGgzPuODnuOCpOODmuODvOOCuOODu+WGjeazqOaWhzwvaDM+PHA+5rOo5paH54q25rOB44Gu56K66KqN44CB5Y+X5Y+W5pel5pmC44Gu5aSJ5pu044CB44Kt44Oj44Oz44K744Or44CB5YmN5Zue44Go5ZCM44GY5YaF5a6544Gn44Gu5YaN5rOo5paH44G+44Gn44CB44GK5a6i5qeY6Ieq6Lqr44GMTElOReOBi+OCieaTjeS9nOOBp+OBjeOBvuOBmeOAgjwvcD48dWw+PGxpPuazqOaWh+eKtuazgeODu+iqv+eQhumAsuaNlzwvbGk+PGxpPuWPl+WPluaXpeaZguWkieabtOODu+OCreODo+ODs+OCu+ODqzwvbGk+PGxpPuWJjeWbnuOBqOWQjOOBmOWGheWuueOBp+WGjeazqOaWhzwvbGk+PC91bD48L2Rpdj4KPGRpdiBjbGFzcz0iZmVhdHVyZS1zaG93Y2FzZS1zY3JlZW4gZGVza3RvcCI+PGlmcmFtZSB0aXRsZT0i44Oe44Kk44Oa44O844K444O75YaN5rOo5paH55S76Z2iIiBsb2FkaW5nPSJsYXp5IiBzcmM9Imh0dHBzOi8vZHByb21zdGsyMDAwLWxhYi5naXRodWIuaW8vZHByby10YWtlb3V0LWxpbmUtbGlmZi9tZW1iZXIuaHRtbD9wcmV2aWV3PTEmYW1wO3Y9dGFrZW91dC1zaXRlLW93bmVyLXZhbHVlIj48L2lmcmFtZT48L2Rpdj4KPC9hcnRpY2xlPg=="
+          OLD_PROOF_B64: "PGRpdiBjbGFzcz0icHJvb2YtYWN0aW9ucyI+PGEgY2xhc3M9InRleHQtbGluayIgaHJlZj0iaHR0cHM6Ly9kcHJvbXN0azIwMDAtbGFiLmdpdGh1Yi5pby9kcHJvLXRha2VvdXQtbGluZS1saWZmL2luZGV4Lmh0bWw/cHJldmlldz0xJmFtcDt2PXRha2VvdXQtc2l0ZS0xOCIgdGFyZ2V0PSJfYmxhbmsiIHJlbD0ibm9vcGVuZXIiPuODouODkOOCpOODq+OCquODvOODgOODvOOCkuS9k+mok+OBmeOCiyDihpI8L2E+PGEgY2xhc3M9InRleHQtbGluayIgaHJlZj0iaHR0cHM6Ly9kcHJvbXN0azIwMDAtbGFiLmdpdGh1Yi5pby9kcHJvLXRha2VvdXQtbGluZS1saWZmL3N5c3RlbS1jaGVjay5odG1sP3ByZXZpZXc9MSZhbXA7dj10YWtlb3V0LXNpdGUtMTgiIHRhcmdldD0iX2JsYW5rIiByZWw9Im5vb3BlbmVyIj7lrozmiJDmpJzmn7vjgpLopovjgosg4oaSPC9hPjwvZGl2Pg=="
+          NEW_PROOF_B64: "PGRpdiBjbGFzcz0icHJvb2YtYWN0aW9ucyI+PGEgY2xhc3M9InRleHQtbGluayIgaHJlZj0iaHR0cHM6Ly9kcHJvbXN0azIwMDAtbGFiLmdpdGh1Yi5pby9kcHJvLXRha2VvdXQtbGluZS1saWZmL2luZGV4Lmh0bWw/cHJldmlldz0xJmFtcDt2PXRha2VvdXQtc2l0ZS1vd25lci12YWx1ZSIgdGFyZ2V0PSJfYmxhbmsiIHJlbD0ibm9vcGVuZXIiPuODouODkOOCpOODq+OCquODvOODgOODvOOCkuS9k+mok+OBmeOCiyDihpI8L2E+PGEgY2xhc3M9InRleHQtbGluayIgaHJlZj0iaHR0cHM6Ly9kcHJvbXN0azIwMDAtbGFiLmdpdGh1Yi5pby9kcHJvLXRha2VvdXQtbGluZS1saWZmL21lbWJlci5odG1sP3ByZXZpZXc9MSZhbXA7dj10YWtlb3V0LXNpdGUtb3duZXItdmFsdWUiIHRhcmdldD0iX2JsYW5rIiByZWw9Im5vb3BlbmVyIj7jg57jgqTjg5rjg7zjgrjjg7vlho3ms6jmlofjgpLopovjgosg4oaSPC9hPjwvZGl2Pg=="
+        run: |
+          set -euo pipefail
+          python3 - <<'PY2'
+          from pathlib import Path
+          import base64, os
+          path=Path('systems/takeout.html')
+          text=path.read_text(encoding='utf-8')
+          old_card=base64.b64decode(os.environ['OLD_CARD_B64']).decode('utf-8')
+          new_card=base64.b64decode(os.environ['NEW_CARD_B64']).decode('utf-8')
+          old_proof=base64.b64decode(os.environ['OLD_PROOF_B64']).decode('utf-8')
+          new_proof=base64.b64decode(os.environ['NEW_PROOF_B64']).decode('utf-8')
+          if new_card not in text:
+              if old_card not in text:
+                  raise SystemExit('差し替え対象が見つからないため安全停止しました。')
+              text=text.replace(old_card,new_card,1)
+          if new_proof not in text:
+              if old_proof not in text:
+                  raise SystemExit('下部リンクの差し替え対象が見つからないため安全停止しました。')
+              text=text.replace(old_proof,new_proof,1)
+          path.write_text(text,encoding='utf-8',newline='\n')
+          PY2
+
+      - name: Validate public product page
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -s systems/takeout.html
+          grep -Fq "03 / MY PAGE &amp; REPEAT ORDER" systems/takeout.html
+          grep -Fq "マイページ・再注文" systems/takeout.html
+          grep -Fq "受取日時変更・キャンセル" systems/takeout.html
+          grep -Fq "member.html?preview=1&amp;v=takeout-site-owner-value" systems/takeout.html
+          ! grep -Fq "system-check.html" systems/takeout.html
+          ! grep -Fq "最終システムチェック" systems/takeout.html
+          python3 - <<'PY2'
+          from html.parser import HTMLParser
+          from pathlib import Path
+          import sys
+          class Checker(HTMLParser):
+              def __init__(self): super().__init__(); self.ids=[]
+              def handle_starttag(self,tag,attrs):
+                  self.ids += [v for k,v in attrs if k=='id' and v]
+          text=Path('systems/takeout.html').read_text(encoding='utf-8')
+          p=Checker(); p.feed(text)
+          dup=sorted({x for x in p.ids if p.ids.count(x)>1})
+          if dup or not text.lower().rstrip().endswith('</html>'):
+              print('HTML validation failed',dup); sys.exit(1)
+          print('公開ページ検査OK')
+          PY2
+
+      - name: Commit and push
+        shell: bash
+        run: |
+          set -euo pipefail
+          if git diff --quiet -- systems/takeout.html; then
+            echo "すでに最新版です。"
+            exit 0
+          fi
+          git config user.name "DPRO GitHub Actions"
+          git config user.email "actions@users.noreply.github.com"
+          git add systems/takeout.html
+          git commit -m "Replace takeout system check with member reorder showcase"
+          git push origin HEAD:main
+
+      - name: Summary
+        shell: bash
+        run: |
+          {
+            echo "## DPRO Takeout owner-facing page updated"
+            echo "- Removed: 最終システムチェック"
+            echo "- Added: マイページ・再注文"
+            echo "- Internal system-check.html remains in the takeout system repository"
+            echo "- Product page: https://dpromstk2000-lab.github.io/dpro-line-systems-site/systems/takeout.html?v=takeout-owner-value"
+          } >> "$GITHUB_STEP_SUMMARY"
