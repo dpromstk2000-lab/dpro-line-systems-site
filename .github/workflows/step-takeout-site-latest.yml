@@ -1,0 +1,191 @@
+name: STEP TAKEOUT Site Latest
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/step-takeout-site-latest.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: step-takeout-site-latest
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Confirm repository
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$GITHUB_REPOSITORY" = "dpromstk2000-lab/dpro-line-systems-site"
+
+      - name: Write latest takeout product page
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat <<'DPRO_TAKEOUT_SITE_GZIP_BASE64' | tr -d '\n\r ' | base64 --decode | gzip -d > systems/takeout.html
+          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
+          2yObDtlNjyGyu15/4bdqaWjvVH5o7jylNCgYEPkga/PdO+75gonYel5+EPF28eYCnilaX6M2a5nviV4vkBNg4z7nEsvP7vpa
+          U1sj3/tpehI21Y7hC8YqcQjvxkdc31ylUf7yyJfPRPjYoTu0gUI9upPsewZU6B7UPxQiuM5k88+elOzGx2LqQvRrHTV13amU
+          4fkWDb0l/JD7YzMKfRr8TL48Ixbx4lgq/94RfgMiS6xoI/942Z68zr9bUTpph186OfCXRg748RZR/ghUmX2qJV0ysfSATrQ3
+          /K+7Cp0ERMYBjQTKqNTI543ImouFHeiEo654YrFq9GzQANUGnueOsoZ/G7kihSjlMJErNIttu++Qj/n0xmMxLQn+Su/HPY0V
+          Xg9i+zEdGydBWnozmkhlOG2r+GYsriZSPSDJFHJSfkXaJgVY09KnhRJarGvAUwuhtFX6xz7pxHW6bLS8AunjP1zHmd2VvQEO
+          XNOTKCj2eZAPjLPymfSJjUtidH1aqTg3BvwKNCsQ/p95MbmyY+ZUv6zX5HZALAFIHJsdi5JMiJF/L/cWX9whn0SjawE0RXJ5
+          7OcM0VtygbrKvtIVot9x+z/jrFCL2E0AAA==
+          DPRO_TAKEOUT_SITE_GZIP_BASE64
+
+      - name: Update takeout catalog card
+        shell: bash
+        env:
+          OLD_CARD_B64: "PGEgY2xhc3M9ImNhdGFsb2ctY2FyZCByZXZlYWwgaXMtbGl2ZSIgaHJlZj0ic3lzdGVtcy90YWtlb3V0Lmh0bWwiPgogIDxkaXYgY2xhc3M9ImNhdGFsb2ctY2FyZC10b3AiPgogICAgPHNwYW4gY2xhc3M9ImNhdGFsb2ctY29kZSI+VE88L3NwYW4+CiAgICA8c3BhbiBjbGFzcz0iY2F0YWxvZy1zdGF0dXMiPuWFrOmWi+S4rTwvc3Bhbj4KICA8L2Rpdj4KICA8ZGl2IGNsYXNzPSJjYXRhbG9nLXZpc3VhbCBjYXRhbG9nLWxpdmUtdmlzdWFsIGNhdGFsb2ctbGl2ZS10YWtlb3V0Ij4KICAgIDxpZnJhbWUgdGl0bGU9IuODhuOCpOOCr+OCouOCpuODiOWun+eUu+mdouODl+ODrOODk+ODpeODvCIgbG9hZGluZz0ibGF6eSIgc3JjPSJodHRwczovL2Rwcm9tc3RrMjAwMC1sYWIuZ2l0aHViLmlvL2Rwcm8tdGFrZW91dC1saW5lLWxpZmYvb3duZXItaXBhZC5odG1sP2VtYmVkX2RlbW89MSZ2PXRha2VvdXQtMTAtcjEiPjwvaWZyYW1lPgogICAgPHNwYW4gY2xhc3M9ImNhdGFsb2ctbGl2ZS1iYWRnZSI+5a6f55S76Z2i44GC44KKPC9zcGFuPgogIDwvZGl2PgogIDxkaXYgY2xhc3M9ImNhdGFsb2ctY2FyZC1jb3B5Ij4KICAgIDxzbWFsbD7po7Lpo5/jg7vlsI/lo7I8L3NtYWxsPgogICAgPGgzPuODhuOCpOOCr+OCouOCpuODiDwvaDM+CiAgICA8cD5MSU5F5rOo5paH44O75Y6o5oi/44O744Os44K444O75ZWG5ZOB44O75Y+X5Y+W5p6g566h55CG44CCPC9wPgogICAgPGIgY2xhc3M9ImNhdGFsb2ctY2FyZC1jdGEiPuS7iuOBmeOBkOijveWTgeODmuODvOOCuOOCkuimi+OCiyDihpI8L2I+CiAgPC9kaXY+CjwvYT4="
+          NEW_CARD_B64: "PGEgY2xhc3M9ImNhdGFsb2ctY2FyZCByZXZlYWwgaXMtbGl2ZSIgaHJlZj0ic3lzdGVtcy90YWtlb3V0Lmh0bWwiPgogIDxkaXYgY2xhc3M9ImNhdGFsb2ctY2FyZC10b3AiPgogICAgPHNwYW4gY2xhc3M9ImNhdGFsb2ctY29kZSI+VE88L3NwYW4+CiAgICA8c3BhbiBjbGFzcz0iY2F0YWxvZy1zdGF0dXMiPkRQUk8gTkVYVOWujOaIkOeJiDwvc3Bhbj4KICA8L2Rpdj4KICA8ZGl2IGNsYXNzPSJjYXRhbG9nLXZpc3VhbCBjYXRhbG9nLWxpdmUtdmlzdWFsIGNhdGFsb2ctbGl2ZS10YWtlb3V0Ij4KICAgIDxpZnJhbWUgdGl0bGU9IuODhuOCpOOCr+OCouOCpuODiOODu+ODouODkOOCpOODq+OCquODvOODgOODvOWun+eUu+mdouODl+ODrOODk+ODpeODvCIgbG9hZGluZz0ibGF6eSIgc3JjPSJodHRwczovL2Rwcm9tc3RrMjAwMC1sYWIuZ2l0aHViLmlvL2Rwcm8tdGFrZW91dC1saW5lLWxpZmYvaW5kZXguaHRtbD9wcmV2aWV3PTEmYW1wO3Y9dGFrZW91dC1zaXRlLTE4Ij48L2lmcmFtZT4KICAgIDxzcGFuIGNsYXNzPSJjYXRhbG9nLWxpdmUtYmFkZ2UiPlNURVAgVEFLRU9VVC0xOOWujOaIkDwvc3Bhbj4KICA8L2Rpdj4KICA8ZGl2IGNsYXNzPSJjYXRhbG9nLWNhcmQtY29weSI+CiAgICA8c21hbGw+6aOy6aOf44O75bCP5aOyPC9zbWFsbD4KICAgIDxoMz7jg4bjgqTjgq/jgqLjgqbjg4jjg7vjg6Ljg5DjgqTjg6vjgqrjg7zjg4Djg7w8L2gzPgogICAgPHA+5YaZ55yf5LuY44GN5rOo5paH44O7TElORe+8j+mbu+ipse+8j+W6l+mgreWPl+S7mOODu+WOqOaIvzTliJfjg5zjg7zjg4njg7vjg57jgqTjg5rjg7zjgrjlho3ms6jmlofjgII8L3A+CiAgICA8YiBjbGFzcz0iY2F0YWxvZy1jYXJkLWN0YSI+RFBSTyBORVhU5a6M5oiQ54mI44KS6KaL44KLIOKGkjwvYj4KICA8L2Rpdj4KPC9hPg=="
+        run: |
+          set -euo pipefail
+          python3 - <<'PY2'
+          from pathlib import Path
+          import base64
+          path = Path('systems.html')
+          text = path.read_text(encoding='utf-8')
+          old = base64.b64decode(__import__('os').environ['OLD_CARD_B64']).decode('utf-8')
+          new = base64.b64decode(__import__('os').environ['NEW_CARD_B64']).decode('utf-8')
+          if new in text:
+              print('Catalog card already updated.')
+          elif old in text:
+              path.write_text(text.replace(old, new, 1), encoding='utf-8', newline='\n')
+              print('Catalog card updated.')
+          else:
+              raise SystemExit('Existing takeout catalog card was not found; stopped safely.')
+          PY2
+
+      - name: Validate updated site
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -s systems/takeout.html
+          test -s systems.html
+          grep -Fq "DPRO-SITE-TAKEOUT-NEXT-20260722" systems/takeout.html
+          grep -Fq "DPRO テイクアウト・モバイルオーダー LINE" systems/takeout.html
+          grep -Fq "STEP TAKEOUT-18 完成版" systems/takeout.html
+          grep -Fq "TAKEOUT-17" systems/takeout.html || true
+          grep -Fq "DPRO NEXT完成版" systems.html
+          grep -Fq "STEP TAKEOUT-18完成" systems.html
+          grep -Fq "index.html?preview=1&amp;v=takeout-site-18" systems.html
+          python3 - <<'PY2'
+          from html.parser import HTMLParser
+          from pathlib import Path
+          import sys
+          class Checker(HTMLParser):
+              def __init__(self):
+                  super().__init__()
+                  self.ids=[]
+              def handle_starttag(self, tag, attrs):
+                  for k,v in attrs:
+                      if k=='id' and v:
+                          self.ids.append(v)
+          for filename in ['systems/takeout.html','systems.html']:
+              text=Path(filename).read_text(encoding='utf-8')
+              p=Checker(); p.feed(text)
+              dup=sorted({x for x in p.ids if p.ids.count(x)>1})
+              if dup:
+                  print(filename,'duplicate ids',dup)
+                  sys.exit(1)
+              if not text.lower().rstrip().endswith('</html>'):
+                  print(filename,'missing html close')
+                  sys.exit(1)
+          print('HTML validation OK')
+          PY2
+
+      - name: Commit and push
+        shell: bash
+        run: |
+          set -euo pipefail
+          if git diff --quiet -- systems/takeout.html systems.html; then
+            echo "Already up to date."
+            exit 0
+          fi
+          git config user.name "DPRO GitHub Actions"
+          git config user.email "actions@users.noreply.github.com"
+          git add systems/takeout.html systems.html
+          git commit -m "Update takeout product site to DPRO NEXT completed version"
+          git push origin HEAD:main
+
+      - name: Summary
+        shell: bash
+        run: |
+          {
+            echo "## DPRO Takeout product site updated"
+            echo "- Product name: DPRO テイクアウト・モバイルオーダー LINE"
+            echo "- Product page: STEP TAKEOUT-18 completed version"
+            echo "- Catalog card: DPRO NEXT completed version"
+            echo "- URL: https://dpromstk2000-lab.github.io/dpro-line-systems-site/systems/takeout.html?v=takeout-next-18"
+          } >> "$GITHUB_STEP_SUMMARY"
