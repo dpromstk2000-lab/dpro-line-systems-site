@@ -4,7 +4,7 @@ document:
   step: "STEP KSH-NEXT-10B-SITE"
   title: "DPRO製品サイト更新・公開候補"
   generated_at_utc: "2026-07-23T05:35:05.505666+00:00"
-  status: "candidate_pending_public_check"
+  status: "completed_public_check_passed"
 targets:
   - "systems/car-service.html"
   - "systems.html"
@@ -36,3 +36,16 @@ safety:
 next_action:
   id: "KSH-NEXT-10B-FINAL-SYNC"
   title: "整備工場リポジトリへ最終完成記録を同期"
+
+public_verification:
+  product_page_http_200: true
+  catalog_http_200: true
+  product_marker_verified: true
+  catalog_marker_verified: true
+  source_demo_urls_http_200: true
+  operation_sheet_pdf_http_200: true
+  operation_sheet_content_type_pdf: true
+  verified_at_utc: "2026-07-23T05:35:48.600879+00:00"
+completion:
+  product_site_publication: "completed"
+  final_source_repository_sync: "pending"
