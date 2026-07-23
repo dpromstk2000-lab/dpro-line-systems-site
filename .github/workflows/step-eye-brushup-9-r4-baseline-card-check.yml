@@ -1,0 +1,384 @@
+name: STEP EYE-BRUSHUP-9 R4 Baseline Card Check
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/step-eye-brushup-9-r4-baseline-card-check.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: step-eye-brushup-9-r4-baseline-card-check
+  cancel-in-progress: false
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout product site
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Save pre-change commit
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "BEFORE_SHA=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
+
+      - name: Complete partial product-site update
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          python3 <<'PY'
+          from pathlib import Path
+          import re
+
+          index_path = Path("index.html")
+          systems_path = Path("systems.html")
+          product_path = Path("systems/eye-salon.html")
+
+          for path in [index_path,systems_path,product_path]:
+              if not path.exists():
+                  raise SystemExit(f"{path} が見つかりません。")
+
+          index_text = index_path.read_text(encoding="utf-8")
+          systems_text = systems_path.read_text(encoding="utf-8")
+          product_text = product_path.read_text(encoding="utf-8")
+
+          def replace_state(text, old, new, label):
+              old_count = text.count(old)
+              new_count = text.count(new)
+
+              if old_count == 1:
+                  return text.replace(old,new,1)
+
+              if old_count == 0 and new_count >= 1:
+                  print(f"{label}：更新済み")
+                  return text
+
+              raise SystemExit(
+                  f"{label} の状態が想定外です。"
+                  f" old={old_count} / new={new_count}"
+              )
+
+          index_rules = [
+              (
+                  "DPRO LINE SYSTEMS。37業種の完成済みLINEシステムを",
+                  "DPRO LINE SYSTEMS。38業種の完成済みLINEシステムを",
+                  "トップ説明文",
+              ),
+              (
+                  "37 PRODUCTS / 7 CATEGORIES",
+                  "38 PRODUCTS / 7 CATEGORIES",
+                  "トップ管理コメント",
+              ),
+              (
+                  "<span>37業種</span>",
+                  "<span>38業種</span>",
+                  "トップ業種数",
+              ),
+              (
+                  "<strong>37</strong><span>完成済みシステム</span>",
+                  "<strong>38</strong><span>完成済みシステム</span>",
+                  "トップ完成数",
+              ),
+              (
+                  "美容室、美容サロン、ネイル、エステ、ヨガ、整骨院",
+                  "美容室、美容サロン、まつげ・眉サロン、ネイル、エステ、ヨガ、整骨院",
+                  "美容・健康カテゴリ説明",
+              ),
+              (
+                  ">37システムをすべて見る<",
+                  ">38システムをすべて見る<",
+                  "全システム導線",
+              ),
+          ]
+
+          for old,new,label in index_rules:
+              index_text = replace_state(index_text,old,new,label)
+
+          systems_rules = [
+              (
+                  "37 PRODUCTS / 7 CATEGORIES",
+                  "38 PRODUCTS / 7 CATEGORIES",
+                  "一覧管理コメント",
+              ),
+              (
+                  "37業種の完成システムを",
+                  "38業種の完成システムを",
+                  "一覧説明文",
+              ),
+              (
+                  '<div class="orbit-core">37</div>',
+                  '<div class="orbit-core">38</div>',
+                  "一覧オービット数",
+              ),
+              (
+                  "<strong>37</strong><span>完成済みシステム</span>",
+                  "<strong>38</strong><span>完成済みシステム</span>",
+                  "一覧完成数",
+              ),
+          ]
+
+          for old,new,label in systems_rules:
+              systems_text = replace_state(systems_text,old,new,label)
+
+          eye_card_marker = 'href="systems/eye-salon.html"'
+          initial_card_matches = re.findall(
+              r'<a\s+class="catalog-card\b[^"]*"\s+href="systems/[^"]+\.html"',
+              systems_text,
+          )
+          initial_card_count = len(initial_card_matches)
+          eye_card_existed = eye_card_marker in systems_text
+          Path("/tmp/eye-brushup-9-card-baseline.txt").write_text(
+              f"{initial_card_count}\n{1 if eye_card_existed else 0}\n",
+              encoding="utf-8",
+          )
+          print(
+              f"変更前カード本体数：{initial_card_count}件 / "
+              f"EYE登録済み：{eye_card_existed}"
+          )
+
+          if not eye_card_existed:
+              nail_anchor = '<a class="catalog-card reveal is-live" href="systems/nail.html">'
+              if systems_text.count(nail_anchor) != 1:
+                  raise SystemExit("ネイルカードの直前へ安全に追加できません。")
+              systems_text = systems_text.replace(
+                  nail_anchor,
+                  '\n<a class="catalog-card reveal is-live" href="systems/eye-salon.html">\n  <div class="catalog-card-top">\n    <span class="catalog-code">EY</span>\n    <span class="catalog-status">予約・写真カルテ・再来店</span>\n  </div>\n  <div class="catalog-visual catalog-live-visual">\n    <iframe title="まつげ・眉サロン実画面プレビュー" loading="lazy"\n      style="width:145%;height:145%;transform:scale(.69);transform-origin:0 0"\n      src="https://dpromstk2000-lab.github.io/dpro-eye-salon-line/index.html?demo=1&amp;v=EYE-18-R3"></iframe>\n    <span class="catalog-live-badge">営業前検査合格済み</span>\n  </div>\n  <div class="catalog-card-copy">\n    <small>美容・健康</small>\n    <h3>まつげ・眉サロン</h3>\n    <p>前回と同じ内容で予約・写真カルテ・次回来店目安・再来店フォロー。</p>\n    <b class="catalog-card-cta">完成版の製品ページを見る →</b>\n  </div>\n</a>\n' + "\n" + nail_anchor,
+                  1,
+              )
+          else:
+              print("まつげ・眉サロン一覧カード：追加済み")
+
+          product_text = product_text.replace(
+              "v=EYE-11",
+              "v=EYE-18-R3"
+          )
+
+          product_text = replace_state(
+              product_text,
+              "<h3>LINE予約・会員ページ</h3><p>メニュー、担当、日時を選択。次回予約、変更、キャンセル、来店履歴を確認できます。</p>",
+              "<h3>LINE予約・前回と同じ内容</h3><p>メニュー、担当、日時を選択。前回内容の引継ぎ、次回予約、変更、キャンセル申請、来店履歴を確認できます。</p>",
+              "製品ページ予約機能説明",
+          )
+
+          product_text = replace_state(
+              product_text,
+              "<h3>店舗設定・再来店</h3><p>スタッフ、勤務、メニュー、料金、施術席と、再来店対象・LINE文面を管理します。</p>",
+              "<h3>店舗設定・再来店フォロー</h3><p>設定ミス・未保存を防ぎ、次回予約済みを除外して再来店対象と施術別文面を管理します。</p>",
+              "製品ページ設定・再来店説明",
+          )
+
+          product_text = replace_state(
+              product_text,
+              '<div class="proof-actions"><a class="text-link" href="https://dpromstk2000-lab.github.io/dpro-eye-salon-line/index.html?demo=1&amp;v=EYE-18-R3" target="_blank" rel="noopener">LINE予約を体験する →</a><a class="text-link" href="https://dpromstk2000-lab.github.io/dpro-eye-salon-line/release-check.html?demo=1&amp;v=EYE-18-R3" target="_blank" rel="noopener">営業前最終検査を見る →</a></div>',
+              '<div class="proof-actions"><a class="text-link" href="https://dpromstk2000-lab.github.io/dpro-eye-salon-line/index.html?demo=1&amp;v=EYE-18-R3" target="_blank" rel="noopener">LINE予約を体験する →</a><a class="text-link" href="https://dpromstk2000-lab.github.io/dpro-eye-salon-line/settings.html?demo=1&amp;v=EYE-18-R3" target="_blank" rel="noopener">店舗設定を見る →</a><a class="text-link" href="https://dpromstk2000-lab.github.io/dpro-eye-salon-line/release-check.html?demo=1&amp;v=EYE-18-R3" target="_blank" rel="noopener">営業前最終検査を見る →</a></div>',
+              "製品ページ営業デモ導線",
+          )
+
+          index_path.write_text(index_text,encoding="utf-8")
+          systems_path.write_text(systems_text,encoding="utf-8")
+          product_path.write_text(product_text,encoding="utf-8")
+
+          index_final = index_path.read_text(encoding="utf-8")
+          systems_final = systems_path.read_text(encoding="utf-8")
+          product_final = product_path.read_text(encoding="utf-8")
+
+          if "37業種" in index_final or ">37システム" in index_final:
+              raise SystemExit("index.htmlに旧37件表記が残っています。")
+
+          if "37業種" in systems_final:
+              raise SystemExit("systems.htmlに旧37件表記が残っています。")
+
+          card_matches = re.findall(
+              r'<a\s+class="catalog-card\b[^"]*"\s+href="systems/[^"]+\.html"',
+              systems_final,
+          )
+          card_count = len(card_matches)
+          expected_card_count = (
+              initial_card_count
+              if eye_card_existed
+              else initial_card_count + 1
+          )
+          if card_count != expected_card_count:
+              raise SystemExit(
+                  "EYE追加後のカード本体数が想定と異なります。"
+                  f" expected={expected_card_count} / actual={card_count}"
+              )
+          print(
+              f"製品カード本体数：{card_count}件 "
+              f"（変更前{initial_card_count}件）"
+          )
+
+          if systems_final.count(eye_card_marker) != 1:
+              raise SystemExit("EYE SALON一覧カードが重複または不足しています。")
+
+          required_product = [
+              "DPRO まつげ・眉サロン LINE",
+              "前回と同じ内容",
+              "写真",
+              "再来店フォロー",
+              "settings.html?demo=1",
+              "release-check.html?demo=1",
+              "<strong>1234</strong>",
+          ]
+
+          missing = [
+              marker for marker in required_product
+              if marker not in product_final
+          ]
+          if missing:
+              raise SystemExit(
+                  "製品ページの必須内容が不足しています: "
+                  + ", ".join(missing)
+              )
+
+          if "v=EYE-11" in product_final:
+              raise SystemExit("製品ページに旧キャッシュバージョンが残っています。")
+          PY
+
+      - name: Validate completed product site
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          test -f index.html
+          test -f systems.html
+          test -f systems/eye-salon.html
+          test -f script.js
+
+          grep -q '38業種' index.html
+          grep -q '38システムをすべて見る' index.html
+          grep -q 'まつげ・眉サロン' index.html
+
+          grep -q '38業種の完成システム' systems.html
+          grep -q '<div class="orbit-core">38</div>' systems.html
+          grep -q 'href="systems/eye-salon.html"' systems.html
+          grep -q '営業前検査合格済み' systems.html
+
+          grep -q 'DPRO まつげ・眉サロン LINE' systems/eye-salon.html
+          grep -q 'LINE予約・前回と同じ内容' systems/eye-salon.html
+          grep -q '店舗設定・再来店フォロー' systems/eye-salon.html
+          grep -q 'settings.html?demo=1' systems/eye-salon.html
+          grep -q 'release-check.html?demo=1' systems/eye-salon.html
+          grep -q '<strong>1234</strong>' systems/eye-salon.html
+
+          ! grep -q 'v=EYE-11' systems/eye-salon.html
+
+          python3 <<'PY'
+          from html.parser import HTMLParser
+          from pathlib import Path
+          import re
+          import subprocess
+
+          pages = [
+              "index.html",
+              "systems.html",
+              "systems/eye-salon.html",
+          ]
+
+          class Parser(HTMLParser):
+              pass
+
+          for page in pages:
+              text = Path(page).read_text(encoding="utf-8")
+              parser = Parser()
+              parser.feed(text)
+              parser.close()
+
+              scripts = re.findall(
+                  r"<script(?:\s[^>]*)?>(.*?)</script>",
+                  text,
+                  flags=re.S,
+              )
+              inline = [script for script in scripts if script.strip()]
+              if inline:
+                  js_path = Path("/tmp") / f"{Path(page).stem}-r2-inline.js"
+                  js_path.write_text(
+                      "\n".join(inline),
+                      encoding="utf-8",
+                  )
+                  subprocess.run(
+                      ["node","--check",str(js_path)],
+                      check=True,
+                  )
+
+              print(f"{page}: HTML / JavaScript check passed.")
+
+          systems = Path("systems.html").read_text(encoding="utf-8")
+          cards = re.findall(
+              r'<a\s+class="catalog-card\b[^"]*"\s+href="systems/[^"]+\.html"',
+              systems,
+          )
+
+          baseline_path = Path("/tmp/eye-brushup-9-card-baseline.txt")
+          if not baseline_path.exists():
+              raise SystemExit("変更前カード数の記録が見つかりません。")
+
+          baseline_lines = baseline_path.read_text(
+              encoding="utf-8"
+          ).splitlines()
+          before_count = int(baseline_lines[0])
+          eye_existed_before = baseline_lines[1] == "1"
+          expected_count = (
+              before_count
+              if eye_existed_before
+              else before_count + 1
+          )
+
+          if len(cards) != expected_count:
+              raise SystemExit(
+                  "EYE追加後のカード本体数が想定と異なります。"
+                  f" expected={expected_count} / actual={len(cards)}"
+              )
+
+          print(
+              f"Actual product cards: {len(cards)} "
+              f"(before: {before_count})"
+          )
+
+          if systems.count('href="systems/eye-salon.html"') != 1:
+              raise SystemExit(
+                  "EYE SALONカードが重複または不足しています。"
+              )
+
+          subprocess.run(["node","--check","script.js"],check=True)
+          print("script.js check passed.")
+          PY
+
+      - name: Create backup tag and commit
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          BACKUP_TAG="eye-brushup-9-r4-site-backup-${{ github.run_id }}"
+          git tag "$BACKUP_TAG" "$BEFORE_SHA"
+          git push origin "$BACKUP_TAG"
+
+          rm -f ".github/workflows/step-eye-brushup-9-add-product-site.yml"
+          rm -f ".github/workflows/step-eye-brushup-9-r2-complete-product-site.yml"
+          rm -f ".github/workflows/step-eye-brushup-9-r3-fix-card-count.yml"
+          rm -f ".github/workflows/step-eye-brushup-9-r4-baseline-card-check.yml"
+
+          git config user.name "DPRO STEP EYE-BRUSHUP-9 R4"
+          git config user.email "actions@users.noreply.github.com"
+
+          git add -A
+
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+            exit 0
+          fi
+
+          git commit -m "STEP EYE-BRUSHUP-9 R4 complete product site safely"
+          git push origin HEAD:main
