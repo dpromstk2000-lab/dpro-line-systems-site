@@ -1,0 +1,160 @@
+name: STEP NAIL-NEXT-11-R2 Fix Product Site
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: nail-next-11-r2-product-site
+  cancel-in-progress: false
+
+env:
+  PATCH_GZIP_BASE64: >-
+        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
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout product site repository
+        uses: actions/checkout@v6
+
+      - name: Restore R2 patch
+        shell: bash
+        run: |
+          set -euo pipefail
+          printf '%s' "$PATCH_GZIP_BASE64"             | tr -d '[:space:]'             | base64 --decode             | gzip --decompress             > /tmp/apply_nail_next11_r2.py
+
+      - name: Apply NEXT product page and previews
+        shell: bash
+        run: |
+          set -euo pipefail
+          python /tmp/apply_nail_next11_r2.py
+
+      - name: Validate product site
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -s systems.html
+          test -s systems/nail.html
+
+          grep -q "STEP NAIL-NEXT-11-R2" systems.html
+          grep -q "STEP NAIL-NEXT-11-R2" systems/nail.html
+          grep -q "NAIL NEXT-10完成版" systems.html
+          grep -q "DPRO NAIL LINE NEXT" systems/nail.html
+          grep -q "写真付きデザイン予約" systems/nail.html
+          grep -q "private施術写真" systems/nail.html
+          grep -q "再来店フォロー" systems/nail.html
+          grep -q "demo=1&amp;auto=1&amp;embed_demo=1" systems/nail.html
+          grep -q "view=dashboard" systems/nail.html
+          grep -q "view=designs" systems/nail.html
+          grep -q "view=customers" systems/nail.html
+          grep -q "view=today" systems/nail.html
+          grep -q "owner.html?v=nail-next-10" systems/nail.html
+          grep -q "owner-ipad.html?v=nail-next-10" systems/nail.html
+
+          if grep -q "v=step-nail-" systems/nail.html; then
+            echo "Old step-nail URL remains."
+            exit 1
+          fi
+
+          python - <<'PY'
+          import re
+          from pathlib import Path
+
+          catalog = Path("systems.html").read_text(encoding="utf-8")
+          product = Path("systems/nail.html").read_text(encoding="utf-8")
+
+          assert len(re.findall(r'href="systems/nail\.html"', catalog)) == 1
+          assert product.count("demo=1&amp;auto=1&amp;embed_demo=1") >= 8
+          assert product.count("owner.html?v=nail-next-10") >= 1
+          assert product.count("owner-ipad.html?v=nail-next-10") >= 1
+          PY
+
+          echo "STEP NAIL-NEXT-11-R2 validation passed"
+
+      - name: Commit and push
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add systems.html systems/nail.html
+
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+            exit 0
+          fi
+
+          git commit -m "STEP NAIL-NEXT-11-R2 fix product site and live previews"
+          git push
