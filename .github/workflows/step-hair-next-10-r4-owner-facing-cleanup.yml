@@ -1,0 +1,114 @@
+name: STEP HAIR-NEXT-10-R4 Owner Facing Cleanup
+
+"on":
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/step-hair-next-10-r4-owner-facing-cleanup.yml"
+      - ".github/workflows/hair-next-10-r4-product-page-payload.html"
+      - ".github/workflows/hair-next-10-r4-owner-guide-payload.pdf"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: step-hair-next-10-r4-owner-facing-cleanup
+  cancel-in-progress: false
+
+jobs:
+  deploy-owner-facing-cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Validate uploaded payloads
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -s ".github/workflows/hair-next-10-r4-product-page-payload.html"
+          test -s ".github/workflows/hair-next-10-r4-owner-guide-payload.pdf"
+          test "$(stat -c%s ".github/workflows/hair-next-10-r4-owner-guide-payload.pdf")" -gt 100000
+          grep -q "STEP HAIR-NEXT-10-R4 / OWNER-FACING CLEANUP / 20260723" ".github/workflows/hair-next-10-r4-product-page-payload.html"
+          grep -q '7つの実画面' ".github/workflows/hair-next-10-r4-product-page-payload.html"
+          ! grep -q '営業前総合検査' ".github/workflows/hair-next-10-r4-product-page-payload.html"
+          ! grep -q 'system-check.html' ".github/workflows/hair-next-10-r4-product-page-payload.html"
+
+      - name: Deploy owner-facing page and guide
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p systems docs
+          cp ".github/workflows/hair-next-10-r4-product-page-payload.html" "systems/hair-salon.html"
+          cp ".github/workflows/hair-next-10-r4-owner-guide-payload.pdf" "docs/DPRO_HAIR_LINE_OPERATION_EXPERIENCE_20260723.pdf"
+
+      - name: Validate deployed owner-facing content
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -s systems/hair-salon.html
+          test -s docs/DPRO_HAIR_LINE_OPERATION_EXPERIENCE_20260723.pdf
+          test "$(stat -c%s docs/DPRO_HAIR_LINE_OPERATION_EXPERIENCE_20260723.pdf)" -gt 100000
+
+          grep -q "STEP HAIR-NEXT-10-R4 / OWNER-FACING CLEANUP / 20260723" systems/hair-salon.html
+          grep -q '7つの実画面' systems/hair-salon.html
+          grep -q 'QRコードから予約・会員・管理・スタッフ・iPad・カタログ・受付を順番に体験できます。' systems/hair-salon.html
+          ! grep -q '営業前総合検査' systems/hair-salon.html
+          ! grep -q 'system-check.html' systems/hair-salon.html
+          ! grep -q 'Worker、DB、Storage' systems/hair-salon.html
+
+          python - <<'PY_VALIDATE'
+          from pathlib import Path
+          import re
+
+          text = Path("systems/hair-salon.html").read_text(encoding="utf-8")
+          assert text.count('class="experience-card"') == 7
+          assert text.count('class="feature"') == 8
+          assert "7つの実画面" in text
+          assert "営業前総合検査" not in text
+          assert "system-check.html" not in text
+
+          ids = re.findall(r'\bid="([^"]+)"', text.split("<script", 1)[0])
+          duplicates = sorted(set(x for x in ids if ids.count(x) > 1))
+          assert not duplicates, duplicates
+
+          scripts = re.findall(
+              r"<script(?![^>]*\bsrc=)[^>]*>(.*?)</script>",
+              text,
+              re.S | re.I,
+          )
+          Path("/tmp/hair-next10-r4-product.js").write_text(
+              "\n".join(scripts),
+              encoding="utf-8",
+          )
+          print("HAIR NEXT-10-R4 owner-facing validation: OK")
+          PY_VALIDATE
+
+          node --check /tmp/hair-next10-r4-product.js
+
+      - name: Remove temporary deployment files
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -f ".github/workflows/step-hair-next-10-r4-owner-facing-cleanup.yml"
+          rm -f ".github/workflows/hair-next-10-r4-product-page-payload.html"
+          rm -f ".github/workflows/hair-next-10-r4-owner-guide-payload.pdf"
+
+      - name: Commit and push
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "DPRO Deploy Bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+            exit 0
+          fi
+          git commit -m "STEP HAIR-NEXT-10-R4 remove internal system check from owner materials"
+          git push origin main
