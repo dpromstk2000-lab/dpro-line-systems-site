@@ -1,0 +1,38 @@
+schema_version: "1.0"
+document:
+  id: "DPRO-KSH-NEXT-10B-SITE-RESULT"
+  step: "STEP KSH-NEXT-10B-SITE"
+  title: "DPRO製品サイト更新・公開候補"
+  generated_at_utc: "2026-07-23T05:35:05.505666+00:00"
+  status: "candidate_pending_public_check"
+targets:
+  - "systems/car-service.html"
+  - "systems.html"
+hashes:
+  product_before: "bce6b80d2c6600b954b1ffb1666ab4df66383e2c27ac75eecc8c75243a6a88cd"
+  product_after: "f2efce8e366240620983390529e93c631c07b864c2aec15a7584b583fd27bf37"
+  catalog_before: "b2529b9d9db40f89fb5f35d768e686083d36affeef50fce26094e968b8d4f7d8"
+  catalog_after: "98cafb6b00f27986913745b3378819dc338ff2b0bf9b0a8f8045a7c810d96ee6"
+changes:
+  - "車検・整備工場製品ページをDPRO NEXT完成版へ全面更新"
+  - "PC・iPad・会員・相談画面を最新STEP URLへ更新"
+  - "受付統合・進捗・見積承認・整備履歴・次回フォローを掲載"
+  - "A4縦1枚操作体験シートPDFへの導線を追加"
+  - "製品一覧カードをDPRO NEXT完成版へ更新"
+public_urls:
+  product_page: "https://dpromstk2000-lab.github.io/dpro-line-systems-site/systems/car-service.html"
+  catalog: "https://dpromstk2000-lab.github.io/dpro-line-systems-site/systems.html"
+  operation_sheet: "https://dpromstk2000-lab.github.io/line-shaken-liff/deliverables/ksh-next-10/DPRO_KSH_NEXT_operation_experience_sheet_20260723.pdf"
+  customer: "https://dpromstk2000-lab.github.io/line-shaken-liff/index.html?v=step-ksh-next-10"
+  member: "https://dpromstk2000-lab.github.io/line-shaken-liff/member.html?demo=1&v=step-ksh-next-7"
+  dashboard: "https://dpromstk2000-lab.github.io/line-shaken-liff/dashboard.html?embed_demo=1&v=step-ksh-next-8"
+  ipad: "https://dpromstk2000-lab.github.io/line-shaken-liff/owner-ipad.html?embed_demo=1&v=step-ksh-next-6"
+  system_check: "https://dpromstk2000-lab.github.io/line-shaken-liff/system-check.html?v=step-ksh-next-9"
+safety:
+  source_system_repository_changed: false
+  worker_changed: false
+  database_changed: false
+  product_count_changed: false
+next_action:
+  id: "KSH-NEXT-10B-FINAL-SYNC"
+  title: "整備工場リポジトリへ最終完成記録を同期"
