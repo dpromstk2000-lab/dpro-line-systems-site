@@ -1,0 +1,147 @@
+name: STEP NAIL-NEXT-11 Update Product Site
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: step-nail-next-11-product-site
+  cancel-in-progress: false
+
+env:
+  PATCH_GZIP_BASE64: >-
+        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
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout product site repository
+        uses: actions/checkout@v6
+
+      - name: Restore product site patch
+        shell: bash
+        run: |
+          set -euo pipefail
+          printf '%s' "$PATCH_GZIP_BASE64"             | tr -d '[:space:]'             | base64 --decode             | gzip --decompress             > /tmp/apply_nail_next11.py
+
+      - name: Apply NAIL NEXT product site update
+        shell: bash
+        run: |
+          set -euo pipefail
+          python /tmp/apply_nail_next11.py
+
+      - name: Validate catalog and product page
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -s systems.html
+          test -s systems/nail.html
+
+          grep -q "STEP NAIL-NEXT-11" systems.html
+          grep -q "STEP NAIL-NEXT-11" systems/nail.html
+          grep -q "NAIL NEXT-10完成版" systems.html
+          grep -q "写真デザイン・カルテ対応" systems.html
+          grep -q "DPRO NAIL LINE NEXT" systems/nail.html
+          grep -q "写真付きデザイン予約" systems/nail.html
+          grep -q "private施術写真" systems/nail.html
+          grep -q "再来店フォロー" systems/nail.html
+          grep -q "release.html?v=nail-next-10" systems/nail.html
+          grep -q "system-check.html?v=nail-next-10" systems/nail.html
+
+          if grep -q "v=step-nail-" systems/nail.html; then
+            echo "Old nail URL remains."
+            exit 1
+          fi
+
+          python - <<'PY'
+          import re
+          from pathlib import Path
+
+          catalog = Path("systems.html").read_text(encoding="utf-8")
+          product = Path("systems/nail.html").read_text(encoding="utf-8")
+
+          assert len(re.findall(r'href="systems/nail\.html"', catalog)) == 1
+          assert catalog.count("NAIL NEXT-10完成版") == 1
+          assert "写真付きデザイン予約" in product
+          assert "施術カルテ" in product
+          assert "再来店フォロー" in product
+          PY
+
+          echo "STEP NAIL-NEXT-11 product site validation passed"
+
+      - name: Commit and push
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add systems.html systems/nail.html
+
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+            exit 0
+          fi
+
+          git commit -m "STEP NAIL-NEXT-11 update nail product site"
+          git push
