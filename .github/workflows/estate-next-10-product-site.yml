@@ -1,0 +1,255 @@
+name: DPRO ESTATE NEXT-10 Product Site
+
+'on':
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/estate-next-10-product-site.yml
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: dpro-product-site-estate-next-10
+  cancel-in-progress: false
+
+jobs:
+  estate-next-10-product-site:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      TARGET_BRANCH: main
+      WORKFLOW_PATH: .github/workflows/estate-next-10-product-site.yml
+      STEP_BACKUP_TAG: dpro-product-site-estate-next10-before-20260724
+      SITE_BASE: https://dpromstk2000-lab.github.io/dpro-line-systems-site
+      ESTATE_BASE: https://dpromstk2000-lab.github.io/dpro-estate-line-liff
+      OPERATION_PDF: https://dpromstk2000-lab.github.io/dpro-estate-line-liff/assets/estate-next-10/dpro-estate-operation-experience.pdf
+      OPERATION_PNG: https://dpromstk2000-lab.github.io/dpro-estate-line-liff/assets/estate-next-10/dpro-estate-operation-experience.png
+
+    steps:
+      - name: Checkout product site repository
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Verify estate final assets and create backup
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          curl --fail --silent --show-error "$OPERATION_PDF?v=${GITHUB_RUN_ID}" -o /tmp/estate-operation.pdf
+          curl --fail --silent --show-error "$OPERATION_PNG?v=${GITHUB_RUN_ID}" -o /tmp/estate-operation.png
+          test "$(stat -c %s /tmp/estate-operation.pdf)" -gt 100000
+          test "$(stat -c %s /tmp/estate-operation.png)" -gt 100000
+
+          if git rev-parse -q --verify "refs/tags/$STEP_BACKUP_TAG" >/dev/null 2>&1; then
+            backup_commit="$(git rev-parse "$STEP_BACKUP_TAG^{commit}")"
+            git merge-base --is-ancestor "$backup_commit" HEAD || { echo 'ERROR: product-site backup tag is not an ancestor of main.' >&2; exit 1; }
+            mapfile -t changed_since_backup < <(git diff --name-only "$backup_commit"..HEAD)
+            for file in "${changed_since_backup[@]}"; do
+              case "$file" in
+                "$WORKFLOW_PATH"|systems/estate.html|systems.html|dpro-next/estate-next-10-product-site.yml) ;;
+                *) echo "ERROR: unexpected file changed after product-site backup: $file" >&2; exit 1;;
+              esac
+            done
+            echo "Reusing product-site backup tag at $backup_commit"
+          else
+            tag_commit="$(git rev-parse HEAD)"
+            while true; do
+              mapfile -t changed < <(git diff-tree --no-commit-id --name-only -r "$tag_commit")
+              only_workflow=true
+              if [ "${#changed[@]}" -eq 0 ]; then only_workflow=false; fi
+              for file in "${changed[@]}"; do
+                if [ "$file" != "$WORKFLOW_PATH" ]; then only_workflow=false; break; fi
+              done
+              if [ "$only_workflow" = false ]; then break; fi
+              tag_commit="$(git rev-parse "$tag_commit^")"
+            done
+            git tag -a "$STEP_BACKUP_TAG" "$tag_commit" -m 'DPRO product site before ESTATE NEXT-10'
+            git push origin "$STEP_BACKUP_TAG"
+          fi
+
+      - name: Install HTML and browser verification tools
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          python3 -m pip install --disable-pip-version-check beautifulsoup4 playwright
+          python3 -m playwright install --with-deps chromium
+
+      - name: Replace estate product page and update catalog card
+        shell: bash
+        env:
+          ESTATE_PAGE_TEMPLATE_B64: PCFkb2N0eXBlIGh0bWw+CjxodG1sIGxhbmc9ImphIj4KPGhlYWQ+CjxtZXRhIGNoYXJzZXQ9InV0Zi04Ij4KPG1ldGEgbmFtZT0idmlld3BvcnQiIGNvbnRlbnQ9IndpZHRoPWRldmljZS13aWR0aCxpbml0aWFsLXNjYWxlPTEiPgo8bWV0YSBuYW1lPSJkZXNjcmlwdGlvbiIgY29udGVudD0iRFBSTyDkuI3li5XnlKPjg7vos4PosrjlhoXoposgTElORSBORVhU5a6M5oiQ54mI44CC54mp5Lu257S55LuL44CB5YaF6KaL5LqI57SE44CB55Sz6L68566h55CG44CB5YaN55u46KuH44CB6L+95a6i44CB54mp5Lu25YCZ6KOc5o+Q5qGI44CBUEPjg7tpUGFk566h55CG44KS5a6f55S76Z2i44Gn57S55LuL44CCIj4KPHRpdGxlPkRQUk8g5LiN5YuV55Sj44O76LOD6LK45YaF6KaLIExJTkUgTkVYVO+9nOWGheimi+ODu+eUs+i+vOODu+i/veWuoueuoeeQhjwvdGl0bGU+CjxsaW5rIHJlbD0ic3R5bGVzaGVldCIgaHJlZj0iLi4vc3R5bGVzLmNzcyI+CjxzY3JpcHQ+dHJ5e2xvY2FsU3RvcmFnZS5zZXRJdGVtKCdkcHJvX2VzdGF0ZV9hZG1pbl9jb2RlJywnMTIzNCcpfWNhdGNoKGUpe308L3NjcmlwdD4KPHN0eWxlIGlkPSJlc3RhdGUtbmV4dC0xMC1wcm9kdWN0LXN0eWxlIj4KLmVzdGF0ZS1uZXh0LWJhZGdle2Rpc3BsYXk6aW5saW5lLWZsZXg7cGFkZGluZzo4cHggMTRweDtib3JkZXItcmFkaXVzOjk5OXB4O2JhY2tncm91bmQ6I2U5ZjdmMTtjb2xvcjojMDk1MTQwO2ZvbnQtd2VpZ2h0OjkwMDttYXJnaW4tYm90dG9tOjE0cHh9Ci5lc3RhdGUtc2hlZXQtZ3JpZHtkaXNwbGF5OmdyaWQ7Z3JpZC10ZW1wbGF0ZS1jb2x1bW5zOm1pbm1heCgwLDEuMWZyKSBtaW5tYXgoMzAwcHgsLjlmcik7Z2FwOjM2cHg7YWxpZ24taXRlbXM6Y2VudGVyfQouZXN0YXRlLXNoZWV0LXByZXZpZXd7ZGlzcGxheTpibG9jaztiYWNrZ3JvdW5kOiNmZmY7Ym9yZGVyLXJhZGl1czoyNHB4O3BhZGRpbmc6MTZweDtib3gtc2hhZG93OjAgMjRweCA3MHB4IHJnYmEoMCwwLDAsLjE4KX0KLmVzdGF0ZS1zaGVldC1wcmV2aWV3IGltZ3tkaXNwbGF5OmJsb2NrO3dpZHRoOjEwMCU7Ym9yZGVyLXJhZGl1czoxNHB4fQouZXN0YXRlLW5leHQtbm90ZXttYXJnaW4tdG9wOjE0cHg7cGFkZGluZzoxNHB4IDE2cHg7Ym9yZGVyLXJhZGl1czoxNHB4O2JhY2tncm91bmQ6I2U5ZjdmMTtjb2xvcjojMDk1MTQwO2ZvbnQtd2VpZ2h0OjgwMH0KQG1lZGlhKG1heC13aWR0aDo4MjBweCl7LmVzdGF0ZS1zaGVldC1ncmlke2dyaWQtdGVtcGxhdGUtY29sdW1uczoxZnJ9fQo8L3N0eWxlPgo8L2hlYWQ+Cjxib2R5Pgo8IS0tIFNURVAgRVNUQVRFLU5FWFQtMTAgLyBEUFJPIE5FWFQgQ09NUExFVEUgLyAyMDI2MDcyNCAtLT4KPGhlYWRlciBjbGFzcz0ic2l0ZS1oZWFkZXIiIGlkPSJ0b3AiPjxkaXYgY2xhc3M9ImhlYWRlci1pbm5lciI+CjxhIGNsYXNzPSJicmFuZCIgaHJlZj0iLi4vaW5kZXguaHRtbCI+PHNwYW4gY2xhc3M9ImJyYW5kLW1hcmsiPkQ8L3NwYW4+PHNwYW4gY2xhc3M9ImJyYW5kLWNvcHkiPjxzdHJvbmc+RFBSTyBMSU5FIFNZU1RFTVM8L3N0cm9uZz48c21hbGw+T0ZGSUNJQUwgUFJPRFVDVCBTSVRFPC9zbWFsbD48L3NwYW4+PC9hPgo8YnV0dG9uIGNsYXNzPSJtZW51LWJ1dHRvbiIgdHlwZT0iYnV0dG9uIiBhcmlhLWV4cGFuZGVkPSJmYWxzZSIgYXJpYS1jb250cm9scz0iZ2xvYmFsLW5hdiIgYXJpYS1sYWJlbD0i44Oh44OL44Ol44O844KS6ZaL44GPIj48c3Bhbj48L3NwYW4+PHNwYW4+PC9zcGFuPjxzcGFuPjwvc3Bhbj48L2J1dHRvbj4KPG5hdiBjbGFzcz0iZ2xvYmFsLW5hdiIgaWQ9Imdsb2JhbC1uYXYiPjxhIGhyZWY9Ii4uL3N5c3RlbXMuaHRtbCI+44K344K544OG44Og5LiA6KanPC9hPjxhIGhyZWY9IiNleHBlcmllbmNlIj7lrp/nlLvpnaI8L2E+PGEgaHJlZj0iI29wZXJhdGlvbi1zaGVldCI+5pON5L2c5L2T6aiT44K344O844OIPC9hPjxhIGNsYXNzPSJuYXYtY3RhIiBocmVmPSJodHRwczovL2xpbi5lZS9ZeEpHWFY2RCIgdGFyZ2V0PSJfYmxhbmsiIHJlbD0ibm9vcGVuZXIiPkxJTkXjgafjg4fjg6LjgpLopovjgos8L2E+PC9uYXY+CjwvZGl2PjwvaGVhZGVyPgo8bWFpbj4KPHNlY3Rpb24gY2xhc3M9InByb2R1Y3QtaGVybyI+CjxkaXYgY2xhc3M9InByb2R1Y3QtaGVyby1jb3B5IHJldmVhbCI+CjxkaXYgY2xhc3M9InByb2R1Y3QtYnJlYWRjcnVtYiI+PGEgaHJlZj0iLi4vc3lzdGVtcy5odG1sIj7jgrfjgrnjg4bjg6DkuIDopqc8L2E+PHNwYW4+Lzwvc3Bhbj48c3Bhbj7kuI3li5XnlKPjg7vos4PosrjlhoXopos8L3NwYW4+PC9kaXY+CjxzcGFuIGNsYXNzPSJlc3RhdGUtbmV4dC1iYWRnZSI+RFBSTyBORVhU5a6M5oiQ54mIPC9zcGFuPjxzcGFuIGNsYXNzPSJwcm9kdWN0LXN5bWJvbCI+RVI8L3NwYW4+CjxwIGNsYXNzPSJleWVicm93Ij5SRUFMIEVTVEFURSBDVVNUT01FUiAmIEZPTExPVy1VUCBTWVNURU08L3A+PGgxPkRQUk8g5LiN5YuV55Sj44O76LOD6LK45YaF6KaLIExJTkU8L2gxPgo8aDIgY2xhc3M9ImhlYWRsaW5lLWxpbmVzIGhlYWRsaW5lLWZpeGVkIj48c3Bhbj7nianku7bmj5DmoYjjgYvjgonnlLPovrzjg7vlho3nm7joq4fjgb7jgafjgIE8L3NwYW4+PHNwYW4+5Za25qWt44KS5q2i44KB44Gq44GE44CCPC9zcGFuPjwvaDI+CjxwPuOBiuWuouanmOOBruW4jOacm+adoeS7tuODu+eJqeS7tuODu+WGheimi+S6iOe0hOOBqOOAgeahiOS7tumAsuaNl+OAgeWIneacn+iyu+eUqOOAgeW/heimgeabuOmhnuOAgeWGheimi+W+jOi/veWuouOAgeWGjeebuOirh+OAgeaWsOedgOeJqeS7tuaPkOahiOOCkuS4gOOBpOOBq+OBpOOBquOBkOS4jeWLleeUo+S8muekvuWQkeOBkUxJTkXjgrfjgrnjg4bjg6DjgafjgZnjgII8L3A+CjxkaXYgY2xhc3M9Imhlcm8tYWN0aW9ucyI+PGEgY2xhc3M9ImJ1dHRvbiBidXR0b24tcHJpbWFyeSIgaHJlZj0iI2V4cGVyaWVuY2UiPuWun+eUu+mdouOCkuS9k+mok+OBmeOCizwvYT48YSBjbGFzcz0iYnV0dG9uIGJ1dHRvbi1zZWNvbmRhcnkiIGhyZWY9Int7UERGX1VSTH19IiB0YXJnZXQ9Il9ibGFuayIgcmVsPSJub29wZW5lciI+5pON5L2c5L2T6aiT44K344O844OIUERGPC9hPjxhIGNsYXNzPSJidXR0b24gYnV0dG9uLXNlY29uZGFyeSIgaHJlZj0iaHR0cHM6Ly9saW4uZWUvWXhKR1hWNkQiIHRhcmdldD0iX2JsYW5rIiByZWw9Im5vb3BlbmVyIj5MSU5F44Gn44OH44Oi44KS6KaL44KLPC9hPjwvZGl2Pgo8L2Rpdj4KPGRpdiBjbGFzcz0icHJvZHVjdC12aXN1YWwgcHJvZHVjdC12aXN1YWwtbGl2ZSByZXZlYWwiPgo8ZGl2IGNsYXNzPSJoZXJvLWxpdmUtbW9uaXRvciI+PGRpdiBjbGFzcz0ibGl2ZS1icm93c2VyLWJhciI+PHNwYW4+PC9zcGFuPjxzcGFuPjwvc3Bhbj48c3Bhbj48L3NwYW4+PGI+5LuK5pel44O75qGI5Lu244O76L+95a6i566h55CGPC9iPjwvZGl2PjxpZnJhbWUgdGl0bGU9IuS4jeWLleeUo1BD566h55CG55S76Z2iIiBsb2FkaW5nPSJlYWdlciIgc3JjPSJ7e09XTkVSX1VSTH19Ij48L2lmcmFtZT48L2Rpdj4KPGRpdiBjbGFzcz0iaGVyby1saXZlLXBob25lIj48aWZyYW1lIHRpdGxlPSLkuI3li5XnlKPjgYrlrqLmp5jnlLvpnaIiIGxvYWRpbmc9ImVhZ2VyIiBzcmM9Int7Q1VTVE9NRVJfVVJMfX0iPjwvaWZyYW1lPjwvZGl2Pgo8ZGl2IGNsYXNzPSJoZXJvLWxpdmUtdGFibGV0Ij48aWZyYW1lIHRpdGxlPSLkuI3li5XnlKPov73lrqLnlLvpnaIiIGxvYWRpbmc9ImVhZ2VyIiBzcmM9Int7Rk9MTE9XVVBfVVJMfX0iPjwvaWZyYW1lPjwvZGl2Pgo8ZGl2IGNsYXNzPSJoZXJvLWxpdmUtbGFiZWwiPjxzcGFuPkVTVEFURSBORVhULTEwPC9zcGFuPjxzdHJvbmc+5a6f6Zqb44Gr5YuV44GP5a6M5oiQ55S76Z2iPC9zdHJvbmc+PC9kaXY+CjwvZGl2Pgo8L3NlY3Rpb24+CjxzZWN0aW9uIGNsYXNzPSJzYWxlcy1zdW1tYXJ5IHNlY3Rpb24iPjxkaXYgY2xhc3M9InNlY3Rpb24taGVhZGluZyByZXZlYWwiPjxwIGNsYXNzPSJleWVicm93Ij5VTkRFUlNUQU5EIElOIDMwIFNFQ09ORFM8L3A+PGgyIGNsYXNzPSJoZWFkbGluZS1saW5lcyBoZWFkbGluZS1maXhlZCI+PHNwYW4+5ZWP44GE5ZCI44KP44Gb44GL44KJ5oiQ57SE44O75YaN5o+Q5qGI44G+44Gn44CBPC9zcGFuPjxzcGFuPuS4gOOBpOOBrumhp+WuouaDheWgseOBp+OBpOOBquOBkOOAgjwvc3Bhbj48L2gyPjxwPuW4jOacm+adoeS7tuOCkuiBnuOBjeebtOOBmeOAgeWGheimi+W+jOOBrumAo+e1oeOBjOa8j+OCjOOCi+OAgeWQjOOBmOeJqeS7tuOCkuWGjeaPkOahiOOBmeOCi+OAgeOBqOOBhOOBo+OBn+WWtualreS4iuOBruaKnOOBkeOCkua4m+OCieOBl+OBvuOBmeOAgjwvcD48L2Rpdj48ZGl2IGNsYXNzPSJzYWxlcy1zdW1tYXJ5LWdyaWQiPjxhcnRpY2xlIGNsYXNzPSJzYWxlcy1zdW1tYXJ5LWNhcmQgcmV2ZWFsIj48c3BhbiBjbGFzcz0ic2FsZXMtc3VtbWFyeS1udW1iZXIiPjAxPC9zcGFuPjxoMz7jgYrlrqLmp5g8L2gzPjx1bD48bGk+5biM5pyb5p2h5Lu244O754mp5Lu25YCZ6KOcPC9saT48bGk+54mp5Lu26Kmz57Sw44O75YaF6KaL5LqI57SEPC9saT48bGk+5a6J5YWo44Gq5Lya5ZOh56K66KqN44O75YaN55u46KuHPC9saT48L3VsPjwvYXJ0aWNsZT48YXJ0aWNsZSBjbGFzcz0ic2FsZXMtc3VtbWFyeS1jYXJkIHJldmVhbCI+PHNwYW4gY2xhc3M9InNhbGVzLXN1bW1hcnktbnVtYmVyIj4wMjwvc3Bhbj48aDM+5bqX6IiX44O75Za25qWtPC9oMz48dWw+PGxpPuS7iuaXpeOChOOCi+OBk+OBqDwvbGk+PGxpPuahiOS7tuODu+eUs+i+vOODu+W/heimgeabuOmhnjwvbGk+PGxpPui/veWuouODu+aWsOedgOeJqeS7tuaPkOahiDwvbGk+PC91bD48L2FydGljbGU+PC9kaXY+PC9zZWN0aW9uPgo8c2VjdGlvbiBjbGFzcz0icHJvZHVjdC1pbnRybyBzZWN0aW9uIj48ZGl2IGNsYXNzPSJzZWN0aW9uLWhlYWRpbmcgcmV2ZWFsIj48cCBjbGFzcz0iZXllYnJvdyI+RVNUQVRFIE5FWFQgRlVOQ1RJT05TPC9wPjxoMiBjbGFzcz0iaGVhZGxpbmUtbGluZXMgaGVhZGxpbmUtZml4ZWQiPjxzcGFuPuizg+iyuOS7suS7i+OBruavjuaXpeOBq+W/heimgeOBquapn+iDveOCkuOAgTwvc3Bhbj48c3Bhbj7pgY7kuI3otrPjgarjgY/jgb7jgajjgoHjgb7jgZfjgZ/jgII8L3NwYW4+PC9oMj48L2Rpdj48ZGl2IGNsYXNzPSJwcm9kdWN0LWZlYXR1cmUtZ3JpZCI+CjxhcnRpY2xlIGNsYXNzPSJwcm9kdWN0LWZlYXR1cmUgcmV2ZWFsIj48c3Bhbj4wMTwvc3Bhbj48aDM+5biM5pyb5p2h5Lu244O754mp5Lu25YCZ6KOcPC9oMz48cD7jgqjjg6rjgqLjgIHlrrbos4PjgIHplpPlj5bjgorjgIHpp5Dou4rloLTjgIHjg5rjg4Pjg4jmnaHku7bjgpLmlbTnkIbjgII8L3A+PC9hcnRpY2xlPgo8YXJ0aWNsZSBjbGFzcz0icHJvZHVjdC1mZWF0dXJlIHJldmVhbCI+PHNwYW4+MDI8L3NwYW4+PGgzPueJqeS7tuips+e0sOODu+WGheimi+S6iOe0hDwvaDM+PHA+54mp5Lu25YilUVLjgYvjgonoqbPntLDnorroqo3jgajlhoXopovkuojntITjgbjmjqXntprjgII8L3A+PC9hcnRpY2xlPgo8YXJ0aWNsZSBjbGFzcz0icHJvZHVjdC1mZWF0dXJlIHJldmVhbCI+PHNwYW4+MDM8L3NwYW4+PGgzPuS7iuaXpeOChOOCi+OBk+OBqDwvaDM+PHA+5pys5pel44Gu5YaF6KaL44CB6L+95a6i44CB56m65a6k56K66KqN44KS5YSq5YWI6KGo56S644CCPC9wPjwvYXJ0aWNsZT4KPGFydGljbGUgY2xhc3M9InByb2R1Y3QtZmVhdHVyZSByZXZlYWwiPjxzcGFuPjA0PC9zcGFuPjxoMz7moYjku7bjg7vnlLPovrznrqHnkIY8L2gzPjxwPuWVj+OBhOWQiOOCj+OBm+OBi+OCieeUs+i+vOOAgeaIkOe0hOOAgeimi+mAgeOCiuOBvuOBp+mAsuaNl+euoeeQhuOAgjwvcD48L2FydGljbGU+CjxhcnRpY2xlIGNsYXNzPSJwcm9kdWN0LWZlYXR1cmUgcmV2ZWFsIj48c3Bhbj4wNTwvc3Bhbj48aDM+5Yid5pyf6LK755So44O75b+F6KaB5pu46aGePC9oMz48cD7mpoLnrpfjgIHnlLPovrzmhI/mgJ3jgIHmm7jpoZ7jg4Hjgqfjg4Pjgq/jgpLpoaflrqLljZjkvY3jgafnrqHnkIbjgII8L3A+PC9hcnRpY2xlPgo8YXJ0aWNsZSBjbGFzcz0icHJvZHVjdC1mZWF0dXJlIHJldmVhbCI+PHNwYW4+MDY8L3NwYW4+PGgzPuWGjeebuOirh+ODu+WGheimi+W+jOi/veWuojwvaDM+PHA+5YmN5Zue5p2h5Lu244Gn44Gu5YaN55u46KuH44KE5YaF6KaL5b6M44OV44Kp44Ot44O844KS44K/44K544Kv5YyW44CCPC9wPjwvYXJ0aWNsZT4KPGFydGljbGUgY2xhc3M9InByb2R1Y3QtZmVhdHVyZSByZXZlYWwiPjxzcGFuPjA3PC9zcGFuPjxoMz7nianku7blgJnoo5zjg7vpmaTlpJbmnaHku7Y8L2gzPjxwPuaPkOahiOa4iOOBv+OAgeWutuizg+i2hemBjuOAgemZpOWklueJqeS7tuOCkumBv+OBkeOBpuWAmeijnOihqOekuuOAgjwvcD48L2FydGljbGU+CjxhcnRpY2xlIGNsYXNzPSJwcm9kdWN0LWZlYXR1cmUgcmV2ZWFsIj48c3Bhbj4wODwvc3Bhbj48aDM+5a6J5YWo44Gq5Lya5ZOh44O75Za25qWt5YmN5qSc5p+7PC9oMz48cD7lj5fku5jnlarlj7fnorroqo3jgIHjgrvjg4Pjgrfjg6fjg7Pkv53orbfjgIE544OG44O844OW44Or5qSc5p+744CCPC9wPjwvYXJ0aWNsZT4KPC9kaXY+PC9zZWN0aW9uPgo8c2VjdGlvbiBjbGFzcz0iZXhwZXJpZW5jZS1zZWN0aW9uIHNlY3Rpb24gc2VjdGlvbi1kYXJrIiBpZD0iZXhwZXJpZW5jZSI+PGRpdiBjbGFzcz0ic2VjdGlvbi1oZWFkaW5nIHNlY3Rpb24taGVhZGluZy1saWdodCByZXZlYWwiPjxwIGNsYXNzPSJleWVicm93Ij5MSVZFIFBST0RVQ1QgRVhQRVJJRU5DRTwvcD48aDIgY2xhc3M9ImhlYWRsaW5lLWxpbmVzIGhlYWRsaW5lLWZpeGVkIj48c3Bhbj7jgYrlrqLmp5jjg7tQQ+ODu2lQYWTjg7vov73lrqLjgpLjgIE8L3NwYW4+PHNwYW4+5a6f55S76Z2i44Gn56K66KqN44CCPC9zcGFuPjwvaDI+PHA+566h55CG55S76Z2i44Gu44OH44Oi44Kz44O844OJ44GvMTIzNOOBp+OBmeOAgjwvcD48L2Rpdj48ZGl2IGNsYXNzPSJsaXZlLXNob3djYXNlIj4KPGFydGljbGUgY2xhc3M9ImxpdmUtcHJvZHVjdCByZXZlYWwiPjxkaXYgY2xhc3M9ImxpdmUtY29weSI+PHNwYW4+MDEgLyBDVVNUT01FUjwvc3Bhbj48aDM+44GK5a6i5qeY55SoPGJyPueJqeS7tuODu+WGheimi+S6iOe0hDwvaDM+PHA+5biM5pyb5p2h5Lu244KS5YWl5Yqb44GX44CB5YCZ6KOc54mp5Lu244GL44KJ5YaF6KaL44KS5LqI57SE44Gn44GN44G+44GZ44CCPC9wPjx1bD48bGk+5biM5pyb5p2h5Lu25YWl5YqbPC9saT48bGk+54mp5Lu25YCZ6KOcPC9saT48bGk+5YaF6KaL5LqI57SEPC9saT48L3VsPjxkaXYgY2xhc3M9ImxpdmUtYWN0aW9ucyI+PGJ1dHRvbiBjbGFzcz0iYnV0dG9uIGJ1dHRvbi1wcmltYXJ5IGJ1dHRvbi16b29tIGpzLXNjcmVlbi1tb2RhbCIgdHlwZT0iYnV0dG9uIiBkYXRhLXNjcmVlbi10aXRsZT0i44GK5a6i5qeY55SoIOeJqeS7tuODu+WGheimi+S6iOe0hCIgZGF0YS1zY3JlZW4tdXJsPSJ7e0NVU1RPTUVSX1VSTH19Ij7nlLvpnaLjgpLmi6HlpKfooajnpLo8L2J1dHRvbj48YSBjbGFzcz0iYnV0dG9uIGJ1dHRvbi1zZWNvbmRhcnkiIGhyZWY9Int7Q1VTVE9NRVJfVVJMfX0iIHRhcmdldD0iX2JsYW5rIiByZWw9Im5vb3BlbmVyIj7liKXjgr/jg5bjgafplovjgY88L2E+PC9kaXY+PC9kaXY+PGRpdiBjbGFzcz0ibGl2ZS1kZXZpY2UgbGl2ZS1waG9uZSI+PGlmcmFtZSB0aXRsZT0i44GK5a6i5qeY55SoIOeJqeS7tuODu+WGheimi+S6iOe0hCIgbG9hZGluZz0ibGF6eSIgc3JjPSJ7e0NVU1RPTUVSX1VSTH19Ij48L2lmcmFtZT48L2Rpdj48L2FydGljbGU+CjxhcnRpY2xlIGNsYXNzPSJsaXZlLXByb2R1Y3QgbGl2ZS1wcm9kdWN0LXJldmVyc2UgcmV2ZWFsIj48ZGl2IGNsYXNzPSJsaXZlLWNvcHkiPjxzcGFuPjAyIC8gUFJPUEVSVFk8L3NwYW4+PGgzPueJqeS7tuips+e0sOODuzxicj7kuojntITlsI7nt5o8L2gzPjxwPueJqeS7tlFS44GL44KJ6Kit5YKZ44O75p2h5Lu244KS56K66KqN44GX44CB44Gd44Gu44G+44G+5YaF6KaL44G46YCy44KB44G+44GZ44CCPC9wPjx1bD48bGk+54mp5Lu26Kmz57SwPC9saT48bGk+6Kit5YKZ44O75p2h5Lu2PC9saT48bGk+5LqI57SE6YCj5pC6PC9saT48L3VsPjxkaXYgY2xhc3M9ImxpdmUtYWN0aW9ucyI+PGJ1dHRvbiBjbGFzcz0iYnV0dG9uIGJ1dHRvbi1wcmltYXJ5IGJ1dHRvbi16b29tIGpzLXNjcmVlbi1tb2RhbCIgdHlwZT0iYnV0dG9uIiBkYXRhLXNjcmVlbi10aXRsZT0i54mp5Lu26Kmz57Sw44O75LqI57SE5bCO57eaIiBkYXRhLXNjcmVlbi11cmw9Int7UFJPUEVSVFlfVVJMfX0iPueUu+mdouOCkuaLoeWkp+ihqOekujwvYnV0dG9uPjxhIGNsYXNzPSJidXR0b24gYnV0dG9uLXNlY29uZGFyeSIgaHJlZj0ie3tQUk9QRVJUWV9VUkx9fSIgdGFyZ2V0PSJfYmxhbmsiIHJlbD0ibm9vcGVuZXIiPuWIpeOCv+ODluOBp+mWi+OBjzwvYT48L2Rpdj48L2Rpdj48ZGl2IGNsYXNzPSJsaXZlLWRldmljZSBsaXZlLXBob25lIj48aWZyYW1lIHRpdGxlPSLnianku7boqbPntLDjg7vkuojntITlsI7nt5oiIGxvYWRpbmc9ImxhenkiIHNyYz0ie3tQUk9QRVJUWV9VUkx9fSI+PC9pZnJhbWU+PC9kaXY+PC9hcnRpY2xlPgo8YXJ0aWNsZSBjbGFzcz0ibGl2ZS1wcm9kdWN0IHJldmVhbCI+PGRpdiBjbGFzcz0ibGl2ZS1jb3B5Ij48c3Bhbj4wMyAvIE9XTkVSIFBDPC9zcGFuPjxoMz7ku4rml6Xjg7vmoYjku7bjg7s8YnI+55Sz6L68566h55CGPC9oMz48cD7mnKzml6Xjga7lr77lv5zjgYvjgonnlLPovrzjg7vlv4XopoHmm7jpoZ7jgb7jgadQQ+OBp+euoeeQhuOBl+OBvuOBmeOAgjwvcD48dWw+PGxpPuS7iuaXpeOChOOCi+OBk+OBqDwvbGk+PGxpPuahiOS7tumAsuaNlzwvbGk+PGxpPuWIneacn+iyu+eUqOODu+abuOmhnjwvbGk+PC91bD48ZGl2IGNsYXNzPSJkZW1vLWNvZGUtY2FyZCI+PHNwYW4+REVNTyBDT0RFPC9zcGFuPjxzdHJvbmc+MTIzNDwvc3Ryb25nPjxzbWFsbD7nrqHnkIbnlLvpnaLnlKg8L3NtYWxsPjwvZGl2PjxkaXYgY2xhc3M9ImxpdmUtYWN0aW9ucyI+PGJ1dHRvbiBjbGFzcz0iYnV0dG9uIGJ1dHRvbi1wcmltYXJ5IGJ1dHRvbi16b29tIGpzLXNjcmVlbi1tb2RhbCIgdHlwZT0iYnV0dG9uIiBkYXRhLXNjcmVlbi10aXRsZT0i5LuK5pel44O75qGI5Lu244O755Sz6L68566h55CGIiBkYXRhLXNjcmVlbi11cmw9Int7T1dORVJfVVJMfX0iPueUu+mdouOCkuaLoeWkp+ihqOekujwvYnV0dG9uPjxhIGNsYXNzPSJidXR0b24gYnV0dG9uLXNlY29uZGFyeSIgaHJlZj0ie3tPV05FUl9VUkx9fSIgdGFyZ2V0PSJfYmxhbmsiIHJlbD0ibm9vcGVuZXIiPuWIpeOCv+ODluOBp+mWi+OBjzwvYT48L2Rpdj48L2Rpdj48ZGl2IGNsYXNzPSJsaXZlLWRldmljZSBsaXZlLWRlc2t0b3AiPjxkaXYgY2xhc3M9ImxpdmUtYnJvd3Nlci1iYXIiPjxzcGFuPjwvc3Bhbj48c3Bhbj48L3NwYW4+PHNwYW4+PC9zcGFuPjxiPuS7iuaXpeODu+ahiOS7tuODu+eUs+i+vOeuoeeQhjwvYj48L2Rpdj48aWZyYW1lIHRpdGxlPSLku4rml6Xjg7vmoYjku7bjg7vnlLPovrznrqHnkIYiIGxvYWRpbmc9ImxhenkiIHNyYz0ie3tPV05FUl9VUkx9fSI+PC9pZnJhbWU+PC9kaXY+PC9hcnRpY2xlPgo8YXJ0aWNsZSBjbGFzcz0ibGl2ZS1wcm9kdWN0IGxpdmUtcHJvZHVjdC1yZXZlcnNlIHJldmVhbCI+PGRpdiBjbGFzcz0ibGl2ZS1jb3B5Ij48c3Bhbj4wNCAvIElQQUQ8L3NwYW4+PGgzPuWWtualreODu+aOpeWuoueUqDxicj5pUGFk55S76Z2iPC9oMz48cD7mjqXlrqLkuK3jgavlhoXopovjgIHpoaflrqLjgIHnianku7bjgIHnqbrlrqTnorroqo3jgpLooajnpLrjgZfjgb7jgZnjgII8L3A+PHVsPjxsaT7mnKzml6Xjga7lhoXopos8L2xpPjxsaT7poaflrqLmpJzntKI8L2xpPjxsaT7nqbrlrqTnorroqo08L2xpPjwvdWw+PGRpdiBjbGFzcz0iZGVtby1jb2RlLWNhcmQiPjxzcGFuPkRFTU8gQ09ERTwvc3Bhbj48c3Ryb25nPjEyMzQ8L3N0cm9uZz48c21hbGw+566h55CG55S76Z2i55SoPC9zbWFsbD48L2Rpdj48ZGl2IGNsYXNzPSJsaXZlLWFjdGlvbnMiPjxidXR0b24gY2xhc3M9ImJ1dHRvbiBidXR0b24tcHJpbWFyeSBidXR0b24tem9vbSBqcy1zY3JlZW4tbW9kYWwiIHR5cGU9ImJ1dHRvbiIgZGF0YS1zY3JlZW4tdGl0bGU9IuWWtualreODu+aOpeWuoueUqGlQYWTnlLvpnaIiIGRhdGEtc2NyZWVuLXVybD0ie3tJUEFEX1VSTH19Ij7nlLvpnaLjgpLmi6HlpKfooajnpLo8L2J1dHRvbj48YSBjbGFzcz0iYnV0dG9uIGJ1dHRvbi1zZWNvbmRhcnkiIGhyZWY9Int7SVBBRF9VUkx9fSIgdGFyZ2V0PSJfYmxhbmsiIHJlbD0ibm9vcGVuZXIiPuWIpeOCv+ODluOBp+mWi+OBjzwvYT48L2Rpdj48L2Rpdj48ZGl2IGNsYXNzPSJsaXZlLWRldmljZSBsaXZlLXRhYmxldCI+PGRpdiBjbGFzcz0ibGl2ZS1icm93c2VyLWJhciI+PHNwYW4+PC9zcGFuPjxzcGFuPjwvc3Bhbj48c3Bhbj48L3NwYW4+PGI+5Za25qWt44O75o6l5a6i55SoaVBhZOeUu+mdojwvYj48L2Rpdj48aWZyYW1lIHRpdGxlPSLllrbmpa3jg7vmjqXlrqLnlKhpUGFk55S76Z2iIiBsb2FkaW5nPSJsYXp5IiBzcmM9Int7SVBBRF9VUkx9fSI+PC9pZnJhbWU+PC9kaXY+PC9hcnRpY2xlPgo8YXJ0aWNsZSBjbGFzcz0ibGl2ZS1wcm9kdWN0IHJldmVhbCI+PGRpdiBjbGFzcz0ibGl2ZS1jb3B5Ij48c3Bhbj4wNSAvIEZPTExPVy1VUDwvc3Bhbj48aDM+6L+95a6i44O75YaN55u46KuH44O7PGJyPueJqeS7tuaPkOahiDwvaDM+PHA+5YaF6KaL5b6M44CB5YaN55u46KuH44CB5paw552A54mp5Lu25YCZ6KOc44KS6aGn5a6i44GU44Go44Gr566h55CG44GX44G+44GZ44CCPC9wPjx1bD48bGk+6L+95a6i44K/44K544KvPC9saT48bGk+5YCZ6KOc44Oe44OD44OB44Oz44KwPC9saT48bGk+6Zmk5aSW5p2h5Lu2PC9saT48L3VsPjxkaXYgY2xhc3M9ImRlbW8tY29kZS1jYXJkIj48c3Bhbj5ERU1PIENPREU8L3NwYW4+PHN0cm9uZz4xMjM0PC9zdHJvbmc+PHNtYWxsPueuoeeQhueUu+mdoueUqDwvc21hbGw+PC9kaXY+PGRpdiBjbGFzcz0ibGl2ZS1hY3Rpb25zIj48YnV0dG9uIGNsYXNzPSJidXR0b24gYnV0dG9uLXByaW1hcnkgYnV0dG9uLXpvb20ganMtc2NyZWVuLW1vZGFsIiB0eXBlPSJidXR0b24iIGRhdGEtc2NyZWVuLXRpdGxlPSLov73lrqLjg7vlho3nm7joq4fjg7vnianku7bmj5DmoYgiIGRhdGEtc2NyZWVuLXVybD0ie3tGT0xMT1dVUF9VUkx9fSI+55S76Z2i44KS5ouh5aSn6KGo56S6PC9idXR0b24+PGEgY2xhc3M9ImJ1dHRvbiBidXR0b24tc2Vjb25kYXJ5IiBocmVmPSJ7e0ZPTExPV1VQX1VSTH19IiB0YXJnZXQ9Il9ibGFuayIgcmVsPSJub29wZW5lciI+5Yil44K/44OW44Gn6ZaL44GPPC9hPjwvZGl2PjwvZGl2PjxkaXYgY2xhc3M9ImxpdmUtZGV2aWNlIGxpdmUtZGVza3RvcCI+PGRpdiBjbGFzcz0ibGl2ZS1icm93c2VyLWJhciI+PHNwYW4+PC9zcGFuPjxzcGFuPjwvc3Bhbj48c3Bhbj48L3NwYW4+PGI+6L+95a6i44O75YaN55u46KuH44O754mp5Lu25o+Q5qGIPC9iPjwvZGl2PjxpZnJhbWUgdGl0bGU9Iui/veWuouODu+WGjeebuOirh+ODu+eJqeS7tuaPkOahiCIgbG9hZGluZz0ibGF6eSIgc3JjPSJ7e0ZPTExPV1VQX1VSTH19Ij48L2lmcmFtZT48L2Rpdj48L2FydGljbGU+CjxhcnRpY2xlIGNsYXNzPSJsaXZlLXByb2R1Y3QgbGl2ZS1wcm9kdWN0LXJldmVyc2UgcmV2ZWFsIj48ZGl2IGNsYXNzPSJsaXZlLWNvcHkiPjxzcGFuPjA2IC8gU1lTVEVNIENIRUNLPC9zcGFuPjxoMz7llrbmpa3liY08YnI+c3lzdGVtLWNoZWNrPC9oMz48cD5BUEnjgIFTZXJ2aWNlIEJpbmRpbmfjgIE544OG44O844OW44Or44CB5YWs6ZaL55S76Z2i44KS5LiA5ous5qSc5p+744GX44G+44GZ44CCPC9wPjx1bD48bGk+T0vjg7vms6jmhI/jg7tORzwvbGk+PGxpPuWuieWFqOOBque1kOaenOOCs+ODlOODvDwvbGk+PGxpPuODh+ODoua6luWCmTwvbGk+PC91bD48ZGl2IGNsYXNzPSJkZW1vLWNvZGUtY2FyZCI+PHNwYW4+REVNTyBDT0RFPC9zcGFuPjxzdHJvbmc+MTIzNDwvc3Ryb25nPjxzbWFsbD7nrqHnkIbnlLvpnaLnlKg8L3NtYWxsPjwvZGl2PjxkaXYgY2xhc3M9ImxpdmUtYWN0aW9ucyI+PGJ1dHRvbiBjbGFzcz0iYnV0dG9uIGJ1dHRvbi1wcmltYXJ5IGJ1dHRvbi16b29tIGpzLXNjcmVlbi1tb2RhbCIgdHlwZT0iYnV0dG9uIiBkYXRhLXNjcmVlbi10aXRsZT0i5Za25qWt5YmNc3lzdGVtLWNoZWNrIiBkYXRhLXNjcmVlbi11cmw9Int7Q0hFQ0tfVVJMfX0iPueUu+mdouOCkuaLoeWkp+ihqOekujwvYnV0dG9uPjxhIGNsYXNzPSJidXR0b24gYnV0dG9uLXNlY29uZGFyeSIgaHJlZj0ie3tDSEVDS19VUkx9fSIgdGFyZ2V0PSJfYmxhbmsiIHJlbD0ibm9vcGVuZXIiPuWIpeOCv+ODluOBp+mWi+OBjzwvYT48L2Rpdj48L2Rpdj48ZGl2IGNsYXNzPSJsaXZlLWRldmljZSBsaXZlLWRlc2t0b3AiPjxkaXYgY2xhc3M9ImxpdmUtYnJvd3Nlci1iYXIiPjxzcGFuPjwvc3Bhbj48c3Bhbj48L3NwYW4+PHNwYW4+PC9zcGFuPjxiPuWWtualreWJjXN5c3RlbS1jaGVjazwvYj48L2Rpdj48aWZyYW1lIHRpdGxlPSLllrbmpa3liY1zeXN0ZW0tY2hlY2siIGxvYWRpbmc9ImxhenkiIHNyYz0ie3tDSEVDS19VUkx9fSI+PC9pZnJhbWU+PC9kaXY+PC9hcnRpY2xlPgo8L2Rpdj48L3NlY3Rpb24+CjxzZWN0aW9uIGNsYXNzPSJmZWF0dXJlLXNob3djYXNlIHNlY3Rpb24iIGlkPSJvcGVyYXRpb24tc2hlZXQiPjxkaXYgY2xhc3M9InNlY3Rpb24taGVhZGluZyByZXZlYWwiPjxwIGNsYXNzPSJleWVicm93Ij5BNCBPUEVSQVRJT04gRVhQRVJJRU5DRSBTSEVFVDwvcD48aDIgY2xhc3M9ImhlYWRsaW5lLWxpbmVzIGhlYWRsaW5lLWZpeGVkIj48c3Bhbj4144Gk44GuUVLjgrPjg7zjg4njgYvjgonjgIE8L3NwYW4+PHNwYW4+44Gd44Gu5aC044Gn5pON5L2c44KS5L2T6aiT44CCPC9zcGFuPjwvaDI+PC9kaXY+PGRpdiBjbGFzcz0iZXN0YXRlLXNoZWV0LWdyaWQiPjxhIGNsYXNzPSJlc3RhdGUtc2hlZXQtcHJldmlldyByZXZlYWwiIGhyZWY9Int7UERGX1VSTH19IiB0YXJnZXQ9Il9ibGFuayIgcmVsPSJub29wZW5lciI+PGltZyBzcmM9Int7UE5HX1VSTH19IiBhbHQ9IkRQUk/kuI3li5XnlKPjg7vos4PosrjlhoXopotMSU5FIOaTjeS9nOS9k+mok+OCt+ODvOODiCI+PC9hPjxkaXYgY2xhc3M9InJldmVhbCI+PGgzPkRQUk8gRVNUQVRFIE5FWFQtMTAg5pON5L2c5L2T6aiT44K344O844OIPC9oMz48cD7jgYrlrqLmp5jnlKjjgIFQQ+euoeeQhuOAgWlQYWTjgIHov73lrqLjgIHllrbmpa3liY3jg4Hjgqfjg4Pjgq/jga5RUuOCs+ODvOODieOCkkE057imMeODmuODvOOCuOOBuOWPjumMsuOBl+OBpuOBhOOBvuOBmeOAgjwvcD48ZGl2IGNsYXNzPSJlc3RhdGUtbmV4dC1ub3RlIj7mnIDntYJQREbjgpLlho3jg6zjg7Pjg4Djg6rjg7PjgrDjgZfjgIE144Gk44GuUVLjgrPjg7zjg4njgpLlrp/pmpvjgavoqq3jgb/lj5bjgorjgIFVUkzlrozlhajkuIDoh7TjgpLoh6rli5XmpJzmn7vmuIjjgb/jgafjgZnjgII8L2Rpdj48ZGl2IGNsYXNzPSJoZXJvLWFjdGlvbnMiPjxhIGNsYXNzPSJidXR0b24gYnV0dG9uLXByaW1hcnkiIGhyZWY9Int7UERGX1VSTH19IiB0YXJnZXQ9Il9ibGFuayIgcmVsPSJub29wZW5lciI+UERG44KS6ZaL44GPPC9hPjxhIGNsYXNzPSJidXR0b24gYnV0dG9uLXNlY29uZGFyeSIgaHJlZj0ie3tQTkdfVVJMfX0iIHRhcmdldD0iX2JsYW5rIiByZWw9Im5vb3BlbmVyIj5QTkfjgpLplovjgY88L2E+PC9kaXY+PC9kaXY+PC9kaXY+PC9zZWN0aW9uPgo8c2VjdGlvbiBjbGFzcz0icHJvZHVjdC1wcm9vZiBzZWN0aW9uIj48ZGl2IGNsYXNzPSJwcm9kdWN0LXByb29mLWlubmVyIHJldmVhbCI+PGRpdj48cCBjbGFzcz0iZXllYnJvdyI+UkVBTCBTQ1JFRU4sIFJFQUwgT1BFUkFUSU9OPC9wPjxoMiBjbGFzcz0iaGVhZGxpbmUtbGluZXMgaGVhZGxpbmUtZml4ZWQiPjxzcGFuPuWGheimi+OCkuWPl+OBkeOCi+OBoOOBkeOBp+OBquOBj+OAgTwvc3Bhbj48c3Bhbj7mrKHjga7mj5DmoYjjgb7jgafntprjgZHjgonjgozjgovjgII8L3NwYW4+PC9oMj48L2Rpdj48ZGl2PjxwPuS4gOaLrOiHquWLlemAgeS/oeOBp+OBr+OBquOBj+OAgemhp+WuouOBlOOBqOOBruWvvuixoeOBqOaWh+mdouOCkueiuuiqjeOBl+OBpuOCs+ODlOODvOOBmeOCi+WuieWFqOOBqkxJTkXpgYvnlKjjgafjgZnjgII8L3A+PGRpdiBjbGFzcz0icHJvb2YtYWN0aW9ucyI+PGEgY2xhc3M9InRleHQtbGluayIgaHJlZj0ie3tDVVNUT01FUl9VUkx9fSIgdGFyZ2V0PSJfYmxhbmsiIHJlbD0ibm9vcGVuZXIiPuWGheimi+S6iOe0hOOCkuS9k+mok+OBmeOCiyDihpI8L2E+PGEgY2xhc3M9InRleHQtbGluayIgaHJlZj0ie3tGT0xMT1dVUF9VUkx9fSIgdGFyZ2V0PSJfYmxhbmsiIHJlbD0ibm9vcGVuZXIiPui/veWuoueUu+mdouOCkuimi+OCiyDihpI8L2E+PGEgY2xhc3M9InRleHQtbGluayIgaHJlZj0ie3tDSEVDS19VUkx9fSIgdGFyZ2V0PSJfYmxhbmsiIHJlbD0ibm9vcGVuZXIiPuWWtualreWJjeODgeOCp+ODg+OCr+OCkuimi+OCiyDihpI8L2E+PC9kaXY+PC9kaXY+PC9kaXY+PC9zZWN0aW9uPgo8c2VjdGlvbiBjbGFzcz0iY29udGFjdCBzZWN0aW9uIiBpZD0iY29udGFjdCI+PGRpdiBjbGFzcz0iY29udGFjdC1jYXJkIHJldmVhbCI+PHAgY2xhc3M9ImV5ZWJyb3ciPlNUQVJUIFdJVEggQSBERU1PPC9wPjxoMiBjbGFzcz0iaGVhZGxpbmUtbGluZXMgaGVhZGxpbmUtZml4ZWQiPjxzcGFuPuS4jeWLleeUo+ODu+izg+iyuOWGheimi+WQkeOBkU5FWFTlrozmiJDniYjjgpLjgIE8L3NwYW4+PHNwYW4+5a6f6Zqb44Gr6Kem44Gj44Gm44G/44G+44Gb44KT44GL44CCPC9zcGFuPjwvaDI+PHA+54mp5Lu257S55LuL44O75YaF6KaL44O755Sz6L6844O76L+95a6i44O75YaN55u46KuH44G+44Gn44CB5a6M5oiQ5riI44G/44Gu5a6f55S76Z2i44KS44GU5qGI5YaF44GX44G+44GZ44CCPC9wPjxkaXYgY2xhc3M9ImNvbnRhY3QtYWN0aW9ucyI+PGEgY2xhc3M9ImJ1dHRvbiBidXR0b24tbGluZSIgaHJlZj0iaHR0cHM6Ly9saW4uZWUvWXhKR1hWNkQiIHRhcmdldD0iX2JsYW5rIiByZWw9Im5vb3BlbmVyIj5MSU5F44Gn44OH44Oi44KS6KaL44KLPC9hPjxhIGNsYXNzPSJidXR0b24gYnV0dG9uLXNlY29uZGFyeS1saWdodCIgaHJlZj0ie3tQREZfVVJMfX0iIHRhcmdldD0iX2JsYW5rIiByZWw9Im5vb3BlbmVyIj7mk43kvZzkvZPpqJPjgrfjg7zjg4g8L2E+PC9kaXY+PC9kaXY+PC9zZWN0aW9uPgo8L21haW4+Cjxmb290ZXIgY2xhc3M9InNpdGUtZm9vdGVyIj48ZGl2PjxhIGNsYXNzPSJicmFuZCBmb290ZXItYnJhbmQiIGhyZWY9Ii4uL2luZGV4Lmh0bWwiPjxzcGFuIGNsYXNzPSJicmFuZC1tYXJrIj5EPC9zcGFuPjxzcGFuIGNsYXNzPSJicmFuZC1jb3B5Ij48c3Ryb25nPkRQUk8gTElORSBTWVNURU1TPC9zdHJvbmc+PHNtYWxsPk9GRklDSUFMIFBST0RVQ1QgU0lURTwvc21hbGw+PC9zcGFuPjwvYT48cD7lupfoiJfmpa3li5njgpLjgIFMSU5F44Gn44KC44Gj44Go57Ch5Y2Y44Gr44CCPC9wPjwvZGl2PjxuYXY+PGEgaHJlZj0iLi4vc3lzdGVtcy5odG1sIj7jgrfjgrnjg4bjg6DkuIDopqc8L2E+PGEgaHJlZj0iLi4vaW5kZXguaHRtbCN3aHkiPkRQUk/jgavjgaTjgYTjgaY8L2E+PGEgaHJlZj0iaHR0cHM6Ly9saW4uZWUvWXhKR1hWNkQiIHRhcmdldD0iX2JsYW5rIiByZWw9Im5vb3BlbmVyIj5MSU5F44Gn44OH44Oi44KS6KaL44KLPC9hPjwvbmF2PjxwIGNsYXNzPSJjb3B5cmlnaHQiPsKpIDxzcGFuIGlkPSJ5ZWFyIj48L3NwYW4+IERQUk8gU0hPUDwvcD48L2Zvb3Rlcj4KPGJ1dHRvbiBjbGFzcz0iYmFjay10by10b3AiIHR5cGU9ImJ1dHRvbiI+4oaRPC9idXR0b24+CjxkaXYgY2xhc3M9InNjcmVlbi1tb2RhbCIgaWQ9InNjcmVlbi1tb2RhbCIgYXJpYS1oaWRkZW49InRydWUiPjxkaXYgY2xhc3M9InNjcmVlbi1tb2RhbC1iYWNrZHJvcCIgZGF0YS1tb2RhbC1jbG9zZT48L2Rpdj48ZGl2IGNsYXNzPSJzY3JlZW4tbW9kYWwtZGlhbG9nIiByb2xlPSJkaWFsb2ciIGFyaWEtbW9kYWw9InRydWUiIGFyaWEtbGFiZWxsZWRieT0ic2NyZWVuLW1vZGFsLXRpdGxlIj48ZGl2IGNsYXNzPSJzY3JlZW4tbW9kYWwtaGVhZGVyIj48c3Ryb25nIGlkPSJzY3JlZW4tbW9kYWwtdGl0bGUiPuWun+eUu+mdojwvc3Ryb25nPjxkaXY+PGEgaWQ9InNjcmVlbi1tb2RhbC1leHRlcm5hbCIgaHJlZj0iIyIgdGFyZ2V0PSJfYmxhbmsiIHJlbD0ibm9vcGVuZXIiPuWIpeOCv+ODluOBp+mWi+OBjzwvYT48YnV0dG9uIHR5cGU9ImJ1dHRvbiIgZGF0YS1tb2RhbC1jbG9zZSBhcmlhLWxhYmVsPSLplonjgZjjgosiPsOXPC9idXR0b24+PC9kaXY+PC9kaXY+PGlmcmFtZSBpZD0ic2NyZWVuLW1vZGFsLWZyYW1lIiB0aXRsZT0i5ouh5aSn44GX44Gf44K344K544OG44Og55S76Z2iIj48L2lmcmFtZT48L2Rpdj48L2Rpdj4KPHNjcmlwdCBzcmM9Ii4uL3NjcmlwdC5qcyI+PC9zY3JpcHQ+CjwvYm9keT48L2h0bWw+Cg==
+        run: |
+          set -Eeuo pipefail
+          python3 - <<'PY_SITE'
+          from pathlib import Path
+          from bs4 import BeautifulSoup, Comment
+          import base64, os
+
+          estate_base = 'https://dpromstk2000-lab.github.io/dpro-estate-line-liff'
+          replacements = {
+              '{{PDF_URL}}': f'{estate_base}/assets/estate-next-10/dpro-estate-operation-experience.pdf',
+              '{{PNG_URL}}': f'{estate_base}/assets/estate-next-10/dpro-estate-operation-experience.png',
+              '{{CUSTOMER_URL}}': f'{estate_base}/index.html?demo=1&v=estate-next-10',
+              '{{PROPERTY_URL}}': f'{estate_base}/property.html?demo=1&v=estate-next-10',
+              '{{OWNER_URL}}': f'{estate_base}/owner.html?demo=1&v=estate-next-10',
+              '{{IPAD_URL}}': f'{estate_base}/owner-ipad.html?demo=1&v=estate-next-10',
+              '{{FOLLOWUP_URL}}': f'{estate_base}/followup.html?demo=1&v=estate-next-10',
+              '{{CHECK_URL}}': f'{estate_base}/system-check.html?demo=1&v=estate-next-10',
+          }
+          page = base64.b64decode(os.environ['ESTATE_PAGE_TEMPLATE_B64']).decode('utf-8')
+          for old,new in replacements.items(): page=page.replace(old,new)
+          import re
+          if re.search(r'\{\{[A-Z_]+\}\}', page): raise SystemExit('ERROR: unresolved product page placeholder.')
+          Path('systems/estate.html').write_text(page,encoding='utf-8')
+
+          catalog_path=Path('systems.html')
+          soup=BeautifulSoup(catalog_path.read_text(encoding='utf-8'),'html.parser')
+          card=soup.find('a',href='systems/estate.html')
+          if card is None: raise SystemExit('ERROR: estate catalog card was not found.')
+          customer_url=replacements['{{CUSTOMER_URL}}']
+          fragment=BeautifulSoup(
+              '<a class="catalog-card reveal is-live" href="systems/estate.html">'
+              '<div class="catalog-card-top"><span class="catalog-code">ER</span><span class="catalog-status">DPRO NEXT完成版</span></div>'
+              '<div class="catalog-visual catalog-live-visual"><iframe title="DPRO不動産NEXT実画面プレビュー" loading="lazy" src="'+customer_url+'"></iframe><span class="catalog-live-badge">ESTATE NEXT-10完成</span></div>'
+              '<div class="catalog-card-copy"><small>住まい・建築</small><h3>不動産・賃貸内見</h3><p>希望条件・内見予約・案件申込・初期費用・必要書類・再相談・追客・物件候補提案。</p><b class="catalog-card-cta">DPRO NEXT完成版を見る →</b></div></a>',
+              'html.parser').a
+          card.replace_with(fragment)
+          soup.body.insert(0,Comment(' STEP ESTATE-NEXT-10 / ESTATE NEXT CATALOG / 20260724 '))
+          catalog_path.write_text(str(soup),encoding='utf-8')
+
+          Path('dpro-next').mkdir(exist_ok=True)
+          Path('dpro-next/estate-next-10-product-site.yml').write_text('\n'.join([
+              'step: ESTATE-NEXT-10-PRODUCT-SITE','status: PREPARED','product_page: systems/estate.html','catalog: systems.html',
+              'operation_sheet_pdf: '+replacements['{{PDF_URL}}'],'operation_sheet_png: '+replacements['{{PNG_URL}}'],
+              'worker_changed: false','supabase_changed: false','api_changed: false',''
+          ]),encoding='utf-8')
+          PY_SITE
+
+      - name: Validate product page catalog and URLs
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          python3 - <<'PY_VALIDATE'
+          from pathlib import Path
+          from bs4 import BeautifulSoup
+          from collections import Counter
+          for name in ['systems/estate.html','systems.html']:
+              text=Path(name).read_text(encoding='utf-8')
+              soup=BeautifulSoup(text,'html.parser')
+              ids=[node.get('id') for node in soup.find_all(id=True)]
+              dup=[key for key,count in Counter(ids).items() if count>1]
+              if dup: raise SystemExit(f'ERROR: duplicate ids in {name}: {dup}')
+          estate=Path('systems/estate.html').read_text(encoding='utf-8')
+          catalog=Path('systems.html').read_text(encoding='utf-8')
+          required=['STEP ESTATE-NEXT-10','DPRO NEXT完成版','dpro-estate-operation-experience.pdf','followup.html?demo=1','system-check.html?demo=1']
+          missing=[value for value in required if value not in estate]
+          if missing: raise SystemExit(f'ERROR: estate product page missing {missing}')
+          if 'v=estate-12' in estate: raise SystemExit('ERROR: old estate-12 URL remains.')
+          if 'ESTATE NEXT-10完成' not in catalog: raise SystemExit('ERROR: catalog was not updated.')
+          soup=BeautifulSoup(catalog,'html.parser')
+          if len(soup.find_all('a',href='systems/estate.html')) != 1: raise SystemExit('ERROR: estate card count invalid.')
+          print('Product site static validation PASS')
+          PY_VALIDATE
+
+      - name: Commit product site update
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          git add systems/estate.html systems.html dpro-next/estate-next-10-product-site.yml
+          if ! git diff --cached --quiet; then
+            git commit -m 'Publish DPRO ESTATE NEXT-10 product site'
+            git push origin "$TARGET_BRANCH"
+          else
+            echo 'Product page and catalog are already prepared.'
+          fi
+
+      - name: Wait for publication and run desktop mobile visual checks
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          for attempt in $(seq 1 36); do
+            body="$(curl --silent --show-error "$SITE_BASE/systems/estate.html?v=estate-next-10-${GITHUB_RUN_ID}" || true)"
+            catalog="$(curl --silent --show-error "$SITE_BASE/systems.html?v=estate-next-10-${GITHUB_RUN_ID}" || true)"
+            if grep -q 'STEP ESTATE-NEXT-10' <<<"$body" && grep -q 'ESTATE NEXT-10完成' <<<"$catalog"; then break; fi
+            if [ "$attempt" = '36' ]; then echo 'ERROR: product site publication timeout.' >&2; exit 1; fi
+            sleep 10
+          done
+          python3 - <<'PY_VISUAL'
+          from playwright.sync_api import sync_playwright
+          url='https://dpromstk2000-lab.github.io/dpro-line-systems-site/systems/estate.html?v=estate-next-10'
+          with sync_playwright() as p:
+              browser=p.chromium.launch(headless=True,args=['--no-sandbox'])
+              for name,width,height in [('desktop',1440,1000),('mobile',390,844)]:
+                  page=browser.new_page(viewport={'width':width,'height':height})
+                  response=page.goto(url,wait_until='domcontentloaded',timeout=120000)
+                  if response is None or response.status>=400: raise RuntimeError(f'{name} HTTP failure')
+                  page.wait_for_timeout(5000)
+                  overflow=page.evaluate('document.documentElement.scrollWidth - window.innerWidth')
+                  if overflow>3: raise RuntimeError(f'{name} horizontal overflow: {overflow}')
+                  if page.locator('text=DPRO NEXT完成版').count()==0: raise RuntimeError(f'{name} completion badge missing')
+                  page.screenshot(path=f'/tmp/estate-product-{name}.png',full_page=False)
+                  page.close()
+              browser.close()
+          PY_VISUAL
+
+      - name: Record product site completion
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          completed_at="$(TZ=Asia/Tokyo date '+%Y-%m-%dT%H:%M:%S%:z')"
+          cat > dpro-next/estate-next-10-product-site.yml <<EOF_SITE
+          step: ESTATE-NEXT-10-PRODUCT-SITE
+          status: COMPLETE
+          completed_at_jst: "$completed_at"
+          product_page: $SITE_BASE/systems/estate.html
+          catalog: $SITE_BASE/systems.html
+          operation_sheet_pdf: $OPERATION_PDF
+          operation_sheet_png: $OPERATION_PNG
+          desktop_visual_check: PASS
+          mobile_visual_check: PASS
+          horizontal_overflow_check: PASS
+          old_estate_12_urls_removed: true
+          worker_changed: false
+          supabase_changed: false
+          api_changed: false
+          EOF_SITE
+          git add dpro-next/estate-next-10-product-site.yml
+          if ! git diff --cached --quiet; then
+            git commit -m 'Complete DPRO ESTATE NEXT-10 product site verification'
+            git push origin "$TARGET_BRANCH"
+          else
+            echo 'Product-site completion ledger is already current.'
+          fi
+
+      - name: Delete workflow and commit completion
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          rm -f "$WORKFLOW_PATH"
+          git add -A "$WORKFLOW_PATH"
+          git commit -m 'Remove completed ESTATE NEXT-10 product site workflow'
+          git push origin "$TARGET_BRANCH"
+
+      - name: Publish completion summary
+        shell: bash
+        run: |
+          cat >> "$GITHUB_STEP_SUMMARY" <<EOF_SUMMARY
+          # ESTATE NEXT-10 PRODUCT SITE COMPLETE
+
+          | 項目 | 結果 |
+          |---|---|
+          | 不動産製品ページ | PASS |
+          | 製品一覧カード | PASS |
+          | 操作体験シートPDF・PNG | PASS |
+          | Desktop表示 | PASS |
+          | Mobile表示 | PASS |
+          | 横スクロール | PASS |
+          | 古いestate-12 URL | 削除済み |
+
+          次に不動産リポジトリのESTATE-NEXT-10を mode=verify で実行してください。
+          EOF_SUMMARY
