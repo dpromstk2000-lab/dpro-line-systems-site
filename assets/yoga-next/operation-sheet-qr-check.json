@@ -1,0 +1,49 @@
+{
+  "status": "PASS",
+  "all_pass": true,
+  "pdf_pages": 1,
+  "qr_count": 6,
+  "results": [
+    {
+      "key": "product",
+      "expected_url": "https://dpromstk2000-lab.github.io/dpro-line-systems-site/systems/yoga.html",
+      "decoded_url": "https://dpromstk2000-lab.github.io/dpro-line-systems-site/systems/yoga.html",
+      "pass": true
+    },
+    {
+      "key": "customer",
+      "expected_url": "https://dpromstk2000-lab.github.io/liff-yoga-reserve/index.html?demo=1&v=yoga-next-10",
+      "decoded_url": "https://dpromstk2000-lab.github.io/liff-yoga-reserve/index.html?demo=1&v=yoga-next-10",
+      "pass": true
+    },
+    {
+      "key": "owner",
+      "expected_url": "https://dpromstk2000-lab.github.io/liff-yoga-reserve/owner.html?demo=1&v=yoga-next-10",
+      "decoded_url": "https://dpromstk2000-lab.github.io/liff-yoga-reserve/owner.html?demo=1&v=yoga-next-10",
+      "pass": true
+    },
+    {
+      "key": "ipad",
+      "expected_url": "https://dpromstk2000-lab.github.io/liff-yoga-reserve/owner-ipad.html?demo=1&v=yoga-next-10",
+      "decoded_url": "https://dpromstk2000-lab.github.io/liff-yoga-reserve/owner-ipad.html?demo=1&v=yoga-next-10",
+      "pass": true
+    },
+    {
+      "key": "member",
+      "expected_url": "https://dpromstk2000-lab.github.io/liff-yoga-reserve/member.html?demo=1&v=yoga-next-10",
+      "decoded_url": "https://dpromstk2000-lab.github.io/liff-yoga-reserve/member.html?demo=1&v=yoga-next-10",
+      "pass": true
+    },
+    {
+      "key": "line",
+      "expected_url": "https://lin.ee/YxJGXV6D",
+      "decoded_url": "https://lin.ee/YxJGXV6D",
+      "pass": true
+    }
+  ],
+  "rendered_png": {
+    "width": 2479,
+    "height": 3508,
+    "bytes": 870976
+  }
+}

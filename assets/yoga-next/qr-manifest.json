@@ -1,0 +1,50 @@
+[
+  {
+    "key": "product",
+    "url": "https://dpromstk2000-lab.github.io/dpro-line-systems-site/systems/yoga.html",
+    "x": 33.5,
+    "y": 129.859375,
+    "width": 105.8125,
+    "height": 105.8125
+  },
+  {
+    "key": "customer",
+    "url": "https://dpromstk2000-lab.github.io/liff-yoga-reserve/index.html?demo=1&v=yoga-next-10",
+    "x": 282.9375,
+    "y": 129.859375,
+    "width": 105.8125,
+    "height": 105.8125
+  },
+  {
+    "key": "owner",
+    "url": "https://dpromstk2000-lab.github.io/liff-yoga-reserve/owner.html?demo=1&v=yoga-next-10",
+    "x": 532.375,
+    "y": 129.859375,
+    "width": 105.8125,
+    "height": 105.8125
+  },
+  {
+    "key": "ipad",
+    "url": "https://dpromstk2000-lab.github.io/liff-yoga-reserve/owner-ipad.html?demo=1&v=yoga-next-10",
+    "x": 33.5,
+    "y": 257.3125,
+    "width": 105.8125,
+    "height": 105.8125
+  },
+  {
+    "key": "member",
+    "url": "https://dpromstk2000-lab.github.io/liff-yoga-reserve/member.html?demo=1&v=yoga-next-10",
+    "x": 282.9375,
+    "y": 257.3125,
+    "width": 105.8125,
+    "height": 105.8125
+  },
+  {
+    "key": "line",
+    "url": "https://lin.ee/YxJGXV6D",
+    "x": 532.375,
+    "y": 257.3125,
+    "width": 105.8125,
+    "height": 105.8125
+  }
+]
