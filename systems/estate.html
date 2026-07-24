@@ -15,6 +15,38 @@
 .estate-next-note{margin-top:14px;padding:14px 16px;border-radius:14px;background:#e9f7f1;color:#095140;font-weight:800}
 @media(max-width:820px){.estate-sheet-grid{grid-template-columns:1fr}}
 </style>
+<style id="estate-next-10-r2-mobile-safe">
+/* ESTATE-NEXT-10-R2-MOBILE-SAFE
+   The hero uses intentional absolute device previews. Keep those previews
+   inside the mobile viewport and prevent a visual decoration from creating
+   page-level horizontal scrolling. */
+html,body{max-width:100%;overflow-x:clip}
+body>header,body>main,body>footer{max-width:100%;overflow-x:clip}
+@media(max-width:560px){
+  .product-hero{width:100%;max-width:100%;grid-template-columns:minmax(0,1fr);overflow:hidden}
+  .product-hero-copy,.product-visual,.product-visual-live,.hero-actions,
+  .live-showcase,.live-product,.live-copy,.live-device,
+  .feature-showcase-grid,.feature-showcase-card,.feature-showcase-copy,
+  .feature-showcase-screen,.estate-sheet-grid,.estate-sheet-preview,
+  .product-proof-inner,.contact-card{min-width:0;max-width:100%}
+  .product-visual-live{overflow:hidden}
+  .hero-live-monitor{left:22px;right:0}
+  .hero-live-phone{left:0}
+  .hero-live-tablet{right:0}
+  .hero-actions,.live-actions{width:100%;display:grid;grid-template-columns:minmax(0,1fr)}
+  .hero-actions .button,.live-actions .button{
+    width:100%;max-width:100%;min-width:0;padding-left:18px;padding-right:18px;
+    text-align:center;white-space:normal;overflow-wrap:anywhere
+  }
+  .live-device,.live-desktop,.live-tablet{max-width:100%;min-width:0;margin-left:0}
+  .feature-showcase-screen.desktop,.feature-showcase-screen.tablet{width:100%;max-width:100%}
+  .estate-sheet-preview{padding:12px}
+  .estate-sheet-preview img{max-width:100%;height:auto}
+  .product-hero h1,.product-hero h2,.section-heading h2,.live-copy h3,
+  .feature-showcase-copy h3,.contact-card h2{max-width:100%;overflow-wrap:anywhere}
+  .screen-modal,.screen-modal-dialog{max-width:100%}
+}
+</style>
 </head>
 <body>
 <!-- STEP ESTATE-NEXT-10 / DPRO NEXT COMPLETE / 20260724 -->
