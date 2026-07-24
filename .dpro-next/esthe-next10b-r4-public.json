@@ -1,0 +1,627 @@
+{
+  "step": "ESTHE-NEXT-10B-R4",
+  "public_visual_pass": true,
+  "actual_horizontal_scroll": false,
+  "critical_content_within_viewport": true,
+  "results": [
+    {
+      "name": "product-desktop-1440",
+      "width": 1440,
+      "metrics": {
+        "viewport": 1440,
+        "documentScrollWidth": 1440,
+        "bodyScrollWidth": 1440,
+        "scrollXBefore": 0,
+        "scrollXAfter": 0
+      },
+      "screenshot": ".next10b-r4-public-artifact/product-desktop-1440.png",
+      "screenshot_bytes": 657524,
+      "pass": true
+    },
+    {
+      "name": "product-mobile-390",
+      "width": 390,
+      "metrics": {
+        "viewport": 390,
+        "documentScrollWidth": 390,
+        "bodyScrollWidth": 390,
+        "scrollXBefore": 0,
+        "scrollXAfter": 0
+      },
+      "screenshot": ".next10b-r4-public-artifact/product-mobile-390.png",
+      "screenshot_bytes": 211848,
+      "pass": true
+    },
+    {
+      "name": "product-mobile-360",
+      "width": 360,
+      "metrics": {
+        "viewport": 360,
+        "documentScrollWidth": 360,
+        "bodyScrollWidth": 360,
+        "scrollXBefore": 0,
+        "scrollXAfter": 0
+      },
+      "screenshot": ".next10b-r4-public-artifact/product-mobile-360.png",
+      "screenshot_bytes": 193465,
+      "pass": true
+    },
+    {
+      "name": "catalog-desktop-1440",
+      "width": 1440,
+      "metrics": {
+        "viewport": 1440,
+        "documentScrollWidth": 1440,
+        "bodyScrollWidth": 1440,
+        "critical": [
+          {
+            "selector": ".catalog-hero-inner",
+            "tag": "div",
+            "text": "DPRO PRODUCT CATALOG 業種ごとに、 完成したシステムが あります。 予約、受付、顧客管理、会員証、スタッフ画面。 41業種の完成システムを、実際の画面でご確認いただけます。 システ",
+            "left": 106.4,
+            "right": 693.9,
+            "width": 587.5,
+            "withinViewport": true
+          },
+          {
+            "selector": ".catalog-hero-title",
+            "tag": "h1",
+            "text": "業種ごとに、 完成したシステムが あります。",
+            "left": 106.4,
+            "right": 693.9,
+            "width": 587.5,
+            "withinViewport": true
+          },
+          {
+            "selector": ".catalog-hero-title > span",
+            "tag": "span",
+            "text": "業種ごとに、",
+            "left": 106.4,
+            "right": 588.8,
+            "width": 482.5,
+            "withinViewport": true
+          },
+          {
+            "selector": ".catalog-hero-title > span",
+            "tag": "span",
+            "text": "完成したシステムが",
+            "left": 106.4,
+            "right": 835.1,
+            "width": 728.7,
+            "withinViewport": true
+          },
+          {
+            "selector": ".catalog-hero-title > span",
+            "tag": "span",
+            "text": "あります。",
+            "left": 106.4,
+            "right": 511.4,
+            "width": 405,
+            "withinViewport": true
+          },
+          {
+            "selector": ".catalog-hero-actions",
+            "tag": "div",
+            "text": "システムを見る LINEでデモを見る",
+            "left": 106.4,
+            "right": 693.9,
+            "width": 587.5,
+            "withinViewport": true
+          },
+          {
+            "selector": ".catalog-summary-grid",
+            "tag": "div",
+            "text": "41 完成済みシステム 7 業種カテゴリ 3 利用画面 LIVE 実画面デモ",
+            "left": 100,
+            "right": 1340,
+            "width": 1240,
+            "withinViewport": true
+          },
+          {
+            "selector": ".catalog-filters",
+            "tag": "div",
+            "text": "すべて 美容・健康 医療・ペット 飲食・小売 買取・リユース 住まい・建築 教育・生活サービス 士業・企業支援",
+            "left": 100,
+            "right": 1340,
+            "width": 1240,
+            "withinViewport": true
+          },
+          {
+            "selector": ".catalog-grid",
+            "tag": "div",
+            "text": "PS 公開中 実画面あり 医療・ペット ペットサロン 予約・顧客・ペット情報・写真管理まで。 今すぐ製品ページを見る → VT 公開中 実画面あり 医療・ペット 動物病院 LINE診察券・順番受付・受",
+            "left": 100,
+            "right": 1340,
+            "width": 1240,
+            "withinViewport": true
+          },
+          {
+            "selector": ".catalog-progress-inner",
+            "tag": "div",
+            "text": "PRODUCT PAGE PROGRESS 41製品すべて、 公開しています。 41製品すべての詳細ページを公開しました。業種別の完成済みシステムを、実画面で確認できます。 41 / 41 製品ページ",
+            "left": 100,
+            "right": 1340,
+            "width": 1240,
+            "withinViewport": true
+          },
+          {
+            "selector": ".phase-cta-inner",
+            "tag": "div",
+            "text": "START WITH A DEMO 気になるシステムを、 実際に触ってみませんか？ 完成済みのデモをご案内します。LINEで業種名を送るだけで大丈夫です。 LINEでデモを見る",
+            "left": 345.3,
+            "right": 1094.7,
+            "width": 749.4,
+            "withinViewport": true
+          },
+          {
+            "selector": ".site-footer .footer-inner",
+            "tag": "div",
+            "text": "D DPRO LINE SYSTEMS OFFICIAL PRODUCT SITE 店舗業務を、LINEでもっと簡単に。 トップ 製品一覧 LINEでデモを見る © 2026 DPRO SHOP",
+            "left": 72,
+            "right": 1268,
+            "width": 1196,
+            "withinViewport": true
+          },
+          {
+            "selector": "a[href=\"systems/esthe.html\"]",
+            "tag": "a",
+            "text": "ES DPRO NEXT完成版 ESTHE NEXT-10完成 美容・健康 エステ・リラクゼーション LINE予約・今日やること・施術前確認・進捗・回数券・来店履歴・前回と同じ予約・再来店フォロー。 ",
+            "left": 100,
+            "right": 500,
+            "width": 400,
+            "withinViewport": true
+          }
+        ],
+        "paintOnly": [],
+        "scrollXAfter": 0
+      },
+      "paint_only_attention_count": 0,
+      "screenshot": ".next10b-r4-public-artifact/catalog-desktop-1440.png",
+      "screenshot_bytes": 484606,
+      "pass": true
+    },
+    {
+      "name": "catalog-mobile-390",
+      "width": 390,
+      "metrics": {
+        "viewport": 390,
+        "documentScrollWidth": 390,
+        "bodyScrollWidth": 390,
+        "critical": [
+          {
+            "selector": ".catalog-hero-inner",
+            "tag": "div",
+            "text": "DPRO PRODUCT CATALOG 業種ごとに、 完成したシステムが あります。 予約、受付、顧客管理、会員証、スタッフ画面。 41業種の完成システムを、実際の画面でご確認いただけます。 システ",
+            "left": 20,
+            "right": 370,
+            "width": 350,
+            "withinViewport": true
+          },
+          {
+            "selector": ".catalog-hero-title",
+            "tag": "h1",
+            "text": "業種ごとに、 完成したシステムが あります。",
+            "left": 20,
+            "right": 370,
+            "width": 350,
+            "withinViewport": true
+          },
+          {
+            "selector": ".catalog-hero-title > span",
+            "tag": "span",
+            "text": "業種ごとに、",
+            "left": 20,
+            "right": 370,
+            "width": 350,
+            "withinViewport": true
+          },
+          {
+            "selector": ".catalog-hero-title > span",
+            "tag": "span",
+            "text": "完成したシステムが",
+            "left": 20,
+            "right": 370,
+            "width": 350,
+            "withinViewport": true
+          },
+          {
+            "selector": ".catalog-hero-title > span",
+            "tag": "span",
+            "text": "あります。",
+            "left": 20,
+            "right": 370,
+            "width": 350,
+            "withinViewport": true
+          },
+          {
+            "selector": ".catalog-hero-actions",
+            "tag": "div",
+            "text": "システムを見る LINEでデモを見る",
+            "left": 20,
+            "right": 370,
+            "width": 350,
+            "withinViewport": true
+          },
+          {
+            "selector": ".catalog-summary-grid",
+            "tag": "div",
+            "text": "41 完成済みシステム 7 業種カテゴリ 3 利用画面 LIVE 実画面デモ",
+            "left": 20,
+            "right": 370,
+            "width": 350,
+            "withinViewport": true
+          },
+          {
+            "selector": ".catalog-filters",
+            "tag": "div",
+            "text": "すべて 美容・健康 医療・ペット 飲食・小売 買取・リユース 住まい・建築 教育・生活サービス 士業・企業支援",
+            "left": 20,
+            "right": 370,
+            "width": 350,
+            "withinViewport": true
+          },
+          {
+            "selector": ".catalog-grid",
+            "tag": "div",
+            "text": "PS 公開中 実画面あり 医療・ペット ペットサロン 予約・顧客・ペット情報・写真管理まで。 今すぐ製品ページを見る → VT 公開中 実画面あり 医療・ペット 動物病院 LINE診察券・順番受付・受",
+            "left": 20,
+            "right": 370,
+            "width": 350,
+            "withinViewport": true
+          },
+          {
+            "selector": ".catalog-progress-inner",
+            "tag": "div",
+            "text": "PRODUCT PAGE PROGRESS 41製品すべて、 公開しています。 41製品すべての詳細ページを公開しました。業種別の完成済みシステムを、実画面で確認できます。 41 / 41 製品ページ",
+            "left": 20,
+            "right": 370,
+            "width": 350,
+            "withinViewport": true
+          },
+          {
+            "selector": ".phase-cta-inner",
+            "tag": "div",
+            "text": "START WITH A DEMO 気になるシステムを、 実際に触ってみませんか？ 完成済みのデモをご案内します。LINEで業種名を送るだけで大丈夫です。 LINEでデモを見る",
+            "left": 20,
+            "right": 370,
+            "width": 350,
+            "withinViewport": true
+          },
+          {
+            "selector": ".site-footer .footer-inner",
+            "tag": "div",
+            "text": "D DPRO LINE SYSTEMS OFFICIAL PRODUCT SITE 店舗業務を、LINEでもっと簡単に。 トップ 製品一覧 LINEでデモを見る © 2026 DPRO SHOP",
+            "left": 20,
+            "right": 370,
+            "width": 350,
+            "withinViewport": true
+          },
+          {
+            "selector": "a[href=\"systems/esthe.html\"]",
+            "tag": "a",
+            "text": "ES DPRO NEXT完成版 ESTHE NEXT-10完成 美容・健康 エステ・リラクゼーション LINE予約・今日やること・施術前確認・進捗・回数券・来店履歴・前回と同じ予約・再来店フォロー。 ",
+            "left": 20,
+            "right": 370,
+            "width": 350,
+            "withinViewport": true
+          }
+        ],
+        "paintOnly": [],
+        "scrollXAfter": 0,
+        "formerly_failing_heading": {
+          "left": 20,
+          "right": 370,
+          "width": 350,
+          "viewport": 390,
+          "pass": true
+        }
+      },
+      "paint_only_attention_count": 0,
+      "screenshot": ".next10b-r4-public-artifact/catalog-mobile-390.png",
+      "screenshot_bytes": 85554,
+      "pass": true
+    },
+    {
+      "name": "catalog-mobile-360",
+      "width": 360,
+      "metrics": {
+        "viewport": 360,
+        "documentScrollWidth": 360,
+        "bodyScrollWidth": 360,
+        "critical": [
+          {
+            "selector": ".catalog-hero-inner",
+            "tag": "div",
+            "text": "DPRO PRODUCT CATALOG 業種ごとに、 完成したシステムが あります。 予約、受付、顧客管理、会員証、スタッフ画面。 41業種の完成システムを、実際の画面でご確認いただけます。 システ",
+            "left": 20,
+            "right": 340,
+            "width": 320,
+            "withinViewport": true
+          },
+          {
+            "selector": ".catalog-hero-title",
+            "tag": "h1",
+            "text": "業種ごとに、 完成したシステムが あります。",
+            "left": 20,
+            "right": 340,
+            "width": 320,
+            "withinViewport": true
+          },
+          {
+            "selector": ".catalog-hero-title > span",
+            "tag": "span",
+            "text": "業種ごとに、",
+            "left": 20,
+            "right": 340,
+            "width": 320,
+            "withinViewport": true
+          },
+          {
+            "selector": ".catalog-hero-title > span",
+            "tag": "span",
+            "text": "完成したシステムが",
+            "left": 20,
+            "right": 340,
+            "width": 320,
+            "withinViewport": true
+          },
+          {
+            "selector": ".catalog-hero-title > span",
+            "tag": "span",
+            "text": "あります。",
+            "left": 20,
+            "right": 340,
+            "width": 320,
+            "withinViewport": true
+          },
+          {
+            "selector": ".catalog-hero-actions",
+            "tag": "div",
+            "text": "システムを見る LINEでデモを見る",
+            "left": 20,
+            "right": 340,
+            "width": 320,
+            "withinViewport": true
+          },
+          {
+            "selector": ".catalog-summary-grid",
+            "tag": "div",
+            "text": "41 完成済みシステム 7 業種カテゴリ 3 利用画面 LIVE 実画面デモ",
+            "left": 20,
+            "right": 340,
+            "width": 320,
+            "withinViewport": true
+          },
+          {
+            "selector": ".catalog-filters",
+            "tag": "div",
+            "text": "すべて 美容・健康 医療・ペット 飲食・小売 買取・リユース 住まい・建築 教育・生活サービス 士業・企業支援",
+            "left": 20,
+            "right": 340,
+            "width": 320,
+            "withinViewport": true
+          },
+          {
+            "selector": ".catalog-grid",
+            "tag": "div",
+            "text": "PS 公開中 実画面あり 医療・ペット ペットサロン 予約・顧客・ペット情報・写真管理まで。 今すぐ製品ページを見る → VT 公開中 実画面あり 医療・ペット 動物病院 LINE診察券・順番受付・受",
+            "left": 20,
+            "right": 340,
+            "width": 320,
+            "withinViewport": true
+          },
+          {
+            "selector": ".catalog-progress-inner",
+            "tag": "div",
+            "text": "PRODUCT PAGE PROGRESS 41製品すべて、 公開しています。 41製品すべての詳細ページを公開しました。業種別の完成済みシステムを、実画面で確認できます。 41 / 41 製品ページ",
+            "left": 20,
+            "right": 340,
+            "width": 320,
+            "withinViewport": true
+          },
+          {
+            "selector": ".phase-cta-inner",
+            "tag": "div",
+            "text": "START WITH A DEMO 気になるシステムを、 実際に触ってみませんか？ 完成済みのデモをご案内します。LINEで業種名を送るだけで大丈夫です。 LINEでデモを見る",
+            "left": 20,
+            "right": 340,
+            "width": 320,
+            "withinViewport": true
+          },
+          {
+            "selector": ".site-footer .footer-inner",
+            "tag": "div",
+            "text": "D DPRO LINE SYSTEMS OFFICIAL PRODUCT SITE 店舗業務を、LINEでもっと簡単に。 トップ 製品一覧 LINEでデモを見る © 2026 DPRO SHOP",
+            "left": 20,
+            "right": 340,
+            "width": 320,
+            "withinViewport": true
+          },
+          {
+            "selector": "a[href=\"systems/esthe.html\"]",
+            "tag": "a",
+            "text": "ES DPRO NEXT完成版 ESTHE NEXT-10完成 美容・健康 エステ・リラクゼーション LINE予約・今日やること・施術前確認・進捗・回数券・来店履歴・前回と同じ予約・再来店フォロー。 ",
+            "left": 20,
+            "right": 340,
+            "width": 320,
+            "withinViewport": true
+          }
+        ],
+        "paintOnly": [
+          {
+            "tag": "span",
+            "id": "",
+            "className": "",
+            "text": "実際に触ってみませんか？",
+            "left": -4.5,
+            "right": 364.5,
+            "width": 369
+          }
+        ],
+        "scrollXAfter": 0,
+        "formerly_failing_heading": {
+          "left": 20,
+          "right": 340,
+          "width": 320,
+          "viewport": 360,
+          "pass": true
+        }
+      },
+      "paint_only_attention_count": 1,
+      "screenshot": ".next10b-r4-public-artifact/catalog-mobile-360.png",
+      "screenshot_bytes": 82773,
+      "pass": true
+    },
+    {
+      "name": "catalog-mobile-320",
+      "width": 320,
+      "metrics": {
+        "viewport": 320,
+        "documentScrollWidth": 320,
+        "bodyScrollWidth": 320,
+        "critical": [
+          {
+            "selector": ".catalog-hero-inner",
+            "tag": "div",
+            "text": "DPRO PRODUCT CATALOG 業種ごとに、 完成したシステムが あります。 予約、受付、顧客管理、会員証、スタッフ画面。 41業種の完成システムを、実際の画面でご確認いただけます。 システ",
+            "left": 20,
+            "right": 300,
+            "width": 280,
+            "withinViewport": true
+          },
+          {
+            "selector": ".catalog-hero-title",
+            "tag": "h1",
+            "text": "業種ごとに、 完成したシステムが あります。",
+            "left": 20,
+            "right": 300,
+            "width": 280,
+            "withinViewport": true
+          },
+          {
+            "selector": ".catalog-hero-title > span",
+            "tag": "span",
+            "text": "業種ごとに、",
+            "left": 20,
+            "right": 300,
+            "width": 280,
+            "withinViewport": true
+          },
+          {
+            "selector": ".catalog-hero-title > span",
+            "tag": "span",
+            "text": "完成したシステムが",
+            "left": 20,
+            "right": 300,
+            "width": 280,
+            "withinViewport": true
+          },
+          {
+            "selector": ".catalog-hero-title > span",
+            "tag": "span",
+            "text": "あります。",
+            "left": 20,
+            "right": 300,
+            "width": 280,
+            "withinViewport": true
+          },
+          {
+            "selector": ".catalog-hero-actions",
+            "tag": "div",
+            "text": "システムを見る LINEでデモを見る",
+            "left": 20,
+            "right": 300,
+            "width": 280,
+            "withinViewport": true
+          },
+          {
+            "selector": ".catalog-summary-grid",
+            "tag": "div",
+            "text": "41 完成済みシステム 7 業種カテゴリ 3 利用画面 LIVE 実画面デモ",
+            "left": 20,
+            "right": 300,
+            "width": 280,
+            "withinViewport": true
+          },
+          {
+            "selector": ".catalog-filters",
+            "tag": "div",
+            "text": "すべて 美容・健康 医療・ペット 飲食・小売 買取・リユース 住まい・建築 教育・生活サービス 士業・企業支援",
+            "left": 20,
+            "right": 300,
+            "width": 280,
+            "withinViewport": true
+          },
+          {
+            "selector": ".catalog-grid",
+            "tag": "div",
+            "text": "PS 公開中 実画面あり 医療・ペット ペットサロン 予約・顧客・ペット情報・写真管理まで。 今すぐ製品ページを見る → VT 公開中 実画面あり 医療・ペット 動物病院 LINE診察券・順番受付・受",
+            "left": 20,
+            "right": 300,
+            "width": 280,
+            "withinViewport": true
+          },
+          {
+            "selector": ".catalog-progress-inner",
+            "tag": "div",
+            "text": "PRODUCT PAGE PROGRESS 41製品すべて、 公開しています。 41製品すべての詳細ページを公開しました。業種別の完成済みシステムを、実画面で確認できます。 41 / 41 製品ページ",
+            "left": 20,
+            "right": 300,
+            "width": 280,
+            "withinViewport": true
+          },
+          {
+            "selector": ".phase-cta-inner",
+            "tag": "div",
+            "text": "START WITH A DEMO 気になるシステムを、 実際に触ってみませんか？ 完成済みのデモをご案内します。LINEで業種名を送るだけで大丈夫です。 LINEでデモを見る",
+            "left": 20,
+            "right": 300,
+            "width": 280,
+            "withinViewport": true
+          },
+          {
+            "selector": ".site-footer .footer-inner",
+            "tag": "div",
+            "text": "D DPRO LINE SYSTEMS OFFICIAL PRODUCT SITE 店舗業務を、LINEでもっと簡単に。 トップ 製品一覧 LINEでデモを見る © 2026 DPRO SHOP",
+            "left": 20,
+            "right": 300,
+            "width": 280,
+            "withinViewport": true
+          },
+          {
+            "selector": "a[href=\"systems/esthe.html\"]",
+            "tag": "a",
+            "text": "ES DPRO NEXT完成版 ESTHE NEXT-10完成 美容・健康 エステ・リラクゼーション LINE予約・今日やること・施術前確認・進捗・回数券・来店履歴・前回と同じ予約・再来店フォロー。 ",
+            "left": 20,
+            "right": 300,
+            "width": 280,
+            "withinViewport": true
+          }
+        ],
+        "paintOnly": [
+          {
+            "tag": "span",
+            "id": "",
+            "className": "",
+            "text": "実際に触ってみませんか？",
+            "left": -24.5,
+            "right": 344.5,
+            "width": 369
+          }
+        ],
+        "scrollXAfter": 0,
+        "formerly_failing_heading": {
+          "left": 20,
+          "right": 300,
+          "width": 280,
+          "viewport": 320,
+          "pass": true
+        }
+      },
+      "paint_only_attention_count": 1,
+      "screenshot": ".next10b-r4-public-artifact/catalog-mobile-320.png",
+      "screenshot_bytes": 78426,
+      "pass": true
+    }
+  ]
+}

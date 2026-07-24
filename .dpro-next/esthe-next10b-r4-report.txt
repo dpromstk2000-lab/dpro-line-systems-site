@@ -1,0 +1,35 @@
+DPRO エステ LINE / ESTHE-NEXT-10B-R4
+完了日時JST: 2026-07-24T17:16:47+09:00
+
+R3診断:
+- viewport: 390px
+- documentScrollWidth: 390px
+- bodyScrollWidth: 390px
+- 実際の横スクロール: なし
+- 誤判定対象: 「完成したシステムが」描画右端392.8px
+
+R4修正:
+- 390px時の製品一覧ヒーロー文字を実表示領域へ調整
+- 実スクロール幅と文字描画境界を分離して検査
+- 以前失敗した見出し右端を個別再検査
+
+公開検査:
+- エステ製品ページ PC 1440px: PASS
+- エステ製品ページ 390px: PASS
+- エステ製品ページ 360px: PASS
+- 製品一覧 PC 1440px: PASS
+- 製品一覧 390px: PASS
+- 製品一覧 360px: PASS
+- 製品一覧 320px: PASS
+- 実際の横スクロール: なし
+- 主要コンテンツ: 画面内
+- 描画境界の注意記録: 2件
+
+変更:
+- systems.html: 変更
+- systems/esthe.html: 変更なし
+- styles.css: 変更なし
+- script.js: 変更なし
+- Worker / Supabase / API: 変更なし
+
+次STEP: ESTHE-NEXT-10C-FINAL-COMPLETE

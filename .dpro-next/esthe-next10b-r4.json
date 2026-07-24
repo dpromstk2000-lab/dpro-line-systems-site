@@ -1,27 +1,46 @@
 {
-  "step": "ESTHE-NEXT-10B-R4",
-  "stage": "catalog_text_fit_committed_publication_pending",
-  "updated_at_jst": "2026-07-24T17:15:20+09:00",
-  "r3_result": {
-    "viewport": 390,
-    "document_scroll_width": 390,
-    "body_scroll_width": 390,
+  "schema_version": 1,
+  "system": "DPRO エステ LINE",
+  "current_step": "ESTHE-NEXT-10B-R4-COMPLETE",
+  "next_step": "ESTHE-NEXT-10C-FINAL-COMPLETE",
+  "completed_at_jst": "2026-07-24T17:16:47+09:00",
+  "result": "OK",
+  "r3_diagnosis": {
+    "actual_page_width": "390 / 390",
     "actual_horizontal_scroll": false,
-    "paint_bound_attention": {
-      "text": "完成したシステムが",
-      "right_px": 392.8,
-      "excess_px": 2.8
-    }
+    "false_positive_source": "text paint bound 392.8px"
   },
-  "target": "systems.html",
-  "scope": "catalog mobile hero heading only",
-  "unchanged": {
-    "systems_esthe_html_sha256": "9fd0b7ce7395cd67036c9edcc97f3eed3ee0f1bdadebbb8776f6997b2e244aec",
-    "styles_css_sha256": "6d9055252e69350510ae30c3aee59203e477b1d30b862ce0c303deb3be9209eb",
-    "script_js_sha256": "caeb942d749001501362ea3f31e14dc9f57c5d6d477d1c31e6cc91f27350cb63"
+  "r4_fix": {
+    "catalog_mobile_heading_font": "clamp(40px,12vw,48px)",
+    "formerly_failing_heading_within_viewport": true,
+    "validation_separates_actual_scroll_and_paint_bounds": true
   },
-  "worker_changed": false,
-  "supabase_changed": false,
-  "api_changed": false,
+  "validation": {
+    "static_ok": 19,
+    "static_ng": 0,
+    "product_desktop_1440": true,
+    "product_mobile_390": true,
+    "product_mobile_360": true,
+    "catalog_desktop_1440": true,
+    "catalog_mobile_390": true,
+    "catalog_mobile_360": true,
+    "catalog_mobile_320": true,
+    "actual_horizontal_scroll": false,
+    "critical_content_within_viewport": true,
+    "paint_only_attention_count": 2
+  },
+  "publication": {
+    "product_page": "https://dpromstk2000-lab.github.io/dpro-line-systems-site/systems/esthe.html",
+    "catalog": "https://dpromstk2000-lab.github.io/dpro-line-systems-site/systems.html"
+  },
+  "changes": {
+    "systems_html": true,
+    "systems_esthe_html": false,
+    "styles_css": false,
+    "script_js": false,
+    "worker": false,
+    "supabase": false,
+    "api": false
+  },
   "backup_tag": "backup-product-site-before-esthe-next10b-r4-20260724"
 }

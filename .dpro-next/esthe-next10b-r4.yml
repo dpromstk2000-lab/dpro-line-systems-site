@@ -1,0 +1,26 @@
+schema_version: 1
+system: "DPRO エステ LINE"
+current_step: "ESTHE-NEXT-10B-R4-COMPLETE"
+next_step: "ESTHE-NEXT-10C-FINAL-COMPLETE"
+completed_at_jst: "2026-07-24T17:16:47+09:00"
+result: "OK"
+validation:
+  product_desktop_1440: true
+  product_mobile_390: true
+  product_mobile_360: true
+  catalog_desktop_1440: true
+  catalog_mobile_390: true
+  catalog_mobile_360: true
+  catalog_mobile_320: true
+  actual_horizontal_scroll: false
+  critical_content_within_viewport: true
+  formerly_failing_heading_within_viewport: true
+  paint_only_attention_count: 2
+changes:
+  systems_html: true
+  systems_esthe_html: false
+  styles_css: false
+  script_js: false
+  worker: false
+  supabase: false
+  api: false
