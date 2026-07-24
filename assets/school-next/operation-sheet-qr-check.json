@@ -1,0 +1,81 @@
+{
+  "checked_at_jst": "2026-07-24T21:14:43+09:00",
+  "page_size": [
+    1654,
+    2339
+  ],
+  "render_size": [
+    1654,
+    2339
+  ],
+  "qr_boxes": {
+    "product": [
+      105,
+      1745,
+      285,
+      1925
+    ],
+    "customer": [
+      349,
+      1745,
+      529,
+      1925
+    ],
+    "owner": [
+      593,
+      1745,
+      773,
+      1925
+    ],
+    "ipad": [
+      837,
+      1745,
+      1017,
+      1925
+    ],
+    "member": [
+      1081,
+      1745,
+      1261,
+      1925
+    ],
+    "line": [
+      1325,
+      1745,
+      1505,
+      1925
+    ]
+  },
+  "results": {
+    "product": {
+      "expected": "https://dpromstk2000-lab.github.io/dpro-line-systems-site/systems/school.html",
+      "decoded": "https://dpromstk2000-lab.github.io/dpro-line-systems-site/systems/school.html",
+      "pass": true
+    },
+    "customer": {
+      "expected": "https://dpromstk2000-lab.github.io/dpro-school-line/index.html?mode=absence&phone=090-9999-0000&student_no=SCHOOL-DEMO-999&student_name=%E3%83%86%E3%82%B9%E3%83%88%20%E5%A4%AA%E9%83%8E&guardian_name=%E3%83%86%E3%82%B9%E3%83%88%20%E4%BF%9D%E8%AD%B7%E8%80%85&v=school-next-10",
+      "decoded": "https://dpromstk2000-lab.github.io/dpro-school-line/index.html?mode=absence&phone=090-9999-0000&student_no=SCHOOL-DEMO-999&student_name=%E3%83%86%E3%82%B9%E3%83%88%20%E5%A4%AA%E9%83%8E&guardian_name=%E3%83%86%E3%82%B9%E3%83%88%20%E4%BF%9D%E8%AD%B7%E8%80%85&v=school-next-10",
+      "pass": true
+    },
+    "owner": {
+      "expected": "https://dpromstk2000-lab.github.io/dpro-school-line/owner.html?v=school-next-10",
+      "decoded": "https://dpromstk2000-lab.github.io/dpro-school-line/owner.html?v=school-next-10",
+      "pass": true
+    },
+    "ipad": {
+      "expected": "https://dpromstk2000-lab.github.io/dpro-school-line/owner-ipad.html?v=school-next-10",
+      "decoded": "https://dpromstk2000-lab.github.io/dpro-school-line/owner-ipad.html?v=school-next-10",
+      "pass": true
+    },
+    "member": {
+      "expected": "https://dpromstk2000-lab.github.io/dpro-school-line/member.html?phone=090-9999-0000&student_no=SCHOOL-DEMO-999&auto=1&v=school-next-10",
+      "decoded": "https://dpromstk2000-lab.github.io/dpro-school-line/member.html?phone=090-9999-0000&student_no=SCHOOL-DEMO-999&auto=1&v=school-next-10",
+      "pass": true
+    },
+    "line": {
+      "expected": "https://lin.ee/YxJGXV6D",
+      "decoded": "https://lin.ee/YxJGXV6D",
+      "pass": true
+    }
+  }
+}

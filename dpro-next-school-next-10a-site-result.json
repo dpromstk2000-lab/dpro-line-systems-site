@@ -1,0 +1,128 @@
+{
+  "step": "SCHOOL-NEXT-10A",
+  "result": "LOCAL_PASS_PUBLIC_PENDING",
+  "created_at_jst": "2026-07-24T21:14:43+09:00",
+  "screenshots": {
+    "customer": {
+      "url": "https://dpromstk2000-lab.github.io/dpro-school-line/index.html?mode=absence&phone=090-9999-0000&student_no=SCHOOL-DEMO-999&student_name=%E3%83%86%E3%82%B9%E3%83%88%20%E5%A4%AA%E9%83%8E&guardian_name=%E3%83%86%E3%82%B9%E3%83%88%20%E4%BF%9D%E8%AD%B7%E8%80%85&v=school-next-10",
+      "width": 430,
+      "height": 900,
+      "bytes": 148467
+    },
+    "member": {
+      "url": "https://dpromstk2000-lab.github.io/dpro-school-line/member.html?phone=090-9999-0000&student_no=SCHOOL-DEMO-999&auto=1&v=school-next-10",
+      "width": 430,
+      "height": 900,
+      "bytes": 173690
+    },
+    "owner": {
+      "url": "https://dpromstk2000-lab.github.io/dpro-school-line/owner.html?v=school-next-10",
+      "width": 1440,
+      "height": 900,
+      "bytes": 462159
+    },
+    "ipad": {
+      "url": "https://dpromstk2000-lab.github.io/dpro-school-line/owner-ipad.html?v=school-next-10",
+      "width": 1024,
+      "height": 820,
+      "bytes": 345809
+    }
+  },
+  "qr_original": {
+    "product": {
+      "url": "https://dpromstk2000-lab.github.io/dpro-line-systems-site/systems/school.html",
+      "file": "assets/school-next/qr/product.png",
+      "decoded": "https://dpromstk2000-lab.github.io/dpro-line-systems-site/systems/school.html",
+      "pass": true
+    },
+    "customer": {
+      "url": "https://dpromstk2000-lab.github.io/dpro-school-line/index.html?mode=absence&phone=090-9999-0000&student_no=SCHOOL-DEMO-999&student_name=%E3%83%86%E3%82%B9%E3%83%88%20%E5%A4%AA%E9%83%8E&guardian_name=%E3%83%86%E3%82%B9%E3%83%88%20%E4%BF%9D%E8%AD%B7%E8%80%85&v=school-next-10",
+      "file": "assets/school-next/qr/customer.png",
+      "decoded": "https://dpromstk2000-lab.github.io/dpro-school-line/index.html?mode=absence&phone=090-9999-0000&student_no=SCHOOL-DEMO-999&student_name=%E3%83%86%E3%82%B9%E3%83%88%20%E5%A4%AA%E9%83%8E&guardian_name=%E3%83%86%E3%82%B9%E3%83%88%20%E4%BF%9D%E8%AD%B7%E8%80%85&v=school-next-10",
+      "pass": true
+    },
+    "owner": {
+      "url": "https://dpromstk2000-lab.github.io/dpro-school-line/owner.html?v=school-next-10",
+      "file": "assets/school-next/qr/owner.png",
+      "decoded": "https://dpromstk2000-lab.github.io/dpro-school-line/owner.html?v=school-next-10",
+      "pass": true
+    },
+    "ipad": {
+      "url": "https://dpromstk2000-lab.github.io/dpro-school-line/owner-ipad.html?v=school-next-10",
+      "file": "assets/school-next/qr/ipad.png",
+      "decoded": "https://dpromstk2000-lab.github.io/dpro-school-line/owner-ipad.html?v=school-next-10",
+      "pass": true
+    },
+    "member": {
+      "url": "https://dpromstk2000-lab.github.io/dpro-school-line/member.html?phone=090-9999-0000&student_no=SCHOOL-DEMO-999&auto=1&v=school-next-10",
+      "file": "assets/school-next/qr/member.png",
+      "decoded": "https://dpromstk2000-lab.github.io/dpro-school-line/member.html?phone=090-9999-0000&student_no=SCHOOL-DEMO-999&auto=1&v=school-next-10",
+      "pass": true
+    },
+    "line": {
+      "url": "https://lin.ee/YxJGXV6D",
+      "file": "assets/school-next/qr/line.png",
+      "decoded": "https://lin.ee/YxJGXV6D",
+      "pass": true
+    }
+  },
+  "qr_pdf": {
+    "product": {
+      "expected": "https://dpromstk2000-lab.github.io/dpro-line-systems-site/systems/school.html",
+      "decoded": "https://dpromstk2000-lab.github.io/dpro-line-systems-site/systems/school.html",
+      "pass": true
+    },
+    "customer": {
+      "expected": "https://dpromstk2000-lab.github.io/dpro-school-line/index.html?mode=absence&phone=090-9999-0000&student_no=SCHOOL-DEMO-999&student_name=%E3%83%86%E3%82%B9%E3%83%88%20%E5%A4%AA%E9%83%8E&guardian_name=%E3%83%86%E3%82%B9%E3%83%88%20%E4%BF%9D%E8%AD%B7%E8%80%85&v=school-next-10",
+      "decoded": "https://dpromstk2000-lab.github.io/dpro-school-line/index.html?mode=absence&phone=090-9999-0000&student_no=SCHOOL-DEMO-999&student_name=%E3%83%86%E3%82%B9%E3%83%88%20%E5%A4%AA%E9%83%8E&guardian_name=%E3%83%86%E3%82%B9%E3%83%88%20%E4%BF%9D%E8%AD%B7%E8%80%85&v=school-next-10",
+      "pass": true
+    },
+    "owner": {
+      "expected": "https://dpromstk2000-lab.github.io/dpro-school-line/owner.html?v=school-next-10",
+      "decoded": "https://dpromstk2000-lab.github.io/dpro-school-line/owner.html?v=school-next-10",
+      "pass": true
+    },
+    "ipad": {
+      "expected": "https://dpromstk2000-lab.github.io/dpro-school-line/owner-ipad.html?v=school-next-10",
+      "decoded": "https://dpromstk2000-lab.github.io/dpro-school-line/owner-ipad.html?v=school-next-10",
+      "pass": true
+    },
+    "member": {
+      "expected": "https://dpromstk2000-lab.github.io/dpro-school-line/member.html?phone=090-9999-0000&student_no=SCHOOL-DEMO-999&auto=1&v=school-next-10",
+      "decoded": "https://dpromstk2000-lab.github.io/dpro-school-line/member.html?phone=090-9999-0000&student_no=SCHOOL-DEMO-999&auto=1&v=school-next-10",
+      "pass": true
+    },
+    "line": {
+      "expected": "https://lin.ee/YxJGXV6D",
+      "decoded": "https://lin.ee/YxJGXV6D",
+      "pass": true
+    }
+  },
+  "pdf": {
+    "file": "assets/pdfs/dpro-school-line-next-operation-guide.pdf",
+    "bytes": 443967,
+    "pages": 1
+  },
+  "png": {
+    "file": "assets/pdfs/dpro-school-line-next-operation-guide.png",
+    "bytes": 1699520
+  },
+  "product_html": {
+    "ids": 9,
+    "bytes": 17911
+  },
+  "catalog_html": {
+    "ids": 6,
+    "bytes": 35385
+  },
+  "urls": {
+    "product": "https://dpromstk2000-lab.github.io/dpro-line-systems-site/systems/school.html",
+    "catalog": "https://dpromstk2000-lab.github.io/dpro-line-systems-site/systems.html",
+    "pdf": "https://dpromstk2000-lab.github.io/dpro-line-systems-site/assets/pdfs/dpro-school-line-next-operation-guide.pdf",
+    "png": "https://dpromstk2000-lab.github.io/dpro-line-systems-site/assets/pdfs/dpro-school-line-next-operation-guide.png"
+  },
+  "worker_changed": false,
+  "supabase_changed": false,
+  "api_changed": false,
+  "next_step": "SCHOOL-NEXT-10B"
+}
