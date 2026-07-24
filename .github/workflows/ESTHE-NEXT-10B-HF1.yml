@@ -1,0 +1,198 @@
+# DPRO エステ・リラクゼーション LINE
+# 製品サイトお客様向け文言修正: ESTHE-NEXT-10B-HF1
+#
+# お客様向けページから技術的な検査件数・QR読取件数・system-checkリンクを外し、
+# PC・iPad・スマートフォン対応、公開デモ、操作体験を表示する。
+#
+# 対象: systems/esthe.html
+# systems.html一覧カード・エステ本体・Worker・Supabase・APIは変更しない。
+
+name: "DPRO ESTHE NEXT-10B-HF1 - Customer-Facing Copy"
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/ESTHE-NEXT-10B-HF1.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: read
+
+concurrency:
+  group: "dpro-product-site-esthe"
+  cancel-in-progress: false
+
+env:
+  WORKFLOW_FILE: ".github/workflows/ESTHE-NEXT-10B-HF1.yml"
+  BACKUP_TAG_PREFIX: "backup-product-site-before-esthe-next10b-hf1"
+  PRODUCT_URL: "https://dpromstk2000-lab.github.io/dpro-line-systems-site/systems/esthe.html"
+
+jobs:
+  esthe-next10b-hf1:
+    name: "Replace technical proof with customer value"
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: "Checkout product-site repository with history"
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: "Configure Git identity"
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          git config user.name "DPRO NEXT Actions"
+          git config user.email "actions@users.noreply.github.com"
+
+      - name: "Confirm current ESTHE product-page baseline"
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          test -f systems/esthe.html
+          test -f systems.html
+          grep -q '公開検査済み完成画面' systems/esthe.html
+          grep -q '静的検査NG 0' systems/esthe.html
+          grep -q '操作体験シートQR6件読取完了' systems/esthe.html
+          grep -q '完成検査を見る' systems/esthe.html
+          grep -q 'href="systems/esthe.html"' systems.html
+          ! grep -q 'ESTHE-NEXT-10B-HF1-CUSTOMER-COPY' systems/esthe.html
+
+      - name: "Create change-before backup tag"
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          CHANGE_BEFORE_SHA="$GITHUB_SHA"
+          mapfile -t HEAD_FILES < <(git diff-tree --no-commit-id --name-only -r "$GITHUB_SHA")
+          if [[ "${#HEAD_FILES[@]}" -eq 1 && "${HEAD_FILES[0]}" == "$WORKFLOW_FILE" ]]; then
+            CHANGE_BEFORE_SHA="$(git rev-parse "${GITHUB_SHA}^")"
+          fi
+          BASE_TAG="${BACKUP_TAG_PREFIX}-$(TZ=Asia/Tokyo date +%Y%m%d)"
+          BACKUP_TAG="$BASE_TAG"
+          if git ls-remote --exit-code --tags origin "refs/tags/$BACKUP_TAG" >/dev/null 2>&1; then
+            BACKUP_TAG="${BASE_TAG}-run-${GITHUB_RUN_ID}"
+          fi
+          git tag -a "$BACKUP_TAG" "$CHANGE_BEFORE_SHA" -m "Before ESTHE NEXT-10B-HF1"
+          git push origin "refs/tags/$BACKUP_TAG"
+          echo "BACKUP_TAG=$BACKUP_TAG" >> "$GITHUB_ENV"
+
+      - name: "Apply customer-facing copy"
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          python3 -c 'import base64;exec(compile(base64.b64decode("CmZyb20gX19mdXR1cmVfXyBpbXBvcnQgYW5ub3RhdGlvbnMKaW1wb3J0IGRhdGV0aW1lIGFzIGR0CmltcG9ydCBqc29uCmltcG9ydCBvcwpmcm9tIHBhdGhsaWIgaW1wb3J0IFBhdGgKCnRhcmdldCA9IFBhdGgoInN5c3RlbXMvZXN0aGUuaHRtbCIpCnRleHQgPSB0YXJnZXQucmVhZF90ZXh0KGVuY29kaW5nPSJ1dGYtOCIpCmlmICJFU1RIRS1ORVhULTEwQi1IRjEtQ1VTVE9NRVItQ09QWSIgaW4gdGV4dDoKICAgIHJhaXNlIFJ1bnRpbWVFcnJvcigiSEYxIGFscmVhZHkgYXBwbGllZCIpCgpoZXJvX29sZCA9ICc8ZGl2IGNsYXNzPSJoZXJvLWxpdmUtbGFiZWwiPjxzcGFuPkRQUk8gTkVYVDwvc3Bhbj48c3Ryb25nPuWFrOmWi+aknOafu+a4iOOBv+WujOaIkOeUu+mdojwvc3Ryb25nPjwvZGl2PicKaGVyb19uZXcgPSAnPCEtLSBFU1RIRS1ORVhULTEwQi1IRjEtQ1VTVE9NRVItQ09QWSAtLT5cbjxkaXYgY2xhc3M9Imhlcm8tbGl2ZS1sYWJlbCI+PHNwYW4+UFVCTElDIERFTU88L3NwYW4+PHN0cm9uZz5QQ+ODu2lQYWTjg7vjgrnjg57jg5vjgaflrp/nlLvpnaLjgpLkvZPpqJM8L3N0cm9uZz48L2Rpdj4nCmlmIHRleHQuY291bnQoaGVyb19vbGQpICE9IDE6CiAgICByYWlzZSBSdW50aW1lRXJyb3IoZiJoZXJvIHRhcmdldCBjb3VudD17dGV4dC5jb3VudChoZXJvX29sZCl9IikKdGV4dCA9IHRleHQucmVwbGFjZShoZXJvX29sZCwgaGVyb19uZXcsIDEpCgpwcm9vZl9vbGQgPSAiIiI8c2VjdGlvbiBjbGFzcz0icHJvZHVjdC1wcm9vZiBzZWN0aW9uIj48ZGl2IGNsYXNzPSJwcm9kdWN0LXByb29mLWlubmVyIHJldmVhbCI+PGRpdj48cCBjbGFzcz0iZXllYnJvdyI+RFBSTyBORVhUIENPTVBMRVRFRDwvcD48aDIgY2xhc3M9ImhlYWRsaW5lLWxpbmVzIGhlYWRsaW5lLWZpeGVkIj4KICA8c3Bhbj7pnZnnmoTmpJzmn7tORyAw44CBPC9zcGFuPgogIDxzcGFuPuaTjeS9nOS9k+mok+OCt+ODvOODiFFSNuS7tuiqreWPluWujOS6huOAgjwvc3Bhbj4KPC9oMj48L2Rpdj48ZGl2PjxwPlBD44O7aVBhZOODu+OCueOCv+ODg+ODleODu0xJTkXkvJrlk6Hjg7vkuojntITnlLvpnaLjga7mgKfog73jgajjgrvjgq3jg6Xjg6rjg4bjgqPjgpLmpJzmn7vjgZfjgIHou4rmpJzjg7vmlbTlgpnlt6XloLRORVhU5Z+65rqW44GuQTTnuKYx44Oa44O844K45pON5L2c5L2T6aiT44K344O844OI44KC5YWs6ZaL44GX44Gm44GE44G+44GZ44CCPC9wPjxkaXYgY2xhc3M9InByb29mLWFjdGlvbnMiPjxhIGNsYXNzPSJ0ZXh0LWxpbmsiIGhyZWY9Imh0dHBzOi8vZHByb21zdGsyMDAwLWxhYi5naXRodWIuaW8vZHByby1lc3RoZS1yZWxheC1saW5lLWxpZmYvaW5kZXgtYnJ1c2guaHRtbD92PWVzdGhlLW5leHQtMTBiIiB0YXJnZXQ9Il9ibGFuayIgcmVsPSJub29wZW5lciI+TElOReS6iOe0hOOCkuS9k+mok+OBmeOCiyDihpI8L2E+PGEgY2xhc3M9InRleHQtbGluayIgaHJlZj0iaHR0cHM6Ly9kcHJvbXN0azIwMDAtbGFiLmdpdGh1Yi5pby9kcHJvLWVzdGhlLXJlbGF4LWxpbmUtbGlmZi9kZWxpdmVyYWJsZXMvZXN0aGUtbmV4dC0xMC9EUFJPX0VTVEhFX05FWFRfb3BlcmF0aW9uX2V4cGVyaWVuY2Vfc2hlZXRfMjAyNjA3MjQucGRmIiB0YXJnZXQ9Il9ibGFuayIgcmVsPSJub29wZW5lciI+5pON5L2c5L2T6aiT44K344O844OI44KS6KaL44KLIOKGkjwvYT48YSBjbGFzcz0idGV4dC1saW5rIiBocmVmPSJodHRwczovL2Rwcm9tc3RrMjAwMC1sYWIuZ2l0aHViLmlvL2Rwcm8tZXN0aGUtcmVsYXgtbGluZS1saWZmL3N5c3RlbS1jaGVjay5odG1sP3Y9ZXN0aGUtbmV4dC0xMGIiIHRhcmdldD0iX2JsYW5rIiByZWw9Im5vb3BlbmVyIj7lrozmiJDmpJzmn7vjgpLopovjgosg4oaSPC9hPjwvZGl2PjwvZGl2PjwvZGl2Pjwvc2VjdGlvbj4iIiIKCnByb29mX25ldyA9ICIiIjxzZWN0aW9uIGNsYXNzPSJwcm9kdWN0LXByb29mIHNlY3Rpb24iPjxkaXYgY2xhc3M9InByb2R1Y3QtcHJvb2YtaW5uZXIgcmV2ZWFsIj48ZGl2PjxwIGNsYXNzPSJleWVicm93Ij5UUlkgVEhFIFJFQUwgU0NSRUVOUzwvcD48aDIgY2xhc3M9ImhlYWRsaW5lLWxpbmVzIGhlYWRsaW5lLWZpeGVkIj4KICA8c3Bhbj5QQ+ODu2lQYWTjg7vjgrnjg57jg7zjg4jjg5Xjgqnjg7PjgafjgIE8L3NwYW4+CiAgPHNwYW4+5a6f6Zqb44Gu5L2/44GE5pa544KS56K66KqN44Gn44GN44G+44GZ44CCPC9zcGFuPgo8L2gyPjwvZGl2PjxkaXY+PHA+44GK5a6i5qeY44GuTElOReS6iOe0hOOBi+OCieOAgeOCquODvOODiuODvOODu+W6l+iIl+ODu+OCueOCv+ODg+ODleOBrueuoeeQhueUu+mdouOBvuOBp+OAgeWFrOmWi+ODh+ODouOBp+mghueVquOBq+OBiuippuOBl+OBhOOBn+OBoOOBkeOBvuOBmeOAguWwjuWFpeW+jOOBruS9v+OBhOaWueOCkuOAgeWun+mam+OBrueUu+mdouOBp+WFt+S9k+eahOOBq+OCpOODoeODvOOCuOOBp+OBjeOBvuOBmeOAgjwvcD48ZGl2IGNsYXNzPSJwcm9vZi1hY3Rpb25zIj48YSBjbGFzcz0idGV4dC1saW5rIiBocmVmPSJodHRwczovL2Rwcm9tc3RrMjAwMC1sYWIuZ2l0aHViLmlvL2Rwcm8tZXN0aGUtcmVsYXgtbGluZS1saWZmL2luZGV4LWJydXNoLmh0bWw/dj1lc3RoZS1uZXh0LTEwYiIgdGFyZ2V0PSJfYmxhbmsiIHJlbD0ibm9vcGVuZXIiPuOBiuWuouanmOS6iOe0hOOCkuippuOBmSDihpI8L2E+PGEgY2xhc3M9InRleHQtbGluayIgaHJlZj0iaHR0cHM6Ly9kcHJvbXN0azIwMDAtbGFiLmdpdGh1Yi5pby9kcHJvLWVzdGhlLXJlbGF4LWxpbmUtbGlmZi9vd25lci5odG1sP3Y9ZXN0aGUtbmV4dC0xMGIiIHRhcmdldD0iX2JsYW5rIiByZWw9Im5vb3BlbmVyIj5QQ+euoeeQhueUu+mdouOCkuippuOBmSDihpI8L2E+PGEgY2xhc3M9InRleHQtbGluayIgaHJlZj0iaHR0cHM6Ly9kcHJvbXN0azIwMDAtbGFiLmdpdGh1Yi5pby9kcHJvLWVzdGhlLXJlbGF4LWxpbmUtbGlmZi9kZWxpdmVyYWJsZXMvZXN0aGUtbmV4dC0xMC9EUFJPX0VTVEhFX05FWFRfb3BlcmF0aW9uX2V4cGVyaWVuY2Vfc2hlZXRfMjAyNjA3MjQucGRmIiB0YXJnZXQ9Il9ibGFuayIgcmVsPSJub29wZW5lciI+5pON5L2c5L2T6aiT44K344O844OI44KS6KaL44KLIOKGkjwvYT48L2Rpdj48L2Rpdj48L2Rpdj48L3NlY3Rpb24+IiIiCgppZiB0ZXh0LmNvdW50KHByb29mX29sZCkgIT0gMToKICAgIHJhaXNlIFJ1bnRpbWVFcnJvcihmInByb29mIHRhcmdldCBjb3VudD17dGV4dC5jb3VudChwcm9vZl9vbGQpfSIpCnRleHQgPSB0ZXh0LnJlcGxhY2UocHJvb2Zfb2xkLCBwcm9vZl9uZXcsIDEpCnRhcmdldC53cml0ZV90ZXh0KHRleHQucnN0cmlwKCkgKyAiXG4iLCBlbmNvZGluZz0idXRmLTgiKQoKbm93ID0gZHQuZGF0ZXRpbWUubm93KGR0LnRpbWV6b25lKGR0LnRpbWVkZWx0YShob3Vycz05KSkpLnJlcGxhY2UobWljcm9zZWNvbmQ9MCkKcmVjb3JkID0gewogICAgInNjaGVtYV92ZXJzaW9uIjogMSwKICAgICJzeXN0ZW0iOiAiRFBSTyDjgqjjgrnjg4bjg7vjg6rjg6njgq/jgrzjg7zjgrfjg6fjg7MgTElORSIsCiAgICAic3RlcCI6ICJFU1RIRS1ORVhULTEwQi1IRjEiLAogICAgInN0YWdlIjogImN1c3RvbWVyLWNvcHktYXBwbGllZC1wdWJsaWNhdGlvbi1wZW5kaW5nIiwKICAgICJ1cGRhdGVkX2F0X2pzdCI6IG5vdy5pc29mb3JtYXQoKSwKICAgICJ0YXJnZXQiOiAic3lzdGVtcy9lc3RoZS5odG1sIiwKICAgICJjYXRhbG9nX2NoYW5nZWQiOiBGYWxzZSwKICAgICJzeXN0ZW1fc291cmNlX2NoYW5nZWQiOiBGYWxzZSwKICAgICJ3b3JrZXJfY2hhbmdlZCI6IEZhbHNlLAogICAgInN1cGFiYXNlX2NoYW5nZWQiOiBGYWxzZSwKICAgICJhcGlfY2hhbmdlZCI6IEZhbHNlLAogICAgImJhY2t1cF90YWciOiBvcy5lbnZpcm9uWyJCQUNLVVBfVEFHIl0sCn0KUGF0aCgiLmRwcm8tbmV4dCIpLm1rZGlyKGV4aXN0X29rPVRydWUpClBhdGgoIi5kcHJvLW5leHQvZXN0aGUtbmV4dDEwYi1oZjEtc3RhZ2UuanNvbiIpLndyaXRlX3RleHQoCiAgICBqc29uLmR1bXBzKHJlY29yZCwgZW5zdXJlX2FzY2lpPUZhbHNlLCBpbmRlbnQ9MikgKyAiXG4iLAogICAgZW5jb2Rpbmc9InV0Zi04IiwKKQo="),"<apply>","exec"))'
+
+      - name: "Run static customer-copy validation"
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          python3 -c 'import base64;exec(compile(base64.b64decode("CmZyb20gX19mdXR1cmVfXyBpbXBvcnQgYW5ub3RhdGlvbnMKaW1wb3J0IGpzb24KaW1wb3J0IHJlCmltcG9ydCBzdWJwcm9jZXNzCmltcG9ydCBzeXMKaW1wb3J0IHRlbXBmaWxlCmZyb20gY29sbGVjdGlvbnMgaW1wb3J0IENvdW50ZXIKZnJvbSBodG1sLnBhcnNlciBpbXBvcnQgSFRNTFBhcnNlcgpmcm9tIHBhdGhsaWIgaW1wb3J0IFBhdGgKCnRleHQgPSBQYXRoKCJzeXN0ZW1zL2VzdGhlLmh0bWwiKS5yZWFkX3RleHQoZW5jb2Rpbmc9InV0Zi04IikKY2F0YWxvZyA9IFBhdGgoInN5c3RlbXMuaHRtbCIpLnJlYWRfdGV4dChlbmNvZGluZz0idXRmLTgiKQppdGVtcyA9IFtdCgpjbGFzcyBQYXJzZXIoSFRNTFBhcnNlcik6CiAgICBkZWYgX19pbml0X18oc2VsZik6CiAgICAgICAgc3VwZXIoKS5fX2luaXRfXyhjb252ZXJ0X2NoYXJyZWZzPVRydWUpCiAgICAgICAgc2VsZi5pZHMgPSBbXQogICAgZGVmIGhhbmRsZV9zdGFydHRhZyhzZWxmLCB0YWcsIGF0dHJzKToKICAgICAgICBmb3Iga2V5LCB2YWx1ZSBpbiBhdHRyczoKICAgICAgICAgICAgaWYga2V5Lmxvd2VyKCkgPT0gImlkIiBhbmQgdmFsdWU6CiAgICAgICAgICAgICAgICBzZWxmLmlkcy5hcHBlbmQodmFsdWUpCiAgICBkZWYgaGFuZGxlX3N0YXJ0ZW5kdGFnKHNlbGYsIHRhZywgYXR0cnMpOgogICAgICAgIHNlbGYuaGFuZGxlX3N0YXJ0dGFnKHRhZywgYXR0cnMpCgpkZWYgYWRkKG5hbWUsIG9rLCBkZXRhaWwpOgogICAgaXRlbXMuYXBwZW5kKHsibmFtZSI6IG5hbWUsICJzdGF0dXMiOiAiT0siIGlmIG9rIGVsc2UgIk5HIiwgImRldGFpbCI6IGRldGFpbH0pCgpwYXJzZXIgPSBQYXJzZXIoKQp0cnk6CiAgICBwYXJzZXIuZmVlZCh0ZXh0KQogICAgcGFyc2VyLmNsb3NlKCkKICAgIGFkZCgiSFRNTOani+aWhyIsIFRydWUsICJIVE1MUGFyc2VyIFBBU1MiKQpleGNlcHQgRXhjZXB0aW9uIGFzIGU6CiAgICBhZGQoIkhUTUzmp4vmlociLCBGYWxzZSwgc3RyKGUpKQoKZHVwcyA9IHNvcnRlZChrIGZvciBrLCBjIGluIENvdW50ZXIocGFyc2VyLmlkcykuaXRlbXMoKSBpZiBjID4gMSkKYWRkKCJIVE1MIElE6YeN6KSHIiwgbm90IGR1cHMsICIsICIuam9pbihkdXBzKSBpZiBkdXBzIGVsc2UgIumHjeikh+OBquOBlyIpCgpzY3JpcHRzID0gcmUuZmluZGFsbChyIjxzY3JpcHQoPyFbXj5dKlxic3JjPSlbXj5dKj4oLio/KTwvc2NyaXB0PiIsIHRleHQsIGZsYWdzPXJlLkkgfCByZS5TKQpqc19lcnJvcnMgPSBbXQpmb3IgaSwgc2NyaXB0IGluIGVudW1lcmF0ZShzY3JpcHRzLCAxKToKICAgIGlmIG5vdCBzY3JpcHQuc3RyaXAoKToKICAgICAgICBjb250aW51ZQogICAgd2l0aCB0ZW1wZmlsZS5OYW1lZFRlbXBvcmFyeUZpbGUoInciLCBzdWZmaXg9Ii5qcyIsIGVuY29kaW5nPSJ1dGYtOCIsIGRlbGV0ZT1GYWxzZSkgYXMgZjoKICAgICAgICBmLndyaXRlKHNjcmlwdCkKICAgICAgICBwID0gZi5uYW1lCiAgICB0cnk6CiAgICAgICAgciA9IHN1YnByb2Nlc3MucnVuKFsibm9kZSIsICItLWNoZWNrIiwgcF0sIGNhcHR1cmVfb3V0cHV0PVRydWUsIHRleHQ9VHJ1ZSkKICAgICAgICBpZiByLnJldHVybmNvZGU6CiAgICAgICAgICAgIGpzX2Vycm9ycy5hcHBlbmQoZiJzY3JpcHR7aX06ICIgKyAoci5zdGRlcnIgb3Igci5zdGRvdXQpLnN0cmlwKClbOjYwMF0pCiAgICBmaW5hbGx5OgogICAgICAgIFBhdGgocCkudW5saW5rKG1pc3Npbmdfb2s9VHJ1ZSkKYWRkKCJKYXZhU2NyaXB05qeL5paHIiwgbm90IGpzX2Vycm9ycywgIiAvICIuam9pbihqc19lcnJvcnMpIGlmIGpzX2Vycm9ycyBlbHNlICLmraPluLgiKQoKcmVxdWlyZWQgPSBbCiAgICAiRVNUSEUtTkVYVC0xMEItSEYxLUNVU1RPTUVSLUNPUFkiLAogICAgIlBD44O7aVBhZOODu+OCueODnuODm+OBp+Wun+eUu+mdouOCkuS9k+mokyIsCiAgICAiUEPjg7tpUGFk44O744K544Oe44O844OI44OV44Kp44Oz44Gn44CBIiwKICAgICLlrp/pmpvjga7kvb/jgYTmlrnjgpLnorroqo3jgafjgY3jgb7jgZnjgIIiLAogICAgIuOBiuWuouanmOS6iOe0hOOCkuippuOBmSDihpIiLAogICAgIlBD566h55CG55S76Z2i44KS6Kmm44GZIOKGkiIsCiAgICAi5pON5L2c5L2T6aiT44K344O844OI44KS6KaL44KLIOKGkiIsCl0KZm9yIHBocmFzZSBpbiByZXF1aXJlZDoKICAgIGFkZChmIuihqOekuu+8mntwaHJhc2V9IiwgcGhyYXNlIGluIHRleHQsICLooajnpLrjgYLjgooiIGlmIHBocmFzZSBpbiB0ZXh0IGVsc2UgIuihqOekuuOBquOBlyIpCgpmb3JiaWRkZW4gPSBbCiAgICAi6Z2Z55qE5qSc5p+7IiwgIlFSNuS7tiIsICLoqq3lj5blrozkuoYiLCAi5a6M5oiQ5qSc5p+744KS6KaL44KLIiwKICAgICLlhazplovmpJzmn7vmuIjjgb8iLCAi5oCn6IO944Go44K744Kt44Ol44Oq44OG44Kj44KS5qSc5p+7IiwKICAgICLou4rmpJzjg7vmlbTlgpnlt6XloLRORVhU5Z+65rqWIiwgInN5c3RlbS1jaGVjay5odG1sIiwKXQpmb3IgcGhyYXNlIGluIGZvcmJpZGRlbjoKICAgIGFkZChmIuaKgOihk+ihqOePvumZpOWOu++8mntwaHJhc2V9IiwgcGhyYXNlIG5vdCBpbiB0ZXh0LCAi6Z2e6KGo56S6IiBpZiBwaHJhc2Ugbm90IGluIHRleHQgZWxzZSAi5q6L5a2YIikKCmFkZCgKICAgICLoo73lk4HkuIDopqfjgqvjg7zjg4nntq3mjIEiLAogICAgJ2hyZWY9InN5c3RlbXMvZXN0aGUuaHRtbCInIGluIGNhdGFsb2cKICAgIGFuZCAiPGgzPuOCqOOCueODhuODu+ODquODqeOCr+OCvOODvOOCt+ODp+ODszwvaDM+IiBpbiBjYXRhbG9nCiAgICBhbmQgIuWGjeadpeW6l+ODleOCqeODreODvOOAgiIgaW4gY2F0YWxvZywKICAgICJzeXN0ZW1zLmh0bWzjga/lpInmm7TjgZfjgarjgYQiLAopCgpuZyA9IHN1bSh4WyJzdGF0dXMiXSA9PSAiTkciIGZvciB4IGluIGl0ZW1zKQpyZXBvcnQgPSB7CiAgICAic2NoZW1hX3ZlcnNpb24iOiAxLAogICAgInN5c3RlbSI6ICJEUFJPIOOCqOOCueODhuODu+ODquODqeOCr+OCvOODvOOCt+ODp+ODsyBMSU5FIiwKICAgICJzdGVwIjogIkVTVEhFLU5FWFQtMTBCLUhGMSIsCiAgICAicGhhc2UiOiAic3RhdGljLXZhbGlkYXRpb24iLAogICAgInN1bW1hcnkiOiB7Im9rIjogbGVuKGl0ZW1zKS1uZywgImF0dGVudGlvbiI6IDAsICJuZyI6IG5nfSwKICAgICJpdGVtcyI6IGl0ZW1zLAp9ClBhdGgoIi5kcHJvLW5leHQvZXN0aGUtbmV4dDEwYi1oZjEtc3RhdGljLmpzb24iKS53cml0ZV90ZXh0KAogICAganNvbi5kdW1wcyhyZXBvcnQsIGVuc3VyZV9hc2NpaT1GYWxzZSwgaW5kZW50PTIpICsgIlxuIiwKICAgIGVuY29kaW5nPSJ1dGYtOCIsCikKcHJpbnQoanNvbi5kdW1wcyhyZXBvcnQsIGVuc3VyZV9hc2NpaT1GYWxzZSwgaW5kZW50PTIpKQppZiBuZzoKICAgIHN5cy5leGl0KDEpCg=="),"<validate>","exec"))'
+          ruby -e 'require "yaml"; YAML.parse_file(ARGV[0]); puts "YML OK"' "$WORKFLOW_FILE"
+          mapfile -t CHANGED < <(git diff --name-only)
+          for file in "${CHANGED[@]}"; do
+            case "$file" in
+              systems/esthe.html|.dpro-next/esthe-next10b-hf1-stage.json|.dpro-next/esthe-next10b-hf1-static.json) ;;
+              *) echo "::error::想定外の変更ファイル: $file"; exit 1 ;;
+            esac
+          done
+
+      - name: "Commit product-page copy and push"
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          git add systems/esthe.html .dpro-next/esthe-next10b-hf1-stage.json .dpro-next/esthe-next10b-hf1-static.json
+          git commit -m "DPRO ESTHE product site: show customer value not test counts"
+          git push origin "HEAD:${GITHUB_REF_NAME}"
+          echo "PATCH_COMMIT_SHA=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
+
+      - name: "Wait for corrected public product page"
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          PUBLISHED=false
+          for attempt in $(seq 1 60); do
+            BODY="$(curl -L -sS --retry 2 -H "Cache-Control: no-cache, no-store" "$PRODUCT_URL?copy=${PATCH_COMMIT_SHA}_${attempt}" || true)"
+            if [[ "$BODY" == *"ESTHE-NEXT-10B-HF1-CUSTOMER-COPY"* \
+              && "$BODY" == *"実際の使い方を確認できます。"* \
+              && "$BODY" != *"静的検査NG 0"* \
+              && "$BODY" != *"QR6件"* \
+              && "$BODY" != *"完成検査を見る"* ]]; then
+              PUBLISHED=true
+              break
+            fi
+            sleep 10
+          done
+          [[ "$PUBLISHED" == true ]] || { echo "::error::公開反映未確認"; exit 1; }
+
+      - name: "Install Chromium validation"
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          python3 -m pip install --upgrade pip
+          python3 -m pip install playwright
+          python3 -m playwright install --with-deps chromium
+
+      - name: "Verify desktop and mobile customer-facing display"
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          python3 -c 'import base64;exec(compile(base64.b64decode("CmZyb20gX19mdXR1cmVfXyBpbXBvcnQgYW5ub3RhdGlvbnMKaW1wb3J0IGFzeW5jaW8KaW1wb3J0IGpzb24KaW1wb3J0IG9zCmZyb20gcGF0aGxpYiBpbXBvcnQgUGF0aApmcm9tIHBsYXl3cmlnaHQuYXN5bmNfYXBpIGltcG9ydCBhc3luY19wbGF5d3JpZ2h0CgpVUkwgPSBvcy5lbnZpcm9uWyJQUk9EVUNUX1VSTCJdClJVTl9JRCA9IG9zLmVudmlyb24uZ2V0KCJHSVRIVUJfUlVOX0lEIiwgImxvY2FsIikKT1VUID0gUGF0aCgiLmVzdGhlLW5leHQxMGItaGYxLWFydGlmYWN0IikKT1VULm1rZGlyKGV4aXN0X29rPVRydWUpCkNBU0VTID0gWwogICAgKCJkZXNrdG9wLTE0NDAiLCAxNDQwLCAxMDAwKSwKICAgICgibW9iaWxlLTM5MCIsIDM5MCwgODQ0KSwKICAgICgibW9iaWxlLTM2MCIsIDM2MCwgODAwKSwKXQoKYXN5bmMgZGVmIGluc3BlY3QoYnJvd3NlciwgbmFtZSwgd2lkdGgsIGhlaWdodCk6CiAgICBjb250ZXh0ID0gYXdhaXQgYnJvd3Nlci5uZXdfY29udGV4dCgKICAgICAgICB2aWV3cG9ydD17IndpZHRoIjogd2lkdGgsICJoZWlnaHQiOiBoZWlnaHR9LAogICAgICAgIGxvY2FsZT0iamEtSlAiLAogICAgICAgIHRpbWV6b25lX2lkPSJBc2lhL1Rva3lvIiwKICAgICkKICAgIHBhZ2UgPSBhd2FpdCBjb250ZXh0Lm5ld19wYWdlKCkKICAgIHJlc3BvbnNlID0gYXdhaXQgcGFnZS5nb3RvKAogICAgICAgIGYie1VSTH0/Y29weT17UlVOX0lEfV97bmFtZX0iLAogICAgICAgIHdhaXRfdW50aWw9ImRvbWNvbnRlbnRsb2FkZWQiLAogICAgICAgIHRpbWVvdXQ9NjAwMDAsCiAgICApCiAgICBpZiBub3QgcmVzcG9uc2Ugb3IgcmVzcG9uc2Uuc3RhdHVzID49IDQwMDoKICAgICAgICByYWlzZSBSdW50aW1lRXJyb3IoZiJ7bmFtZX0gSFRUUCBlcnJvciIpCiAgICBhd2FpdCBwYWdlLndhaXRfZm9yX3RpbWVvdXQoMTAwMCkKICAgIGh0bWwgPSBhd2FpdCBwYWdlLmNvbnRlbnQoKQogICAgZm9yIHBocmFzZSBpbiBbCiAgICAgICAgIkVTVEhFLU5FWFQtMTBCLUhGMS1DVVNUT01FUi1DT1BZIiwKICAgICAgICAi5a6f6Zqb44Gu5L2/44GE5pa544KS56K66KqN44Gn44GN44G+44GZ44CCIiwKICAgICAgICAi44GK5a6i5qeY5LqI57SE44KS6Kmm44GZIOKGkiIsCiAgICAgICAgIlBD566h55CG55S76Z2i44KS6Kmm44GZIOKGkiIsCiAgICBdOgogICAgICAgIGlmIHBocmFzZSBub3QgaW4gaHRtbDoKICAgICAgICAgICAgcmFpc2UgUnVudGltZUVycm9yKGYie25hbWV9IG1pc3Npbmc6IHtwaHJhc2V9IikKICAgIGZvciBwaHJhc2UgaW4gWyLpnZnnmoTmpJzmn7siLCAiUVI25Lu2IiwgIuWujOaIkOaknOafu+OCkuimi+OCiyIsICLlhazplovmpJzmn7vmuIjjgb8iLCAic3lzdGVtLWNoZWNrLmh0bWwiXToKICAgICAgICBpZiBwaHJhc2UgaW4gaHRtbDoKICAgICAgICAgICAgcmFpc2UgUnVudGltZUVycm9yKGYie25hbWV9IGZvcmJpZGRlbiByZW1haW5zOiB7cGhyYXNlfSIpCgogICAgbWV0cmljcyA9IGF3YWl0IHBhZ2UuZXZhbHVhdGUoIiIiKCkgPT4gKHsKICAgICAgdmlld3BvcnQ6IGlubmVyV2lkdGgsCiAgICAgIGRvYzogZG9jdW1lbnQuZG9jdW1lbnRFbGVtZW50LnNjcm9sbFdpZHRoLAogICAgICBib2R5OiBkb2N1bWVudC5ib2R5LnNjcm9sbFdpZHRoCiAgICB9KSIiIikKICAgIGF3YWl0IHBhZ2UuZXZhbHVhdGUoIndpbmRvdy5zY3JvbGxUbyg5OTk5OTksMCkiKQogICAgYXdhaXQgcGFnZS53YWl0X2Zvcl90aW1lb3V0KDEwMCkKICAgIG1ldHJpY3NbInNjcm9sbFhBZnRlciJdID0gYXdhaXQgcGFnZS5ldmFsdWF0ZSgic2Nyb2xsWCIpCiAgICBpZiBtZXRyaWNzWyJkb2MiXSA+IHdpZHRoICsgMiBvciBtZXRyaWNzWyJib2R5Il0gPiB3aWR0aCArIDIgb3IgbWV0cmljc1sic2Nyb2xsWEFmdGVyIl0gPiAyOgogICAgICAgIHJhaXNlIFJ1bnRpbWVFcnJvcihmIntuYW1lfSBvdmVyZmxvdzoge21ldHJpY3N9IikKCiAgICBwcm9vZiA9IHBhZ2UubG9jYXRvcigiLnByb2R1Y3QtcHJvb2YiKQogICAgYXdhaXQgcHJvb2Yuc2Nyb2xsX2ludG9fdmlld19pZl9uZWVkZWQoKQogICAgYXdhaXQgcGFnZS53YWl0X2Zvcl90aW1lb3V0KDIwMCkKICAgIGxpbmtzID0gWyhhd2FpdCBhLmlubmVyX3RleHQoKSkuc3RyaXAoKSBmb3IgYSBpbiBhd2FpdCBwcm9vZi5sb2NhdG9yKCJhIikuYWxsKCldCiAgICBleHBlY3RlZCA9IFsi44GK5a6i5qeY5LqI57SE44KS6Kmm44GZIOKGkiIsICJQQ+euoeeQhueUu+mdouOCkuippuOBmSDihpIiLCAi5pON5L2c5L2T6aiT44K344O844OI44KS6KaL44KLIOKGkiJdCiAgICBpZiBsaW5rcyAhPSBleHBlY3RlZDoKICAgICAgICByYWlzZSBSdW50aW1lRXJyb3IoZiJ7bmFtZX0gbGlua3MgbWlzbWF0Y2g6IHtsaW5rc30iKQoKICAgIHNob3QgPSBPVVQgLyBmIntuYW1lfS5wbmciCiAgICBhd2FpdCBwYWdlLnNjcmVlbnNob3QocGF0aD1zdHIoc2hvdCksIGZ1bGxfcGFnZT1GYWxzZSwgYW5pbWF0aW9ucz0iZGlzYWJsZWQiKQogICAgaWYgc2hvdC5zdGF0KCkuc3Rfc2l6ZSA8IDE1MDAwOgogICAgICAgIHJhaXNlIFJ1bnRpbWVFcnJvcihmIntuYW1lfSBzY3JlZW5zaG90IHRvbyBzbWFsbCIpCiAgICBhd2FpdCBjb250ZXh0LmNsb3NlKCkKICAgIHJldHVybiB7Im5hbWUiOiBuYW1lLCAid2lkdGgiOiB3aWR0aCwgIm1ldHJpY3MiOiBtZXRyaWNzLCAibGlua3MiOiBsaW5rcywgInBhc3MiOiBUcnVlfQoKYXN5bmMgZGVmIG1haW4oKToKICAgIGFzeW5jIHdpdGggYXN5bmNfcGxheXdyaWdodCgpIGFzIHA6CiAgICAgICAgYnJvd3NlciA9IGF3YWl0IHAuY2hyb21pdW0ubGF1bmNoKGhlYWRsZXNzPVRydWUsIGFyZ3M9WyItLW5vLXNhbmRib3giLCAiLS1kaXNhYmxlLWRldi1zaG0tdXNhZ2UiXSkKICAgICAgICB0cnk6CiAgICAgICAgICAgIHJlc3VsdHMgPSBbYXdhaXQgaW5zcGVjdChicm93c2VyLCAqY2FzZSkgZm9yIGNhc2UgaW4gQ0FTRVNdCiAgICAgICAgZmluYWxseToKICAgICAgICAgICAgYXdhaXQgYnJvd3Nlci5jbG9zZSgpCiAgICByZXBvcnQgPSB7CiAgICAgICAgInNjaGVtYV92ZXJzaW9uIjogMSwKICAgICAgICAic3lzdGVtIjogIkRQUk8g44Ko44K544OG44O744Oq44Op44Kv44K844O844K344On44OzIExJTkUiLAogICAgICAgICJzdGVwIjogIkVTVEhFLU5FWFQtMTBCLUhGMSIsCiAgICAgICAgInBoYXNlIjogInB1YmxpYy12YWxpZGF0aW9uIiwKICAgICAgICAidmlld3BvcnRfY291bnQiOiBsZW4ocmVzdWx0cyksCiAgICAgICAgImFsbF9wYXNzIjogYWxsKHhbInBhc3MiXSBmb3IgeCBpbiByZXN1bHRzKSwKICAgICAgICAicmVzdWx0cyI6IHJlc3VsdHMsCiAgICB9CiAgICBQYXRoKCIuZHByby1uZXh0L2VzdGhlLW5leHQxMGItaGYxLXB1YmxpYy5qc29uIikud3JpdGVfdGV4dCgKICAgICAgICBqc29uLmR1bXBzKHJlcG9ydCwgZW5zdXJlX2FzY2lpPUZhbHNlLCBpbmRlbnQ9MikgKyAiXG4iLAogICAgICAgIGVuY29kaW5nPSJ1dGYtOCIsCiAgICApCiAgICBwcmludChqc29uLmR1bXBzKHJlcG9ydCwgZW5zdXJlX2FzY2lpPUZhbHNlLCBpbmRlbnQ9MikpCgphc3luY2lvLnJ1bihtYWluKCkpCg=="),"<browser>","exec"))'
+
+      - name: "Write internal completion record"
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          python3 -c 'import base64;exec(compile(base64.b64decode("CmZyb20gX19mdXR1cmVfXyBpbXBvcnQgYW5ub3RhdGlvbnMKaW1wb3J0IGRhdGV0aW1lIGFzIGR0CmltcG9ydCBqc29uCmltcG9ydCBvcwpmcm9tIHBhdGhsaWIgaW1wb3J0IFBhdGgKCm5vdyA9IGR0LmRhdGV0aW1lLm5vdyhkdC50aW1lem9uZShkdC50aW1lZGVsdGEoaG91cnM9OSkpKS5yZXBsYWNlKG1pY3Jvc2Vjb25kPTApCnN0YXRpYyA9IGpzb24ubG9hZHMoUGF0aCgiLmRwcm8tbmV4dC9lc3RoZS1uZXh0MTBiLWhmMS1zdGF0aWMuanNvbiIpLnJlYWRfdGV4dChlbmNvZGluZz0idXRmLTgiKSkKcHVibGljID0ganNvbi5sb2FkcyhQYXRoKCIuZHByby1uZXh0L2VzdGhlLW5leHQxMGItaGYxLXB1YmxpYy5qc29uIikucmVhZF90ZXh0KGVuY29kaW5nPSJ1dGYtOCIpKQpyZWNvcmQgPSB7CiAgICAic2NoZW1hX3ZlcnNpb24iOiAxLAogICAgInN5c3RlbSI6ICJEUFJPIOOCqOOCueODhuODu+ODquODqeOCr+OCvOODvOOCt+ODp+ODsyBMSU5FIiwKICAgICJzdGVwIjogIkVTVEhFLU5FWFQtMTBCLUhGMSIsCiAgICAic3RhdHVzIjogIk9LIiwKICAgICJjb21wbGV0ZWRfYXRfanN0Ijogbm93Lmlzb2Zvcm1hdCgpLAogICAgInRhcmdldCI6ICJzeXN0ZW1zL2VzdGhlLmh0bWwiLAogICAgImN1c3RvbWVyX2ZhY2luZ19jb3B5IjogewogICAgICAgICJ0ZWNobmljYWxfdGVzdF9jb3VudHNfdmlzaWJsZSI6IEZhbHNlLAogICAgICAgICJxcl9yZWFkX2NvdW50X3Zpc2libGUiOiBGYWxzZSwKICAgICAgICAic3lzdGVtX2NoZWNrX2xpbmtfdmlzaWJsZSI6IEZhbHNlLAogICAgICAgICJkZXZpY2Vfc3VwcG9ydF92aXNpYmxlIjogVHJ1ZSwKICAgICAgICAicHVibGljX2RlbW9fdmlzaWJsZSI6IFRydWUsCiAgICAgICAgIm9wZXJhdGlvbl9leHBlcmllbmNlX3Zpc2libGUiOiBUcnVlLAogICAgfSwKICAgICJ2YWxpZGF0aW9uIjogewogICAgICAgICJzdGF0aWMiOiBzdGF0aWNbInN1bW1hcnkiXSwKICAgICAgICAicHVibGljX3ZpZXdwb3J0X2NvdW50IjogcHVibGljWyJ2aWV3cG9ydF9jb3VudCJdLAogICAgICAgICJwdWJsaWNfYWxsX3Bhc3MiOiBwdWJsaWNbImFsbF9wYXNzIl0sCiAgICAgICAgImhvcml6b250YWxfb3ZlcmZsb3ciOiBGYWxzZSwKICAgIH0sCiAgICAiY2hhbmdlcyI6IHsKICAgICAgICAicHJvZHVjdF9wYWdlIjogVHJ1ZSwKICAgICAgICAiY2F0YWxvZyI6IEZhbHNlLAogICAgICAgICJzeXN0ZW1fc291cmNlIjogRmFsc2UsCiAgICAgICAgIndvcmtlciI6IEZhbHNlLAogICAgICAgICJzdXBhYmFzZSI6IEZhbHNlLAogICAgICAgICJhcGkiOiBGYWxzZSwKICAgIH0sCiAgICAiYmFja3VwX3RhZyI6IG9zLmVudmlyb25bIkJBQ0tVUF9UQUciXSwKfQpQYXRoKCIuZHByby1uZXh0L2VzdGhlLW5leHQxMGItaGYxLWNvbXBsZXRpb24uanNvbiIpLndyaXRlX3RleHQoCiAgICBqc29uLmR1bXBzKHJlY29yZCwgZW5zdXJlX2FzY2lpPUZhbHNlLCBpbmRlbnQ9MikgKyAiXG4iLAogICAgZW5jb2Rpbmc9InV0Zi04IiwKKQpQYXRoKCIuZHByby1uZXh0L2VzdGhlLW5leHQxMGItaGYxLWNvbXBsZXRpb24ueW1sIikud3JpdGVfdGV4dCgKICAgICJcbiIuam9pbihbCiAgICAgICAgInNjaGVtYV92ZXJzaW9uOiAxIiwKICAgICAgICAnc3lzdGVtOiAiRFBSTyDjgqjjgrnjg4bjg7vjg6rjg6njgq/jgrzjg7zjgrfjg6fjg7MgTElORSInLAogICAgICAgICdzdGVwOiAiRVNUSEUtTkVYVC0xMEItSEYxIicsCiAgICAgICAgInN0YXR1czogT0siLAogICAgICAgIGYnY29tcGxldGVkX2F0X2pzdDogIntub3cuaXNvZm9ybWF0KCl9IicsCiAgICAgICAgJ3RhcmdldDogInN5c3RlbXMvZXN0aGUuaHRtbCInLAogICAgICAgICJjdXN0b21lcl9mYWNpbmdfY29weToiLAogICAgICAgICIgIHRlY2huaWNhbF90ZXN0X2NvdW50c192aXNpYmxlOiBmYWxzZSIsCiAgICAgICAgIiAgcXJfcmVhZF9jb3VudF92aXNpYmxlOiBmYWxzZSIsCiAgICAgICAgIiAgc3lzdGVtX2NoZWNrX2xpbmtfdmlzaWJsZTogZmFsc2UiLAogICAgICAgICIgIGRldmljZV9zdXBwb3J0X3Zpc2libGU6IHRydWUiLAogICAgICAgICIgIHB1YmxpY19kZW1vX3Zpc2libGU6IHRydWUiLAogICAgICAgICIgIG9wZXJhdGlvbl9leHBlcmllbmNlX3Zpc2libGU6IHRydWUiLAogICAgICAgICJ2YWxpZGF0aW9uOiIsCiAgICAgICAgZiIgIHN0YXRpY19vazoge3N0YXRpY1snc3VtbWFyeSddWydvayddfSIsCiAgICAgICAgIiAgc3RhdGljX2F0dGVudGlvbjogMCIsCiAgICAgICAgIiAgc3RhdGljX25nOiAwIiwKICAgICAgICBmIiAgcHVibGljX3ZpZXdwb3J0X2NvdW50OiB7cHVibGljWyd2aWV3cG9ydF9jb3VudCddfSIsCiAgICAgICAgIiAgcHVibGljX2FsbF9wYXNzOiB0cnVlIiwKICAgICAgICAiICBob3Jpem9udGFsX292ZXJmbG93OiBmYWxzZSIsCiAgICAgICAgImNoYW5nZXM6IiwKICAgICAgICAiICBwcm9kdWN0X3BhZ2U6IHRydWUiLAogICAgICAgICIgIGNhdGFsb2c6IGZhbHNlIiwKICAgICAgICAiICBzeXN0ZW1fc291cmNlOiBmYWxzZSIsCiAgICAgICAgIiAgd29ya2VyOiBmYWxzZSIsCiAgICAgICAgIiAgc3VwYWJhc2U6IGZhbHNlIiwKICAgICAgICAiICBhcGk6IGZhbHNlIiwKICAgICAgICBmJ2JhY2t1cF90YWc6ICJ7b3MuZW52aXJvblsiQkFDS1VQX1RBRyJdfSInLAogICAgXSkgKyAiXG4iLAogICAgZW5jb2Rpbmc9InV0Zi04IiwKKQo="),"<final>","exec"))'
+          grep -q '^status: OK$' .dpro-next/esthe-next10b-hf1-completion.yml
+          grep -q 'technical_test_counts_visible: false' .dpro-next/esthe-next10b-hf1-completion.yml
+          grep -q 'system_check_link_visible: false' .dpro-next/esthe-next10b-hf1-completion.yml
+          grep -q 'public_all_pass: true' .dpro-next/esthe-next10b-hf1-completion.yml
+
+      - name: "Upload validation artifact"
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: "ESTHE-NEXT-10B-HF1-${{ github.run_id }}"
+          path: |
+            .esthe-next10b-hf1-artifact/
+            .dpro-next/esthe-next10b-hf1-*.json
+            .dpro-next/esthe-next10b-hf1-*.yml
+          if-no-files-found: warn
+          retention-days: 90
+
+      - name: "Commit completion record delete workflow and push"
+        if: success()
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          git add .dpro-next/esthe-next10b-hf1-static.json .dpro-next/esthe-next10b-hf1-public.json .dpro-next/esthe-next10b-hf1-completion.json .dpro-next/esthe-next10b-hf1-completion.yml
+          git rm --ignore-unmatch "$WORKFLOW_FILE"
+          git commit -m "DPRO ESTHE product-site customer copy complete"
+          git push origin "HEAD:${GITHUB_REF_NAME}"
+          echo "FINAL_COMMIT_SHA=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
+
+      - name: "Confirm final internal record"
+        if: success()
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          RAW="https://raw.githubusercontent.com/${GITHUB_REPOSITORY}/${GITHUB_REF_NAME}/.dpro-next/esthe-next10b-hf1-completion.yml"
+          CONFIRMED=false
+          for attempt in $(seq 1 36); do
+            BODY="$(curl -L -sS --retry 2 -H "Cache-Control: no-cache, no-store" "$RAW?sha=${FINAL_COMMIT_SHA}_${attempt}" || true)"
+            if [[ "$BODY" == *'step: "ESTHE-NEXT-10B-HF1"'* \
+              && "$BODY" == *"technical_test_counts_visible: false"* \
+              && "$BODY" == *"public_all_pass: true"* ]]; then
+              CONFIRMED=true
+              break
+            fi
+            sleep 10
+          done
+          [[ "$CONFIRMED" == true ]] || { echo "::error::完成記録未確認"; exit 1; }
+          echo "### エステ製品サイト お客様向け表示更新" >> "$GITHUB_STEP_SUMMARY"
+          echo "- 技術的な検査件数・QR読取件数・system-checkリンク: **非表示**" >> "$GITHUB_STEP_SUMMARY"
+          echo "- 利用端末・公開デモ・操作体験: **表示**" >> "$GITHUB_STEP_SUMMARY"
+          echo "- systems.html一覧カード・エステ本体・Worker・Supabase・API: **変更なし**" >> "$GITHUB_STEP_SUMMARY"
