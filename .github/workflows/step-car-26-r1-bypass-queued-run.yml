@@ -1,0 +1,152 @@
+name: DPRO CAR STEP CAR-26 R1 Bypass Queued Run
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/step-car-26-r1-bypass-queued-run.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  apply-car-26-directly:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout product site
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Execute validated CAR-26 update
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          import textwrap
+
+          source = Path(
+              ".github/workflows/"
+              "step-car-26-used-car-product-site-complete.yml"
+          )
+          if not source.exists():
+              raise SystemExit(
+                  "CAR-26 original workflow file was not found."
+              )
+
+          text = source.read_text(encoding="utf-8")
+          blocks = re.findall(
+              r"python - <<'PY'\n(.*?)\n          PY",
+              text,
+              flags=re.S,
+          )
+          if len(blocks) != 3:
+              raise SystemExit(
+                  f"Expected 3 Python blocks, found {len(blocks)}."
+              )
+
+          for index, block in enumerate(blocks, 1):
+              code = textwrap.dedent(block)
+              exec(
+                  compile(
+                      code,
+                      f"<car26-block-{index}>",
+                      "exec",
+                  ),
+                  {},
+              )
+
+          print("CAR-26 validated update executed.")
+          PY
+
+      - name: Final validation
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+
+          product = Path(
+              "systems/used-car.html"
+          ).read_text(encoding="utf-8")
+          catalog = Path(
+              "systems.html"
+          ).read_text(encoding="utf-8")
+          pdf = Path(
+              "assets/"
+              "dpro-used-car-operation-sheet-20260725.pdf"
+          )
+
+          required = [
+              "STEP CAR-26",
+              "CAR-24 COMPLETE EDITION",
+              "v=CAR-24-R1",
+              "操作体験シートPDFを開く",
+              "経営分析・CSV移行・本番準備",
+          ]
+          missing = [
+              marker for marker in required
+              if marker not in product
+          ]
+          if missing:
+              raise SystemExit(
+                  f"Product validation failed: {missing}"
+              )
+
+          card = re.search(
+              r'<a class="catalog-card reveal is-live" '
+              r'href="systems/used-car\.html">.*?</a>',
+              catalog,
+              flags=re.S,
+          )
+          if (
+              not card
+              or "CAR-24完成版" not in card.group(0)
+          ):
+              raise SystemExit(
+                  "Catalog card validation failed."
+              )
+
+          if (
+              not pdf.exists()
+              or pdf.stat().st_size < 100000
+              or pdf.read_bytes()[:4] != b"%PDF"
+          ):
+              raise SystemExit(
+                  "CAR-25 PDF validation failed."
+              )
+
+          if "v=CAR-10-R1" in product:
+              raise SystemExit(
+                  "Old CAR-10-R1 reference remains."
+              )
+
+          print("CAR-26 R1 final validation: OK")
+          PY
+          git diff --check
+          git status --short
+
+      - name: Commit CAR-26 and remove workflows
+        shell: bash
+        run: |
+          git config user.name             "DPRO Product Site Automation"
+          git config user.email             "actions@users.noreply.github.com"
+
+          git add             systems/used-car.html             systems.html             assets/dpro-used-car-operation-sheet-20260725.pdf
+
+          git rm --ignore-unmatch             .github/workflows/step-car-26-used-car-product-site-complete.yml
+
+          git rm --ignore-unmatch             .github/workflows/step-car-26-r1-bypass-queued-run.yml
+
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+            exit 0
+          fi
+
+          git commit -m             "CAR-26-R1: publish used-car complete edition"
+          git push origin main
