@@ -1,0 +1,16 @@
+step: "SCHOOL-NEXT-10A"
+result: "OK"
+completed_at_jst: "2026-07-24T21:15:29+09:00"
+product_page: "https://dpromstk2000-lab.github.io/dpro-line-systems-site/systems/school.html"
+catalog_page: "https://dpromstk2000-lab.github.io/dpro-line-systems-site/systems.html"
+operation_sheet_pdf: "https://dpromstk2000-lab.github.io/dpro-line-systems-site/assets/pdfs/dpro-school-line-next-operation-guide.pdf"
+operation_sheet_png: "https://dpromstk2000-lab.github.io/dpro-line-systems-site/assets/pdfs/dpro-school-line-next-operation-guide.png"
+pdf_pages: 1
+qr_codes_checked: 6
+qr_result: "PASS"
+public_verify: "PASS"
+worker_changed: false
+supabase_changed: false
+sql_required: false
+api_changed: false
+next_step: "SCHOOL-NEXT-10B"
