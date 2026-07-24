@@ -1,0 +1,272 @@
+# DPRO エステ LINE
+# STEP名: ESTHE-NEXT-10B-R4
+#
+# R3失敗の正確な状態:
+# - viewport: 390
+# - documentScrollWidth: 390
+# - bodyScrollWidth: 390
+# - 実際の横スクロール: なし
+# - 見出し「完成したシステムが」の描画右端: 392.8px
+#
+# R4:
+# - 製品一覧の小画面見出しを実表示領域へ収める
+# - 実スクロール幅とサブピクセル描画境界を分離
+# - 以前失敗した見出しを個別検査
+#
+# 対象:
+# - systems.html
+# - R4検査・完成記録
+#
+# 変更しない:
+# - systems/esthe.html
+# - styles.css
+# - script.js
+# - Worker / Supabase / API
+#
+# 公開検査:
+# - 製品ページ 1440 / 390 / 360
+# - 製品一覧 1440 / 390 / 360 / 320
+# - documentScrollWidth / bodyScrollWidth / scrollX
+# - 主要コンテンツ境界
+# - 旧失敗見出し境界
+#
+# 成功後:
+# - 自動Commit / Push
+# - NEXT-10B、R2、R3、R4 YML自身を削除
+#
+# 次STEP:
+# - ESTHE-NEXT-10C-FINAL-COMPLETE
+
+name: "DPRO ESTHE NEXT-10B-R4 - Catalog Text Fit and Accurate Validation"
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/ESTHE-NEXT-10B-R4.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: read
+
+concurrency:
+  group: "dpro-product-site-esthe-next"
+  cancel-in-progress: false
+
+env:
+  WORKFLOW_FILE: ".github/workflows/ESTHE-NEXT-10B-R4.yml"
+  BACKUP_TAG_PREFIX: "backup-product-site-before-esthe-next10b-r4"
+  PRODUCT_PAGE_URL: "https://dpromstk2000-lab.github.io/dpro-line-systems-site/systems/esthe.html"
+  CATALOG_URL: "https://dpromstk2000-lab.github.io/dpro-line-systems-site/systems.html"
+
+jobs:
+  esthe-next-10b-r4:
+    name: "Fit catalog text and verify real horizontal overflow"
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+
+    steps:
+      - name: "Checkout product-site repository with history"
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: "Configure Git identity"
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          git config user.name "DPRO NEXT Actions"
+          git config user.email "actions@users.noreply.github.com"
+
+      - name: "Confirm NEXT-10B R2 and R3 committed baseline"
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          grep -q 'STEP ESTHE-NEXT-10B / DPRO NEXT CATALOG' systems.html
+          grep -q 'CATALOG-NEXT10B-R3-MOBILE-SAFE' systems.html
+          grep -q 'ESTHE NEXT-10完成' systems.html
+          grep -q 'DPRO NEXT完成版を見る' systems.html
+          grep -q 'ESTHE-NEXT-10B-R2-MOBILE-SAFE' systems/esthe.html
+          [[ "$(grep -o 'href="systems/esthe.html"' systems.html | wc -l)" -eq 1 ]]
+          ! grep -q 'CATALOG-NEXT10B-R4-TEXT-FIT' systems.html
+
+      - name: "Create change-before backup tag"
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          CHANGE_BEFORE_SHA="$GITHUB_SHA"
+          mapfile -t HEAD_FILES < <(git diff-tree --no-commit-id --name-only -r "$GITHUB_SHA")
+          if [[ "${#HEAD_FILES[@]}" -eq 1 && "${HEAD_FILES[0]}" == "$WORKFLOW_FILE" ]]; then
+            CHANGE_BEFORE_SHA="$(git rev-parse "${GITHUB_SHA}^")"
+          fi
+
+          BASE_TAG="${BACKUP_TAG_PREFIX}-$(TZ=Asia/Tokyo date +%Y%m%d)"
+          BACKUP_TAG="$BASE_TAG"
+          if git ls-remote --exit-code --tags origin "refs/tags/$BACKUP_TAG" >/dev/null 2>&1; then
+            BACKUP_TAG="${BASE_TAG}-run-${GITHUB_RUN_ID}"
+          fi
+
+          git tag -a "$BACKUP_TAG" "$CHANGE_BEFORE_SHA" \
+            -m "DPRO product site before ESTHE NEXT-10B-R4"
+          git push origin "refs/tags/$BACKUP_TAG"
+          echo "BACKUP_TAG=$BACKUP_TAG" >> "$GITHUB_ENV"
+
+      - name: "Apply mobile heading text-fit patch"
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          ESTHE_SHA_BEFORE="$(sha256sum systems/esthe.html | awk '{print $1}')"
+          STYLES_SHA_BEFORE="$(sha256sum styles.css | awk '{print $1}')"
+          SCRIPT_SHA_BEFORE="$(sha256sum script.js | awk '{print $1}')"
+          echo "ESTHE_SHA_BEFORE=$ESTHE_SHA_BEFORE" >> "$GITHUB_ENV"
+          echo "STYLES_SHA_BEFORE=$STYLES_SHA_BEFORE" >> "$GITHUB_ENV"
+          echo "SCRIPT_SHA_BEFORE=$SCRIPT_SHA_BEFORE" >> "$GITHUB_ENV"
+          python3 -c 'import base64;exec(compile(base64.b64decode("CmZyb20gX19mdXR1cmVfXyBpbXBvcnQgYW5ub3RhdGlvbnMKCmltcG9ydCBkYXRldGltZSBhcyBkdAppbXBvcnQgaGFzaGxpYgppbXBvcnQganNvbgppbXBvcnQgb3MKZnJvbSBwYXRobGliIGltcG9ydCBQYXRoCgpjYXRhbG9nX3BhdGggPSBQYXRoKCJzeXN0ZW1zLmh0bWwiKQplc3RoZV9wYXRoID0gUGF0aCgic3lzdGVtcy9lc3RoZS5odG1sIikKc3R5bGVzX3BhdGggPSBQYXRoKCJzdHlsZXMuY3NzIikKc2NyaXB0X3BhdGggPSBQYXRoKCJzY3JpcHQuanMiKQoKY2F0YWxvZyA9IGNhdGFsb2dfcGF0aC5yZWFkX3RleHQoZW5jb2Rpbmc9InV0Zi04IikKZXN0aGUgPSBlc3RoZV9wYXRoLnJlYWRfdGV4dChlbmNvZGluZz0idXRmLTgiKQpzdHlsZXMgPSBzdHlsZXNfcGF0aC5yZWFkX3RleHQoZW5jb2Rpbmc9InV0Zi04IikKc2NyaXB0ID0gc2NyaXB0X3BhdGgucmVhZF90ZXh0KGVuY29kaW5nPSJ1dGYtOCIpCgpyZXF1aXJlZF9jYXRhbG9nID0gWwogICAgIlNURVAgRVNUSEUtTkVYVC0xMEIgLyBEUFJPIE5FWFQgQ0FUQUxPRyIsCiAgICAiQ0FUQUxPRy1ORVhUMTBCLVIzLU1PQklMRS1TQUZFIiwKICAgICJFU1RIRSBORVhULTEw5a6M5oiQIiwKICAgICJEUFJPIE5FWFTlrozmiJDniYjjgpLopovjgosiLApdCmZvciB0b2tlbiBpbiByZXF1aXJlZF9jYXRhbG9nOgogICAgaWYgdG9rZW4gbm90IGluIGNhdGFsb2c6CiAgICAgICAgcmFpc2UgUnVudGltZUVycm9yKGYiUjMgY2F0YWxvZyBiYXNlbGluZSBtaXNzaW5nOiB7dG9rZW59IikKCmlmICJFU1RIRS1ORVhULTEwQi1SMi1NT0JJTEUtU0FGRSIgbm90IGluIGVzdGhlOgogICAgcmFpc2UgUnVudGltZUVycm9yKCJFU1RIRSBwcm9kdWN0LXBhZ2UgUjIgYmFzZWxpbmUgaXMgbWlzc2luZy4iKQppZiAiQ0FUQUxPRy1ORVhUMTBCLVI0LVRFWFQtRklUIiBpbiBjYXRhbG9nOgogICAgcmFpc2UgUnVudGltZUVycm9yKCJSNCB0ZXh0LWZpdCBwYXRjaCBhbHJlYWR5IGV4aXN0cy4iKQoKdW5jaGFuZ2VkID0gewogICAgInN5c3RlbXNfZXN0aGVfaHRtbF9zaGEyNTYiOiBoYXNobGliLnNoYTI1Nihlc3RoZS5lbmNvZGUoInV0Zi04IikpLmhleGRpZ2VzdCgpLAogICAgInN0eWxlc19jc3Nfc2hhMjU2IjogaGFzaGxpYi5zaGEyNTYoc3R5bGVzLmVuY29kZSgidXRmLTgiKSkuaGV4ZGlnZXN0KCksCiAgICAic2NyaXB0X2pzX3NoYTI1NiI6IGhhc2hsaWIuc2hhMjU2KHNjcmlwdC5lbmNvZGUoInV0Zi04IikpLmhleGRpZ2VzdCgpLAp9CgpwYXRjaCA9IHIiIiIKPHN0eWxlIGlkPSJjYXRhbG9nLW5leHQxMGItcjQtdGV4dC1maXQiPgovKiBDQVRBTE9HLU5FWFQxMEItUjQtVEVYVC1GSVQKICAgUjPjgafjg5rjg7zjgrjlhajkvZPjga7mqKrjgrnjgq/jg63jg7zjg6vjga/op6PmtojmuIjjgb/jgIIKICAgMzkwcHjmmYLjgavopovlh7rjgZfmloflrZfjga7mj4/nlLvnq6/jgaDjgZHjgYwyLjhweOi2heOBiOOBn+OBn+OCgeOAgQogICDoo73lk4HkuIDopqfjg5Ljg7zjg63jg7zmloflrZfjgpLlrp/ooajnpLrpoJjln5/jgbjlj47jgoHjgovjgIIgKi8KQG1lZGlhKG1heC13aWR0aDo0MjBweCl7CiAgYm9keS5jYXRhbG9nLXBhZ2UgLmNhdGFsb2ctaGVyby10aXRsZXsKICAgIHdpZHRoOjEwMCU7CiAgICBtYXgtd2lkdGg6MTAwJTsKICB9CiAgYm9keS5jYXRhbG9nLXBhZ2UgLmNhdGFsb2ctaGVyby10aXRsZSA+IHNwYW57CiAgICBkaXNwbGF5OmJsb2NrOwogICAgd2lkdGg6MTAwJTsKICAgIG1heC13aWR0aDoxMDAlOwogICAgd2hpdGUtc3BhY2U6bm93cmFwOwogIH0KICBib2R5LmNhdGFsb2ctcGFnZSAuY2F0YWxvZy1oZXJvIGgxewogICAgZm9udC1zaXplOmNsYW1wKDQwcHgsMTJ2dyw0OHB4KTsKICAgIGxpbmUtaGVpZ2h0Oi45ODsKICB9Cn0KQG1lZGlhKG1heC13aWR0aDozNDBweCl7CiAgYm9keS5jYXRhbG9nLXBhZ2UgLmNhdGFsb2ctaGVybyBoMXsKICAgIGZvbnQtc2l6ZTpjbGFtcCgzN3B4LDExLjd2dyw0MHB4KTsKICB9Cn0KPC9zdHlsZT4KIiIiLnN0cmlwKCkKCm5lZWRsZSA9ICI8L2hlYWQ+IgppZiBjYXRhbG9nLmNvdW50KG5lZWRsZSkgIT0gMToKICAgIHJhaXNlIFJ1bnRpbWVFcnJvcigic3lzdGVtcy5odG1sIDwvaGVhZD4gbWFya2VyIGlzIG5vdCB1bmlxdWUuIikKY2F0YWxvZyA9IGNhdGFsb2cucmVwbGFjZShuZWVkbGUsIHBhdGNoICsgIlxuIiArIG5lZWRsZSwgMSkKY2F0YWxvZ19wYXRoLndyaXRlX3RleHQoY2F0YWxvZy5yc3RyaXAoKSArICJcbiIsIGVuY29kaW5nPSJ1dGYtOCIpCgojIFNjb3BlIGd1YXJkOiBSNCBtdXN0IG5vdCBjaGFuZ2UgdGhlc2UgZmlsZXMuCmlmIGhhc2hsaWIuc2hhMjU2KGVzdGhlX3BhdGgucmVhZF90ZXh0KGVuY29kaW5nPSJ1dGYtOCIpLmVuY29kZSgidXRmLTgiKSkuaGV4ZGlnZXN0KCkgIT0gdW5jaGFuZ2VkWyJzeXN0ZW1zX2VzdGhlX2h0bWxfc2hhMjU2Il06CiAgICByYWlzZSBSdW50aW1lRXJyb3IoInN5c3RlbXMvZXN0aGUuaHRtbCBjaGFuZ2VkIHVuZXhwZWN0ZWRseS4iKQppZiBoYXNobGliLnNoYTI1NihzdHlsZXNfcGF0aC5yZWFkX3RleHQoZW5jb2Rpbmc9InV0Zi04IikuZW5jb2RlKCJ1dGYtOCIpKS5oZXhkaWdlc3QoKSAhPSB1bmNoYW5nZWRbInN0eWxlc19jc3Nfc2hhMjU2Il06CiAgICByYWlzZSBSdW50aW1lRXJyb3IoInN0eWxlcy5jc3MgY2hhbmdlZCB1bmV4cGVjdGVkbHkuIikKaWYgaGFzaGxpYi5zaGEyNTYoc2NyaXB0X3BhdGgucmVhZF90ZXh0KGVuY29kaW5nPSJ1dGYtOCIpLmVuY29kZSgidXRmLTgiKSkuaGV4ZGlnZXN0KCkgIT0gdW5jaGFuZ2VkWyJzY3JpcHRfanNfc2hhMjU2Il06CiAgICByYWlzZSBSdW50aW1lRXJyb3IoInNjcmlwdC5qcyBjaGFuZ2VkIHVuZXhwZWN0ZWRseS4iKQoKbm93ID0gZHQuZGF0ZXRpbWUubm93KAogICAgZHQudGltZXpvbmUoZHQudGltZWRlbHRhKGhvdXJzPTkpKQopLnJlcGxhY2UobWljcm9zZWNvbmQ9MCkKCnJlY29yZCA9IHsKICAgICJzdGVwIjogIkVTVEhFLU5FWFQtMTBCLVI0IiwKICAgICJzdGFnZSI6ICJjYXRhbG9nX3RleHRfZml0X2NvbW1pdHRlZF9wdWJsaWNhdGlvbl9wZW5kaW5nIiwKICAgICJ1cGRhdGVkX2F0X2pzdCI6IG5vdy5pc29mb3JtYXQoKSwKICAgICJyM19yZXN1bHQiOiB7CiAgICAgICAgInZpZXdwb3J0IjogMzkwLAogICAgICAgICJkb2N1bWVudF9zY3JvbGxfd2lkdGgiOiAzOTAsCiAgICAgICAgImJvZHlfc2Nyb2xsX3dpZHRoIjogMzkwLAogICAgICAgICJhY3R1YWxfaG9yaXpvbnRhbF9zY3JvbGwiOiBGYWxzZSwKICAgICAgICAicGFpbnRfYm91bmRfYXR0ZW50aW9uIjogewogICAgICAgICAgICAidGV4dCI6ICLlrozmiJDjgZfjgZ/jgrfjgrnjg4bjg6DjgYwiLAogICAgICAgICAgICAicmlnaHRfcHgiOiAzOTIuOCwKICAgICAgICAgICAgImV4Y2Vzc19weCI6IDIuOCwKICAgICAgICB9LAogICAgfSwKICAgICJ0YXJnZXQiOiAic3lzdGVtcy5odG1sIiwKICAgICJzY29wZSI6ICJjYXRhbG9nIG1vYmlsZSBoZXJvIGhlYWRpbmcgb25seSIsCiAgICAidW5jaGFuZ2VkIjogdW5jaGFuZ2VkLAogICAgIndvcmtlcl9jaGFuZ2VkIjogRmFsc2UsCiAgICAic3VwYWJhc2VfY2hhbmdlZCI6IEZhbHNlLAogICAgImFwaV9jaGFuZ2VkIjogRmFsc2UsCiAgICAiYmFja3VwX3RhZyI6IG9zLmVudmlyb24uZ2V0KCJCQUNLVVBfVEFHIiwgIiIpLAp9ClBhdGgoIi5kcHJvLW5leHQiKS5ta2RpcihleGlzdF9vaz1UcnVlKQpQYXRoKCIuZHByby1uZXh0L2VzdGhlLW5leHQxMGItcjQuanNvbiIpLndyaXRlX3RleHQoCiAgICBqc29uLmR1bXBzKHJlY29yZCwgZW5zdXJlX2FzY2lpPUZhbHNlLCBpbmRlbnQ9MikgKyAiXG4iLAogICAgZW5jb2Rpbmc9InV0Zi04IiwKKQo="),"<ESTHE-NEXT-10B-R4-apply>","exec"))'
+
+      - name: "Run static regression and scope validation"
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          python3 -c 'import base64;exec(compile(base64.b64decode("CmZyb20gX19mdXR1cmVfXyBpbXBvcnQgYW5ub3RhdGlvbnMKCmltcG9ydCBoYXNobGliCmltcG9ydCBqc29uCmltcG9ydCBzdWJwcm9jZXNzCmltcG9ydCBzeXMKZnJvbSBjb2xsZWN0aW9ucyBpbXBvcnQgQ291bnRlcgpmcm9tIGh0bWwucGFyc2VyIGltcG9ydCBIVE1MUGFyc2VyCmZyb20gcGF0aGxpYiBpbXBvcnQgUGF0aAoKY2xhc3MgUGFyc2VyKEhUTUxQYXJzZXIpOgogICAgZGVmIF9faW5pdF9fKHNlbGYpOgogICAgICAgIHN1cGVyKCkuX19pbml0X18oY29udmVydF9jaGFycmVmcz1UcnVlKQogICAgICAgIHNlbGYuaWRzID0gW10KICAgIGRlZiBoYW5kbGVfc3RhcnR0YWcoc2VsZiwgdGFnLCBhdHRycyk6CiAgICAgICAgZm9yIGtleSwgdmFsdWUgaW4gYXR0cnM6CiAgICAgICAgICAgIGlmIGtleS5sb3dlcigpID09ICJpZCIgYW5kIHZhbHVlOgogICAgICAgICAgICAgICAgc2VsZi5pZHMuYXBwZW5kKHZhbHVlKQogICAgZGVmIGhhbmRsZV9zdGFydGVuZHRhZyhzZWxmLCB0YWcsIGF0dHJzKToKICAgICAgICBzZWxmLmhhbmRsZV9zdGFydHRhZyh0YWcsIGF0dHJzKQoKY2F0YWxvZyA9IFBhdGgoInN5c3RlbXMuaHRtbCIpLnJlYWRfdGV4dChlbmNvZGluZz0idXRmLTgiKQplc3RoZSA9IFBhdGgoInN5c3RlbXMvZXN0aGUuaHRtbCIpLnJlYWRfdGV4dChlbmNvZGluZz0idXRmLTgiKQpzdHlsZXMgPSBQYXRoKCJzdHlsZXMuY3NzIikucmVhZF90ZXh0KGVuY29kaW5nPSJ1dGYtOCIpCnNjcmlwdCA9IFBhdGgoInNjcmlwdC5qcyIpLnJlYWRfdGV4dChlbmNvZGluZz0idXRmLTgiKQpzdGFnZSA9IGpzb24ubG9hZHMoCiAgICBQYXRoKCIuZHByby1uZXh0L2VzdGhlLW5leHQxMGItcjQuanNvbiIpLnJlYWRfdGV4dChlbmNvZGluZz0idXRmLTgiKQopCgppdGVtcyA9IFtdCmRlZiBhZGQobmFtZSwgb2ssIGRldGFpbCk6CiAgICBpdGVtcy5hcHBlbmQoewogICAgICAgICJuYW1lIjogbmFtZSwKICAgICAgICAic3RhdHVzIjogIk9LIiBpZiBvayBlbHNlICJORyIsCiAgICAgICAgImRldGFpbCI6IGRldGFpbCwKICAgIH0pCgpmb3IgZmlsZV9uYW1lLCBjb250ZW50IGluIFsKICAgICgic3lzdGVtcy5odG1sIiwgY2F0YWxvZyksCiAgICAoInN5c3RlbXMvZXN0aGUuaHRtbCIsIGVzdGhlKSwKXToKICAgIHBhcnNlciA9IFBhcnNlcigpCiAgICB0cnk6CiAgICAgICAgcGFyc2VyLmZlZWQoY29udGVudCkKICAgICAgICBwYXJzZXIuY2xvc2UoKQogICAgICAgIGFkZChmIntmaWxlX25hbWV9IEhUTUzop6PmnpAiLCBUcnVlLCAiSFRNTFBhcnNlciBQQVNTIikKICAgIGV4Y2VwdCBFeGNlcHRpb24gYXMgZXJyb3I6CiAgICAgICAgYWRkKGYie2ZpbGVfbmFtZX0gSFRNTOino+aekCIsIEZhbHNlLCBzdHIoZXJyb3IpKQogICAgICAgIGNvbnRpbnVlCgogICAgZHVwbGljYXRlcyA9IHNvcnRlZCgKICAgICAgICBrZXkgZm9yIGtleSwgY291bnQgaW4gQ291bnRlcihwYXJzZXIuaWRzKS5pdGVtcygpIGlmIGNvdW50ID4gMQogICAgKQogICAgYWRkKAogICAgICAgIGYie2ZpbGVfbmFtZX0gSUTph43opIciLAogICAgICAgIG5vdCBkdXBsaWNhdGVzLAogICAgICAgICIsICIuam9pbihkdXBsaWNhdGVzKSBpZiBkdXBsaWNhdGVzIGVsc2UgIuOBquOBlyIsCiAgICApCgpmb3IgdG9rZW4gaW4gWwogICAgIlNURVAgRVNUSEUtTkVYVC0xMEIgLyBEUFJPIE5FWFQgQ0FUQUxPRyIsCiAgICAiQ0FUQUxPRy1ORVhUMTBCLVIzLU1PQklMRS1TQUZFIiwKICAgICJDQVRBTE9HLU5FWFQxMEItUjQtVEVYVC1GSVQiLAogICAgIkVTVEhFIE5FWFQtMTDlrozmiJAiLAogICAgIkRQUk8gTkVYVOWujOaIkOeJiOOCkuimi+OCiyIsCiAgICAiZm9udC1zaXplOmNsYW1wKDQwcHgsMTJ2dyw0OHB4KSIsCl06CiAgICBhZGQoZiLkuIDopqcge3Rva2VufSIsIHRva2VuIGluIGNhdGFsb2csIHRva2VuKQoKZm9yIHRva2VuIGluIFsKICAgICJTVEVQIEVTVEhFLU5FWFQtMTBCIC8gRFBSTyBORVhUIFBST0RVQ1QgU0lURSIsCiAgICAiRVNUSEUtTkVYVC0xMEItUjItTU9CSUxFLVNBRkUiLAogICAgIuaTjeS9nOS9k+mok+OCt+ODvOODiFBERiIsCiAgICAi5YWs6ZaL5qSc5p+75riI44G/5a6M5oiQ55S76Z2iIiwKXToKICAgIGFkZChmIuijveWTgeODmuODvOOCuOe2reaMgSB7dG9rZW59IiwgdG9rZW4gaW4gZXN0aGUsIHRva2VuKQoKYWRkKAogICAgIuOCqOOCueODhuS4gOimp+OCq+ODvOODieS4gOaEjyIsCiAgICBjYXRhbG9nLmNvdW50KCdocmVmPSJzeXN0ZW1zL2VzdGhlLmh0bWwiJykgPT0gMSwKICAgIHN0cihjYXRhbG9nLmNvdW50KCdocmVmPSJzeXN0ZW1zL2VzdGhlLmh0bWwiJykpLAopCmFkZCgKICAgICLoo73lk4Hjg5rjg7zjgrhTSEHntq3mjIEiLAogICAgaGFzaGxpYi5zaGEyNTYoZXN0aGUuZW5jb2RlKCJ1dGYtOCIpKS5oZXhkaWdlc3QoKQogICAgPT0gc3RhZ2VbInVuY2hhbmdlZCJdWyJzeXN0ZW1zX2VzdGhlX2h0bWxfc2hhMjU2Il0sCiAgICBoYXNobGliLnNoYTI1Nihlc3RoZS5lbmNvZGUoInV0Zi04IikpLmhleGRpZ2VzdCgpLAopCmFkZCgKICAgICLlhbHpgJpDU1MgU0hB57at5oyBIiwKICAgIGhhc2hsaWIuc2hhMjU2KHN0eWxlcy5lbmNvZGUoInV0Zi04IikpLmhleGRpZ2VzdCgpCiAgICA9PSBzdGFnZVsidW5jaGFuZ2VkIl1bInN0eWxlc19jc3Nfc2hhMjU2Il0sCiAgICBoYXNobGliLnNoYTI1NihzdHlsZXMuZW5jb2RlKCJ1dGYtOCIpKS5oZXhkaWdlc3QoKSwKKQphZGQoCiAgICAi5YWx6YCaSlMgU0hB57at5oyBIiwKICAgIGhhc2hsaWIuc2hhMjU2KHNjcmlwdC5lbmNvZGUoInV0Zi04IikpLmhleGRpZ2VzdCgpCiAgICA9PSBzdGFnZVsidW5jaGFuZ2VkIl1bInNjcmlwdF9qc19zaGEyNTYiXSwKICAgIGhhc2hsaWIuc2hhMjU2KHNjcmlwdC5lbmNvZGUoInV0Zi04IikpLmhleGRpZ2VzdCgpLAopCgpqc19jaGVjayA9IHN1YnByb2Nlc3MucnVuKAogICAgWyJub2RlIiwgIi0tY2hlY2siLCAic2NyaXB0LmpzIl0sCiAgICBjYXB0dXJlX291dHB1dD1UcnVlLAogICAgdGV4dD1UcnVlLAopCmFkZCgKICAgICLlhbHpgJpKYXZhU2NyaXB05qeL5paHIiwKICAgIGpzX2NoZWNrLnJldHVybmNvZGUgPT0gMCwKICAgICJub2RlIC0tY2hlY2sgUEFTUyIKICAgIGlmIGpzX2NoZWNrLnJldHVybmNvZGUgPT0gMAogICAgZWxzZSAoanNfY2hlY2suc3RkZXJyIG9yIGpzX2NoZWNrLnN0ZG91dClbOjUwMF0sCikKCm5nID0gc3VtKGl0ZW1bInN0YXR1cyJdID09ICJORyIgZm9yIGl0ZW0gaW4gaXRlbXMpCnJlcG9ydCA9IHsKICAgICJzdGVwIjogIkVTVEhFLU5FWFQtMTBCLVI0IiwKICAgICJzdW1tYXJ5IjogewogICAgICAgICJvayI6IGxlbihpdGVtcykgLSBuZywKICAgICAgICAiYXR0ZW50aW9uIjogMCwKICAgICAgICAibmciOiBuZywKICAgIH0sCiAgICAiaXRlbXMiOiBpdGVtcywKfQpQYXRoKCIuZHByby1uZXh0L2VzdGhlLW5leHQxMGItcjQtc3RhdGljLmpzb24iKS53cml0ZV90ZXh0KAogICAganNvbi5kdW1wcyhyZXBvcnQsIGVuc3VyZV9hc2NpaT1GYWxzZSwgaW5kZW50PTIpICsgIlxuIiwKICAgIGVuY29kaW5nPSJ1dGYtOCIsCikKcHJpbnQoanNvbi5kdW1wcyhyZXBvcnQsIGVuc3VyZV9hc2NpaT1GYWxzZSwgaW5kZW50PTIpKQppZiBuZzoKICAgIHN5cy5leGl0KDEpCg=="),"<ESTHE-NEXT-10B-R4-static>","exec"))'
+          ruby -e 'require "yaml"; YAML.parse_file(ARGV[0]); puts "YML OK"' "$WORKFLOW_FILE"
+          [[ "$(sha256sum systems/esthe.html | awk '{print $1}')" == "$ESTHE_SHA_BEFORE" ]]
+          [[ "$(sha256sum styles.css | awk '{print $1}')" == "$STYLES_SHA_BEFORE" ]]
+          [[ "$(sha256sum script.js | awk '{print $1}')" == "$SCRIPT_SHA_BEFORE" ]]
+
+      - name: "Commit R4 catalog text-fit patch and push"
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          git add \
+            systems.html \
+            .dpro-next/esthe-next10b-r4.json \
+            .dpro-next/esthe-next10b-r4-static.json
+          git diff --cached --quiet && {
+            echo "::error::Commit対象がありません"; exit 1;
+          }
+          git commit -m "DPRO ESTHE NEXT-10B-R4: fit catalog mobile heading"
+          git push origin "HEAD:${GITHUB_REF_NAME}"
+          echo "PATCH_COMMIT_SHA=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
+
+      - name: "Wait for R4 public catalog"
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          PUBLISHED="false"
+          for attempt in $(seq 1 60); do
+            BODY="$(curl -L -sS --retry 2 --connect-timeout 8 --max-time 35 \
+              -H "Cache-Control: no-cache, no-store, max-age=0" \
+              -H "Pragma: no-cache" \
+              "$CATALOG_URL?r4=${PATCH_COMMIT_SHA}_${attempt}" || true)"
+            if [[ "$BODY" == *"CATALOG-NEXT10B-R4-TEXT-FIT"* \
+              && "$BODY" == *"ESTHE NEXT-10完成"* ]]; then
+              PUBLISHED="true"
+              break
+            fi
+            sleep 10
+          done
+          [[ "$PUBLISHED" == "true" ]] || {
+            echo "::error::R4公開反映を確認できません"; exit 1;
+          }
+
+      - name: "Install Chromium validation"
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          python3 -m pip install --upgrade pip
+          python3 -m pip install playwright
+          python3 -m playwright install --with-deps chromium
+
+      - name: "Verify real scroll and critical visual boundaries"
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          python3 -c 'import base64;exec(compile(base64.b64decode("CmZyb20gX19mdXR1cmVfXyBpbXBvcnQgYW5ub3RhdGlvbnMKCmltcG9ydCBhc3luY2lvCmltcG9ydCBqc29uCmltcG9ydCBvcwpmcm9tIHBhdGhsaWIgaW1wb3J0IFBhdGgKCmZyb20gcGxheXdyaWdodC5hc3luY19hcGkgaW1wb3J0IGFzeW5jX3BsYXl3cmlnaHQKClBST0RVQ1QgPSBvcy5lbnZpcm9uWyJQUk9EVUNUX1BBR0VfVVJMIl0KQ0FUQUxPRyA9IG9zLmVudmlyb25bIkNBVEFMT0dfVVJMIl0KUlVOX0lEID0gb3MuZW52aXJvbi5nZXQoIkdJVEhVQl9SVU5fSUQiLCAibG9jYWwiKQpPVVQgPSBQYXRoKCIubmV4dDEwYi1yNC1wdWJsaWMtYXJ0aWZhY3QiKQpPVVQubWtkaXIoZXhpc3Rfb2s9VHJ1ZSkKCmFzeW5jIGRlZiBpbnNwZWN0X3Byb2R1Y3QoYnJvd3NlciwgbmFtZSwgd2lkdGgsIGhlaWdodCk6CiAgICBjb250ZXh0ID0gYXdhaXQgYnJvd3Nlci5uZXdfY29udGV4dCgKICAgICAgICB2aWV3cG9ydD17IndpZHRoIjogd2lkdGgsICJoZWlnaHQiOiBoZWlnaHR9LAogICAgICAgIGxvY2FsZT0iamEtSlAiLAogICAgICAgIHRpbWV6b25lX2lkPSJBc2lhL1Rva3lvIiwKICAgICAgICBjb2xvcl9zY2hlbWU9ImxpZ2h0IiwKICAgICkKICAgIHBhZ2UgPSBhd2FpdCBjb250ZXh0Lm5ld19wYWdlKCkKICAgIHJlc3BvbnNlID0gYXdhaXQgcGFnZS5nb3RvKAogICAgICAgIGYie1BST0RVQ1R9P2VzdGhlX25leHQxMGJfcjQ9e1JVTl9JRH1fe25hbWV9IiwKICAgICAgICB3YWl0X3VudGlsPSJkb21jb250ZW50bG9hZGVkIiwKICAgICAgICB0aW1lb3V0PTYwMDAwLAogICAgKQogICAgaWYgbm90IHJlc3BvbnNlIG9yIHJlc3BvbnNlLnN0YXR1cyA+PSA0MDA6CiAgICAgICAgcmFpc2UgUnVudGltZUVycm9yKAogICAgICAgICAgICBmIntuYW1lfSBIVFRQIHtyZXNwb25zZS5zdGF0dXMgaWYgcmVzcG9uc2UgZWxzZSAnbm9uZSd9IgogICAgICAgICkKICAgIGF3YWl0IHBhZ2Uud2FpdF9mb3JfdGltZW91dCgxNzAwKQogICAgYm9keSA9IGF3YWl0IHBhZ2UubG9jYXRvcigiYm9keSIpLmlubmVyX3RleHQoKQogICAgZm9yIHRva2VuIGluIFsKICAgICAgICAiRFBSTyDjgqjjgrnjg4bjg7vjg6rjg6njgq/jgrzjg7zjgrfjg6fjg7MgTElORSIsCiAgICAgICAgIuaTjeS9nOS9k+mok+OCt+ODvOODiFBERiIsCiAgICAgICAgIuWFrOmWi+aknOafu+a4iOOBv+WujOaIkOeUu+mdoiIsCiAgICBdOgogICAgICAgIGlmIHRva2VuIG5vdCBpbiBib2R5OgogICAgICAgICAgICByYWlzZSBSdW50aW1lRXJyb3IoZiJ7bmFtZX0gbWlzc2luZyB7dG9rZW59IikKCiAgICBtZXRyaWNzID0gYXdhaXQgcGFnZS5ldmFsdWF0ZSgKICAgICAgICAiIiIoKSA9PiAoewogICAgICAgICAgdmlld3BvcnQ6IGlubmVyV2lkdGgsCiAgICAgICAgICBkb2N1bWVudFNjcm9sbFdpZHRoOiBkb2N1bWVudC5kb2N1bWVudEVsZW1lbnQuc2Nyb2xsV2lkdGgsCiAgICAgICAgICBib2R5U2Nyb2xsV2lkdGg6IGRvY3VtZW50LmJvZHkuc2Nyb2xsV2lkdGgsCiAgICAgICAgICBzY3JvbGxYQmVmb3JlOiBzY3JvbGxYCiAgICAgICAgfSkiIiIKICAgICkKICAgIGF3YWl0IHBhZ2UuZXZhbHVhdGUoIndpbmRvdy5zY3JvbGxUbyg5OTk5OTksIDApIikKICAgIGF3YWl0IHBhZ2Uud2FpdF9mb3JfdGltZW91dCgxMDApCiAgICBtZXRyaWNzWyJzY3JvbGxYQWZ0ZXIiXSA9IGF3YWl0IHBhZ2UuZXZhbHVhdGUoInNjcm9sbFgiKQogICAgaWYgKAogICAgICAgIG1ldHJpY3NbImRvY3VtZW50U2Nyb2xsV2lkdGgiXSA+IHdpZHRoICsgMQogICAgICAgIG9yIG1ldHJpY3NbImJvZHlTY3JvbGxXaWR0aCJdID4gd2lkdGggKyAxCiAgICAgICAgb3IgbWV0cmljc1sic2Nyb2xsWEFmdGVyIl0gPiAxCiAgICApOgogICAgICAgIHJhaXNlIFJ1bnRpbWVFcnJvcigKICAgICAgICAgICAgZiJ7bmFtZX0gYWN0dWFsIGhvcml6b250YWwgc2Nyb2xsICIKICAgICAgICAgICAgKyBqc29uLmR1bXBzKG1ldHJpY3MsIGVuc3VyZV9hc2NpaT1GYWxzZSkKICAgICAgICApCgogICAgc2hvdCA9IE9VVCAvIGYie25hbWV9LnBuZyIKICAgIGF3YWl0IHBhZ2Uuc2NyZWVuc2hvdCgKICAgICAgICBwYXRoPXN0cihzaG90KSwKICAgICAgICBmdWxsX3BhZ2U9RmFsc2UsCiAgICAgICAgYW5pbWF0aW9ucz0iZGlzYWJsZWQiLAogICAgKQogICAgaWYgc2hvdC5zdGF0KCkuc3Rfc2l6ZSA8IDE4MDAwOgogICAgICAgIHJhaXNlIFJ1bnRpbWVFcnJvcihmIntuYW1lfSBzY3JlZW5zaG90IHRvbyBzbWFsbCIpCiAgICBhd2FpdCBjb250ZXh0LmNsb3NlKCkKCiAgICByZXR1cm4gewogICAgICAgICJuYW1lIjogbmFtZSwKICAgICAgICAid2lkdGgiOiB3aWR0aCwKICAgICAgICAibWV0cmljcyI6IG1ldHJpY3MsCiAgICAgICAgInNjcmVlbnNob3QiOiBzdHIoc2hvdCksCiAgICAgICAgInNjcmVlbnNob3RfYnl0ZXMiOiBzaG90LnN0YXQoKS5zdF9zaXplLAogICAgICAgICJwYXNzIjogVHJ1ZSwKICAgIH0KCmFzeW5jIGRlZiBpbnNwZWN0X2NhdGFsb2coYnJvd3NlciwgbmFtZSwgd2lkdGgsIGhlaWdodCwgY2FyZF9vbmx5PUZhbHNlKToKICAgIGNvbnRleHQgPSBhd2FpdCBicm93c2VyLm5ld19jb250ZXh0KAogICAgICAgIHZpZXdwb3J0PXsid2lkdGgiOiB3aWR0aCwgImhlaWdodCI6IGhlaWdodH0sCiAgICAgICAgbG9jYWxlPSJqYS1KUCIsCiAgICAgICAgdGltZXpvbmVfaWQ9IkFzaWEvVG9reW8iLAogICAgICAgIGNvbG9yX3NjaGVtZT0ibGlnaHQiLAogICAgKQogICAgcGFnZSA9IGF3YWl0IGNvbnRleHQubmV3X3BhZ2UoKQogICAgcmVzcG9uc2UgPSBhd2FpdCBwYWdlLmdvdG8oCiAgICAgICAgZiJ7Q0FUQUxPR30/ZXN0aGVfbmV4dDEwYl9yND17UlVOX0lEfV97bmFtZX0iLAogICAgICAgIHdhaXRfdW50aWw9ImRvbWNvbnRlbnRsb2FkZWQiLAogICAgICAgIHRpbWVvdXQ9NjAwMDAsCiAgICApCiAgICBpZiBub3QgcmVzcG9uc2Ugb3IgcmVzcG9uc2Uuc3RhdHVzID49IDQwMDoKICAgICAgICByYWlzZSBSdW50aW1lRXJyb3IoCiAgICAgICAgICAgIGYie25hbWV9IEhUVFAge3Jlc3BvbnNlLnN0YXR1cyBpZiByZXNwb25zZSBlbHNlICdub25lJ30iCiAgICAgICAgKQogICAgYXdhaXQgcGFnZS53YWl0X2Zvcl90aW1lb3V0KDE3MDApCgogICAgY2FyZCA9IHBhZ2UubG9jYXRvcignYVtocmVmPSJzeXN0ZW1zL2VzdGhlLmh0bWwiXScpCiAgICBpZiBhd2FpdCBjYXJkLmNvdW50KCkgIT0gMToKICAgICAgICByYWlzZSBSdW50aW1lRXJyb3IoZiJ7bmFtZX0gRVNUSEUgY2FyZCBjb3VudD17YXdhaXQgY2FyZC5jb3VudCgpfSIpCgogICAgYm9keSA9IGF3YWl0IHBhZ2UubG9jYXRvcigiYm9keSIpLmlubmVyX3RleHQoKQogICAgZm9yIHRva2VuIGluIFsKICAgICAgICAiRVNUSEUgTkVYVC0xMOWujOaIkCIsCiAgICAgICAgIkRQUk8gTkVYVOWujOaIkOeJiOOCkuimi+OCiyIsCiAgICBdOgogICAgICAgIGlmIHRva2VuIG5vdCBpbiBib2R5OgogICAgICAgICAgICByYWlzZSBSdW50aW1lRXJyb3IoZiJ7bmFtZX0gbWlzc2luZyB7dG9rZW59IikKCiAgICBtZXRyaWNzID0gYXdhaXQgcGFnZS5ldmFsdWF0ZSgKICAgICAgICAiIiIoKSA9PiB7CiAgICAgICAgICBjb25zdCB2aWV3cG9ydCA9IGlubmVyV2lkdGg7CiAgICAgICAgICBjb25zdCBjcml0aWNhbFNlbGVjdG9ycyA9IFsKICAgICAgICAgICAgJy5jYXRhbG9nLWhlcm8taW5uZXInLAogICAgICAgICAgICAnLmNhdGFsb2ctaGVyby10aXRsZScsCiAgICAgICAgICAgICcuY2F0YWxvZy1oZXJvLXRpdGxlID4gc3BhbicsCiAgICAgICAgICAgICcuY2F0YWxvZy1oZXJvLWFjdGlvbnMnLAogICAgICAgICAgICAnLmNhdGFsb2ctc3VtbWFyeS1ncmlkJywKICAgICAgICAgICAgJy5jYXRhbG9nLWZpbHRlcnMnLAogICAgICAgICAgICAnLmNhdGFsb2ctZ3JpZCcsCiAgICAgICAgICAgICcuY2F0YWxvZy1wcm9ncmVzcy1pbm5lcicsCiAgICAgICAgICAgICcucGhhc2UtY3RhLWlubmVyJywKICAgICAgICAgICAgJy5zaXRlLWZvb3RlciAuZm9vdGVyLWlubmVyJywKICAgICAgICAgICAgJ2FbaHJlZj0ic3lzdGVtcy9lc3RoZS5odG1sIl0nCiAgICAgICAgICBdOwogICAgICAgICAgY29uc3QgY3JpdGljYWwgPSBbXTsKICAgICAgICAgIGZvciAoY29uc3Qgc2VsZWN0b3Igb2YgY3JpdGljYWxTZWxlY3RvcnMpIHsKICAgICAgICAgICAgZG9jdW1lbnQucXVlcnlTZWxlY3RvckFsbChzZWxlY3RvcikuZm9yRWFjaChlbCA9PiB7CiAgICAgICAgICAgICAgY29uc3QgciA9IGVsLmdldEJvdW5kaW5nQ2xpZW50UmVjdCgpOwogICAgICAgICAgICAgIGNyaXRpY2FsLnB1c2goewogICAgICAgICAgICAgICAgc2VsZWN0b3IsCiAgICAgICAgICAgICAgICB0YWc6IGVsLnRhZ05hbWUudG9Mb3dlckNhc2UoKSwKICAgICAgICAgICAgICAgIHRleHQ6IChlbC5pbm5lclRleHQgfHwgJycpLnRyaW0oKS5yZXBsYWNlKC9cXHMrL2csJyAnKS5zbGljZSgwLDEwMCksCiAgICAgICAgICAgICAgICBsZWZ0OiBNYXRoLnJvdW5kKHIubGVmdCAqIDEwKSAvIDEwLAogICAgICAgICAgICAgICAgcmlnaHQ6IE1hdGgucm91bmQoci5yaWdodCAqIDEwKSAvIDEwLAogICAgICAgICAgICAgICAgd2lkdGg6IE1hdGgucm91bmQoci53aWR0aCAqIDEwKSAvIDEwLAogICAgICAgICAgICAgICAgd2l0aGluVmlld3BvcnQ6CiAgICAgICAgICAgICAgICAgIHIubGVmdCA+PSAtMSAmJgogICAgICAgICAgICAgICAgICByLnJpZ2h0IDw9IHZpZXdwb3J0ICsgMSAmJgogICAgICAgICAgICAgICAgICByLndpZHRoIDw9IHZpZXdwb3J0ICsgMQogICAgICAgICAgICAgIH0pOwogICAgICAgICAgICB9KTsKICAgICAgICAgIH0KICAgICAgICAgIGNvbnN0IHBhaW50T25seSA9IFsuLi5kb2N1bWVudC5xdWVyeVNlbGVjdG9yQWxsKCdib2R5IConKV0KICAgICAgICAgICAgLm1hcChlbCA9PiB7CiAgICAgICAgICAgICAgY29uc3QgciA9IGVsLmdldEJvdW5kaW5nQ2xpZW50UmVjdCgpOwogICAgICAgICAgICAgIHJldHVybiB7CiAgICAgICAgICAgICAgICB0YWc6IGVsLnRhZ05hbWUudG9Mb3dlckNhc2UoKSwKICAgICAgICAgICAgICAgIGlkOiBlbC5pZCB8fCAnJywKICAgICAgICAgICAgICAgIGNsYXNzTmFtZTogdHlwZW9mIGVsLmNsYXNzTmFtZSA9PT0gJ3N0cmluZycgPyBlbC5jbGFzc05hbWUgOiAnJywKICAgICAgICAgICAgICAgIHRleHQ6IChlbC5pbm5lclRleHQgfHwgJycpLnRyaW0oKS5yZXBsYWNlKC9cXHMrL2csJyAnKS5zbGljZSgwLDgwKSwKICAgICAgICAgICAgICAgIGxlZnQ6IE1hdGgucm91bmQoci5sZWZ0ICogMTApIC8gMTAsCiAgICAgICAgICAgICAgICByaWdodDogTWF0aC5yb3VuZChyLnJpZ2h0ICogMTApIC8gMTAsCiAgICAgICAgICAgICAgICB3aWR0aDogTWF0aC5yb3VuZChyLndpZHRoICogMTApIC8gMTAKICAgICAgICAgICAgICB9OwogICAgICAgICAgICB9KQogICAgICAgICAgICAuZmlsdGVyKGl0ZW0gPT4gaXRlbS5yaWdodCA+IHZpZXdwb3J0ICsgMSB8fCBpdGVtLmxlZnQgPCAtMSkKICAgICAgICAgICAgLnNsaWNlKDAsMzApOwoKICAgICAgICAgIHJldHVybiB7CiAgICAgICAgICAgIHZpZXdwb3J0LAogICAgICAgICAgICBkb2N1bWVudFNjcm9sbFdpZHRoOiBkb2N1bWVudC5kb2N1bWVudEVsZW1lbnQuc2Nyb2xsV2lkdGgsCiAgICAgICAgICAgIGJvZHlTY3JvbGxXaWR0aDogZG9jdW1lbnQuYm9keS5zY3JvbGxXaWR0aCwKICAgICAgICAgICAgY3JpdGljYWwsCiAgICAgICAgICAgIHBhaW50T25seQogICAgICAgICAgfTsKICAgICAgICB9IiIiCiAgICApCgogICAgYXdhaXQgcGFnZS5ldmFsdWF0ZSgid2luZG93LnNjcm9sbFRvKDk5OTk5OSwgMCkiKQogICAgYXdhaXQgcGFnZS53YWl0X2Zvcl90aW1lb3V0KDEwMCkKICAgIG1ldHJpY3NbInNjcm9sbFhBZnRlciJdID0gYXdhaXQgcGFnZS5ldmFsdWF0ZSgic2Nyb2xsWCIpCgogICAgYWN0dWFsX292ZXJmbG93ID0gKAogICAgICAgIG1ldHJpY3NbImRvY3VtZW50U2Nyb2xsV2lkdGgiXSA+IHdpZHRoICsgMQogICAgICAgIG9yIG1ldHJpY3NbImJvZHlTY3JvbGxXaWR0aCJdID4gd2lkdGggKyAxCiAgICAgICAgb3IgbWV0cmljc1sic2Nyb2xsWEFmdGVyIl0gPiAxCiAgICApCiAgICBpZiBhY3R1YWxfb3ZlcmZsb3c6CiAgICAgICAgcmFpc2UgUnVudGltZUVycm9yKAogICAgICAgICAgICBmIntuYW1lfSBhY3R1YWwgaG9yaXpvbnRhbCBzY3JvbGwgIgogICAgICAgICAgICArIGpzb24uZHVtcHMobWV0cmljcywgZW5zdXJlX2FzY2lpPUZhbHNlKQogICAgICAgICkKCiAgICBjcml0aWNhbF9mYWlsdXJlcyA9IFsKICAgICAgICBpdGVtIGZvciBpdGVtIGluIG1ldHJpY3NbImNyaXRpY2FsIl0KICAgICAgICBpZiBub3QgaXRlbVsid2l0aGluVmlld3BvcnQiXQogICAgXQogICAgaWYgY3JpdGljYWxfZmFpbHVyZXM6CiAgICAgICAgcmFpc2UgUnVudGltZUVycm9yKAogICAgICAgICAgICBmIntuYW1lfSBjcml0aWNhbCBjb250ZW50IG91dHNpZGUgdmlld3BvcnQgIgogICAgICAgICAgICArIGpzb24uZHVtcHMoY3JpdGljYWxfZmFpbHVyZXMsIGVuc3VyZV9hc2NpaT1GYWxzZSkKICAgICAgICApCgogICAgIyBSNC1zcGVjaWZpYyBwcm9vZjogdGhlIGZvcm1lcmx5IGZhaWxpbmcgaGVhZGluZyBtdXN0IGZpdC4KICAgIGlmIHdpZHRoIDw9IDQyMDoKICAgICAgICB0YXJnZXQgPSBhd2FpdCBwYWdlLmxvY2F0b3IoCiAgICAgICAgICAgICIuY2F0YWxvZy1oZXJvLXRpdGxlID4gc3BhbiIKICAgICAgICApLmZpbHRlcihoYXNfdGV4dD0i5a6M5oiQ44GX44Gf44K344K544OG44Og44GMIikuYm91bmRpbmdfYm94KCkKICAgICAgICBpZiBub3QgdGFyZ2V0OgogICAgICAgICAgICByYWlzZSBSdW50aW1lRXJyb3IoZiJ7bmFtZX0gdGFyZ2V0IGhlYWRpbmcgd2FzIG5vdCBmb3VuZCIpCiAgICAgICAgdGFyZ2V0X3JpZ2h0ID0gdGFyZ2V0WyJ4Il0gKyB0YXJnZXRbIndpZHRoIl0KICAgICAgICBpZiB0YXJnZXRbIngiXSA8IC0xIG9yIHRhcmdldF9yaWdodCA+IHdpZHRoICsgMToKICAgICAgICAgICAgcmFpc2UgUnVudGltZUVycm9yKAogICAgICAgICAgICAgICAgZiJ7bmFtZX0gdGFyZ2V0IGhlYWRpbmcgc3RpbGwgZXhjZWVkcyB2aWV3cG9ydDogIgogICAgICAgICAgICAgICAgZiJ4PXt0YXJnZXRbJ3gnXX0gcmlnaHQ9e3RhcmdldF9yaWdodH0gdmlld3BvcnQ9e3dpZHRofSIKICAgICAgICAgICAgKQogICAgICAgIG1ldHJpY3NbImZvcm1lcmx5X2ZhaWxpbmdfaGVhZGluZyJdID0gewogICAgICAgICAgICAibGVmdCI6IHRhcmdldFsieCJdLAogICAgICAgICAgICAicmlnaHQiOiB0YXJnZXRfcmlnaHQsCiAgICAgICAgICAgICJ3aWR0aCI6IHRhcmdldFsid2lkdGgiXSwKICAgICAgICAgICAgInZpZXdwb3J0Ijogd2lkdGgsCiAgICAgICAgICAgICJwYXNzIjogVHJ1ZSwKICAgICAgICB9CgogICAgaWYgY2FyZF9vbmx5OgogICAgICAgIGF3YWl0IGNhcmQuc2Nyb2xsX2ludG9fdmlld19pZl9uZWVkZWQoKQogICAgICAgIGF3YWl0IHBhZ2Uud2FpdF9mb3JfdGltZW91dCg1MDApCiAgICAgICAgY2FyZF90ZXh0ID0gYXdhaXQgY2FyZC5pbm5lcl90ZXh0KCkKICAgICAgICBmb3IgdG9rZW4gaW4gWwogICAgICAgICAgICAiRFBSTyBORVhU5a6M5oiQ54mIIiwKICAgICAgICAgICAgIkVTVEhFIE5FWFQtMTDlrozmiJAiLAogICAgICAgICAgICAi5YmN5Zue44Go5ZCM44GY5LqI57SEIiwKICAgICAgICBdOgogICAgICAgICAgICBpZiB0b2tlbiBub3QgaW4gY2FyZF90ZXh0OgogICAgICAgICAgICAgICAgcmFpc2UgUnVudGltZUVycm9yKGYie25hbWV9IGNhcmQgbWlzc2luZyB7dG9rZW59IikKCiAgICBzaG90ID0gT1VUIC8gZiJ7bmFtZX0ucG5nIgogICAgaWYgY2FyZF9vbmx5OgogICAgICAgIGF3YWl0IGNhcmQuc2NyZWVuc2hvdChwYXRoPXN0cihzaG90KSwgYW5pbWF0aW9ucz0iZGlzYWJsZWQiKQogICAgZWxzZToKICAgICAgICBhd2FpdCBwYWdlLnNjcmVlbnNob3QoCiAgICAgICAgICAgIHBhdGg9c3RyKHNob3QpLAogICAgICAgICAgICBmdWxsX3BhZ2U9RmFsc2UsCiAgICAgICAgICAgIGFuaW1hdGlvbnM9ImRpc2FibGVkIiwKICAgICAgICApCiAgICBpZiBzaG90LnN0YXQoKS5zdF9zaXplIDwgMTgwMDA6CiAgICAgICAgcmFpc2UgUnVudGltZUVycm9yKGYie25hbWV9IHNjcmVlbnNob3QgdG9vIHNtYWxsIikKCiAgICBhd2FpdCBjb250ZXh0LmNsb3NlKCkKICAgIHJldHVybiB7CiAgICAgICAgIm5hbWUiOiBuYW1lLAogICAgICAgICJ3aWR0aCI6IHdpZHRoLAogICAgICAgICJtZXRyaWNzIjogbWV0cmljcywKICAgICAgICAicGFpbnRfb25seV9hdHRlbnRpb25fY291bnQiOiBsZW4obWV0cmljc1sicGFpbnRPbmx5Il0pLAogICAgICAgICJzY3JlZW5zaG90Ijogc3RyKHNob3QpLAogICAgICAgICJzY3JlZW5zaG90X2J5dGVzIjogc2hvdC5zdGF0KCkuc3Rfc2l6ZSwKICAgICAgICAicGFzcyI6IFRydWUsCiAgICB9Cgphc3luYyBkZWYgbWFpbigpOgogICAgYXN5bmMgd2l0aCBhc3luY19wbGF5d3JpZ2h0KCkgYXMgcGxheXdyaWdodDoKICAgICAgICBicm93c2VyID0gYXdhaXQgcGxheXdyaWdodC5jaHJvbWl1bS5sYXVuY2goCiAgICAgICAgICAgIGhlYWRsZXNzPVRydWUsCiAgICAgICAgICAgIGFyZ3M9WwogICAgICAgICAgICAgICAgIi0tbm8tc2FuZGJveCIsCiAgICAgICAgICAgICAgICAiLS1kaXNhYmxlLWRldi1zaG0tdXNhZ2UiLAogICAgICAgICAgICAgICAgIi0tZm9yY2UtY29sb3ItcHJvZmlsZT1zcmdiIiwKICAgICAgICAgICAgXSwKICAgICAgICApCiAgICAgICAgdHJ5OgogICAgICAgICAgICByZXN1bHRzID0gWwogICAgICAgICAgICAgICAgYXdhaXQgaW5zcGVjdF9wcm9kdWN0KAogICAgICAgICAgICAgICAgICAgIGJyb3dzZXIsICJwcm9kdWN0LWRlc2t0b3AtMTQ0MCIsIDE0NDAsIDEwMDAKICAgICAgICAgICAgICAgICksCiAgICAgICAgICAgICAgICBhd2FpdCBpbnNwZWN0X3Byb2R1Y3QoCiAgICAgICAgICAgICAgICAgICAgYnJvd3NlciwgInByb2R1Y3QtbW9iaWxlLTM5MCIsIDM5MCwgODQ0CiAgICAgICAgICAgICAgICApLAogICAgICAgICAgICAgICAgYXdhaXQgaW5zcGVjdF9wcm9kdWN0KAogICAgICAgICAgICAgICAgICAgIGJyb3dzZXIsICJwcm9kdWN0LW1vYmlsZS0zNjAiLCAzNjAsIDgwMAogICAgICAgICAgICAgICAgKSwKICAgICAgICAgICAgICAgIGF3YWl0IGluc3BlY3RfY2F0YWxvZygKICAgICAgICAgICAgICAgICAgICBicm93c2VyLCAiY2F0YWxvZy1kZXNrdG9wLTE0NDAiLCAxNDQwLCAxMDAwCiAgICAgICAgICAgICAgICApLAogICAgICAgICAgICAgICAgYXdhaXQgaW5zcGVjdF9jYXRhbG9nKAogICAgICAgICAgICAgICAgICAgIGJyb3dzZXIsICJjYXRhbG9nLW1vYmlsZS0zOTAiLCAzOTAsIDg0NCwgVHJ1ZQogICAgICAgICAgICAgICAgKSwKICAgICAgICAgICAgICAgIGF3YWl0IGluc3BlY3RfY2F0YWxvZygKICAgICAgICAgICAgICAgICAgICBicm93c2VyLCAiY2F0YWxvZy1tb2JpbGUtMzYwIiwgMzYwLCA4MDAsIFRydWUKICAgICAgICAgICAgICAgICksCiAgICAgICAgICAgICAgICBhd2FpdCBpbnNwZWN0X2NhdGFsb2coCiAgICAgICAgICAgICAgICAgICAgYnJvd3NlciwgImNhdGFsb2ctbW9iaWxlLTMyMCIsIDMyMCwgNzIwLCBUcnVlCiAgICAgICAgICAgICAgICApLAogICAgICAgICAgICBdCiAgICAgICAgZmluYWxseToKICAgICAgICAgICAgYXdhaXQgYnJvd3Nlci5jbG9zZSgpCgogICAgcmVwb3J0ID0gewogICAgICAgICJzdGVwIjogIkVTVEhFLU5FWFQtMTBCLVI0IiwKICAgICAgICAicHVibGljX3Zpc3VhbF9wYXNzIjogVHJ1ZSwKICAgICAgICAiYWN0dWFsX2hvcml6b250YWxfc2Nyb2xsIjogRmFsc2UsCiAgICAgICAgImNyaXRpY2FsX2NvbnRlbnRfd2l0aGluX3ZpZXdwb3J0IjogVHJ1ZSwKICAgICAgICAicmVzdWx0cyI6IHJlc3VsdHMsCiAgICB9CiAgICBQYXRoKCIuZHByby1uZXh0L2VzdGhlLW5leHQxMGItcjQtcHVibGljLmpzb24iKS53cml0ZV90ZXh0KAogICAgICAgIGpzb24uZHVtcHMocmVwb3J0LCBlbnN1cmVfYXNjaWk9RmFsc2UsIGluZGVudD0yKSArICJcbiIsCiAgICAgICAgZW5jb2Rpbmc9InV0Zi04IiwKICAgICkKICAgIHByaW50KGpzb24uZHVtcHMocmVwb3J0LCBlbnN1cmVfYXNjaWk9RmFsc2UsIGluZGVudD0yKSkKCmFzeW5jaW8ucnVuKG1haW4oKSkK"),"<ESTHE-NEXT-10B-R4-visual>","exec"))'
+
+      - name: "Write R4 completion record"
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          python3 -c 'import base64;exec(compile(base64.b64decode("CmZyb20gX19mdXR1cmVfXyBpbXBvcnQgYW5ub3RhdGlvbnMKCmltcG9ydCBkYXRldGltZSBhcyBkdAppbXBvcnQganNvbgppbXBvcnQgb3MKZnJvbSBwYXRobGliIGltcG9ydCBQYXRoCgpub3cgPSBkdC5kYXRldGltZS5ub3coCiAgICBkdC50aW1lem9uZShkdC50aW1lZGVsdGEoaG91cnM9OSkpCikucmVwbGFjZShtaWNyb3NlY29uZD0wKQoKc3RhdGljID0ganNvbi5sb2FkcygKICAgIFBhdGgoIi5kcHJvLW5leHQvZXN0aGUtbmV4dDEwYi1yNC1zdGF0aWMuanNvbiIpCiAgICAucmVhZF90ZXh0KGVuY29kaW5nPSJ1dGYtOCIpCikKdmlzdWFsID0ganNvbi5sb2FkcygKICAgIFBhdGgoIi5kcHJvLW5leHQvZXN0aGUtbmV4dDEwYi1yNC1wdWJsaWMuanNvbiIpCiAgICAucmVhZF90ZXh0KGVuY29kaW5nPSJ1dGYtOCIpCikKCmF0dGVudGlvbl9jb3VudCA9IHN1bSgKICAgIHJlc3VsdC5nZXQoInBhaW50X29ubHlfYXR0ZW50aW9uX2NvdW50IiwgMCkKICAgIGZvciByZXN1bHQgaW4gdmlzdWFsWyJyZXN1bHRzIl0KKQoKcmVjb3JkID0gewogICAgInNjaGVtYV92ZXJzaW9uIjogMSwKICAgICJzeXN0ZW0iOiAiRFBSTyDjgqjjgrnjg4YgTElORSIsCiAgICAiY3VycmVudF9zdGVwIjogIkVTVEhFLU5FWFQtMTBCLVI0LUNPTVBMRVRFIiwKICAgICJuZXh0X3N0ZXAiOiAiRVNUSEUtTkVYVC0xMEMtRklOQUwtQ09NUExFVEUiLAogICAgImNvbXBsZXRlZF9hdF9qc3QiOiBub3cuaXNvZm9ybWF0KCksCiAgICAicmVzdWx0IjogIk9LIiwKICAgICJyM19kaWFnbm9zaXMiOiB7CiAgICAgICAgImFjdHVhbF9wYWdlX3dpZHRoIjogIjM5MCAvIDM5MCIsCiAgICAgICAgImFjdHVhbF9ob3Jpem9udGFsX3Njcm9sbCI6IEZhbHNlLAogICAgICAgICJmYWxzZV9wb3NpdGl2ZV9zb3VyY2UiOiAidGV4dCBwYWludCBib3VuZCAzOTIuOHB4IiwKICAgIH0sCiAgICAicjRfZml4IjogewogICAgICAgICJjYXRhbG9nX21vYmlsZV9oZWFkaW5nX2ZvbnQiOiAiY2xhbXAoNDBweCwxMnZ3LDQ4cHgpIiwKICAgICAgICAiZm9ybWVybHlfZmFpbGluZ19oZWFkaW5nX3dpdGhpbl92aWV3cG9ydCI6IFRydWUsCiAgICAgICAgInZhbGlkYXRpb25fc2VwYXJhdGVzX2FjdHVhbF9zY3JvbGxfYW5kX3BhaW50X2JvdW5kcyI6IFRydWUsCiAgICB9LAogICAgInZhbGlkYXRpb24iOiB7CiAgICAgICAgInN0YXRpY19vayI6IHN0YXRpY1sic3VtbWFyeSJdWyJvayJdLAogICAgICAgICJzdGF0aWNfbmciOiAwLAogICAgICAgICJwcm9kdWN0X2Rlc2t0b3BfMTQ0MCI6IFRydWUsCiAgICAgICAgInByb2R1Y3RfbW9iaWxlXzM5MCI6IFRydWUsCiAgICAgICAgInByb2R1Y3RfbW9iaWxlXzM2MCI6IFRydWUsCiAgICAgICAgImNhdGFsb2dfZGVza3RvcF8xNDQwIjogVHJ1ZSwKICAgICAgICAiY2F0YWxvZ19tb2JpbGVfMzkwIjogVHJ1ZSwKICAgICAgICAiY2F0YWxvZ19tb2JpbGVfMzYwIjogVHJ1ZSwKICAgICAgICAiY2F0YWxvZ19tb2JpbGVfMzIwIjogVHJ1ZSwKICAgICAgICAiYWN0dWFsX2hvcml6b250YWxfc2Nyb2xsIjogRmFsc2UsCiAgICAgICAgImNyaXRpY2FsX2NvbnRlbnRfd2l0aGluX3ZpZXdwb3J0IjogVHJ1ZSwKICAgICAgICAicGFpbnRfb25seV9hdHRlbnRpb25fY291bnQiOiBhdHRlbnRpb25fY291bnQsCiAgICB9LAogICAgInB1YmxpY2F0aW9uIjogewogICAgICAgICJwcm9kdWN0X3BhZ2UiOiBvcy5lbnZpcm9uWyJQUk9EVUNUX1BBR0VfVVJMIl0sCiAgICAgICAgImNhdGFsb2ciOiBvcy5lbnZpcm9uWyJDQVRBTE9HX1VSTCJdLAogICAgfSwKICAgICJjaGFuZ2VzIjogewogICAgICAgICJzeXN0ZW1zX2h0bWwiOiBUcnVlLAogICAgICAgICJzeXN0ZW1zX2VzdGhlX2h0bWwiOiBGYWxzZSwKICAgICAgICAic3R5bGVzX2NzcyI6IEZhbHNlLAogICAgICAgICJzY3JpcHRfanMiOiBGYWxzZSwKICAgICAgICAid29ya2VyIjogRmFsc2UsCiAgICAgICAgInN1cGFiYXNlIjogRmFsc2UsCiAgICAgICAgImFwaSI6IEZhbHNlLAogICAgfSwKICAgICJiYWNrdXBfdGFnIjogb3MuZW52aXJvblsiQkFDS1VQX1RBRyJdLAp9CgpQYXRoKCIuZHByby1uZXh0L2VzdGhlLW5leHQxMGItcjQuanNvbiIpLndyaXRlX3RleHQoCiAgICBqc29uLmR1bXBzKHJlY29yZCwgZW5zdXJlX2FzY2lpPUZhbHNlLCBpbmRlbnQ9MikgKyAiXG4iLAogICAgZW5jb2Rpbmc9InV0Zi04IiwKKQoKeWFtbF9saW5lcyA9IFsKICAgICJzY2hlbWFfdmVyc2lvbjogMSIsCiAgICAnc3lzdGVtOiAiRFBSTyDjgqjjgrnjg4YgTElORSInLAogICAgJ2N1cnJlbnRfc3RlcDogIkVTVEhFLU5FWFQtMTBCLVI0LUNPTVBMRVRFIicsCiAgICAnbmV4dF9zdGVwOiAiRVNUSEUtTkVYVC0xMEMtRklOQUwtQ09NUExFVEUiJywKICAgIGYnY29tcGxldGVkX2F0X2pzdDogIntub3cuaXNvZm9ybWF0KCl9IicsCiAgICAncmVzdWx0OiAiT0siJywKICAgICJ2YWxpZGF0aW9uOiIsCiAgICAiICBwcm9kdWN0X2Rlc2t0b3BfMTQ0MDogdHJ1ZSIsCiAgICAiICBwcm9kdWN0X21vYmlsZV8zOTA6IHRydWUiLAogICAgIiAgcHJvZHVjdF9tb2JpbGVfMzYwOiB0cnVlIiwKICAgICIgIGNhdGFsb2dfZGVza3RvcF8xNDQwOiB0cnVlIiwKICAgICIgIGNhdGFsb2dfbW9iaWxlXzM5MDogdHJ1ZSIsCiAgICAiICBjYXRhbG9nX21vYmlsZV8zNjA6IHRydWUiLAogICAgIiAgY2F0YWxvZ19tb2JpbGVfMzIwOiB0cnVlIiwKICAgICIgIGFjdHVhbF9ob3Jpem9udGFsX3Njcm9sbDogZmFsc2UiLAogICAgIiAgY3JpdGljYWxfY29udGVudF93aXRoaW5fdmlld3BvcnQ6IHRydWUiLAogICAgIiAgZm9ybWVybHlfZmFpbGluZ19oZWFkaW5nX3dpdGhpbl92aWV3cG9ydDogdHJ1ZSIsCiAgICBmIiAgcGFpbnRfb25seV9hdHRlbnRpb25fY291bnQ6IHthdHRlbnRpb25fY291bnR9IiwKICAgICJjaGFuZ2VzOiIsCiAgICAiICBzeXN0ZW1zX2h0bWw6IHRydWUiLAogICAgIiAgc3lzdGVtc19lc3RoZV9odG1sOiBmYWxzZSIsCiAgICAiICBzdHlsZXNfY3NzOiBmYWxzZSIsCiAgICAiICBzY3JpcHRfanM6IGZhbHNlIiwKICAgICIgIHdvcmtlcjogZmFsc2UiLAogICAgIiAgc3VwYWJhc2U6IGZhbHNlIiwKICAgICIgIGFwaTogZmFsc2UiLApdClBhdGgoIi5kcHJvLW5leHQvZXN0aGUtbmV4dDEwYi1yNC55bWwiKS53cml0ZV90ZXh0KAogICAgIlxuIi5qb2luKHlhbWxfbGluZXMpICsgIlxuIiwKICAgIGVuY29kaW5nPSJ1dGYtOCIsCikKClBhdGgoIi5kcHJvLW5leHQvZXN0aGUtbmV4dDEwYi1yNC1yZXBvcnQudHh0Iikud3JpdGVfdGV4dCgKICAgIGYiIiJEUFJPIOOCqOOCueODhiBMSU5FIC8gRVNUSEUtTkVYVC0xMEItUjQK5a6M5LqG5pel5pmCSlNUOiB7bm93Lmlzb2Zvcm1hdCgpfQoKUjPoqLrmlq06Ci0gdmlld3BvcnQ6IDM5MHB4Ci0gZG9jdW1lbnRTY3JvbGxXaWR0aDogMzkwcHgKLSBib2R5U2Nyb2xsV2lkdGg6IDM5MHB4Ci0g5a6f6Zqb44Gu5qiq44K544Kv44Ot44O844OrOiDjgarjgZcKLSDoqqTliKTlrprlr77osaE6IOOAjOWujOaIkOOBl+OBn+OCt+OCueODhuODoOOBjOOAjeaPj+eUu+WPs+errzM5Mi44cHgKClI05L+u5q2jOgotIDM5MHB45pmC44Gu6KO95ZOB5LiA6Kan44OS44O844Ot44O85paH5a2X44KS5a6f6KGo56S66aCY5Z+f44G46Kq/5pW0Ci0g5a6f44K544Kv44Ot44O844Or5bmF44Go5paH5a2X5o+P55S75aKD55WM44KS5YiG6Zui44GX44Gm5qSc5p+7Ci0g5Lul5YmN5aSx5pWX44GX44Gf6KaL5Ye644GX5Y+z56uv44KS5YCL5Yil5YaN5qSc5p+7CgrlhazplovmpJzmn7s6Ci0g44Ko44K544OG6KO95ZOB44Oa44O844K4IFBDIDE0NDBweDogUEFTUwotIOOCqOOCueODhuijveWTgeODmuODvOOCuCAzOTBweDogUEFTUwotIOOCqOOCueODhuijveWTgeODmuODvOOCuCAzNjBweDogUEFTUwotIOijveWTgeS4gOimpyBQQyAxNDQwcHg6IFBBU1MKLSDoo73lk4HkuIDopqcgMzkwcHg6IFBBU1MKLSDoo73lk4HkuIDopqcgMzYwcHg6IFBBU1MKLSDoo73lk4HkuIDopqcgMzIwcHg6IFBBU1MKLSDlrp/pmpvjga7mqKrjgrnjgq/jg63jg7zjg6s6IOOBquOBlwotIOS4u+imgeOCs+ODs+ODhuODs+ODhDog55S76Z2i5YaFCi0g5o+P55S75aKD55WM44Gu5rOo5oSP6KiY6YyyOiB7YXR0ZW50aW9uX2NvdW50feS7tgoK5aSJ5pu0OgotIHN5c3RlbXMuaHRtbDog5aSJ5pu0Ci0gc3lzdGVtcy9lc3RoZS5odG1sOiDlpInmm7TjgarjgZcKLSBzdHlsZXMuY3NzOiDlpInmm7TjgarjgZcKLSBzY3JpcHQuanM6IOWkieabtOOBquOBlwotIFdvcmtlciAvIFN1cGFiYXNlIC8gQVBJOiDlpInmm7TjgarjgZcKCuasoVNURVA6IEVTVEhFLU5FWFQtMTBDLUZJTkFMLUNPTVBMRVRFCiIiIiwKICAgIGVuY29kaW5nPSJ1dGYtOCIsCikK"),"<ESTHE-NEXT-10B-R4-final>","exec"))'
+          grep -q 'current_step: "ESTHE-NEXT-10B-R4-COMPLETE"' \
+            .dpro-next/esthe-next10b-r4.yml
+          grep -q 'next_step: "ESTHE-NEXT-10C-FINAL-COMPLETE"' \
+            .dpro-next/esthe-next10b-r4.yml
+          grep -q 'actual_horizontal_scroll: false' \
+            .dpro-next/esthe-next10b-r4.yml
+          grep -q 'formerly_failing_heading_within_viewport: true' \
+            .dpro-next/esthe-next10b-r4.yml
+
+      - name: "Upload R4 validation artifact"
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: "ESTHE-NEXT-10B-R4-${{ github.run_id }}"
+          path: |
+            .next10b-r4-public-artifact/
+            .dpro-next/esthe-next10b-r4-static.json
+            .dpro-next/esthe-next10b-r4-public.json
+            .dpro-next/esthe-next10b-r4.json
+            .dpro-next/esthe-next10b-r4.yml
+            .dpro-next/esthe-next10b-r4-report.txt
+          if-no-files-found: warn
+          retention-days: 30
+
+      - name: "Commit final record, delete workflows and push"
+        if: success()
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          git add \
+            .dpro-next/esthe-next10b-r4-static.json \
+            .dpro-next/esthe-next10b-r4-public.json \
+            .dpro-next/esthe-next10b-r4.json \
+            .dpro-next/esthe-next10b-r4.yml \
+            .dpro-next/esthe-next10b-r4-report.txt
+
+          git rm --ignore-unmatch \
+            "$WORKFLOW_FILE" \
+            ".github/workflows/ESTHE-NEXT-10B-R3.yml" \
+            ".github/workflows/ESTHE-NEXT-10B-R2.yml" \
+            ".github/workflows/ESTHE-NEXT-10B.yml"
+
+          git diff --cached --quiet && {
+            echo "::error::最終Commit対象がありません"; exit 1;
+          }
+
+          git commit -m "DPRO ESTHE NEXT-10B-R4 complete: public widths verified"
+          git push origin "HEAD:${GITHUB_REF_NAME}"
+          echo "FINAL_COMMIT_SHA=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
+
+      - name: "Final public marker confirmation"
+        if: success()
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          FINAL_OK="false"
+          for attempt in $(seq 1 36); do
+            BODY="$(curl -L -sS --retry 2 --connect-timeout 8 --max-time 35 \
+              -H "Cache-Control: no-cache, no-store, max-age=0" \
+              "$CATALOG_URL?final=${FINAL_COMMIT_SHA}_${attempt}" || true)"
+            if [[ "$BODY" == *"CATALOG-NEXT10B-R4-TEXT-FIT"* \
+              && "$BODY" == *"ESTHE NEXT-10完成"* ]]; then
+              FINAL_OK="true"
+              break
+            fi
+            sleep 10
+          done
+          [[ "$FINAL_OK" == "true" ]] || {
+            echo "::error::R4最終公開確認に失敗しました"; exit 1;
+          }
+
+          echo "### ESTHE-NEXT-10B-R4 完了" >> "$GITHUB_STEP_SUMMARY"
+          echo "- R3の実スクロール幅: 390 / 390（正常）" >> "$GITHUB_STEP_SUMMARY"
+          echo "- 以前失敗した見出し: 画面内PASS" >> "$GITHUB_STEP_SUMMARY"
+          echo "- 製品ページ 1440 / 390 / 360: PASS" >> "$GITHUB_STEP_SUMMARY"
+          echo "- 製品一覧 1440 / 390 / 360 / 320: PASS" >> "$GITHUB_STEP_SUMMARY"
+          echo "- 実際の横スクロール: なし" >> "$GITHUB_STEP_SUMMARY"
+          echo "- systems/esthe.html / styles.css / script.js: 変更なし" >> "$GITHUB_STEP_SUMMARY"
+          echo "- 次STEP: ESTHE-NEXT-10C-FINAL-COMPLETE" >> "$GITHUB_STEP_SUMMARY"
