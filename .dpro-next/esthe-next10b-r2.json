@@ -1,0 +1,12 @@
+{
+  "step": "ESTHE-NEXT-10B-R2",
+  "stage": "mobile_overflow_fix_committed_publication_pending",
+  "updated_at_jst": "2026-07-24T16:48:45+09:00",
+  "reason": "product-mobile horizontal overflow 540 > 390",
+  "target": "systems/esthe.html",
+  "scope": "ESTHE product page only",
+  "worker_changed": false,
+  "supabase_changed": false,
+  "api_changed": false,
+  "backup_tag": "backup-product-site-before-esthe-next10b-r2-20260724"
+}
