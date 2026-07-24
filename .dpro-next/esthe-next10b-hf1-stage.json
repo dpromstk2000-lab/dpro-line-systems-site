@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "system": "DPRO エステ・リラクゼーション LINE",
+  "step": "ESTHE-NEXT-10B-HF1",
+  "stage": "customer-copy-applied-publication-pending",
+  "updated_at_jst": "2026-07-24T22:06:32+09:00",
+  "target": "systems/esthe.html",
+  "catalog_changed": false,
+  "system_source_changed": false,
+  "worker_changed": false,
+  "supabase_changed": false,
+  "api_changed": false,
+  "backup_tag": "backup-product-site-before-esthe-next10b-hf1-20260724"
+}

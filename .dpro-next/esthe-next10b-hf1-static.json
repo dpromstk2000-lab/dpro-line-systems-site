@@ -1,0 +1,108 @@
+{
+  "schema_version": 1,
+  "system": "DPRO エステ・リラクゼーション LINE",
+  "step": "ESTHE-NEXT-10B-HF1",
+  "phase": "static-validation",
+  "summary": {
+    "ok": 19,
+    "attention": 0,
+    "ng": 0
+  },
+  "items": [
+    {
+      "name": "HTML構文",
+      "status": "OK",
+      "detail": "HTMLParser PASS"
+    },
+    {
+      "name": "HTML ID重複",
+      "status": "OK",
+      "detail": "重複なし"
+    },
+    {
+      "name": "JavaScript構文",
+      "status": "OK",
+      "detail": "正常"
+    },
+    {
+      "name": "表示：ESTHE-NEXT-10B-HF1-CUSTOMER-COPY",
+      "status": "OK",
+      "detail": "表示あり"
+    },
+    {
+      "name": "表示：PC・iPad・スマホで実画面を体験",
+      "status": "OK",
+      "detail": "表示あり"
+    },
+    {
+      "name": "表示：PC・iPad・スマートフォンで、",
+      "status": "OK",
+      "detail": "表示あり"
+    },
+    {
+      "name": "表示：実際の使い方を確認できます。",
+      "status": "OK",
+      "detail": "表示あり"
+    },
+    {
+      "name": "表示：お客様予約を試す →",
+      "status": "OK",
+      "detail": "表示あり"
+    },
+    {
+      "name": "表示：PC管理画面を試す →",
+      "status": "OK",
+      "detail": "表示あり"
+    },
+    {
+      "name": "表示：操作体験シートを見る →",
+      "status": "OK",
+      "detail": "表示あり"
+    },
+    {
+      "name": "技術表現除去：静的検査",
+      "status": "OK",
+      "detail": "非表示"
+    },
+    {
+      "name": "技術表現除去：QR6件",
+      "status": "OK",
+      "detail": "非表示"
+    },
+    {
+      "name": "技術表現除去：読取完了",
+      "status": "OK",
+      "detail": "非表示"
+    },
+    {
+      "name": "技術表現除去：完成検査を見る",
+      "status": "OK",
+      "detail": "非表示"
+    },
+    {
+      "name": "技術表現除去：公開検査済み",
+      "status": "OK",
+      "detail": "非表示"
+    },
+    {
+      "name": "技術表現除去：性能とセキュリティを検査",
+      "status": "OK",
+      "detail": "非表示"
+    },
+    {
+      "name": "技術表現除去：車検・整備工場NEXT基準",
+      "status": "OK",
+      "detail": "非表示"
+    },
+    {
+      "name": "技術表現除去：system-check.html",
+      "status": "OK",
+      "detail": "非表示"
+    },
+    {
+      "name": "製品一覧カード維持",
+      "status": "OK",
+      "detail": "systems.htmlは変更しない"
+    }
+  ]
+}
