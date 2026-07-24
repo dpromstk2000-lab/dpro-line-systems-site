@@ -1,0 +1,169 @@
+{
+  "step": "ESTHE-NEXT-10B",
+  "summary": {
+    "ok": 32,
+    "ng": 0
+  },
+  "items": [
+    {
+      "name": "systems/esthe.html HTML解析",
+      "status": "OK",
+      "detail": "HTMLParserで解析完了"
+    },
+    {
+      "name": "systems/esthe.html ID重複",
+      "status": "OK",
+      "detail": "重複なし"
+    },
+    {
+      "name": "systems.html HTML解析",
+      "status": "OK",
+      "detail": "HTMLParserで解析完了"
+    },
+    {
+      "name": "systems.html ID重複",
+      "status": "OK",
+      "detail": "重複なし"
+    },
+    {
+      "name": "製品ページ STEP ESTHE-NEXT-10B",
+      "status": "OK",
+      "detail": "STEP ESTHE-NEXT-10B"
+    },
+    {
+      "name": "製品ページ DPRO エステ・リラクゼーション LINE",
+      "status": "OK",
+      "detail": "DPRO エステ・リラクゼーション LINE"
+    },
+    {
+      "name": "製品ページ DPRO NEXT",
+      "status": "OK",
+      "detail": "DPRO NEXT"
+    },
+    {
+      "name": "製品ページ 公開検査済み完成画面",
+      "status": "OK",
+      "detail": "公開検査済み完成画面"
+    },
+    {
+      "name": "製品ページ 操作体験シートPDF",
+      "status": "OK",
+      "detail": "操作体験シートPDF"
+    },
+    {
+      "name": "製品ページ 今日やること",
+      "status": "OK",
+      "detail": "今日やること"
+    },
+    {
+      "name": "製品ページ 施術進捗",
+      "status": "OK",
+      "detail": "施術進捗"
+    },
+    {
+      "name": "製品ページ 施術前確認",
+      "status": "OK",
+      "detail": "施術前確認"
+    },
+    {
+      "name": "製品ページ 前回と同じ",
+      "status": "OK",
+      "detail": "前回と同じ"
+    },
+    {
+      "name": "製品ページ 再来店フォロー",
+      "status": "OK",
+      "detail": "再来店フォロー"
+    },
+    {
+      "name": "製品ページ owner.html?v=esthe-next-10b",
+      "status": "OK",
+      "detail": "owner.html?v=esthe-next-10b"
+    },
+    {
+      "name": "製品ページ owner-ipad.html?v=esthe-next-10b",
+      "status": "OK",
+      "detail": "owner-ipad.html?v=esthe-next-10b"
+    },
+    {
+      "name": "製品ページ staff.html?v=esthe-next-10b",
+      "status": "OK",
+      "detail": "staff.html?v=esthe-next-10b"
+    },
+    {
+      "name": "製品ページ member.html?phone=08000003002",
+      "status": "OK",
+      "detail": "member.html?phone=08000003002"
+    },
+    {
+      "name": "製品ページ system-check.html?v=esthe-next-10b",
+      "status": "OK",
+      "detail": "system-check.html?v=esthe-next-10b"
+    },
+    {
+      "name": "製品ページ DPRO_ESTHE_NEXT_operation_experience_sheet_20260724.pdf",
+      "status": "OK",
+      "detail": "DPRO_ESTHE_NEXT_operation_experience_sheet_20260724.pdf"
+    },
+    {
+      "name": "一覧カード STEP ESTHE-NEXT-10B / DPRO NEXT CATALOG",
+      "status": "OK",
+      "detail": "STEP ESTHE-NEXT-10B / DPRO NEXT CATALOG"
+    },
+    {
+      "name": "一覧カード DPRO NEXT完成版",
+      "status": "OK",
+      "detail": "DPRO NEXT完成版"
+    },
+    {
+      "name": "一覧カード ESTHE NEXT-10完成",
+      "status": "OK",
+      "detail": "ESTHE NEXT-10完成"
+    },
+    {
+      "name": "一覧カード DPRO NEXT完成版を見る",
+      "status": "OK",
+      "detail": "DPRO NEXT完成版を見る"
+    },
+    {
+      "name": "一覧カード member.html?phone=08000003002",
+      "status": "OK",
+      "detail": "member.html?phone=08000003002"
+    },
+    {
+      "name": "一覧カード 施術前確認",
+      "status": "OK",
+      "detail": "施術前確認"
+    },
+    {
+      "name": "一覧カード 前回と同じ予約",
+      "status": "OK",
+      "detail": "前回と同じ予約"
+    },
+    {
+      "name": "ESTHE一覧カード件数",
+      "status": "OK",
+      "detail": "1"
+    },
+    {
+      "name": "旧step-esthe-16除去",
+      "status": "OK",
+      "detail": "製品ページ"
+    },
+    {
+      "name": "製品ページiframe数",
+      "status": "OK",
+      "detail": "12"
+    },
+    {
+      "name": "外部script維持",
+      "status": "OK",
+      "detail": "script.js"
+    },
+    {
+      "name": "共通JavaScript構文",
+      "status": "OK",
+      "detail": "node --check"
+    }
+  ]
+}

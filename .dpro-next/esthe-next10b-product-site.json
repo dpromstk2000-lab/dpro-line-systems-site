@@ -1,0 +1,34 @@
+{
+  "schema_version": 1,
+  "system": "DPRO エステ LINE",
+  "step": "ESTHE-NEXT-10B",
+  "stage": "source_updated_publication_pending",
+  "updated_at_jst": "2026-07-24T16:20:37+09:00",
+  "source_system_step": "ESTHE-NEXT-10A-R3-COMPLETE",
+  "target_files": [
+    "systems/esthe.html",
+    "systems.html"
+  ],
+  "operation_sheet_pdf": "https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/deliverables/esthe-next-10/DPRO_ESTHE_NEXT_operation_experience_sheet_20260724.pdf",
+  "public_urls": {
+    "product_page": "https://dpromstk2000-lab.github.io/dpro-line-systems-site/systems/esthe.html",
+    "catalog": "https://dpromstk2000-lab.github.io/dpro-line-systems-site/systems.html",
+    "booking": "https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/index-brush.html",
+    "member": "https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/member.html?phone=08000003002",
+    "owner_pc": "https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/owner.html",
+    "owner_ipad": "https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/owner-ipad.html",
+    "staff": "https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/staff.html",
+    "system_check": "https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/system-check.html"
+  },
+  "changes": {
+    "worker": false,
+    "supabase": false,
+    "api": false,
+    "product_page": true,
+    "catalog_card": true
+  },
+  "rollback": {
+    "backup_tag": "backup-product-site-before-esthe-next10b-20260724",
+    "method": "backup tagからsystems/esthe.htmlとsystems.htmlを復元"
+  }
+}
