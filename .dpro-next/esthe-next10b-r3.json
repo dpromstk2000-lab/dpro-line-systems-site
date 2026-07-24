@@ -1,0 +1,16 @@
+{
+  "step": "ESTHE-NEXT-10B-R3",
+  "stage": "catalog_mobile_fix_committed_publication_pending",
+  "updated_at_jst": "2026-07-24T17:03:21+09:00",
+  "reason": "catalog viewport 390px / document scrollWidth 400px",
+  "target": "systems.html",
+  "scope": "catalog page only",
+  "unchanged": {
+    "systems/esthe.html": "9fd0b7ce7395cd67036c9edcc97f3eed3ee0f1bdadebbb8776f6997b2e244aec",
+    "styles.css": "6d9055252e69350510ae30c3aee59203e477b1d30b862ce0c303deb3be9209eb",
+    "worker": true,
+    "supabase": true,
+    "api": true
+  },
+  "backup_tag": "backup-product-site-before-esthe-next10b-r3-20260724"
+}
