@@ -1,0 +1,58 @@
+{
+  "schema_version": 1,
+  "system": "DPRO エステ・リラクゼーション LINE",
+  "step": "ESTHE-NEXT-10B-HF1",
+  "phase": "public-validation",
+  "viewport_count": 3,
+  "all_pass": true,
+  "results": [
+    {
+      "name": "desktop-1440",
+      "width": 1440,
+      "metrics": {
+        "viewport": 1440,
+        "doc": 1440,
+        "body": 1440,
+        "scrollXAfter": 0
+      },
+      "links": [
+        "お客様予約を試す →",
+        "PC管理画面を試す →",
+        "操作体験シートを見る →"
+      ],
+      "pass": true
+    },
+    {
+      "name": "mobile-390",
+      "width": 390,
+      "metrics": {
+        "viewport": 390,
+        "doc": 390,
+        "body": 390,
+        "scrollXAfter": 0
+      },
+      "links": [
+        "お客様予約を試す →",
+        "PC管理画面を試す →",
+        "操作体験シートを見る →"
+      ],
+      "pass": true
+    },
+    {
+      "name": "mobile-360",
+      "width": 360,
+      "metrics": {
+        "viewport": 360,
+        "doc": 360,
+        "body": 360,
+        "scrollXAfter": 0
+      },
+      "links": [
+        "お客様予約を試す →",
+        "PC管理画面を試す →",
+        "操作体験シートを見る →"
+      ],
+      "pass": true
+    }
+  ]
+}

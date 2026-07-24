@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "system": "DPRO エステ・リラクゼーション LINE",
+  "step": "ESTHE-NEXT-10B-HF1",
+  "status": "OK",
+  "completed_at_jst": "2026-07-24T22:07:56+09:00",
+  "target": "systems/esthe.html",
+  "customer_facing_copy": {
+    "technical_test_counts_visible": false,
+    "qr_read_count_visible": false,
+    "system_check_link_visible": false,
+    "device_support_visible": true,
+    "public_demo_visible": true,
+    "operation_experience_visible": true
+  },
+  "validation": {
+    "static": {
+      "ok": 19,
+      "attention": 0,
+      "ng": 0
+    },
+    "public_viewport_count": 3,
+    "public_all_pass": true,
+    "horizontal_overflow": false
+  },
+  "changes": {
+    "product_page": true,
+    "catalog": false,
+    "system_source": false,
+    "worker": false,
+    "supabase": false,
+    "api": false
+  },
+  "backup_tag": "backup-product-site-before-esthe-next10b-hf1-20260724"
+}
