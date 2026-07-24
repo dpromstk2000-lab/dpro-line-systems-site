@@ -156,7 +156,34 @@ body.catalog-page .catalog-card-cta{
     padding-right:22px;
   }
 }
-</style></head>
+</style><style id="catalog-next10b-r4-text-fit">
+/* CATALOG-NEXT10B-R4-TEXT-FIT
+   R3でページ全体の横スクロールは解消済み。
+   390px時に見出し文字の描画端だけが2.8px超えたため、
+   製品一覧ヒーロー文字を実表示領域へ収める。 */
+@media(max-width:420px){
+  body.catalog-page .catalog-hero-title{
+    width:100%;
+    max-width:100%;
+  }
+  body.catalog-page .catalog-hero-title > span{
+    display:block;
+    width:100%;
+    max-width:100%;
+    white-space:nowrap;
+  }
+  body.catalog-page .catalog-hero h1{
+    font-size:clamp(40px,12vw,48px);
+    line-height:.98;
+  }
+}
+@media(max-width:340px){
+  body.catalog-page .catalog-hero h1{
+    font-size:clamp(37px,11.7vw,40px);
+  }
+}
+</style>
+</head>
 <body class="catalog-page">
 <!-- STEP ESTHE-NEXT-10B / DPRO NEXT CATALOG / 20260724 -->
 <!-- STEP SEITAI-PRODUCT-SITE-NEXT-10 / DPRO NEXT COMPLETE / 20260724 -->

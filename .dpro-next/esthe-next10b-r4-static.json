@@ -1,0 +1,105 @@
+{
+  "step": "ESTHE-NEXT-10B-R4",
+  "summary": {
+    "ok": 19,
+    "attention": 0,
+    "ng": 0
+  },
+  "items": [
+    {
+      "name": "systems.html HTML解析",
+      "status": "OK",
+      "detail": "HTMLParser PASS"
+    },
+    {
+      "name": "systems.html ID重複",
+      "status": "OK",
+      "detail": "なし"
+    },
+    {
+      "name": "systems/esthe.html HTML解析",
+      "status": "OK",
+      "detail": "HTMLParser PASS"
+    },
+    {
+      "name": "systems/esthe.html ID重複",
+      "status": "OK",
+      "detail": "なし"
+    },
+    {
+      "name": "一覧 STEP ESTHE-NEXT-10B / DPRO NEXT CATALOG",
+      "status": "OK",
+      "detail": "STEP ESTHE-NEXT-10B / DPRO NEXT CATALOG"
+    },
+    {
+      "name": "一覧 CATALOG-NEXT10B-R3-MOBILE-SAFE",
+      "status": "OK",
+      "detail": "CATALOG-NEXT10B-R3-MOBILE-SAFE"
+    },
+    {
+      "name": "一覧 CATALOG-NEXT10B-R4-TEXT-FIT",
+      "status": "OK",
+      "detail": "CATALOG-NEXT10B-R4-TEXT-FIT"
+    },
+    {
+      "name": "一覧 ESTHE NEXT-10完成",
+      "status": "OK",
+      "detail": "ESTHE NEXT-10完成"
+    },
+    {
+      "name": "一覧 DPRO NEXT完成版を見る",
+      "status": "OK",
+      "detail": "DPRO NEXT完成版を見る"
+    },
+    {
+      "name": "一覧 font-size:clamp(40px,12vw,48px)",
+      "status": "OK",
+      "detail": "font-size:clamp(40px,12vw,48px)"
+    },
+    {
+      "name": "製品ページ維持 STEP ESTHE-NEXT-10B / DPRO NEXT PRODUCT SITE",
+      "status": "OK",
+      "detail": "STEP ESTHE-NEXT-10B / DPRO NEXT PRODUCT SITE"
+    },
+    {
+      "name": "製品ページ維持 ESTHE-NEXT-10B-R2-MOBILE-SAFE",
+      "status": "OK",
+      "detail": "ESTHE-NEXT-10B-R2-MOBILE-SAFE"
+    },
+    {
+      "name": "製品ページ維持 操作体験シートPDF",
+      "status": "OK",
+      "detail": "操作体験シートPDF"
+    },
+    {
+      "name": "製品ページ維持 公開検査済み完成画面",
+      "status": "OK",
+      "detail": "公開検査済み完成画面"
+    },
+    {
+      "name": "エステ一覧カード一意",
+      "status": "OK",
+      "detail": "1"
+    },
+    {
+      "name": "製品ページSHA維持",
+      "status": "OK",
+      "detail": "9fd0b7ce7395cd67036c9edcc97f3eed3ee0f1bdadebbb8776f6997b2e244aec"
+    },
+    {
+      "name": "共通CSS SHA維持",
+      "status": "OK",
+      "detail": "6d9055252e69350510ae30c3aee59203e477b1d30b862ce0c303deb3be9209eb"
+    },
+    {
+      "name": "共通JS SHA維持",
+      "status": "OK",
+      "detail": "caeb942d749001501362ea3f31e14dc9f57c5d6d477d1c31e6cc91f27350cb63"
+    },
+    {
+      "name": "共通JavaScript構文",
+      "status": "OK",
+      "detail": "node --check PASS"
+    }
+  ]
+}
