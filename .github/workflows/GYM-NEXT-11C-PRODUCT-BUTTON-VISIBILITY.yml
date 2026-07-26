@@ -1,0 +1,647 @@
+name: STEP GYM-NEXT-11C - Fix Operation Web Button Visibility
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/GYM-NEXT-11C-PRODUCT-BUTTON-VISIBILITY.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: write
+
+concurrency:
+  group: gym-next-11c-product-button-visibility
+  cancel-in-progress: false
+
+env:
+  WORKFLOW_FILE: .github/workflows/GYM-NEXT-11C-PRODUCT-BUTTON-VISIBILITY.yml
+  PRODUCT_PAGE: systems/gym.html
+  COMPLETION_YML: dpro-next/gym/GYM-NEXT-COMPLETE.yml
+  COMPLETION_MD: dpro-next/gym/GYM-NEXT-COMPLETE.md
+  PRODUCT_SITE_BASE: https://dpromstk2000-lab.github.io/dpro-line-systems-site
+  BACKUP_TAG: backup-product-site-before-gym-next-11c-20260726
+  EXPECTED_BASE_COMMIT: 4f4702d96ec58bac8bce225c4f331e470e5c908e
+  EXPECTED_PRODUCT_PAGE_BLOB: 4691b35ebf48b61efe820a87cbc91eee040eac43
+  EXPECTED_COMPLETION_YML_BLOB: 64a6bee4b4b82adcc09c62fe9bcb54c32510d316
+  EXPECTED_COMPLETION_MD_BLOB: e0fff5ff4b7033c55d1aebb46fdf1da31b2de87f
+
+jobs:
+  fix-button:
+    name: Make five-screen web button readable
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+
+    steps:
+      - name: Checkout product site with complete history
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install YAML validator
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m pip install --disable-pip-version-check \
+            pyyaml==6.0.2
+
+      - name: Configure Git identity
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "DPRO NEXT Actions"
+          git config user.email "actions@users.noreply.github.com"
+
+      - name: Confirm completed state and safe upload
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          [[ "${GITHUB_REPOSITORY}" == "dpromstk2000-lab/dpro-line-systems-site" ]] || {
+            echo "::error::This YML must run in dpromstk2000-lab/dpro-line-systems-site."
+            exit 1
+          }
+
+          test -f "${WORKFLOW_FILE}"
+          test -f "${PRODUCT_PAGE}"
+          test -f "${COMPLETION_YML}"
+          test -f "${COMPLETION_MD}"
+
+          if [[ "${GITHUB_EVENT_NAME}" == "push" ]]; then
+            STEP_BASE_SHA="$(git rev-parse "${GITHUB_SHA}^")"
+            UNEXPECTED="$(
+              git diff --name-only "${STEP_BASE_SHA}" "${GITHUB_SHA}" |
+                grep -v -F -x "${WORKFLOW_FILE}" |
+                sed '/^$/d' || true
+            )"
+            [[ -z "${UNEXPECTED}" ]] || {
+              echo "::error::Upload commit must contain only ${WORKFLOW_FILE}."
+              echo "${UNEXPECTED}"
+              exit 1
+            }
+          else
+            STEP_BASE_SHA="$(git rev-parse HEAD)"
+          fi
+
+          [[ "${STEP_BASE_SHA}" == "${EXPECTED_BASE_COMMIT}" ]] || {
+            echo "::error::Product site changed after the inspected completion state."
+            echo "Expected: ${EXPECTED_BASE_COMMIT}"
+            echo "Actual:   ${STEP_BASE_SHA}"
+            exit 1
+          }
+
+          [[ "$(git hash-object "${PRODUCT_PAGE}")" == "${EXPECTED_PRODUCT_PAGE_BLOB}" ]]
+          [[ "$(git hash-object "${COMPLETION_YML}")" == "${EXPECTED_COMPLETION_YML_BLOB}" ]]
+          [[ "$(git hash-object "${COMPLETION_MD}")" == "${EXPECTED_COMPLETION_MD_BLOB}" ]]
+
+          python3 <<'PY'
+          from pathlib import Path
+          import yaml
+
+          data = yaml.safe_load(
+              Path(
+                  "dpro-next/gym/GYM-NEXT-COMPLETE.yml"
+              ).read_text(encoding="utf-8")
+          )
+          assert data["result"] == "DPRO-NEXT-COMPLETE"
+          assert data["completed_step"] == (
+              "GYM-NEXT-11B-PRODUCT-SITE-CLEANUP"
+          )
+          assert data["operation_sheet"][
+              "actual_screen_count"
+          ] == 5
+          assert data["operation_sheet"][
+              "system_check_exposed"
+          ] is False
+          assert data["next_step"] is None
+          PY
+
+          grep -Fq '>5画面をWebで見る<' "${PRODUCT_PAGE}"
+          grep -Fq 'class="button button-secondary"' "${PRODUCT_PAGE}"
+          grep -Fq 'data-dpro-next-step="GYM-NEXT-11B"' "${PRODUCT_PAGE}"
+          grep -Fq '実画面 5画面' "${PRODUCT_PAGE}"
+          grep -Fq 'QR読取 5 / 5' "${PRODUCT_PAGE}"
+          grep -Fq 'URL完全一致 5 / 5' "${PRODUCT_PAGE}"
+
+          if grep -Fq '.gym-next-proof-actions .button-secondary' "${PRODUCT_PAGE}"; then
+            echo "::error::The product-specific button visibility fix already exists."
+            exit 1
+          fi
+
+          echo "STEP_BASE_SHA=${STEP_BASE_SHA}" >> "$GITHUB_ENV"
+          echo "RUN_URL=https://github.com/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}" >> "$GITHUB_ENV"
+
+      - name: Protect product site before button fix
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch --tags --force
+
+          if git show-ref --tags --verify --quiet "refs/tags/${BACKUP_TAG}"; then
+            EXISTING="$(git rev-list -n 1 "${BACKUP_TAG}")"
+            [[ "${EXISTING}" == "${STEP_BASE_SHA}" ]] || {
+              echo "::error::Backup tag points to another commit."
+              exit 1
+            }
+          else
+            git tag -a "${BACKUP_TAG}" "${STEP_BASE_SHA}" \
+              -m "Before fixing gym operation web button visibility"
+            git push origin "refs/tags/${BACKUP_TAG}"
+          fi
+
+      - name: Apply product-specific button contrast fix
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          python3 <<'PY'
+          from pathlib import Path
+
+          path = Path("systems/gym.html")
+          html = path.read_text(encoding="utf-8")
+
+          anchor = (
+              ".gym-next-proof-actions{display:flex;"
+              "flex-wrap:wrap;gap:10px}\n"
+          )
+          addition = (
+              ".gym-next-proof-actions .button-secondary,"
+              ".gym-next-proof-actions .button-secondary:visited"
+              "{color:#13213c;border:1px solid "
+              "rgba(19,33,60,.28);background:#fff;"
+              "box-shadow:0 10px 24px rgba(19,33,60,.08);"
+              "text-shadow:none}\n"
+              ".gym-next-proof-actions .button-secondary:hover"
+              "{color:#13213c;border-color:"
+              "rgba(19,33,60,.42);background:#f2f6fb}\n"
+          )
+
+          assert html.count(anchor) == 1
+          assert addition not in html
+          html = html.replace(
+              anchor,
+              anchor + addition,
+              1,
+          )
+
+          assert html.count(
+              ".gym-next-proof-actions .button-secondary,"
+          ) == 1
+          assert html.count(
+              ".gym-next-proof-actions .button-secondary:hover"
+          ) == 1
+          assert html.count(">5画面をWebで見る<") == 1
+          assert (
+              'href="https://dpromstk2000-lab.github.io/'
+              'liff-gym-demo/deliverables/gym-next-10/'
+              'operation-sheet.html"'
+          ) in html
+          assert "system-check" not in html.lower()
+          assert "system check" not in html.lower()
+          assert "営業前" not in html
+
+          path.write_text(
+              html,
+              encoding="utf-8",
+              newline="\n",
+          )
+          PY
+
+      - name: Validate HTML CSS and change scope
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/gym-next-11c
+
+          python3 <<'PY'
+          from html.parser import HTMLParser
+          from pathlib import Path
+          import json
+          import re
+
+          class Parser(HTMLParser):
+              def __init__(self):
+                  super().__init__(convert_charrefs=True)
+                  self.ids = []
+                  self.web_button = None
+
+              def handle_starttag(self, tag, attrs):
+                  data = dict(attrs)
+                  if data.get("id"):
+                      self.ids.append(data["id"])
+                  if (
+                      tag == "a"
+                      and "button-secondary"
+                      in data.get("class", "").split()
+                      and "operation-sheet.html"
+                      in data.get("href", "")
+                  ):
+                      self.web_button = data
+
+              def handle_startendtag(self, tag, attrs):
+                  self.handle_starttag(tag, attrs)
+
+          path = Path("systems/gym.html")
+          html = path.read_text(encoding="utf-8")
+          parser = Parser()
+          parser.feed(html)
+
+          duplicates = sorted({
+              value
+              for value in parser.ids
+              if parser.ids.count(value) > 1
+          })
+          assert not duplicates, duplicates
+          assert parser.web_button is not None
+          assert parser.web_button["target"] == "_blank"
+          assert parser.web_button["rel"] == "noopener"
+
+          assert (
+              ".gym-next-proof-actions .button-secondary,"
+              ".gym-next-proof-actions .button-secondary:visited"
+              "{color:#13213c;"
+          ) in html
+          assert (
+              ".gym-next-proof-actions .button-secondary:hover"
+              "{color:#13213c;"
+          ) in html
+          assert "background:#fff" in html
+          assert "background:#f2f6fb" in html
+          assert "border:1px solid rgba(19,33,60,.28)" in html
+          assert "text-shadow:none" in html
+          assert html.count(">5画面をWebで見る<") == 1
+          assert not re.search(r"[ \t]+$", html, flags=re.M)
+          assert html.endswith("\n")
+          assert not html.endswith("\n\n")
+
+          report = {
+              "ok": True,
+              "step": "GYM-NEXT-11C",
+              "button_label": "5画面をWebで見る",
+              "button_text_color": "#13213c",
+              "button_background": "#ffffff",
+              "button_hover_background": "#f2f6fb",
+              "product_specific_css": True,
+              "shared_styles_changed": False,
+              "duplicate_ids": duplicates,
+          }
+          Path(
+              "/tmp/gym-next-11c/validation.json"
+          ).write_text(
+              json.dumps(
+                  report,
+                  ensure_ascii=False,
+                  indent=2,
+              ) + "\n",
+              encoding="utf-8",
+          )
+          PY
+
+          SHARED_STYLE_BLOB="$(git hash-object styles.css)"
+          SCRIPT_BLOB="$(git hash-object script.js)"
+          CATALOG_BLOB="$(git hash-object systems.html)"
+
+          echo "SHARED_STYLE_BLOB=${SHARED_STYLE_BLOB}" >> "$GITHUB_ENV"
+          echo "SCRIPT_BLOB=${SCRIPT_BLOB}" >> "$GITHUB_ENV"
+          echo "CATALOG_BLOB=${CATALOG_BLOB}" >> "$GITHUB_ENV"
+
+          CHANGED="$(git diff --name-only | sort)"
+          [[ "${CHANGED}" == "${PRODUCT_PAGE}" ]] || {
+            echo "::error::Only systems/gym.html may change before the product commit."
+            echo "${CHANGED}"
+            exit 1
+          }
+
+          git diff --check
+
+      - name: Commit button visibility fix
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          git add "${PRODUCT_PAGE}"
+          git diff --cached --check
+          git commit -m "Fix gym operation web button visibility"
+
+          PRODUCT_COMMIT_SHA="$(git rev-parse HEAD)"
+          PRODUCT_PAGE_BLOB="$(git hash-object "${PRODUCT_PAGE}")"
+
+          echo "PRODUCT_COMMIT_SHA=${PRODUCT_COMMIT_SHA}" >> "$GITHUB_ENV"
+          echo "PRODUCT_PAGE_BLOB=${PRODUCT_PAGE_BLOB}" >> "$GITHUB_ENV"
+
+          git push origin HEAD:main
+
+      - name: Wait for GitHub Pages and verify visible button
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/gym-next-11c/public
+          PUBLIC_FILE=/tmp/gym-next-11c/public/gym.html
+
+          for attempt in $(seq 1 72); do
+            HTTP_CODE="$(
+              curl --location --silent --show-error \
+                --connect-timeout 15 \
+                --max-time 30 \
+                --header 'Cache-Control: no-cache' \
+                --header 'Pragma: no-cache' \
+                --output "${PUBLIC_FILE}" \
+                --write-out '%{http_code}' \
+                "${PRODUCT_SITE_BASE}/systems/gym.html?v=${PRODUCT_COMMIT_SHA}-${GITHUB_RUN_ID}-${attempt}" || true
+            )"
+
+            MARKER="old-or-empty"
+            if [[ -s "${PUBLIC_FILE}" ]] &&
+               grep -Fq '>5画面をWebで見る<' "${PUBLIC_FILE}" &&
+               grep -Fq '.gym-next-proof-actions .button-secondary,' "${PUBLIC_FILE}" &&
+               grep -Fq 'color:#13213c' "${PUBLIC_FILE}" &&
+               grep -Fq 'background:#fff' "${PUBLIC_FILE}"; then
+              MARKER="button-visible"
+            fi
+
+            echo "Attempt ${attempt}/72: HTTP ${HTTP_CODE}, marker=${MARKER}"
+
+            if [[ "${MARKER}" == "button-visible" ]]; then
+              break
+            fi
+
+            if [[ "${attempt}" == "72" ]]; then
+              echo "::error::Button visibility fix did not reach GitHub Pages within 12 minutes."
+              exit 1
+            fi
+            sleep 10
+          done
+
+          grep -Fq 'border:1px solid rgba(19,33,60,.28)' "${PUBLIC_FILE}"
+          grep -Fq 'background:#f2f6fb' "${PUBLIC_FILE}"
+          grep -Fq 'text-shadow:none' "${PUBLIC_FILE}"
+          grep -Fq '実画面 5画面' "${PUBLIC_FILE}"
+          grep -Fq 'QR読取 5 / 5' "${PUBLIC_FILE}"
+          grep -Fq 'URL完全一致 5 / 5' "${PUBLIC_FILE}"
+
+          if grep -Eqi 'system-check|system check|営業前' "${PUBLIC_FILE}"; then
+            echo "::error::Published page unexpectedly exposes system-check."
+            exit 1
+          fi
+
+          PUBLIC_BYTES="$(wc -c < "${PUBLIC_FILE}" | tr -d ' ')"
+          [[ "${PUBLIC_BYTES}" -le 120000 ]]
+          echo "PUBLIC_BYTES=${PUBLIC_BYTES}" >> "$GITHUB_ENV"
+
+      - name: Update final completion records
+        shell: bash
+        run: |
+          set -euo pipefail
+          COMPLETED_AT="$(TZ=Asia/Tokyo date '+%Y-%m-%dT%H:%M:%S%z')"
+          export COMPLETED_AT
+
+          python3 <<'PY'
+          from pathlib import Path
+          import os
+          import yaml
+
+          yml_path = Path(
+              "dpro-next/gym/GYM-NEXT-COMPLETE.yml"
+          )
+          data = yaml.safe_load(
+              yml_path.read_text(encoding="utf-8")
+          )
+          assert isinstance(data, dict)
+
+          data["logical_step"] = "GYM-NEXT-11"
+          data["completed_step"] = (
+              "GYM-NEXT-11C-PRODUCT-BUTTON-VISIBILITY"
+          )
+          data["completed_at"] = os.environ["COMPLETED_AT"]
+          data["product_commit_sha"] = os.environ[
+              "PRODUCT_COMMIT_SHA"
+          ]
+          data["product_page_blob"] = os.environ[
+              "PRODUCT_PAGE_BLOB"
+          ]
+          data["workflow_run_url"] = os.environ["RUN_URL"]
+
+          product_site = data.setdefault("product_site", {})
+          product_site.update({
+              "operation_web_button_present": True,
+              "operation_web_button_label": (
+                  "5画面をWebで見る"
+              ),
+              "operation_web_button_text_color": "#13213c",
+              "operation_web_button_background": "#ffffff",
+              "operation_web_button_visible": True,
+              "operation_web_button_contrast_fix": True,
+              "shared_styles_changed_for_button_fix": False,
+          })
+
+          checks = data.setdefault("checks", {})
+          checks.update({
+              "product_operation_web_button_html": "OK",
+              "product_operation_web_button_css": "OK",
+              "product_operation_web_button_public": "OK",
+              "product_operation_web_button_contrast": "OK",
+              "shared_css_unchanged": "OK",
+              "github_pages_button_visibility": "OK",
+          })
+
+          correction = data.setdefault(
+              "product_ui_corrections", {}
+          )
+          correction["gym_next_11c"] = {
+              "issue": (
+                  "白背景のbutton-secondaryに白文字が適用され、"
+                  "5画面をWebで見るの文字が見えなかった"
+              ),
+              "fix": (
+                  "パーソナルジム製品ページ専用CSSで"
+                  "濃紺文字・白背景・濃紺系枠線へ修正"
+              ),
+              "shared_css_changed": False,
+              "product_page_only": True,
+          }
+
+          data["next_step"] = None
+
+          yml_path.write_text(
+              yaml.safe_dump(
+                  data,
+                  allow_unicode=True,
+                  sort_keys=False,
+              ),
+              encoding="utf-8",
+              newline="\n",
+          )
+
+          validated = yaml.safe_load(
+              yml_path.read_text(encoding="utf-8")
+          )
+          assert validated["result"] == "DPRO-NEXT-COMPLETE"
+          assert validated["completed_step"] == (
+              "GYM-NEXT-11C-PRODUCT-BUTTON-VISIBILITY"
+          )
+          assert validated["product_site"][
+              "operation_web_button_visible"
+          ] is True
+          assert validated["product_site"][
+              "operation_web_button_label"
+          ] == "5画面をWebで見る"
+          assert validated["product_site"][
+              "shared_styles_changed_for_button_fix"
+          ] is False
+          assert validated["next_step"] is None
+          PY
+
+          cat > "${COMPLETION_MD}" <<EOF
+          # DPRO パーソナルジム LINE｜DPRO NEXT COMPLETE
+
+          - 結果: DPRO-NEXT-COMPLETE
+          - 最終STEP: GYM-NEXT-11C-PRODUCT-BUTTON-VISIBILITY
+          - 製品ページ: ${PRODUCT_SITE_BASE}/systems/gym.html
+          - 操作体験シート: オーナー向け5画面
+          - QR読取・URL一致: 5 / 5
+          - 「5画面をWebで見る」ボタン: 表示修正済み
+          - ボタン文字色: 濃紺
+          - ボタン背景: 白
+          - 共通CSSへの影響: なし
+          - system-checkのオーナー向け掲載: なし
+          - system-check.html本体: DPRO導入・保守担当専用として維持
+          - Worker変更: なし
+          - Supabase変更: なし
+          - 完了日時: ${COMPLETED_AT}
+          - Actions: ${RUN_URL}
+          EOF
+
+          python3 <<'PY'
+          from pathlib import Path
+          import yaml
+
+          data = yaml.safe_load(
+              Path(
+                  "dpro-next/gym/GYM-NEXT-COMPLETE.yml"
+              ).read_text(encoding="utf-8")
+          )
+          assert data["product_site"][
+              "operation_web_button_visible"
+          ] is True
+          assert data["next_step"] is None
+          PY
+
+          grep -Fq 'operation_web_button_visible: true' "${COMPLETION_YML}"
+          grep -Fq 'operation_web_button_label: 5画面をWebで見る' "${COMPLETION_YML}"
+          grep -Fq 'shared_styles_changed_for_button_fix: false' "${COMPLETION_YML}"
+          grep -Fq '「5画面をWebで見る」ボタン: 表示修正済み' "${COMPLETION_MD}"
+
+      - name: Confirm completion change scope
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          [[ "$(git hash-object "${PRODUCT_PAGE}")" == "${PRODUCT_PAGE_BLOB}" ]]
+          [[ "$(git hash-object styles.css)" == "${SHARED_STYLE_BLOB}" ]]
+          [[ "$(git hash-object script.js)" == "${SCRIPT_BLOB}" ]]
+          [[ "$(git hash-object systems.html)" == "${CATALOG_BLOB}" ]]
+
+          CHANGED="$(git diff --name-only | sort)"
+          EXPECTED="$(
+            printf '%s\n' \
+              "${COMPLETION_MD}" \
+              "${COMPLETION_YML}" |
+              sort
+          )"
+          [[ "${CHANGED}" == "${EXPECTED}" ]] || {
+            echo "::error::Only final completion records may change now."
+            echo "Actual:"
+            echo "${CHANGED}"
+            echo "Expected:"
+            echo "${EXPECTED}"
+            exit 1
+          }
+
+          git diff --check
+
+      - name: Commit completion records and self-delete
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          git add "${COMPLETION_YML}" "${COMPLETION_MD}"
+          git rm "${WORKFLOW_FILE}"
+
+          git diff --cached --check
+          git commit -m "Complete gym operation button visibility fix"
+          FINAL_COMMIT_SHA="$(git rev-parse HEAD)"
+          echo "FINAL_COMMIT_SHA=${FINAL_COMMIT_SHA}" >> "$GITHUB_ENV"
+          git push origin HEAD:main
+
+      - name: Verify final committed state
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          git fetch origin main
+          [[ "$(git rev-parse origin/main)" == "${FINAL_COMMIT_SHA}" ]]
+          [[ ! -e "${WORKFLOW_FILE}" ]]
+          [[ "$(git hash-object "${PRODUCT_PAGE}")" == "${PRODUCT_PAGE_BLOB}" ]]
+          [[ "$(git hash-object styles.css)" == "${SHARED_STYLE_BLOB}" ]]
+
+          python3 <<'PY'
+          from pathlib import Path
+          import yaml
+
+          data = yaml.safe_load(
+              Path(
+                  "dpro-next/gym/GYM-NEXT-COMPLETE.yml"
+              ).read_text(encoding="utf-8")
+          )
+          assert data["result"] == "DPRO-NEXT-COMPLETE"
+          assert data["completed_step"] == (
+              "GYM-NEXT-11C-PRODUCT-BUTTON-VISIBILITY"
+          )
+          assert data["product_site"][
+              "operation_web_button_visible"
+          ] is True
+          assert data["checks"][
+              "github_pages_button_visibility"
+          ] == "OK"
+          assert data["next_step"] is None
+          PY
+
+      - name: Upload completion artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: GYM-NEXT-11C-button-visibility-complete
+          path: |
+            systems/gym.html
+            dpro-next/gym/GYM-NEXT-COMPLETE.yml
+            dpro-next/gym/GYM-NEXT-COMPLETE.md
+            /tmp/gym-next-11c/validation.json
+            /tmp/gym-next-11c/public/gym.html
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: STEP completion summary
+        shell: bash
+        run: |
+          {
+            echo "## GYM-NEXT-11C COMPLETE"
+            echo ""
+            echo "- Button label: 5画面をWebで見る"
+            echo "- Text color: #13213c"
+            echo "- Background: #ffffff"
+            echo "- Border: rgba(19,33,60,.28)"
+            echo "- Product-specific CSS: true"
+            echo "- Shared styles.css changed: false"
+            echo "- GitHub Pages visibility: OK"
+            echo "- Worker change: false"
+            echo "- Supabase change: false"
+            echo "- Next STEP: none"
+          } >> "$GITHUB_STEP_SUMMARY"
