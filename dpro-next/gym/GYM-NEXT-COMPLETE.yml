@@ -2,15 +2,15 @@ schema_version: 2
 system_name: DPRO パーソナルジム LINE
 result: DPRO-NEXT-COMPLETE
 logical_step: GYM-NEXT-11
-completed_step: GYM-NEXT-11B-PRODUCT-SITE-CLEANUP
-completed_at: 2026-07-26T13:28:43+0900
+completed_step: GYM-NEXT-11C-PRODUCT-BUTTON-VISIBILITY
+completed_at: 2026-07-26T13:48:48+0900
 source_repository: dpromstk2000-lab/liff-gym-demo
 product_site_repository: dpromstk2000-lab/dpro-line-systems-site
-product_commit_sha: e52e93902aad4ecf7a9c49a1492ed7162767efcd
-product_page_blob: 4691b35ebf48b61efe820a87cbc91eee040eac43
+product_commit_sha: 098d2f1ed6caee3fabc63898f00eedd8e16f4d98
+product_page_blob: 543cbf333d85d4ccf0fe58aa26083e3f49464cde
 catalog_blob: f63b9d554111c6c0bfa4ee44fd4ec6087fead34b
 backup_tag: backup-product-site-before-gym-next-11b-20260726
-workflow_run_url: https://github.com/dpromstk2000-lab/dpro-line-systems-site/actions/runs/30187838599
+workflow_run_url: https://github.com/dpromstk2000-lab/dpro-line-systems-site/actions/runs/30188353223
 worker:
   name: dpro-gym-line-api
   version: GYM-NEXT-9-WORKER-R2-20260725
@@ -56,6 +56,13 @@ product_site:
   owner_facing_system_check_removed: true
   owner_facing_system_check_link_removed: true
   owner_facing_system_check_copy_removed: true
+  operation_web_button_present: true
+  operation_web_button_label: 5画面をWebで見る
+  operation_web_button_text_color: '#13213c'
+  operation_web_button_background: '#ffffff'
+  operation_web_button_visible: true
+  operation_web_button_contrast_fix: true
+  shared_styles_changed_for_button_fix: false
 checks:
   source_next_10a: OK
   source_assets_sha: OK
@@ -81,6 +88,12 @@ checks:
   product_operation_sheet_five_screens: OK
   public_file_budget: OK
   python_yaml_validation: OK
+  product_operation_web_button_html: OK
+  product_operation_web_button_css: OK
+  product_operation_web_button_public: OK
+  product_operation_web_button_contrast: OK
+  shared_css_unchanged: OK
+  github_pages_button_visibility: OK
 recovery:
   workflow_revision: R2
   failed_revision: R1
@@ -112,3 +125,9 @@ owner_facing_correction:
   operation_sheet_changed_to: 5
   system_check_runtime_deleted: false
   system_check_product_reference_removed: true
+product_ui_corrections:
+  gym_next_11c:
+    issue: 白背景のbutton-secondaryに白文字が適用され、5画面をWebで見るの文字が見えなかった
+    fix: パーソナルジム製品ページ専用CSSで濃紺文字・白背景・濃紺系枠線へ修正
+    shared_css_changed: false
+    product_page_only: true
