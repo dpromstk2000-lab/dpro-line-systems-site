@@ -1,75 +1,114 @@
-schema_version: 1
-system_name: "DPRO パーソナルジム LINE"
-result: "DPRO-NEXT-COMPLETE"
-logical_step: "GYM-NEXT-10"
-completed_step: "GYM-NEXT-10B-PRODUCT-SITE"
-completed_at: "2026-07-26T11:16:06+0900"
-source_repository: "dpromstk2000-lab/liff-gym-demo"
-product_site_repository: "dpromstk2000-lab/dpro-line-systems-site"
-product_commit_sha: "1dcfe67f406f1c2ba3342ff7c3ac4b163f74f612"
-product_page_blob: "e29c23ab246d13c6179b34bf6f0a27331101b2d1"
-catalog_blob: "f63b9d554111c6c0bfa4ee44fd4ec6087fead34b"
-backup_tag: "backup-product-site-before-gym-next-10b-20260726"
-workflow_run_url: "https://github.com/dpromstk2000-lab/dpro-line-systems-site/actions/runs/30184258386"
+schema_version: 2
+system_name: DPRO パーソナルジム LINE
+result: DPRO-NEXT-COMPLETE
+logical_step: GYM-NEXT-11
+completed_step: GYM-NEXT-11B-PRODUCT-SITE-CLEANUP
+completed_at: 2026-07-26T13:28:43+0900
+source_repository: dpromstk2000-lab/liff-gym-demo
+product_site_repository: dpromstk2000-lab/dpro-line-systems-site
+product_commit_sha: e52e93902aad4ecf7a9c49a1492ed7162767efcd
+product_page_blob: 4691b35ebf48b61efe820a87cbc91eee040eac43
+catalog_blob: f63b9d554111c6c0bfa4ee44fd4ec6087fead34b
+backup_tag: backup-product-site-before-gym-next-11b-20260726
+workflow_run_url: https://github.com/dpromstk2000-lab/dpro-line-systems-site/actions/runs/30187838599
 worker:
-  name: "dpro-gym-line-api"
-  version: "GYM-NEXT-9-WORKER-R2-20260725"
+  name: dpro-gym-line-api
+  version: GYM-NEXT-9-WORKER-R2-20260725
   changed_in_product_step: false
 supabase_changed_in_product_step: false
 runtime_changed_in_product_step: false
 product_site_changed: true
 public_urls:
-  product_page: "https://dpromstk2000-lab.github.io/dpro-line-systems-site/systems/gym.html"
-  catalog: "https://dpromstk2000-lab.github.io/dpro-line-systems-site/systems.html"
-  reservation: "https://dpromstk2000-lab.github.io/liff-gym-demo/index.html?demo=1"
-  member: "https://dpromstk2000-lab.github.io/liff-gym-demo/member.html?demo=1"
-  owner: "https://dpromstk2000-lab.github.io/liff-gym-demo/dashboard.html?demo=1"
-  ipad: "https://dpromstk2000-lab.github.io/liff-gym-demo/owner-ipad.html?demo=1"
-  staff: "https://dpromstk2000-lab.github.io/liff-gym-demo/staff.html?demo=1"
-  system_check: "https://dpromstk2000-lab.github.io/liff-gym-demo/system-check.html?demo=1"
-  operation_sheet_pdf: "https://dpromstk2000-lab.github.io/liff-gym-demo/deliverables/gym-next-10/DPRO_GYM_NEXT_operation_experience_sheet_20260726.pdf"
-  operation_sheet_png: "https://dpromstk2000-lab.github.io/liff-gym-demo/deliverables/gym-next-10/DPRO_GYM_NEXT_operation_experience_sheet_20260726.png"
-  operation_sheet_html: "https://dpromstk2000-lab.github.io/liff-gym-demo/deliverables/gym-next-10/operation-sheet.html"
+  product_page: https://dpromstk2000-lab.github.io/dpro-line-systems-site/systems/gym.html
+  catalog: https://dpromstk2000-lab.github.io/dpro-line-systems-site/systems.html
+  reservation: https://dpromstk2000-lab.github.io/liff-gym-demo/index.html?demo=1
+  member: https://dpromstk2000-lab.github.io/liff-gym-demo/member.html?demo=1
+  owner: https://dpromstk2000-lab.github.io/liff-gym-demo/dashboard.html?demo=1
+  ipad: https://dpromstk2000-lab.github.io/liff-gym-demo/owner-ipad.html?demo=1
+  staff: https://dpromstk2000-lab.github.io/liff-gym-demo/staff.html?demo=1
+  operation_sheet_pdf: https://dpromstk2000-lab.github.io/liff-gym-demo/deliverables/gym-next-10/DPRO_GYM_NEXT_operation_experience_sheet_20260726.pdf
+  operation_sheet_png: https://dpromstk2000-lab.github.io/liff-gym-demo/deliverables/gym-next-10/DPRO_GYM_NEXT_operation_experience_sheet_20260726.png
+  operation_sheet_html: https://dpromstk2000-lab.github.io/liff-gym-demo/deliverables/gym-next-10/operation-sheet.html
 operation_sheet:
-  actual_screen_count: 6
-  qr_count: 6
-  source_qr_decoded_count: 6
-  rendered_qr_decoded_count: 6
-  exact_url_match_count: 6
-  pdf_sha256: "d5b87f30eb95a3bf95401862eca0fc0e15051cea45726b9c6c9ab66f84a35ea6"
-  png_sha256: "f18baf929b20752c93ade8e9ae16b3d898345468af2f7cc91224823e7c306694"
+  owner_facing_only: true
+  actual_screen_count: 5
+  qr_count: 5
+  source_qr_decoded_count: 5
+  rendered_qr_decoded_count: 5
+  exact_url_match_count: 5
+  system_check_exposed: false
+  pdf_sha256: 0581ba706fed52de0c508548faaf9b2ab0f65aded36796dd9c0d96949bc0fc8f
+  png_sha256: d27b5fd48dec81cf1099c8a37b8d6e59cb5a0eb0bf191727e66feb3120ceb103
 product_site:
-  old_preview_removed: "gym-5-final"
-  next_preview_version: "gym-next-10"
+  old_preview_removed: gym-5-final
+  next_preview_version: gym-next-10
   catalog_card_added: true
   catalog_card_count_before: 28
   catalog_card_count_after: 29
   catalog_live_card_count_before: 28
   catalog_live_card_count_after: 29
   declared_completed_system_count: 38
-  published_product_pages: "38/38"
+  published_product_pages: 38/38
   operation_sheet_section: true
   staff_role_feature: true
-  integrated_system_check_feature: true
+  integrated_system_check_feature: false
+  operation_sheet_screen_count: 5
+  owner_facing_system_check_removed: true
+  owner_facing_system_check_link_removed: true
+  owner_facing_system_check_copy_removed: true
 checks:
-  source_next_10a: "OK"
-  source_assets_sha: "OK"
-  qr_report: "OK"
-  backup_tag: "OK"
-  product_html: "OK"
-  catalog_html: "OK"
-  duplicate_ids: "OK"
-  javascript_syntax: "OK"
-  change_scope: "OK"
-  github_pages_product: "OK"
-  github_pages_catalog: "OK"
-  public_file_budgets: "OK"
-  catalog_card_increment: "28_TO_29_OK"
-  catalog_published_page_count: "38_OF_38_OK"
+  source_next_10a: OK
+  source_assets_sha: OK
+  qr_report: OK
+  backup_tag: OK
+  product_html: OK
+  catalog_html: OK
+  duplicate_ids: OK
+  javascript_syntax: OK
+  change_scope: OK
+  github_pages_product: OK
+  github_pages_catalog: OK
+  public_file_budgets: OK
+  catalog_card_increment: 28_TO_29_OK
+  catalog_published_page_count: 38_OF_38_OK
+  source_next_11a: OK
+  source_owner_facing_screen_count: '5'
+  source_owner_facing_qr_count: '5'
+  source_system_check_exposed: 'FALSE'
+  product_owner_system_check_removed: OK
+  product_owner_system_check_link_removed: OK
+  product_owner_system_check_copy_removed: OK
+  product_operation_sheet_five_screens: OK
+  public_file_budget: OK
+  python_yaml_validation: OK
 recovery:
-  workflow_revision: "R2"
-  failed_revision: "R1"
-  failed_run_url: "https://github.com/dpromstk2000-lab/dpro-line-systems-site/actions/runs/30183653796"
-  failure_reason: "一覧カードを38件固定で検査した"
-  corrected_rule: "変更前カード数プラス1件"
+  workflow_revision: R2
+  failed_revision: R1
+  failed_run_url: https://github.com/dpromstk2000-lab/dpro-line-systems-site/actions/runs/30183653796
+  failure_reason: 一覧カードを38件固定で検査した
+  corrected_rule: 変更前カード数プラス1件
+  failed_workflow_revisions:
+  - GYM-NEXT-11B-R1
+  - GYM-NEXT-11B-R2
+  failed_run_urls:
+  - https://github.com/dpromstk2000-lab/dpro-line-systems-site/actions/runs/30187172268
+  - https://github.com/dpromstk2000-lab/dpro-line-systems-site/actions/runs/30187402729
+  failure_reason_gym_next_11b_r1: 削除済みを示す内部コメント自身を禁止文字として誤検出
+  failure_reason_gym_next_11b_r2: Ruby PsychがYAML日時をTime型として安全制限で拒否
+  gym_next_11b_r3_fix: 公開済み製品ページを固定検査し、PyYAML safe_loadで完成台帳のみ更新
+  product_page_reedited_in_r3: false
 next_step: null
+maintenance_scope:
+  system_check_html_preserved_in_source_system: true
+  system_check_role: DPRO導入・保守担当専用
+  system_check_owner_facing: false
+  product_site_link_exposed: false
+owner_facing_correction:
+  reason: system-checkはオーナー向け機能ではなく、DPRO導入・保守担当専用
+  source_step: GYM-NEXT-11A-COMPLETE
+  product_step: GYM-NEXT-11B-PRODUCT-SITE-CLEANUP
+  workflow_revision: R3
+  operation_sheet_changed_from: 6
+  operation_sheet_changed_to: 5
+  system_check_runtime_deleted: false
+  system_check_product_reference_removed: true
