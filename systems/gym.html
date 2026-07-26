@@ -25,10 +25,24 @@
 .gym-value-card p{margin:0;color:#637087;font-size:.9rem;line-height:1.75}
 @media(max-width:900px){.gym-value-grid{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:600px){.gym-value-grid{grid-template-columns:1fr}.gym-hero .product-hero-copy h1{font-size:2rem}}
+.gym-next-proof{padding:72px 0;background:#eef3fa}
+.gym-next-proof-inner{width:min(1120px,calc(100% - 32px));margin:auto;display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:30px;align-items:center}
+.gym-next-proof-copy{padding:30px;border:1px solid #d6dfeb;border-radius:24px;background:#fff;box-shadow:0 14px 36px rgba(19,33,60,.08)}
+.gym-next-proof-copy .eyebrow{margin:0 0 8px;color:#c4315c}
+.gym-next-proof-copy h2{margin:0;color:#13213c;font-size:clamp(1.65rem,3vw,2.45rem);line-height:1.35}
+.gym-next-proof-copy>p{color:#617086;line-height:1.85}
+.gym-next-proof-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:22px 0}
+.gym-next-proof-list span{padding:11px 12px;border-radius:12px;background:#f2f6fb;color:#334766;font-size:.84rem;font-weight:800}
+.gym-next-proof-actions{display:flex;flex-wrap:wrap;gap:10px}
+.gym-next-sheet-preview{padding:16px;border:1px solid #d6dfeb;border-radius:24px;background:#fff;box-shadow:0 14px 36px rgba(19,33,60,.08)}
+.gym-next-sheet-preview img{display:block;width:100%;max-height:680px;object-fit:contain;border-radius:14px;background:#f7f9fc}
+.gym-next-complete-badge{display:inline-flex;margin:0 0 14px;padding:8px 12px;border-radius:999px;background:#13213c;color:#fff;font-size:.78rem;font-weight:900;letter-spacing:.06em}
+@media(max-width:860px){.gym-next-proof-inner{grid-template-columns:1fr}.gym-next-sheet-preview{order:-1}.gym-next-sheet-preview img{max-height:520px}}
+@media(max-width:560px){.gym-next-proof{padding:52px 0}.gym-next-proof-copy{padding:22px}.gym-next-proof-list{grid-template-columns:1fr}.gym-next-proof-actions .button{width:100%;text-align:center}}
 </style>
 </head>
 <body>
-<!-- STEP GYM-WEB-1-R1 / MEMBER DEMO URL FIX / PRODUCT 30 / 20260717 -->
+<!-- STEP GYM-NEXT-10B / DPRO NEXT COMPLETE / 20260726 -->
 
 <header class="site-header" id="top"><div class="header-inner">
 <a class="brand" href="../index.html"><span class="brand-mark">D</span><span class="brand-copy"><strong>DPRO LINE SYSTEMS</strong><small>OFFICIAL PRODUCT SITE</small></span></a>
@@ -41,24 +55,24 @@
 <div class="product-hero-copy reveal">
 <div class="product-breadcrumb"><a href="../systems.html">システム一覧</a><span>/</span><span>パーソナルジム</span></div>
 <span class="product-symbol">PG</span>
-<p class="eyebrow">PERSONAL GYM LINE SYSTEM</p>
+<p class="eyebrow">PERSONAL GYM LINE SYSTEM / DPRO NEXT COMPLETE</p>
 <h1>DPRO パーソナルジム LINE</h1>
-<h2 class="headline-lines headline-fixed"><span>体験予約・会員・回数券・来店進行を、</span><span>LINEと店舗で一つに。</span></h2>
-<p>無料体験・カウンセリング予約から、会員マイページ、予約変更・キャンセル相談、回数券、来店・セッション進行、継続フォローまでをつなぐパーソナルジム専用システムです。</p>
-<div class="hero-actions"><a class="button button-primary" href="#experience">実画面を体験する</a><a class="button button-secondary" href="https://lin.ee/YxJGXV6D" target="_blank" rel="noopener">LINEでデモを見る</a></div>
-<p class="gym-note">予約開始時刻は30分単位。電話番号はハイフン・全角・+81形式を正規化して既存会員を検索し、電話・店頭予約でも同じ会員情報を利用できます。</p>
+<h2 class="headline-lines headline-fixed"><span>体験・入会・記録・継続フォローを、</span><span>LINEと店舗で一つに。</span></h2>
+<p>無料体験、入会・プラン、会員マイページ、回数券、セッション記録、スタッフ受付、前回と同じ予約、期限別の継続フォローまでをつなぐDPRO NEXT完成版です。</p>
+<div class="hero-actions"><a class="button button-primary" href="#experience">実画面を体験する</a><a class="button button-secondary" href="#operation-sheet">操作体験シート</a><a class="button button-secondary" href="https://lin.ee/YxJGXV6D" target="_blank" rel="noopener">LINEでデモを見る</a></div>
+<p class="gym-note">30分枠・電話番号正規化・重複防止に加え、セッション完了時の回数減算、スタッフ権限分離、URL認証拒否、営業前統合system-checkまで検査済みです。</p>
 </div>
 
 <div class="product-visual product-visual-live reveal">
-<div class="hero-live-monitor"><div class="live-browser-bar"><span></span><span></span><span></span><b>パーソナルジムPC管理</b></div><iframe title="パーソナルジムPC管理プレビュー" loading="eager" src="https://dpromstk2000-lab.github.io/liff-gym-demo/dashboard.html?demo=1&amp;v=gym-5-final"></iframe></div>
-<div class="hero-live-phone"><iframe title="無料体験予約プレビュー" loading="eager" src="https://dpromstk2000-lab.github.io/liff-gym-demo/index.html?demo=1&amp;v=gym-5-final"></iframe></div>
-<div class="hero-live-tablet"><iframe title="iPad受付プレビュー" loading="eager" src="https://dpromstk2000-lab.github.io/liff-gym-demo/owner-ipad.html?demo=1&amp;v=gym-5-final"></iframe></div>
+<div class="hero-live-monitor"><div class="live-browser-bar"><span></span><span></span><span></span><b>パーソナルジムPC管理</b></div><iframe title="パーソナルジムPC管理プレビュー" loading="eager" src="https://dpromstk2000-lab.github.io/liff-gym-demo/dashboard.html?demo=1&amp;v=gym-next-10"></iframe></div>
+<div class="hero-live-phone"><iframe title="無料体験予約プレビュー" loading="eager" src="https://dpromstk2000-lab.github.io/liff-gym-demo/index.html?demo=1&amp;v=gym-next-10"></iframe></div>
+<div class="hero-live-tablet"><iframe title="iPad受付プレビュー" loading="eager" src="https://dpromstk2000-lab.github.io/liff-gym-demo/owner-ipad.html?demo=1&amp;v=gym-next-10"></iframe></div>
 <div class="hero-live-label"><span>LIVE DEMO</span><strong>実際に動く完成画面</strong></div>
 </div>
 </section>
 
 <section class="sales-summary section">
-<div class="section-heading reveal"><p class="eyebrow">UNDERSTAND IN 30 SECONDS</p><h2 class="headline-lines headline-fixed"><span>30秒で分かる、</span><span>パーソナルジムシステムの価値。</span></h2><p>予約、会員情報、回数券、来店進行、相談、継続フォローを同じ顧客情報へまとめます。</p></div>
+<div class="section-heading reveal"><p class="eyebrow">UNDERSTAND IN 30 SECONDS</p><h2 class="headline-lines headline-fixed"><span>30秒で分かる、</span><span>DPRO NEXT完成版の価値。</span></h2><p>体験予約、入会、プラン、回数券、セッション記録、来店進行、会員履歴、継続フォローを同じ顧客情報へまとめます。</p></div>
 <div class="sales-summary-grid">
 <article class="sales-summary-card reveal"><span class="sales-summary-number">01</span><h3>お客様はLINEで完結</h3><ul><li>無料体験・通常トレーニングを予約</li><li>トレーナー・日付・空き時間を選択</li><li>マイページで残り回数・次回予約を確認</li></ul></article>
 <article class="sales-summary-card reveal"><span class="sales-summary-number">02</span><h3>こんなジムにおすすめ</h3><ul><li>体験予約後の対応漏れを減らしたい</li><li>回数券と来店回数を整理したい</li><li>来店・開始・完了を受付で更新したい</li><li>残り回数や継続対象者を把握したい</li></ul></article>
@@ -79,22 +93,50 @@
 <article class="product-feature reveal"><span>03</span><h3>PC総合管理</h3><p>今日やること、予約一覧、会員検索、相談、施設設定、操作履歴を管理します。</p></article>
 <article class="product-feature reveal"><span>04</span><h3>iPad受付</h3><p>予約確定、来店、トレーニング開始、完了・回数減算を大きなボタンで更新します。</p></article>
 <article class="product-feature reveal"><span>05</span><h3>電話・店頭予約</h3><p>氏名・電話番号・会員番号から既存会員を検索し、空き時間へ予約を登録できます。</p></article>
-<article class="product-feature reveal"><span>06</span><h3>回数券・継続管理</h3><p>回数券の増減、有効期限、残り1回以下、継続相談、フォロー予定を管理できます。</p></article>
+<article class="product-feature reveal"><span>06</span><h3>回数券・継続管理</h3><p>回数券の増減、有効期限、残り1回以下、継続相談、フォロー予定を管理できます。</p></article><article class="product-feature reveal"><span>07</span><h3>スタッフ権限分離</h3><p>スタッフコードで当日の受付・来店・開始・完了・セッション記録だけを安全に操作します。</p></article><article class="product-feature reveal"><span>08</span><h3>営業前system-check</h3><p>DB、認証、重複防止、役割分離、セキュリティ、応答性能を一括検査します。</p></article>
 </div>
 </section>
 
 <section class="experience-section section section-dark" id="experience">
-<div class="section-heading section-heading-light reveal"><p class="eyebrow">LIVE PRODUCT EXPERIENCE</p><h2 class="headline-lines headline-fixed"><span>お客様LINEからPC・iPad受付まで、</span><span>本物の画面で確認。</span></h2><p>PC管理とiPad受付は営業デモURLで管理コード1234を自動設定し、実画面を表示します。</p></div>
+<div class="section-heading section-heading-light reveal"><p class="eyebrow">LIVE PRODUCT EXPERIENCE</p><h2 class="headline-lines headline-fixed"><span>お客様LINEからPC・iPad・スタッフまで、</span><span>本物の完成画面で確認。</span></h2><p>管理コード1234、スタッフコード5678。自動・一斉LINE送信は行わず、必要な文面を確認してコピーする安全設計です。</p></div>
 <div class="live-showcase">
 
-<article class="live-product reveal"><div class="live-copy"><span>01 / CUSTOMER RESERVATION</span><h3>無料体験・<br>トレーニング予約</h3><p>メニューと担当トレーナーを選び、空き状況から希望日時を予約します。</p><ul><li>無料体験・カウンセリング</li><li>30分単位の空き枠</li><li>既存会員情報の自動入力</li></ul><div class="live-actions"><button class="button button-primary button-zoom js-screen-modal" type="button" data-screen-title="無料体験・トレーニング予約" data-screen-url="https://dpromstk2000-lab.github.io/liff-gym-demo/index.html?demo=1&amp;v=gym-5-final">画面を拡大表示</button><a class="button button-secondary" href="https://dpromstk2000-lab.github.io/liff-gym-demo/index.html?demo=1&amp;v=gym-5-final" target="_blank" rel="noopener">別タブで開く</a></div></div><div class="live-device live-phone"><iframe title="無料体験・トレーニング予約" loading="lazy" src="https://dpromstk2000-lab.github.io/liff-gym-demo/index.html?demo=1&amp;v=gym-5-final"></iframe></div></article>
+<article class="live-product reveal"><div class="live-copy"><span>01 / CUSTOMER RESERVATION</span><h3>無料体験・<br>トレーニング予約</h3><p>メニューと担当トレーナーを選び、空き状況から希望日時を予約します。</p><ul><li>無料体験・カウンセリング</li><li>30分単位の空き枠</li><li>既存会員情報の自動入力</li></ul><div class="live-actions"><button class="button button-primary button-zoom js-screen-modal" type="button" data-screen-title="無料体験・トレーニング予約" data-screen-url="https://dpromstk2000-lab.github.io/liff-gym-demo/index.html?demo=1&amp;v=gym-next-10">画面を拡大表示</button><a class="button button-secondary" href="https://dpromstk2000-lab.github.io/liff-gym-demo/index.html?demo=1&amp;v=gym-next-10" target="_blank" rel="noopener">別タブで開く</a></div></div><div class="live-device live-phone"><iframe title="無料体験・トレーニング予約" loading="lazy" src="https://dpromstk2000-lab.github.io/liff-gym-demo/index.html?demo=1&amp;v=gym-next-10"></iframe></div></article>
 
-<article class="live-product live-product-reverse reveal"><div class="live-copy"><span>02 / MEMBER MY PAGE</span><h3>会員<br>マイページ</h3><p>残り回数、次回予約、プラン、目標、予約変更・キャンセル相談を確認できます。</p><ul><li>回数券残数と有効期限</li><li>今後の予約・利用履歴</li><li>トレーナーへの相談</li></ul><div class="live-actions"><button class="button button-primary button-zoom js-screen-modal" type="button" data-screen-title="会員マイページ" data-screen-url="https://dpromstk2000-lab.github.io/liff-gym-demo/member.html?demo=1&amp;line_user_id=demo_gym_line_002&amp;v=gym-5-final">画面を拡大表示</button><a class="button button-secondary" href="https://dpromstk2000-lab.github.io/liff-gym-demo/member.html?demo=1&amp;line_user_id=demo_gym_line_002&amp;v=gym-5-final" target="_blank" rel="noopener">別タブで開く</a></div></div><div class="live-device live-phone"><iframe title="会員マイページ" loading="lazy" src="https://dpromstk2000-lab.github.io/liff-gym-demo/member.html?demo=1&amp;line_user_id=demo_gym_line_002&amp;v=gym-5-final"></iframe></div></article>
+<article class="live-product live-product-reverse reveal"><div class="live-copy"><span>02 / MEMBER MY PAGE</span><h3>会員<br>マイページ</h3><p>残り回数、次回予約、プラン、目標、予約変更・キャンセル相談を確認できます。</p><ul><li>回数券残数と有効期限</li><li>今後の予約・利用履歴</li><li>トレーナーへの相談</li></ul><div class="live-actions"><button class="button button-primary button-zoom js-screen-modal" type="button" data-screen-title="会員マイページ" data-screen-url="https://dpromstk2000-lab.github.io/liff-gym-demo/member.html?demo=1&amp;v=gym-next-10">画面を拡大表示</button><a class="button button-secondary" href="https://dpromstk2000-lab.github.io/liff-gym-demo/member.html?demo=1&amp;v=gym-next-10" target="_blank" rel="noopener">別タブで開く</a></div></div><div class="live-device live-phone"><iframe title="会員マイページ" loading="lazy" src="https://dpromstk2000-lab.github.io/liff-gym-demo/member.html?demo=1&amp;v=gym-next-10"></iframe></div></article>
 
-<article class="live-product reveal"><div class="live-copy"><span>03 / OWNER PC</span><h3>パーソナルジム<br>PC総合管理</h3><p>本日の予約と優先対応、会員、回数券、相談、電話予約、施設設定を一元管理します。</p><ul><li>氏名・電話番号・会員番号検索</li><li>電話・店頭予約</li><li>営業前デモ準備・操作履歴</li></ul><div class="live-actions"><button class="button button-primary button-zoom js-screen-modal" type="button" data-screen-title="パーソナルジムPC総合管理" data-screen-url="https://dpromstk2000-lab.github.io/liff-gym-demo/dashboard.html?demo=1&amp;v=gym-5-final">画面を拡大表示</button><a class="button button-secondary" href="https://dpromstk2000-lab.github.io/liff-gym-demo/dashboard.html?demo=1&amp;v=gym-5-final" target="_blank" rel="noopener">別タブで開く</a></div></div><div class="live-device live-desktop"><div class="live-browser-bar"><span></span><span></span><span></span><b>パーソナルジムPC総合管理</b></div><iframe title="パーソナルジムPC総合管理" loading="lazy" src="https://dpromstk2000-lab.github.io/liff-gym-demo/dashboard.html?demo=1&amp;v=gym-5-final"></iframe></div></article>
+<article class="live-product reveal"><div class="live-copy"><span>03 / OWNER PC</span><h3>パーソナルジム<br>PC総合管理</h3><p>本日の予約と優先対応、会員、回数券、相談、電話予約、施設設定を一元管理します。</p><ul><li>氏名・電話番号・会員番号検索</li><li>電話・店頭予約</li><li>営業前デモ準備・操作履歴</li></ul><div class="live-actions"><button class="button button-primary button-zoom js-screen-modal" type="button" data-screen-title="パーソナルジムPC総合管理" data-screen-url="https://dpromstk2000-lab.github.io/liff-gym-demo/dashboard.html?demo=1&amp;v=gym-next-10">画面を拡大表示</button><a class="button button-secondary" href="https://dpromstk2000-lab.github.io/liff-gym-demo/dashboard.html?demo=1&amp;v=gym-next-10" target="_blank" rel="noopener">別タブで開く</a></div></div><div class="live-device live-desktop"><div class="live-browser-bar"><span></span><span></span><span></span><b>パーソナルジムPC総合管理</b></div><iframe title="パーソナルジムPC総合管理" loading="lazy" src="https://dpromstk2000-lab.github.io/liff-gym-demo/dashboard.html?demo=1&amp;v=gym-next-10"></iframe></div></article>
 
-<article class="live-product live-product-reverse reveal"><div class="live-copy"><span>04 / RECEPTION IPAD</span><h3>iPad受付<br>本日の進行管理</h3><p>予約確定・来店・開始・完了を受付から更新し、回数券対象メニューは完了時に減算します。</p><ul><li>本日の予約と進行状況</li><li>会員検索・回数調整</li><li>相談・連絡の対応</li></ul><div class="live-actions"><button class="button button-primary button-zoom js-screen-modal" type="button" data-screen-title="iPad受付 本日の進行管理" data-screen-url="https://dpromstk2000-lab.github.io/liff-gym-demo/owner-ipad.html?demo=1&amp;v=gym-5-final">画面を拡大表示</button><a class="button button-secondary" href="https://dpromstk2000-lab.github.io/liff-gym-demo/owner-ipad.html?demo=1&amp;v=gym-5-final" target="_blank" rel="noopener">別タブで開く</a></div></div><div class="live-device live-tablet"><div class="live-browser-bar"><span></span><span></span><span></span><b>iPad受付 本日の進行管理</b></div><iframe title="iPad受付 本日の進行管理" loading="lazy" src="https://dpromstk2000-lab.github.io/liff-gym-demo/owner-ipad.html?demo=1&amp;v=gym-5-final"></iframe></div></article>
+<article class="live-product live-product-reverse reveal"><div class="live-copy"><span>04 / RECEPTION IPAD</span><h3>iPad受付<br>本日の進行管理</h3><p>スタッフ権限で来店・開始・完了を更新し、セッション記録と回数減算を重複なく確定します。</p><ul><li>本日の予約と進行状況</li><li>スタッフ専用API・権限分離</li><li>完了時だけ原子的に回数減算</li></ul><div class="live-actions"><button class="button button-primary button-zoom js-screen-modal" type="button" data-screen-title="iPad受付 本日の進行管理" data-screen-url="https://dpromstk2000-lab.github.io/liff-gym-demo/owner-ipad.html?demo=1&amp;v=gym-next-10">画面を拡大表示</button><a class="button button-secondary" href="https://dpromstk2000-lab.github.io/liff-gym-demo/owner-ipad.html?demo=1&amp;v=gym-next-10" target="_blank" rel="noopener">別タブで開く</a></div></div><div class="live-device live-tablet"><div class="live-browser-bar"><span></span><span></span><span></span><b>iPad受付 本日の進行管理</b></div><iframe title="iPad受付 本日の進行管理" loading="lazy" src="https://dpromstk2000-lab.github.io/liff-gym-demo/owner-ipad.html?demo=1&amp;v=gym-next-10"></iframe></div></article>
 
+</div>
+</section>
+
+
+<section class="gym-next-proof" id="operation-sheet" data-dpro-next-step="GYM-NEXT-10B">
+<div class="gym-next-proof-inner">
+<div class="gym-next-proof-copy reveal">
+<span class="gym-next-complete-badge">GYM NEXT-10 COMPLETE</span>
+<p class="eyebrow">A4 OPERATION EXPERIENCE SHEET</p>
+<h2>6つの実画面を、<br>QR付き1枚資料で確認。</h2>
+<p>無料体験予約、会員マイページ、PC管理、iPad受付、スタッフ画面、営業前system-checkを実画面スクリーンショットで掲載しています。</p>
+<div class="gym-next-proof-list">
+<span>実画面 6画面</span>
+<span>QR読取 6 / 6</span>
+<span>URL完全一致 6 / 6</span>
+<span>A4縦・300dpi</span>
+<span>QRサイズ 23mm</span>
+<span>公開PDF SHA一致</span>
+</div>
+<div class="gym-next-proof-actions">
+<a class="button button-primary" href="https://dpromstk2000-lab.github.io/liff-gym-demo/deliverables/gym-next-10/DPRO_GYM_NEXT_operation_experience_sheet_20260726.pdf" target="_blank" rel="noopener">操作体験PDFを開く</a>
+<a class="button button-secondary" href="https://dpromstk2000-lab.github.io/liff-gym-demo/deliverables/gym-next-10/operation-sheet.html" target="_blank" rel="noopener">6画面をWebで見る</a>
+<a class="button button-secondary" href="https://dpromstk2000-lab.github.io/liff-gym-demo/system-check.html?demo=1&amp;v=gym-next-10" target="_blank" rel="noopener">system-checkを開く</a>
+</div>
+</div>
+<a class="gym-next-sheet-preview reveal" href="https://dpromstk2000-lab.github.io/liff-gym-demo/deliverables/gym-next-10/DPRO_GYM_NEXT_operation_experience_sheet_20260726.pdf" target="_blank" rel="noopener" aria-label="DPROパーソナルジム操作体験シートPDFを開く">
+<img loading="lazy" src="https://dpromstk2000-lab.github.io/liff-gym-demo/deliverables/gym-next-10/DPRO_GYM_NEXT_operation_experience_sheet_20260726.png?v=gym-next-10b" alt="DPROパーソナルジムLINE NEXT 操作体験シート">
+</a>
 </div>
 </section>
 
@@ -108,7 +150,7 @@
 </div>
 </section>
 
-<section class="contact section" id="contact"><div class="contact-card reveal"><p class="eyebrow">START WITH A DEMO</p><h2 class="headline-lines headline-fixed"><span>パーソナルジムの予約・会員業務を、</span><span>実際の画面で、</span><span>確認しませんか。</span></h2><p>完成済みの予約・会員マイページ・PC管理・iPad受付画面をご案内します。</p><div class="contact-actions"><a class="button button-line" href="https://lin.ee/YxJGXV6D" target="_blank" rel="noopener">LINEでデモを見る</a><a class="button button-secondary-light" href="https://dpromstk2000-lab.github.io/liff-gym-demo/index.html?demo=1&amp;v=gym-5-final" target="_blank" rel="noopener">無料体験予約を開く</a></div></div></section>
+<section class="contact section" id="contact"><div class="contact-card reveal"><p class="eyebrow">START WITH A DEMO</p><h2 class="headline-lines headline-fixed"><span>パーソナルジムの予約・会員業務を、</span><span>実際の画面で、</span><span>確認しませんか。</span></h2><p>DPRO NEXT完成済みの予約・会員・PC管理・iPad受付・スタッフ・system-checkをご案内します。</p><div class="contact-actions"><a class="button button-line" href="https://lin.ee/YxJGXV6D" target="_blank" rel="noopener">LINEでデモを見る</a><a class="button button-secondary-light" href="https://dpromstk2000-lab.github.io/liff-gym-demo/deliverables/gym-next-10/DPRO_GYM_NEXT_operation_experience_sheet_20260726.pdf" target="_blank" rel="noopener">操作体験PDFを開く</a></div></div></section>
 </main>
 
 <footer class="site-footer"><div><a class="brand footer-brand" href="../index.html"><span class="brand-mark">D</span><span class="brand-copy"><strong>DPRO LINE SYSTEMS</strong><small>OFFICIAL PRODUCT SITE</small></span></a><p>業務を、LINEでもっと簡単に。</p></div><nav><a href="../systems.html">システム一覧</a><a href="../index.html#why">DPROについて</a><a href="https://lin.ee/YxJGXV6D" target="_blank" rel="noopener">LINEでデモを見る</a></nav><p class="copyright">© <span id="year"></span> DPRO SHOP</p></footer>
