@@ -1,0 +1,29 @@
+step: DPRO-WEB-SHUTTLE-1
+title: DPRO 福祉施設送迎 製品紹介ページ
+target_repository: dpromstk2000-lab/dpro-line-systems-site
+target_path: systems/welfare-shuttle.html
+files:
+  - welfare-shuttle.html
+  - welfare-shuttle-html.txt
+changes:
+  - 福祉施設送迎専用の製品紹介ページを新規作成
+  - できること・おすすめ施設・導入前後を掲載
+  - PC・iPad・スタッフ・ご家族の実画面を埋め込み
+  - デモ認証情報を掲載
+  - DPROシステム料金を掲載
+automatic_checks:
+  html_parse: pass
+  iframe_pair_check: pass
+  required_sections:
+    - hero
+    - sales-summary
+    - product-intro
+    - experience
+    - feature-showcase
+    - pricing
+    - contact
+upload_url: https://github.com/dpromstk2000-lab/dpro-line-systems-site/upload/main/systems
+target_filename: welfare-shuttle.html
+published_url: https://dpromstk2000-lab.github.io/dpro-line-systems-site/systems/welfare-shuttle.html
+next_step: DPRO-WEB-SHUTTLE-2
+next_action: systems.html と script.js に福祉施設送迎カードを追加して製品一覧から遷移可能にする
