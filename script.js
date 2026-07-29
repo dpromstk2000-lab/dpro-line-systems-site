@@ -1,7 +1,7 @@
 (() => {
   "use strict";
 
-  // STEP CARETAXI-WEB-1 / 42 PRODUCTS / PRESERVE ALL 41 PRODUCTS / 20260729
+  // STEP SITE-SHUTTLE-1 / 43 PRODUCTS / PRESERVE ALL 42 PRODUCTS / 20260729
 
   const menuButton = document.querySelector(".menu-button");
   const globalNav = document.querySelector(".global-nav");
@@ -38,6 +38,7 @@
       },
       { threshold: 0.1 }
     );
+
     document
       .querySelectorAll(".reveal")
       .forEach((element) => revealObserver.observe(element));
@@ -157,7 +158,7 @@
     });
   }
 
-  const productCount = 42;
+  const productCount = 43;
 
   const setFirstText = (selector, value) => {
     const node = document.querySelector(selector);
@@ -263,6 +264,7 @@
   appendDescription("教育・生活サービス", "訪問介護・家族連絡");
   appendDescription("教育・生活サービス", "福祉用具レンタル・販売");
   appendDescription("教育・生活サービス", "介護タクシー");
+  appendDescription("教育・生活サービス", "福祉施設送迎");
   appendDescription(
     "士業・企業支援",
     "行政書士・許認可申請"
@@ -470,6 +472,16 @@
       "教育・生活サービス",
       "介護タクシー",
       "送迎依頼・家族ポータル・配車・当日運行・料金・顧客乗車者台帳。"
+    ],
+    [
+      "systems/welfare-shuttle.html",
+      "WS",
+      "catalog-live-welfare-shuttle",
+      "福祉施設送迎実画面プレビュー",
+      "https://dpromstk2000-lab.github.io/dpro-welfare-shuttle-line/?demo=1&v=SHUTTLE-10-R1",
+      "教育・生活サービス",
+      "福祉施設送迎",
+      "利用者・家族連携・定期予定・配車・スタッフ運行・変更依頼・一括検査。"
     ]
   ];
 
@@ -545,7 +557,8 @@
       "就労継続支援B型",
       "宿泊・民泊",
       "福祉用具レンタル・販売",
-      "介護タクシー"
+      "介護タクシー",
+      "福祉施設送迎"
     ],
     "士業・企業支援": [
       "社労士・顧問先対応",
