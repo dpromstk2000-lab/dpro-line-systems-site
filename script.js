@@ -1,7 +1,7 @@
 (() => {
   "use strict";
 
-  // STEP WELFARE-EQUIP-WEB-1 / 40 PRODUCTS / PRESERVE ALL 39 PRODUCTS / 20260720
+  // STEP CARETAXI-WEB-1 / 42 PRODUCTS / PRESERVE ALL 41 PRODUCTS / 20260729
 
   const menuButton = document.querySelector(".menu-button");
   const globalNav = document.querySelector(".global-nav");
@@ -157,7 +157,7 @@
     });
   }
 
-  const productCount = 41;
+  const productCount = 42;
 
   const setFirstText = (selector, value) => {
     const node = document.querySelector(selector);
@@ -262,6 +262,7 @@
   appendDescription("教育・生活サービス", "宿泊・民泊");
   appendDescription("教育・生活サービス", "訪問介護・家族連絡");
   appendDescription("教育・生活サービス", "福祉用具レンタル・販売");
+  appendDescription("教育・生活サービス", "介護タクシー");
   appendDescription(
     "士業・企業支援",
     "行政書士・許認可申請"
@@ -441,16 +442,15 @@
       "美容相談・商品取り置き・購入履歴・再購入・問合せ・販促管理。"
     ],
     [
-    "systems/homecare.html",
-    "HC",
-    "catalog-live-homecare",
-    "訪問介護・家族連絡実画面プレビュー",
-    "https://dpromstk2000-lab.github.io/dpro-homecare-family-line/owner.html?demo=1&v=HOMECARE-10",
-    "教育・生活サービス",
-    "訪問介護・家族連絡",
-    "訪問予定・スタッフ記録・家族報告・申し送り・事故・問い合わせ管理。"
-  ]
-,
+      "systems/homecare.html",
+      "HC",
+      "catalog-live-homecare",
+      "訪問介護・家族連絡実画面プレビュー",
+      "https://dpromstk2000-lab.github.io/dpro-homecare-family-line/owner.html?demo=1&v=HOMECARE-10",
+      "教育・生活サービス",
+      "訪問介護・家族連絡",
+      "訪問予定・スタッフ記録・家族報告・申し送り・事故・問い合わせ管理。"
+    ],
     [
       "systems/welfare-equipment.html",
       "WE",
@@ -460,6 +460,16 @@
       "教育・生活サービス",
       "福祉用具レンタル・販売",
       "相談・アセスメント・計画・契約・個体管理・納品・保守・請求・スタッフ権限。"
+    ],
+    [
+      "systems/caretaxi.html",
+      "CT",
+      "catalog-live-caretaxi",
+      "介護タクシー実画面プレビュー",
+      "https://dpromstk2000-lab.github.io/dpro-caretaxi-line/owner.html?v=CARETAXI-11",
+      "教育・生活サービス",
+      "介護タクシー",
+      "送迎依頼・家族ポータル・配車・当日運行・料金・顧客乗車者台帳。"
     ]
   ];
 
@@ -534,7 +544,8 @@
       "放課後等デイサービス",
       "就労継続支援B型",
       "宿泊・民泊",
-      "福祉用具レンタル・販売"
+      "福祉用具レンタル・販売",
+      "介護タクシー"
     ],
     "士業・企業支援": [
       "社労士・顧問先対応",
