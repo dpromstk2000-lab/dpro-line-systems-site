@@ -1,7 +1,7 @@
 (() => {
   "use strict";
 
-  // STEP SITE-SHUTTLE-1 / 43 PRODUCTS / PRESERVE ALL 42 PRODUCTS / 20260729
+  // STEP SITE-HAISHOKU-1 / 44 PRODUCTS / PRESERVE ALL 43 PRODUCTS / 20260730
 
   const menuButton = document.querySelector(".menu-button");
   const globalNav = document.querySelector(".global-nav");
@@ -158,7 +158,7 @@
     });
   }
 
-  const productCount = 43;
+  const productCount = 44;
 
   const setFirstText = (selector, value) => {
     const node = document.querySelector(selector);
@@ -265,6 +265,7 @@
   appendDescription("教育・生活サービス", "福祉用具レンタル・販売");
   appendDescription("教育・生活サービス", "介護タクシー");
   appendDescription("教育・生活サービス", "福祉施設送迎");
+  appendDescription("教育・生活サービス", "高齢者配食サービス");
   appendDescription(
     "士業・企業支援",
     "行政書士・許認可申請"
@@ -482,6 +483,16 @@
       "教育・生活サービス",
       "福祉施設送迎",
       "利用者・家族連携・定期予定・配車・スタッフ運行・変更依頼・一括検査。"
+    ],
+    [
+      "systems/senior-meal-delivery.html",
+      "SM",
+      "catalog-live-senior-meal",
+      "高齢者配食サービス実画面プレビュー",
+      "https://dpromstk2000-lab.github.io/dpro-senior-meal-delivery-line/owner.html?demo=1&v=HAISHOKU-12",
+      "教育・生活サービス",
+      "高齢者配食サービス",
+      "電話・店頭注文、定期利用、厨房、配達、家族連絡、変更依頼、LINE通知を一元管理。"
     ]
   ];
 
@@ -558,7 +569,8 @@
       "宿泊・民泊",
       "福祉用具レンタル・販売",
       "介護タクシー",
-      "福祉施設送迎"
+      "福祉施設送迎",
+      "高齢者配食サービス"
     ],
     "士業・企業支援": [
       "社労士・顧問先対応",
