@@ -8,7 +8,7 @@
 <link rel="stylesheet" href="../styles.css">
 </head>
 <body>
-<!-- STEP NURSING-SYSTEM-SITE-46-R2 / COMMON LIVE PREVIEW / HTML ONLY / 20260731 -->
+<!-- STEP NURSING-SYSTEM-SITE-46-R3 / COMMON LIVE PREVIEW / HTML ONLY / 20260731 -->
 <header class="site-header" id="top"><div class="header-inner">
 <a class="brand" href="../index.html"><span class="brand-mark">D</span><span class="brand-copy"><strong>DPRO LINE SYSTEMS</strong><small>OFFICIAL PRODUCT SITE</small></span></a>
 <button class="menu-button" type="button" aria-expanded="false" aria-controls="global-nav" aria-label="メニューを開く"><span></span><span></span><span></span></button>
@@ -55,7 +55,7 @@
 <article class="product-feature reveal"><span>03</span><h3>管理者PC</h3><p>訪問予定、スタッフ配置、スタッフ管理、家族報告、LINE連携を一元管理します。</p></article>
 <article class="product-feature reveal"><span>04</span><h3>管理者iPad</h3><p>当日の訪問、未配置、訪問中、完了、家族連絡、承認、要確認を実データ表示します。</p></article>
 <article class="product-feature reveal"><span>05</span><h3>スタッフ画面</h3><p>ログインしたスタッフ本人に割り当てられた訪問だけを表示し、開始・終了・報告案を登録します。</p></article>
-<article class="product-feature reveal"><span>06</span><h3>最終system-check</h3><p>フロント、Worker、Supabase、LINE、セキュリティ、主要機能を45項目で一括検査します。</p></article>
+<article class="product-feature reveal"><span>06</span><h3>家族連絡・承認</h3><p>変更・欠席・折り返し希望を確認し、家族報告とLINE連携を管理者が承認します。</p></article>
 </div>
 </section>
 
@@ -122,7 +122,7 @@
   class="button button-primary button-zoom js-screen-modal"
   type="button"
   data-screen-title="訪問看護 本人・家族ポータル"
-  data-screen-url="https://dpromstk2000-lab.github.io/dpro-home-nursing-line/member.html?demo=1&mock=1&preview=1&embed_demo=1&v=NURSING-SITE-R2"
+  data-nursing-member-modal
 >画面を拡大表示</button>
 <a class="button button-secondary" href="https://liff.line.me/2010876527-hXoFHt3R/member.html" target="_blank" rel="noopener">
 LINEで開く
@@ -130,7 +130,12 @@ LINEで開く
 </div>
 </div>
 <div class="live-device live-phone">
-<iframe title="訪問看護 本人・家族ポータル" loading="lazy" src="https://dpromstk2000-lab.github.io/dpro-home-nursing-line/member.html?demo=1&mock=1&preview=1&embed_demo=1&v=NURSING-SITE-R2"></iframe>
+<iframe
+  title="訪問看護 本人・家族ポータル"
+  loading="lazy"
+  sandbox=""
+  data-nursing-member-preview
+></iframe>
 </div>
 </article>
 
@@ -232,39 +237,6 @@ LINEで開く
 </div>
 </article>
 
-<article class="live-product live-product-reverse reveal">
-<div class="live-copy">
-<span>06 / SYSTEM CHECK</span>
-<h3>最終<br>システム検査</h3>
-<p>営業前・公開前に、主要機能と安全設定を一括確認します。</p>
-<ul>
-<li>45件中45件合格</li>
-<li>要確認0件・不合格0件</li>
-<li>最終判定「営業デモ実施可能」</li>
-</ul>
-<div class="demo-code-card">
-<span>DEMO CODE</span>
-<strong>1234</strong>
-<small>NURSING-11公開固定版</small>
-</div>
-<div class="live-actions">
-<button
-  class="button button-primary button-zoom js-screen-modal"
-  type="button"
-  data-screen-title="訪問看護 最終システム検査"
-  data-screen-url="https://dpromstk2000-lab.github.io/dpro-home-nursing-line/system-check.html?v=NURSING-11"
->画面を拡大表示</button>
-<a class="button button-secondary" href="https://dpromstk2000-lab.github.io/dpro-home-nursing-line/system-check.html?v=NURSING-11" target="_blank" rel="noopener">
-別タブで開く
-</a>
-</div>
-</div>
-<div class="live-device live-desktop">
-<div class="live-browser-bar"><span></span><span></span><span></span><b>最終システム検査</b></div>
-<iframe title="訪問看護 最終システム検査" loading="lazy" src="https://dpromstk2000-lab.github.io/dpro-home-nursing-line/system-check.html?v=NURSING-11"></iframe>
-</div>
-</article>
-
 </div>
 </section>
 
@@ -306,10 +278,43 @@ LINEで開く
 <button class="back-to-top" type="button">↑</button>
 <div class="screen-modal" id="screen-modal" aria-hidden="true"><div class="screen-modal-backdrop" data-modal-close></div><div class="screen-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="screen-modal-title"><div class="screen-modal-header"><strong id="screen-modal-title">実画面</strong><div><a id="screen-modal-external" href="#" target="_blank" rel="noopener">別タブで開く</a><button type="button" data-modal-close aria-label="閉じる">×</button></div></div><iframe id="screen-modal-frame" title="拡大したシステム画面"></iframe></div></div>
 <script src="../script.js"></script>
+<script id="nursing-system-site-member-preview">
+(() => {
+  "use strict";
+  const DATA = "PCFkb2N0eXBlIGh0bWw+CjxodG1sIGxhbmc9ImphIj4KPGhlYWQ+CjxtZXRhIGNoYXJzZXQ9InV0Zi04Ij4KPG1ldGEgbmFtZT0idmlld3BvcnQiIGNvbnRlbnQ9IndpZHRoPWRldmljZS13aWR0aCxpbml0aWFsLXNjYWxlPTEiPgo8c3R5bGU+Cjpyb290ey0tdDojMGM2NjY0Oy0tbjojMTIzMjRiOy0tbTojNjE3Nzg2Oy0tbDojY2ZkZGRjOy0tZzojMTY4NjVhOy0tZ3M6I2VhZjhlZjstLWI6I2Y0ZjhmN30KKntib3gtc2l6aW5nOmJvcmRlci1ib3h9aHRtbHtmb250LWZhbWlseTotYXBwbGUtc3lzdGVtLEJsaW5rTWFjU3lzdGVtRm9udCwiTm90byBTYW5zIEpQIiwiWXUgR290aGljIixzYW5zLXNlcmlmO2JhY2tncm91bmQ6dmFyKC0tYik7Y29sb3I6dmFyKC0tbil9CmJvZHl7bWFyZ2luOjA7YmFja2dyb3VuZDpsaW5lYXItZ3JhZGllbnQoI2ZmZiwjZjNmOGY3KTtmb250LXNpemU6MTZweH0KaGVhZGVye2JhY2tncm91bmQ6I2ZmZjtib3JkZXItYm90dG9tOjFweCBzb2xpZCB2YXIoLS1sKX0KLnRvcHtkaXNwbGF5OmZsZXg7YWxpZ24taXRlbXM6Y2VudGVyO2dhcDoxMXB4O3BhZGRpbmc6MTNweH0KLmxvZ297ZGlzcGxheTpncmlkO3BsYWNlLWl0ZW1zOmNlbnRlcjt3aWR0aDo0NHB4O2hlaWdodDo0NHB4O2JvcmRlci1yYWRpdXM6MTNweDtiYWNrZ3JvdW5kOmxpbmVhci1ncmFkaWVudCgxNDVkZWcsIzBiNmI2OSwjMGM0MDU0KTtjb2xvcjojZmZmO2ZvbnQtc2l6ZToyNHB4O2ZvbnQtd2VpZ2h0OjkwMH0KLmJyYW5ke21pbi13aWR0aDowfS5icmFuZCBzbWFsbHtkaXNwbGF5OmJsb2NrO2NvbG9yOnZhcigtLXQpO2ZvbnQtc2l6ZTo5cHg7Zm9udC13ZWlnaHQ6OTAwO2xldHRlci1zcGFjaW5nOi4wOGVtfQouYnJhbmQgc3Ryb25ne2Rpc3BsYXk6YmxvY2s7b3ZlcmZsb3c6aGlkZGVuO3RleHQtb3ZlcmZsb3c6ZWxsaXBzaXM7d2hpdGUtc3BhY2U6bm93cmFwO2ZvbnQtc2l6ZToxM3B4fQoucm9sZXttYXJnaW4tbGVmdDphdXRvO3BhZGRpbmc6NnB4IDlweDtib3JkZXItcmFkaXVzOjk5OXB4O2JhY2tncm91bmQ6I2VhZjVmMztjb2xvcjp2YXIoLS10KTtmb250LXNpemU6MTBweDtmb250LXdlaWdodDo5MDB9Cm1haW57cGFkZGluZzoxM3B4fS5lbXtwYWRkaW5nOjEzcHg7Ym9yZGVyOjJweCBzb2xpZCAjZWZiNWFmO2JvcmRlci1yYWRpdXM6MTVweDtiYWNrZ3JvdW5kOiNmZmYxZWY7Y29sb3I6Izk3MmUyODtmb250LXNpemU6MTFweDtmb250LXdlaWdodDo4MDA7bGluZS1oZWlnaHQ6MS42fQouaGVyb3ttYXJnaW4tdG9wOjEzcHg7cGFkZGluZzoyMnB4IDE3cHg7Ym9yZGVyOjFweCBzb2xpZCB2YXIoLS1sKTtib3JkZXItcmFkaXVzOjIwcHg7YmFja2dyb3VuZDpsaW5lYXItZ3JhZGllbnQoMTM1ZGVnLCNmZmYsI2VhZjVmMyl9Ci5leWV7bWFyZ2luOjAgMCA2cHg7Y29sb3I6dmFyKC0tdCk7Zm9udC1zaXplOjEwcHg7Zm9udC13ZWlnaHQ6OTAwO2xldHRlci1zcGFjaW5nOi4wOGVtfQpoMXttYXJnaW46MDtmb250LXNpemU6MjVweDtsaW5lLWhlaWdodDoxLjN9LmxlYWR7bWFyZ2luOjEwcHggMCAwO2NvbG9yOnZhcigtLW0pO2ZvbnQtc2l6ZToxMnB4O2xpbmUtaGVpZ2h0OjEuN30KLm9re21hcmdpbi10b3A6MTNweDtwYWRkaW5nOjEycHggMTNweDtib3JkZXI6MXB4IHNvbGlkICM4ZGM5YWE7Ym9yZGVyLXJhZGl1czoxM3B4O2JhY2tncm91bmQ6dmFyKC0tZ3MpO2NvbG9yOiMxNzZhNGE7Zm9udC1zaXplOjExcHg7Zm9udC13ZWlnaHQ6ODAwO2xpbmUtaGVpZ2h0OjEuNTV9Ci5zZWN7bWFyZ2luLXRvcDoxOXB4fS5oZWFke2Rpc3BsYXk6ZmxleDthbGlnbi1pdGVtczpmbGV4LWVuZDtqdXN0aWZ5LWNvbnRlbnQ6c3BhY2UtYmV0d2VlbjtnYXA6OHB4O21hcmdpbi1ib3R0b206OHB4fQouaGVhZCBoMnttYXJnaW46MDtmb250LXNpemU6MjBweH0uc3RhdHVze3BhZGRpbmc6NXB4IDhweDtib3JkZXItcmFkaXVzOjk5OXB4O2JhY2tncm91bmQ6dmFyKC0tZ3MpO2NvbG9yOnZhcigtLWcpO2ZvbnQtc2l6ZToxMHB4O2ZvbnQtd2VpZ2h0OjkwMH0KLmNhcmR7bWFyZ2luLXRvcDo4cHg7cGFkZGluZzoxNHB4O2JvcmRlcjoxcHggc29saWQgdmFyKC0tbCk7Ym9yZGVyLXJhZGl1czoxNnB4O2JhY2tncm91bmQ6I2ZmZjtib3gtc2hhZG93OjAgNnB4IDE4cHggcmdiYSgyMSw1Niw2NiwuMDUpfQoudmlzaXR7ZGlzcGxheTpncmlkO2dyaWQtdGVtcGxhdGUtY29sdW1uczo3MnB4IDFmcjtnYXA6MTBweH0udGltZXtmb250LXNpemU6MTFweDtmb250LXdlaWdodDo5MDA7bGluZS1oZWlnaHQ6MS41NX0KLmNhcmQgaDN7bWFyZ2luOjAgMCA0cHg7Zm9udC1zaXplOjE1cHh9LmNhcmQgcHttYXJnaW46MDtjb2xvcjp2YXIoLS1tKTtmb250LXNpemU6MTFweDtsaW5lLWhlaWdodDoxLjZ9Ci5yZXBvcnR7Ym9yZGVyLWxlZnQ6NXB4IHNvbGlkIHZhcigtLXQpfS5mb3Jte2Rpc3BsYXk6Z3JpZDtnYXA6OXB4fQpsYWJlbHtkaXNwbGF5OmJsb2NrO21hcmdpbi1ib3R0b206NHB4O2ZvbnQtc2l6ZToxMXB4O2ZvbnQtd2VpZ2h0OjkwMH0Kc2VsZWN0LHRleHRhcmVhe3dpZHRoOjEwMCU7Ym9yZGVyOjFweCBzb2xpZCB2YXIoLS1sKTtib3JkZXItcmFkaXVzOjExcHg7YmFja2dyb3VuZDojZjdmYWY5O3BhZGRpbmc6MTBweDtjb2xvcjojNzI4MzhjO2ZvbnQ6aW5oZXJpdH0KdGV4dGFyZWF7bWluLWhlaWdodDo4MnB4O3Jlc2l6ZTpub25lfWJ1dHRvbnt3aWR0aDoxMDAlO2JvcmRlcjowO2JvcmRlci1yYWRpdXM6MTJweDtiYWNrZ3JvdW5kOiNjOGQ2ZDQ7cGFkZGluZzoxMnB4O2NvbG9yOiNmZmY7Zm9udC1zaXplOjEzcHg7Zm9udC13ZWlnaHQ6OTAwfQoubm90ZXttYXJnaW46MjBweCAwIDdweDtwYWRkaW5nOjEzcHg7Ym9yZGVyLWxlZnQ6NXB4IHNvbGlkICMzNDdiYWI7Ym9yZGVyLXJhZGl1czoxMXB4O2JhY2tncm91bmQ6I2VhZjNmYjtjb2xvcjojMzc1YzcyO2ZvbnQtc2l6ZToxMHB4O2xpbmUtaGVpZ2h0OjEuNjV9CmZvb3RlcntwYWRkaW5nOjIycHggMTNweDt0ZXh0LWFsaWduOmNlbnRlcjtjb2xvcjojN2E4ZDk4O2ZvbnQtc2l6ZTo5cHh9Cjwvc3R5bGU+CjwvaGVhZD4KPGJvZHk+CjxoZWFkZXI+PGRpdiBjbGFzcz0idG9wIj48ZGl2IGNsYXNzPSJsb2dvIj7nnIs8L2Rpdj48ZGl2IGNsYXNzPSJicmFuZCI+PHNtYWxsPkRQUk8gSE9NRSBOVVJTSU5HPC9zbWFsbD48c3Ryb25nPkRQUk8g6Kiq5ZWP55yL6K2344K544OG44O844K344On44OzIExJTkU8L3N0cm9uZz48L2Rpdj48c3BhbiBjbGFzcz0icm9sZSI+5pys5Lq644O75a625pePPC9zcGFuPjwvZGl2PjwvaGVhZGVyPgo8bWFpbj4KPGRpdiBjbGFzcz0iZW0iPuKYjiDnt4rmgKXjga7nl4fnirbjg7vpgKPntaHjga9MSU5F44Gr5YWl5Yqb44Gb44Ga44CB5LqL5qWt5omA44Gu57eK5oCl6YCj57Wh5YWI44G+44Gf44GvMTE544G46Zu76Kmx44GX44Gm44GP44Gg44GV44GE44CCPC9kaXY+CjxzZWN0aW9uIGNsYXNzPSJoZXJvIj48cCBjbGFzcz0iZXllIj4yMDI25bm0N+aciDMx5pelKOmHkSk8L3A+PGgxPuioquWVj+eci+ittyDjg4fjg6LliKnnlKjogIXmp5jjga7oqKrllY/kuojlrpo8L2gxPjxwIGNsYXNzPSJsZWFkIj7pgKPmkLrmib/oqo3jgZXjgozjgZ/jgZTmnKzkurrjg7vjgZTlrrbml4/jgaDjgZHjgYzjgIHoqKrllY/kuojlrprjgajlhazplovmuIjjgb/loLHlkYrjgpLnorroqo3jgafjgY3jgb7jgZnjgII8L3A+PC9zZWN0aW9uPgo8ZGl2IGNsYXNzPSJvayI+TElORemAo+aQuuOCkueiuuiqjeOBl+OBvuOBl+OBn+OAgueuoeeQhuiAheOBjOWFrOmWi+OCkuaJv+iqjeOBl+OBn+aDheWgseOBoOOBkeOCkuihqOekuuOBl+OBpuOBhOOBvuOBmeOAgjwvZGl2Pgo8c2VjdGlvbiBjbGFzcz0ic2VjIj48ZGl2IGNsYXNzPSJoZWFkIj48ZGl2PjxwIGNsYXNzPSJleWUiPuioquWVj+S6iOWumjwvcD48aDI+5qyh5Zue44GL44KJMuS7tjwvaDI+PC9kaXY+PHNwYW4gY2xhc3M9InN0YXR1cyI+6YCj5pC65om/6KqN5riI44G/PC9zcGFuPjwvZGl2Pgo8YXJ0aWNsZSBjbGFzcz0iY2FyZCB2aXNpdCI+PGRpdiBjbGFzcz0idGltZSI+OOaciDPml6Uo5pyIKTxicj4xMDowMDwvZGl2PjxkaXY+PGgzPuWumuacn+ioquWVjzwvaDM+PHA+57WC5LqG5LqI5a6aIDExOjAwPGJyPuaLheW9k+eci+itt+W4q+OBjOioquWVj+OBl+OBvuOBmeOAgjwvcD48L2Rpdj48L2FydGljbGU+CjxhcnRpY2xlIGNsYXNzPSJjYXJkIHZpc2l0Ij48ZGl2IGNsYXNzPSJ0aW1lIj445pyINuaXpSjmnKgpPGJyPjE0OjMwPC9kaXY+PGRpdj48aDM+6Kiq5ZWP44Oq44OP44OT44OqPC9oMz48cD7ntYLkuobkuojlrpogMTU6MzA8YnI+5aSJ5pu044Gv5LqL5qWt5omA44Gu5Zue562U5b6M44Gr56K65a6a44GX44G+44GZ44CCPC9wPjwvZGl2PjwvYXJ0aWNsZT48L3NlY3Rpb24+CjxzZWN0aW9uIGNsYXNzPSJzZWMiPjxkaXYgY2xhc3M9ImhlYWQiPjxkaXY+PHAgY2xhc3M9ImV5ZSI+5YWs6ZaL5riI44G/5oOF5aCx44Gu44G/PC9wPjxoMj7oqKrllY/lrozkuobloLHlkYo8L2gyPjwvZGl2PjwvZGl2Pgo8YXJ0aWNsZSBjbGFzcz0iY2FyZCByZXBvcnQiPjxwIGNsYXNzPSJleWUiPuioquWVj+WujOS6huWgseWRijwvcD48aDM+N+aciDMw5pelKOacqCkgMDk6NDU8L2gzPjxwPuS6iOWumuOBqeOBiuOCiuioquWVj+OBjOWujOS6huOBl+OBvuOBl+OBn+OAgjwvcD48L2FydGljbGU+PC9zZWN0aW9uPgo8c2VjdGlvbiBjbGFzcz0ic2VjIj48ZGl2IGNsYXNzPSJoZWFkIj48ZGl2PjxwIGNsYXNzPSJleWUiPumdnue3iuaApeOBruOBlOmAo+e1oTwvcD48aDI+5aSJ5pu044O755u46KuH44KS6YCB44KLPC9oMj48L2Rpdj48L2Rpdj4KPGRpdiBjbGFzcz0iY2FyZCBmb3JtIj48ZGl2PjxsYWJlbD7pgKPntaHlhoXlrrk8L2xhYmVsPjxzZWxlY3QgZGlzYWJsZWQ+PG9wdGlvbj7oqKrllY/ml6XmmYLjga7lpInmm7TluIzmnJs8L29wdGlvbj48L3NlbGVjdD48L2Rpdj48ZGl2PjxsYWJlbD7kvJ3jgYjjgZ/jgYTlhoXlrrk8L2xhYmVsPjx0ZXh0YXJlYSBkaXNhYmxlZD7ntLnku4vjg5rjg7zjgrjlhoXjga/oqq3lj5blsILnlKjjgafjgZnjgII8L3RleHRhcmVhPjwvZGl2PjxidXR0b24gZGlzYWJsZWQ+5LqL5qWt5omA44G46YCB5L+h44GZ44KLPC9idXR0b24+PC9kaXY+PC9zZWN0aW9uPgo8ZGl2IGNsYXNzPSJub3RlIj7jgZPjga7jg5fjg6zjg5Pjg6Xjg7zjga/mnrbnqbrjg4fjg7zjgr/jgafjgZnjgILjgrnjgr/jg4Pjg5Xjga7lhoXpg6jnlLPjgZfpgIHjgorjgoTmraPlvI/jgarnnIvorbfoqJjpjLLjga/ooajnpLrjgZfjgb7jgZvjgpPjgII8L2Rpdj4KPC9tYWluPjxmb290ZXI+RFBST+ioquWVj+eci+itt+OCueODhuODvOOCt+ODp+ODs++8iOODh+ODou+8ie+8j1JFQUQgT05MWSBQUkVWSUVXPC9mb290ZXI+CjwvYm9keT48L2h0bWw+";
+  const LINE_URL = "https://liff.line.me/2010876527-hXoFHt3R/member.html";
+  const binary = atob(DATA);
+  const previewHtml = new TextDecoder("utf-8").decode(
+    Uint8Array.from(binary, (char) => char.charCodeAt(0))
+  );
+
+  document.querySelectorAll("[data-nursing-member-preview]").forEach((frame) => {
+    frame.srcdoc = previewHtml;
+  });
+
+  document.querySelectorAll("[data-nursing-member-modal]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const modal = document.getElementById("screen-modal");
+      const frame = document.getElementById("screen-modal-frame");
+      const title = document.getElementById("screen-modal-title");
+      const external = document.getElementById("screen-modal-external");
+      if (!modal || !frame || !title || !external) return;
+      title.textContent = "訪問看護 本人・家族ポータル";
+      frame.removeAttribute("src");
+      frame.srcdoc = previewHtml;
+      external.href = LINE_URL;
+      external.textContent = "LINEで開く";
+      modal.classList.add("is-open");
+      modal.setAttribute("aria-hidden", "false");
+      document.body.classList.add("modal-open");
+    });
+  });
+})();
+</script>
 
 <script id="nursing-system-site-readonly-preview">
 /*
-  NURSING-SYSTEM-SITE-46-R2
+  NURSING-SYSTEM-SITE-46-R3
   紹介ページ内の本人・家族／スタッフiframeだけに架空データを描画する。
   API送信、データベース更新、認証情報保存は行わない。
 */
@@ -518,6 +523,10 @@ LINEで開く
       return;
     }
 
+    doc.querySelectorAll('a[href="system-check.html"]').forEach((link) => {
+      link.hidden = true;
+    });
+
     const done = target.path.endsWith("/member.html")
       ? applyMember(doc)
       : target.path.endsWith("/staff.html")
@@ -594,6 +603,10 @@ LINEで開く
       if (attempt < 40) setTimeout(() => tryAutoLogin(frame, attempt + 1), 200);
       return;
     }
+
+    doc.querySelectorAll('a[href="system-check.html"]').forEach((link) => {
+      link.hidden = true;
+    });
     if (isLoggedIn(doc, info.path)) {
       frame.dataset.nursingAutoLoginDone = "1";
       return;
