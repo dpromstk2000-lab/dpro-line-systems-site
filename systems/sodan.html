@@ -8,7 +8,7 @@
 <link rel="stylesheet" href="../styles.css">
 </head>
 <body>
-<!-- STEP SODAN-SYSTEM-SITE-45 / 45TH PRODUCT / 20260730 -->
+<!-- STEP SODAN-SYSTEM-SITE-45-R1 / EMBEDDED AUTO LOGIN / 20260731 -->
 <header class="site-header" id="top"><div class="header-inner">
 <a class="brand" href="../index.html"><span class="brand-mark">D</span><span class="brand-copy"><strong>DPRO LINE SYSTEMS</strong><small>OFFICIAL PRODUCT SITE</small></span></a>
 <button class="menu-button" type="button" aria-expanded="false" aria-controls="global-nav" aria-label="メニューを開く"><span></span><span></span><span></span></button>
@@ -93,5 +93,100 @@
 <button class="back-to-top" type="button">↑</button>
 <div class="screen-modal" id="screen-modal" aria-hidden="true"><div class="screen-modal-backdrop" data-modal-close></div><div class="screen-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="screen-modal-title"><div class="screen-modal-header"><strong id="screen-modal-title">実画面</strong><div><a id="screen-modal-external" href="#" target="_blank" rel="noopener">別タブで開く</a><button type="button" data-modal-close aria-label="閉じる">×</button></div></div><iframe id="screen-modal-frame" title="拡大したシステム画面"></iframe></div></div>
 <script src="../script.js"></script>
+<script id="sodan-site-auto-login-r1">
+/* SODAN-SITE-AUTO-LOGIN-R1
+   製品紹介ページ内の同一オリジンiframeだけを、デモ認証で自動表示する。
+   システム本体・別タブ表示・本番環境の認証仕様は変更しない。 */
+(() => {
+  'use strict';
+  const TARGET = '/dpro-sodan-line/';
+  const OWNER_CODE = '1234';
+  const STAFF_CODE = 'DEMO-STF-01';
+  const STAFF_ACCESS_CODE = '90DE7M6OZQWF';
+
+  function isTarget(frame) {
+    try {
+      const url = new URL(frame.getAttribute('src') || frame.src || '', location.href);
+      return url.origin === location.origin && url.pathname.includes(TARGET);
+    } catch {
+      return false;
+    }
+  }
+
+  function tryAutoLogin(frame, attempt = 0) {
+    if (!isTarget(frame) || frame.dataset.sodanAutoLoginDone === '1') return;
+    let doc;
+    let path;
+    try {
+      doc = frame.contentDocument;
+      path = new URL(frame.src, location.href).pathname;
+    } catch {
+      return;
+    }
+    if (!doc || doc.readyState === 'loading') {
+      if (attempt < 30) setTimeout(() => tryAutoLogin(frame, attempt + 1), 200);
+      return;
+    }
+
+    const loginView = doc.getElementById('loginView');
+    if (loginView && loginView.classList.contains('hidden')) {
+      frame.dataset.sodanAutoLoginDone = '1';
+      return;
+    }
+    if (frame.dataset.sodanAutoLoginStarted === '1') return;
+
+    if (path.endsWith('/staff.html')) {
+      const staffCode = doc.getElementById('staffCode');
+      const accessCode = doc.getElementById('accessCode');
+      const form = doc.getElementById('loginForm');
+      if (staffCode && accessCode && form) {
+        frame.dataset.sodanAutoLoginStarted = '1';
+        staffCode.value = STAFF_CODE;
+        accessCode.value = STAFF_ACCESS_CODE;
+        if (typeof form.requestSubmit === 'function') form.requestSubmit();
+        else form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
+      }
+      return;
+    }
+
+    if (path.endsWith('/owner-ipad.html')) {
+      const input = doc.getElementById('adminCode');
+      const form = doc.getElementById('loginForm');
+      if (input && form) {
+        frame.dataset.sodanAutoLoginStarted = '1';
+        input.value = OWNER_CODE;
+        if (typeof form.requestSubmit === 'function') form.requestSubmit();
+        else form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
+      }
+      return;
+    }
+
+    if (path.endsWith('/owner.html') || path.endsWith('/system-check.html')) {
+      const input = doc.getElementById('adminCode');
+      const button = doc.getElementById('loginButton');
+      if (input && button) {
+        frame.dataset.sodanAutoLoginStarted = '1';
+        input.value = OWNER_CODE;
+        button.click();
+      }
+    }
+  }
+
+  function bind(frame) {
+    if (!isTarget(frame) || frame.dataset.sodanAutoLoginBound === '1') return;
+    frame.dataset.sodanAutoLoginBound = '1';
+    frame.addEventListener('load', () => {
+      frame.dataset.sodanAutoLoginStarted = '';
+      frame.dataset.sodanAutoLoginDone = '';
+      setTimeout(() => tryAutoLogin(frame), 120);
+    });
+    setTimeout(() => tryAutoLogin(frame), 120);
+  }
+
+  document.querySelectorAll('iframe').forEach(bind);
+  new MutationObserver(() => document.querySelectorAll('iframe').forEach(bind))
+    .observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['src'] });
+})();
+</script>
 </body>
 </html>
