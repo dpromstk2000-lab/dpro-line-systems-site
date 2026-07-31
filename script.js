@@ -1,7 +1,7 @@
 (() => {
   "use strict";
 
-  // STEP SITE-HAISHOKU-1 / 44 PRODUCTS / PRESERVE ALL 43 PRODUCTS / 20260730
+  // STEP SITE-SODAN-1 / 45 PRODUCTS / PRESERVE ALL 44 PRODUCTS / 20260731
 
   const menuButton = document.querySelector(".menu-button");
   const globalNav = document.querySelector(".global-nav");
@@ -158,7 +158,7 @@
     });
   }
 
-  const productCount = 44;
+  const productCount = 45;
 
   const setFirstText = (selector, value) => {
     const node = document.querySelector(selector);
@@ -266,6 +266,7 @@
   appendDescription("教育・生活サービス", "介護タクシー");
   appendDescription("教育・生活サービス", "福祉施設送迎");
   appendDescription("教育・生活サービス", "高齢者配食サービス");
+  appendDescription("教育・生活サービス", "相談支援事業所");
   appendDescription(
     "士業・企業支援",
     "行政書士・許認可申請"
@@ -493,6 +494,16 @@
       "教育・生活サービス",
       "高齢者配食サービス",
       "電話・店頭注文、定期利用、厨房、配達、家族連絡、変更依頼、LINE通知を一元管理。"
+    ],
+    [
+      "systems/sodan.html",
+      "SD",
+      "catalog-live-sodan",
+      "相談支援事業所実画面プレビュー",
+      "https://dpromstk2000-lab.github.io/dpro-sodan-line/owner.html?v=SODAN-13-R1",
+      "教育・生活サービス",
+      "相談支援事業所",
+      "初回相談・案件・計画・書類提出・モニタリング・本人家族連携。"
     ]
   ];
 
@@ -566,6 +577,7 @@
       "不用品回収・遺品整理",
       "放課後等デイサービス",
       "就労継続支援B型",
+      "相談支援事業所",
       "宿泊・民泊",
       "福祉用具レンタル・販売",
       "介護タクシー",
