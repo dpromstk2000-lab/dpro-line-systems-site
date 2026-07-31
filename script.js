@@ -1,7 +1,7 @@
 (() => {
   "use strict";
 
-  // STEP SITE-SODAN-1 / 45 PRODUCTS / PRESERVE ALL 44 PRODUCTS / 20260731
+  // STEP SITE-NURSING-46 / 46 PRODUCTS / PRESERVE ALL 45 PRODUCTS / 20260731
 
   const menuButton = document.querySelector(".menu-button");
   const globalNav = document.querySelector(".global-nav");
@@ -158,7 +158,7 @@
     });
   }
 
-  const productCount = 45;
+  const productCount = 46;
 
   const setFirstText = (selector, value) => {
     const node = document.querySelector(selector);
@@ -267,6 +267,7 @@
   appendDescription("教育・生活サービス", "福祉施設送迎");
   appendDescription("教育・生活サービス", "高齢者配食サービス");
   appendDescription("教育・生活サービス", "相談支援事業所");
+  appendDescription("教育・生活サービス", "訪問看護ステーション");
   appendDescription(
     "士業・企業支援",
     "行政書士・許認可申請"
@@ -504,6 +505,16 @@
       "教育・生活サービス",
       "相談支援事業所",
       "初回相談・案件・計画・書類提出・モニタリング・本人家族連携。"
+    ],
+    [
+      "systems/home-nursing.html",
+      "HN",
+      "catalog-live-home-nursing",
+      "訪問看護ステーション実画面プレビュー",
+      "https://dpromstk2000-lab.github.io/dpro-home-nursing-line/owner.html?v=NURSING-11",
+      "教育・生活サービス",
+      "訪問看護ステーション",
+      "新規相談・訪問予定・スタッフ配置・訪問開始終了・家族報告・LINE連携・家族連絡。"
     ]
   ];
 
@@ -578,6 +589,7 @@
       "放課後等デイサービス",
       "就労継続支援B型",
       "相談支援事業所",
+      "訪問看護ステーション",
       "宿泊・民泊",
       "福祉用具レンタル・販売",
       "介護タクシー",
