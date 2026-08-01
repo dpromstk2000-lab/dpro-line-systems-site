@@ -1,11 +1,15 @@
 (() => {
   "use strict";
 
-  // STEP SITE-NURSING-46 / 46 PRODUCTS / PRESERVE ALL 45 PRODUCTS / 20260731
+  // STEP SITE-CAREPLAN-47 / 47 PRODUCTS / PRESERVE ALL 46 PRODUCTS / 20260801
 
-  const menuButton = document.querySelector(".menu-button");
-  const globalNav = document.querySelector(".global-nav");
-  const backToTop = document.querySelector(".back-to-top");
+  const $ = (selector, scope = document) => scope.querySelector(selector);
+  const $$ = (selector, scope = document) =>
+    Array.from(scope.querySelectorAll(selector));
+
+  const menuButton = $(".menu-button");
+  const globalNav = $(".global-nav");
+  const backToTop = $(".back-to-top");
 
   if (menuButton && globalNav) {
     menuButton.addEventListener("click", () => {
@@ -18,7 +22,7 @@
       );
     });
 
-    globalNav.querySelectorAll("a").forEach((link) => {
+    $$("a", globalNav).forEach((link) => {
       link.addEventListener("click", () => {
         menuButton.classList.remove("open");
         globalNav.classList.remove("open");
@@ -38,14 +42,9 @@
       },
       { threshold: 0.1 }
     );
-
-    document
-      .querySelectorAll(".reveal")
-      .forEach((element) => revealObserver.observe(element));
+    $$(".reveal").forEach((element) => revealObserver.observe(element));
   } else {
-    document
-      .querySelectorAll(".reveal")
-      .forEach((element) => element.classList.add("visible"));
+    $$(".reveal").forEach((element) => element.classList.add("visible"));
   }
 
   window.addEventListener(
@@ -58,12 +57,12 @@
     window.scrollTo({ top: 0, behavior: "smooth" });
   });
 
-  const year = document.querySelector("#year");
+  const year = $("#year");
   if (year) year.textContent = String(new Date().getFullYear());
 
-  const filterButtons = document.querySelectorAll(".filter-button");
-  const systemCards = document.querySelectorAll(".system-card");
-
+  // 旧形式の絞り込みにも対応
+  const filterButtons = $$(".filter-button");
+  const systemCards = $$(".system-card");
   filterButtons.forEach((button) => {
     button.addEventListener("click", () => {
       const filter = button.dataset.filter;
@@ -78,8 +77,9 @@
     });
   });
 
-  const screenTabs = document.querySelectorAll(".screen-tab");
-  const screenPreview = document.querySelector("#screen-preview");
+  // 役割別プレビュー
+  const screenTabs = $$(".screen-tab");
+  const screenPreview = $("#screen-preview");
   const screenContent = {
     customer: {
       label: "Customer Experience",
@@ -121,11 +121,12 @@
     });
   });
 
-  const modal = document.getElementById("screen-modal");
+  // 実画面拡大モーダル
+  const modal = $("#screen-modal");
   if (modal) {
-    const frame = document.getElementById("screen-modal-frame");
-    const title = document.getElementById("screen-modal-title");
-    const external = document.getElementById("screen-modal-external");
+    const frame = $("#screen-modal-frame");
+    const title = $("#screen-modal-title");
+    const external = $("#screen-modal-external");
 
     const closeModal = () => {
       modal.classList.remove("is-open");
@@ -134,7 +135,7 @@
       if (frame) frame.src = "about:blank";
     };
 
-    document.querySelectorAll(".js-screen-modal").forEach((button) => {
+    $$(".js-screen-modal").forEach((button) => {
       button.addEventListener("click", () => {
         const url = button.dataset.screenUrl;
         if (!url || !frame || !title || !external) return;
@@ -147,9 +148,9 @@
       });
     });
 
-    modal
-      .querySelectorAll("[data-modal-close]")
-      .forEach((button) => button.addEventListener("click", closeModal));
+    $$("[data-modal-close]", modal).forEach((button) =>
+      button.addEventListener("click", closeModal)
+    );
 
     document.addEventListener("keydown", (event) => {
       if (event.key === "Escape" && modal.classList.contains("is-open")) {
@@ -158,10 +159,10 @@
     });
   }
 
-  const productCount = 46;
+  const productCount = 47;
 
   const setFirstText = (selector, value) => {
-    const node = document.querySelector(selector);
+    const node = $(selector);
     if (node) node.textContent = value;
   };
 
@@ -176,9 +177,7 @@
     String(productCount)
   );
 
-  const catalogHeroText = document.querySelector(
-    ".catalog-hero-inner > p:not(.eyebrow)"
-  );
+  const catalogHeroText = $(".catalog-hero-inner > p:not(.eyebrow)");
   if (catalogHeroText) {
     catalogHeroText.innerHTML = catalogHeroText.innerHTML.replace(
       /\d+業種/g,
@@ -186,14 +185,12 @@
     );
   }
 
-  const moreLink = document.querySelector(".catalog-more-link a");
+  const moreLink = $(".catalog-more-link a");
   if (moreLink) {
     moreLink.textContent = `${productCount}システムをすべて見る`;
   }
 
-  const metaDescription = document.querySelector(
-    'meta[name="description"]'
-  );
+  const metaDescription = $('meta[name="description"]');
   if (metaDescription) {
     metaDescription.content = metaDescription.content.replace(
       /\d+業種/g,
@@ -201,84 +198,58 @@
     );
   }
 
-  const progressTitleFirst = document.querySelector(
-    ".catalog-progress-title span:first-child"
-  );
+  const progressTitleFirst = $(".catalog-progress-title span:first-child");
   if (progressTitleFirst) {
     progressTitleFirst.textContent = `${productCount}製品すべて、`;
   }
 
-  const progressCopyText = document.querySelector(
-    ".catalog-progress-copy > p"
-  );
+  const progressCopyText = $(".catalog-progress-copy > p");
   if (progressCopyText) {
     progressCopyText.textContent =
       `${productCount}製品すべての詳細ページを公開しました。` +
       "業種別の完成済みシステムを、実画面で確認できます。";
   }
 
-  const progressCopySmall = document.querySelector(
-    ".catalog-progress-copy > small"
-  );
+  const progressCopySmall = $(".catalog-progress-copy > small");
   if (progressCopySmall) {
     progressCopySmall.textContent =
       `${productCount} / ${productCount} 製品ページ公開済み`;
   }
 
   const appendDescription = (titleText, productText) => {
-    const panel = Array.from(
-      document.querySelectorAll(".industry-panel")
-    ).find(
-      (item) =>
-        item.querySelector("h3")?.textContent?.trim() === titleText
+    const panel = $$(".industry-panel").find(
+      (item) => $("h3", item)?.textContent?.trim() === titleText
     );
-    const description = panel?.querySelector("p");
-
-    if (
-      description &&
-      !description.textContent.includes(productText)
-    ) {
-      description.textContent =
-        `${description.textContent}、${productText}`;
+    const description = panel ? $("p", panel) : null;
+    if (description && !description.textContent.includes(productText)) {
+      description.textContent = `${description.textContent}、${productText}`;
     }
   };
 
-  appendDescription("美容・健康", "パーソナルジム");
-  appendDescription("美容・健康", "まつげ・眉サロン");
-  appendDescription("美容・健康", "化粧品店");
-  appendDescription("飲食・小売", "焼肉店");
-  appendDescription("飲食・小売", "フラワーショップ");
-  appendDescription(
-    "教育・生活サービス",
-    "ハウスクリーニング・家事代行"
-  );
-  appendDescription(
-    "教育・生活サービス",
-    "不用品回収・遺品整理"
-  );
-  appendDescription(
-    "教育・生活サービス",
-    "放課後等デイサービス"
-  );
-  appendDescription("教育・生活サービス", "宿泊・民泊");
-  appendDescription("教育・生活サービス", "訪問介護・家族連絡");
-  appendDescription("教育・生活サービス", "福祉用具レンタル・販売");
-  appendDescription("教育・生活サービス", "介護タクシー");
-  appendDescription("教育・生活サービス", "福祉施設送迎");
-  appendDescription("教育・生活サービス", "高齢者配食サービス");
-  appendDescription("教育・生活サービス", "相談支援事業所");
-  appendDescription("教育・生活サービス", "訪問看護ステーション");
-  appendDescription(
-    "士業・企業支援",
-    "行政書士・許認可申請"
-  );
-  appendDescription("士業・企業支援", "土地家屋調査士");
-  appendDescription(
-    "士業・企業支援",
-    "司法書士・相続登記"
-  );
+  [
+    ["美容・健康", "パーソナルジム"],
+    ["美容・健康", "まつげ・眉サロン"],
+    ["美容・健康", "化粧品店"],
+    ["飲食・小売", "焼肉店"],
+    ["飲食・小売", "フラワーショップ"],
+    ["教育・生活サービス", "ハウスクリーニング・家事代行"],
+    ["教育・生活サービス", "不用品回収・遺品整理"],
+    ["教育・生活サービス", "放課後等デイサービス"],
+    ["教育・生活サービス", "宿泊・民泊"],
+    ["教育・生活サービス", "訪問介護・家族連絡"],
+    ["教育・生活サービス", "福祉用具レンタル・販売"],
+    ["教育・生活サービス", "介護タクシー"],
+    ["教育・生活サービス", "福祉施設送迎"],
+    ["教育・生活サービス", "高齢者配食サービス"],
+    ["教育・生活サービス", "相談支援事業所"],
+    ["教育・生活サービス", "訪問看護ステーション"],
+    ["教育・生活サービス", "居宅介護支援・ケアマネ"],
+    ["士業・企業支援", "行政書士・許認可申請"],
+    ["士業・企業支援", "土地家屋調査士"],
+    ["士業・企業支援", "司法書士・相続登記"]
+  ].forEach(([category, product]) => appendDescription(category, product));
 
-  const catalogGrid = document.querySelector(".catalog-grid");
+  const catalogGrid = $(".catalog-grid");
 
   const appendCatalogCard = ({
     href,
@@ -290,12 +261,7 @@
     title,
     description
   }) => {
-    if (
-      !catalogGrid ||
-      catalogGrid.querySelector(`a[href="${href}"]`)
-    ) {
-      return;
-    }
+    if (!catalogGrid || catalogGrid.querySelector(`a[href="${href}"]`)) return;
 
     const card = document.createElement("a");
     card.className = "catalog-card reveal visible is-live";
@@ -317,11 +283,8 @@
         <small>${category}</small>
         <h3>${title}</h3>
         <p>${description}</p>
-        <b class="catalog-card-cta">
-          今すぐ製品ページを見る →
-        </b>
+        <b class="catalog-card-cta">今すぐ製品ページを見る →</b>
       </div>`;
-
     catalogGrid.appendChild(card);
   };
 
@@ -515,6 +478,16 @@
       "教育・生活サービス",
       "訪問看護ステーション",
       "新規相談・訪問予定・スタッフ配置・訪問開始終了・家族報告・LINE連携・家族連絡。"
+    ],
+    [
+      "systems/careplan.html",
+      "CP",
+      "catalog-live-careplan",
+      "居宅介護支援・ケアマネ実画面プレビュー",
+      "https://dpromstk2000-lab.github.io/dpro-careplan-line/owner.html?v=CAREPLAN-10",
+      "教育・生活サービス",
+      "居宅介護支援・ケアマネ",
+      "新規相談・利用者台帳・認定期限・ケアプラン・モニタリング・非公開書類・家族連携。"
     ]
   ];
 
@@ -550,34 +523,27 @@
       "美容サロン",
       "エステ・リラクゼーション",
       "整骨院・接骨院",
+      "整骨院・整体",
       "パーソナルジム",
       "まつげ・眉サロン",
       "化粧品店"
     ],
-    "医療・ペット": [
-      "ペットサロン",
-      "動物病院",
-      "歯科"
-    ],
+    "医療・ペット": ["ペットサロン", "動物病院", "歯科"],
     "飲食・小売": [
       "ベーカリー",
       "ケーキ・洋菓子店",
       "居酒屋",
       "テイクアウト",
+      "テイクアウト・モバイルオーダー",
       "焼肉店 予約・順番受付",
       "フラワーショップ"
     ],
-    "買取・リユース": [
-      "買取・査定",
-      "中古車買取・販売"
-    ],
-    "住まい・建築": [
-      "不動産・賃貸内見",
-      "リフォーム・工務店"
-    ],
+    "買取・リユース": ["買取・査定", "中古車買取・販売"],
+    "住まい・建築": ["不動産・賃貸内見", "リフォーム・工務店"],
     "教育・生活サービス": [
       "学習塾・習い事",
       "車検・整備",
+      "車検・整備工場",
       "修理受付",
       "クリーニング",
       "デイサービス",
@@ -590,6 +556,7 @@
       "就労継続支援B型",
       "相談支援事業所",
       "訪問看護ステーション",
+      "居宅介護支援・ケアマネ",
       "宿泊・民泊",
       "福祉用具レンタル・販売",
       "介護タクシー",
@@ -605,14 +572,10 @@
     ]
   };
 
-  const categoryButtons = document.querySelectorAll(
-    ".catalog-filter"
-  );
+  const categoryButtons = $$(".catalog-filter");
 
   const applyCategory = (category, updateUrl = false) => {
-    const safeCategory = categoryMap[category]
-      ? category
-      : "all";
+    const safeCategory = categoryMap[category] ? category : "all";
 
     categoryButtons.forEach((button) => {
       button.classList.toggle(
@@ -621,12 +584,10 @@
       );
     });
 
-    document.querySelectorAll(".catalog-card").forEach((card) => {
-      const title =
-        card.querySelector("h3")?.textContent?.trim() || "";
+    $$(".catalog-card").forEach((card) => {
+      const title = $("h3", card)?.textContent?.trim() || "";
       card.style.display =
-        safeCategory === "all" ||
-        categoryMap[safeCategory].includes(title)
+        safeCategory === "all" || categoryMap[safeCategory].includes(title)
           ? ""
           : "none";
     });
@@ -646,28 +607,19 @@
   categoryButtons.forEach((button) => {
     button.addEventListener("click", () => {
       applyCategory(button.dataset.category, true);
-      document.getElementById("catalog")?.scrollIntoView({
-        behavior: "smooth",
-        block: "start"
-      });
+      $("#catalog")?.scrollIntoView({ behavior: "smooth", block: "start" });
     });
   });
 
-  const requestedCategory = new URLSearchParams(
-    window.location.search
-  ).get("category");
+  const requestedCategory = new URLSearchParams(window.location.search).get(
+    "category"
+  );
 
-  if (
-    requestedCategory &&
-    categoryMap[requestedCategory]
-  ) {
+  if (requestedCategory && categoryMap[requestedCategory]) {
     applyCategory(requestedCategory, false);
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
-        document.getElementById("catalog")?.scrollIntoView({
-          behavior: "auto",
-          block: "start"
-        });
+        $("#catalog")?.scrollIntoView({ behavior: "auto", block: "start" });
       });
     });
   }
