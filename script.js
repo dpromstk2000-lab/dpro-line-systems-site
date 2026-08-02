@@ -1,7 +1,7 @@
 (() => {
   "use strict";
 
-  // STEP SITE-CAREPLAN-47 / 47 PRODUCTS / PRESERVE ALL 46 PRODUCTS / 20260801
+  // STEP SITE-GAKUDO-48 / 48 PRODUCTS / PRESERVE ALL 47 PRODUCTS / 20260802
 
   const $ = (selector, scope = document) => scope.querySelector(selector);
   const $$ = (selector, scope = document) =>
@@ -159,7 +159,7 @@
     });
   }
 
-  const productCount = 47;
+  const productCount = 48;
 
   const setFirstText = (selector, value) => {
     const node = $(selector);
@@ -244,6 +244,7 @@
     ["教育・生活サービス", "相談支援事業所"],
     ["教育・生活サービス", "訪問看護ステーション"],
     ["教育・生活サービス", "居宅介護支援・ケアマネ"],
+    ["教育・生活サービス", "学童保育・放課後児童クラブ"],
     ["士業・企業支援", "行政書士・許認可申請"],
     ["士業・企業支援", "土地家屋調査士"],
     ["士業・企業支援", "司法書士・相続登記"]
@@ -488,6 +489,16 @@
       "教育・生活サービス",
       "居宅介護支援・ケアマネ",
       "新規相談・利用者台帳・認定期限・ケアプラン・モニタリング・非公開書類・家族連携。"
+    ],
+    [
+      "systems/gakudo.html",
+      "GK",
+      "catalog-live-gakudo",
+      "学童保育・放課後児童クラブ実画面プレビュー",
+      "https://dpromstk2000-lab.github.io/dpro-gakudo-line/owner.html?v=GAKUDO-10",
+      "教育・生活サービス",
+      "学童保育・放課後児童クラブ",
+      "欠席・利用変更・お迎え連絡・入退室・長期休暇・日別定員・通知・安全警告。"
     ]
   ];
 
