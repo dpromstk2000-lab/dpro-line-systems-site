@@ -1,0 +1,92 @@
+name: Fix GAKUDO Demo on DPRO System Site
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Fix GAKUDO product page
+        shell: bash
+        run: |
+          python <<'PY'
+          from pathlib import Path
+          import re
+          
+          path = Path("systems/gakudo.html")
+          if not path.exists():
+              raise SystemExit(f"Missing required file: {path}")
+          text = path.read_text(encoding="utf-8")
+          original = text
+          
+          # Demo links and iframe previews: open the safe built-in demo automatically.
+          for page in ("member.html", "staff.html", "owner.html", "owner-ipad.html"):
+              text = text.replace(
+                  f"https://dpromstk2000-lab.github.io/dpro-gakudo-line/{page}?v=GAKUDO-10",
+                  f"https://dpromstk2000-lab.github.io/dpro-gakudo-line/{page}?demo=1&v=GAKUDO-10",
+              )
+          
+          # system-check is retained only in the GAKUDO repository for DPRO maintenance.
+          text = text.replace('完成済みの6画面を実際に開いて確認できます。施設画面の管理コードは1234です。',
+                              '完成済みの5画面を実際に開いて確認できます。各デモ画面は自動で開きます。')
+          text = text.replace('<span>保護者から、</span><span>スタッフ・管理者・一括検査まで。</span>',
+                              '<span>保護者から、</span><span>スタッフ・管理者まで。</span>')
+          text = text.replace('保護者、スタッフ、管理者PC・iPad、検査画面への入口です。',
+                              '保護者、スタッフ、管理者PC・iPadへの入口です。')
+          text = text.replace('<span>06</span><h3>全機能一括検査</h3><p>GAKUDO-1〜10、DB、RLS、API、公開17ファイルをまとめて検査します。</p>', '')
+          
+          # Remove the complete feature article and demo article robustly.
+          text, feature_removed = re.subn(
+              r'<article class="product-feature reveal"><span>06</span><h3>全機能一括検査</h3>.*?</article>',
+              '', text, count=1, flags=re.S,
+          )
+          text, demo_removed = re.subn(
+              r'<article class="live-product live-product-reverse reveal"><div class="live-copy"><span>06 / SYSTEM CHECK</span>.*?</article>',
+              '', text, count=1, flags=re.S,
+          )
+          
+          checks = {
+              "page changed": text != original,
+              "system-check feature removed": feature_removed == 1 or "全機能一括検査" not in text,
+              "system-check demo removed": demo_removed == 1 or "06 / SYSTEM CHECK" not in text,
+              "no owner-facing system-check text": "system-check" not in text.lower(),
+              "no maintenance public file wording": "公開17ファイル" not in text,
+              "guardian demo preview": "member.html?demo=1&v=GAKUDO-10" in text,
+              "staff demo preview": "staff.html?demo=1&v=GAKUDO-10" in text,
+              "owner demo preview": "owner.html?demo=1&v=GAKUDO-10" in text,
+              "ipad demo preview": "owner-ipad.html?demo=1&v=GAKUDO-10" in text,
+              "no old guardian preview": "member.html?v=GAKUDO-10" not in text,
+              "no old staff preview": "staff.html?v=GAKUDO-10" not in text,
+              "no old owner preview": "owner.html?v=GAKUDO-10" not in text,
+              "no old ipad preview": "owner-ipad.html?v=GAKUDO-10" not in text,
+              "five screen wording": "完成済みの5画面" in text,
+          }
+          for name, ok in checks.items():
+              print(("PASS" if ok else "FAIL") + " - " + name)
+          failed = [name for name, ok in checks.items() if not ok]
+          if failed:
+              raise SystemExit("Validation failed: " + ", ".join(failed))
+          
+          path.write_text(text, encoding="utf-8", newline="\n")
+          print("DPRO System Site GAKUDO owner-facing demo page fixed.")
+          PY
+
+      - name: Commit changes
+        shell: bash
+        run: |
+          if git diff --quiet; then
+            echo "No changes required."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add systems/gakudo.html
+          git commit -m "Fix GAKUDO owner-facing demo on product site"
+          git push
