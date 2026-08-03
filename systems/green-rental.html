@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="DPRO グリーンレンタル LINE。写真相談、植物・鉢の個体管理、設置、定期巡回、作業写真、交換、回収・養生・再利用、お客様報告をLINE・PC・iPad・スタッフ画面でつなぎます。">
+<meta name="theme-color" content="#071b14">
+<title>DPRO グリーンレンタル LINE｜DPRO LINE SYSTEMS</title>
+<link rel="stylesheet" href="../styles.css">
+<style>
+.green-product{--g:#23704d;--gd:#0a3927;--gl:#a7cf69;--gs:#edf6ef;color:#112d21;background:#fff}
+.green-product .gp-hero{position:relative;overflow:hidden;min-height:760px;padding:110px 24px 80px;background:radial-gradient(circle at 78% 20%,rgba(170,211,100,.18),transparent 28%),radial-gradient(circle at 18% 82%,rgba(48,130,87,.22),transparent 35%),linear-gradient(145deg,#040d09,#071d14 52%,#0d3d29);color:#fff}
+.green-product .gp-hero:before{content:"";position:absolute;inset:0;opacity:.22;background-image:linear-gradient(rgba(255,255,255,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.06) 1px,transparent 1px);background-size:48px 48px}
+.gp-hero-inner{position:relative;z-index:1;width:min(1180px,100%);margin:auto;display:grid;grid-template-columns:minmax(0,1fr) minmax(350px,.86fr);gap:56px;align-items:center}
+.gp-crumb{display:flex;gap:9px;align-items:center;color:rgba(255,255,255,.59);font-size:12px}.gp-crumb a{color:inherit}
+.gp-kicker{margin:28px 0 0;color:#cceaa1;font-size:12px;font-weight:900;letter-spacing:.17em}
+.gp-hero h1{margin:17px 0 0;font-size:clamp(46px,6vw,82px);line-height:1.02;letter-spacing:-.055em}.gp-hero h1 em{font-style:normal;background:linear-gradient(110deg,#fff,#cceaa6 55%,#7fcf87);background-clip:text;-webkit-background-clip:text;color:transparent}
+.gp-lead{margin:25px 0 0;color:rgba(255,255,255,.72);font-size:17px;line-height:1.95}
+.gp-actions{margin-top:30px;display:flex;gap:11px;flex-wrap:wrap}.gp-button{min-height:53px;padding:0 22px;border-radius:999px;display:inline-flex;align-items:center;justify-content:center;text-decoration:none;font-weight:900}.gp-button-primary{background:#ff9f30;color:#151008}.gp-button-secondary{border:1px solid rgba(255,255,255,.22);background:rgba(255,255,255,.07);color:#fff}
+.gp-proof{margin-top:26px;display:flex;gap:16px;flex-wrap:wrap}.gp-proof span{color:rgba(255,255,255,.65);font-size:12px;font-weight:800}.gp-proof span:before{content:"●";margin-right:7px;color:#a8d474}
+.gp-preview{position:relative;padding:18px;border:1px solid rgba(255,255,255,.13);border-radius:30px;background:rgba(255,255,255,.075);box-shadow:0 35px 100px rgba(0,0,0,.35)}
+.gp-preview-head{padding:10px 12px;display:flex;justify-content:space-between;color:rgba(255,255,255,.65);font-size:9px;font-weight:900;letter-spacing:.12em}
+.gp-preview iframe{width:100%;height:520px;border:0;border-radius:20px;background:#fff}
+.gp-floating{position:absolute;padding:12px 14px;border-radius:14px;background:#fff;color:#173a2b;box-shadow:0 18px 42px rgba(0,0,0,.22)}.gp-floating small{display:block;color:#789083;font-size:7px;font-weight:900}.gp-floating strong{display:block;margin-top:4px;font-size:12px}.gp-floating-a{left:-24px;bottom:70px}.gp-floating-b{right:-15px;top:66px}
+.gp-section{padding:94px 24px}.gp-soft{background:#f3f7f4}.gp-dark{background:#061b14;color:#fff}.gp-container{width:min(1120px,100%);margin:auto}
+.gp-heading{display:grid;grid-template-columns:minmax(0,.95fr) minmax(280px,.58fr);gap:44px;align-items:end}.gp-heading small{color:#2d7a55;font-size:11px;font-weight:900;letter-spacing:.16em}.gp-heading h2{margin:12px 0 0;font-size:clamp(36px,4.3vw,58px);line-height:1.12;letter-spacing:-.045em}.gp-heading>p{margin:0;color:#697b70;line-height:1.9}.gp-dark .gp-heading>p{color:rgba(255,255,255,.63)}
+.gp-grid{margin-top:42px;display:grid;grid-template-columns:repeat(3,1fr);gap:15px}.gp-card{padding:26px;border:1px solid #d9e8dd;border-radius:22px;background:#fff;box-shadow:0 15px 36px rgba(8,52,30,.055)}.gp-card b{color:#2e7e56;font-size:11px;letter-spacing:.12em}.gp-card h3{margin:15px 0 0;font-size:19px;line-height:1.45}.gp-card p{margin:10px 0 0;color:#697b70;font-size:13px;line-height:1.85}.gp-card ul{margin:14px 0 0;padding:0;list-style:none;display:grid;gap:8px}.gp-card li{position:relative;padding-left:17px;color:#5d7165;font-size:13px;line-height:1.7}.gp-card li:before{content:"";position:absolute;left:0;top:.65em;width:7px;height:7px;border-radius:50%;background:#91bd64}
+.gp-flow{margin-top:46px;display:grid;grid-template-columns:repeat(6,1fr);gap:9px}.gp-step{padding:19px 14px;border:1px solid rgba(255,255,255,.12);border-radius:18px;background:rgba(255,255,255,.055)}.gp-step span{color:#a6d478;font-size:10px;font-weight:900}.gp-step strong{display:block;margin-top:11px;font-size:15px}.gp-step p{margin:8px 0 0;color:rgba(255,255,255,.61);font-size:11px;line-height:1.7}
+.gp-screen-grid{margin-top:43px;display:grid;grid-template-columns:repeat(2,1fr);gap:18px}.gp-screen{overflow:hidden;border:1px solid #d7e6db;border-radius:24px;background:#fff;box-shadow:0 22px 55px rgba(8,51,31,.09)}.gp-screen-head{padding:17px 18px;display:flex;align-items:center;justify-content:space-between;gap:12px}.gp-screen-head div small{display:block;color:#2f7b55;font-size:9px;font-weight:900;letter-spacing:.12em}.gp-screen-head strong{display:block;margin-top:5px;font-size:17px}.gp-screen-head a{color:#26734d;font-size:12px;font-weight:900}.gp-screen iframe{width:100%;height:580px;border:0;border-top:1px solid #e3ebe5;background:#fff}
+.gp-demo-info{margin-top:20px;padding:19px;border:1px solid #d7e7db;border-radius:18px;background:#fff;display:flex;gap:18px;flex-wrap:wrap;color:#587064}.gp-demo-info code{padding:4px 7px;border-radius:7px;background:#edf5ee;color:#17633e}
+.gp-scope{margin-top:34px;padding:22px;border:1px solid #dbe8df;border-radius:19px;background:#fff;color:#5e7366;line-height:1.9}.gp-scope strong{color:#183c2b}
+.gp-official{padding:72px 24px;background:linear-gradient(135deg,#08291c,#0e4d34);color:#fff}.gp-official-inner{width:min(1050px,100%);margin:auto;display:flex;align-items:center;justify-content:space-between;gap:32px}.gp-official h2{margin:0;font-size:clamp(31px,4vw,51px);line-height:1.18}.gp-official p{margin:13px 0 0;color:rgba(255,255,255,.67);line-height:1.8}
+@media(max-width:980px){.gp-hero-inner{grid-template-columns:1fr}.gp-preview{max-width:720px}.gp-grid{grid-template-columns:repeat(2,1fr)}.gp-flow{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:720px){.green-product .gp-hero{padding-top:82px}.gp-hero h1{font-size:clamp(42px,12vw,60px)}.gp-heading{grid-template-columns:1fr}.gp-grid,.gp-screen-grid{grid-template-columns:1fr}.gp-flow{grid-template-columns:repeat(2,1fr)}.gp-screen iframe{height:600px}.gp-official-inner{align-items:flex-start;flex-direction:column}.gp-floating{display:none}}
+@media(max-width:430px){.gp-flow{grid-template-columns:1fr}.gp-preview iframe{height:570px}.gp-screen iframe{height:560px}}
+</style>
+</head>
+<body class="green-product">
+<header class="site-header phase-header" id="top">
+<div class="header-inner">
+<a class="brand" href="../index.html" aria-label="DPRO LINE SYSTEMS トップへ"><span class="brand-mark">D</span><span class="brand-copy"><strong>DPRO LINE SYSTEMS</strong><small>OFFICIAL PRODUCT SITE</small></span></a>
+<button class="menu-button" type="button" aria-expanded="false" aria-controls="global-nav" aria-label="メニューを開く"><span></span><span></span><span></span></button>
+<nav class="global-nav" id="global-nav" aria-label="メインナビゲーション">
+<a href="../index.html">トップ</a>
+<a href="../systems.html">製品一覧</a>
+<a href="#functions">機能</a>
+<a href="#screens">実画面</a>
+<a class="nav-cta" href="https://lin.ee/YxJGXV6D" target="_blank" rel="noopener">LINEでデモを見る</a>
+</nav>
+</div>
+</header>
+
+<main>
+<section class="gp-hero">
+<div class="gp-hero-inner">
+<div>
+<nav class="gp-crumb" aria-label="パンくずリスト"><a href="../index.html">DPRO LINE SYSTEMS</a><span>／</span><a href="../systems.html">製品一覧</a><span>／</span><strong>グリーンレンタル</strong></nav>
+<p class="gp-kicker">DPRO GREEN RENTAL LINE</p>
+<h1>植物の設置から、<br><em>巡回・交換後まで。</em></h1>
+<p class="gp-lead">写真相談、現地確認、顧客・拠点、植物・鉢、設置、定期巡回、作業写真、交換提案、回収・養生・再利用、お客様報告を、LINE・PC・iPad・スタッフ画面でつなぎます。</p>
+<div class="gp-actions"><a class="gp-button gp-button-primary" href="#screens">実画面を見る →</a><a class="gp-button gp-button-secondary" href="https://dpro-shop.com/systems/green-rental" target="_blank" rel="noopener">公式紹介ページ</a></div>
+<div class="gp-proof"><span>相談受付</span><span>植物資産</span><span>巡回・写真報告</span><span>交換・養生</span></div>
+</div>
+<div class="gp-preview">
+<div class="gp-preview-head"><span>OWNER PC / LIVE DEMO</span><b>DPRO GREEN</b></div>
+<iframe title="DPROグリーンレンタル管理PC実画面" loading="eager" src="https://dpromstk2000-lab.github.io/dpro-green-rental-line/owner.html"></iframe>
+<div class="gp-floating gp-floating-a"><small>ROUTE</small><strong>本日の巡回・担当・順番</strong></div>
+<div class="gp-floating gp-floating-b"><small>REPORT</small><strong>写真付き作業報告</strong></div>
+</div>
+</div>
+</section>
+
+<section class="gp-section gp-soft" id="functions">
+<div class="gp-container">
+<div class="gp-heading"><div><small>COMPLETE OPERATION</small><h2>観葉植物レンタルの<br>日常業務を一つに。</h2></div><p>相談から設置、巡回、作業報告、交換後の養生まで、業務の前後関係を切らさず管理します。</p></div>
+<div class="gp-grid">
+<article class="gp-card"><b>01 / INQUIRY</b><h3>写真相談・現地確認</h3><ul><li>定期・追加・スポット・メンテ相談</li><li>写真付き受付・受付番号</li><li>営業・現地確認・顧客登録へ</li></ul></article>
+<article class="gp-card"><b>02 / CUSTOMER</b><h3>顧客・拠点・設置場所</h3><ul><li>電話番号正規化・重複候補</li><li>拠点・フロア・設置場所</li><li>入館・駐車・連絡先・社内メモ</li></ul></article>
+<article class="gp-card"><b>03 / ASSET</b><h3>植物・鉢・現在地</h3><ul><li>品種・植物・鉢・鉢カバー</li><li>一鉢／本数／併用管理</li><li>組み合わせ・移動・棚卸・在庫</li></ul></article>
+<article class="gp-card"><b>04 / VISIT</b><h3>定期巡回・スタッフ</h3><ul><li>訪問ルール・予定生成</li><li>担当・訪問順・再訪問</li><li>到着・開始・完了・訪問できず</li></ul></article>
+<article class="gp-card"><b>05 / MAINTENANCE</b><h3>作業・状態・写真</h3><ul><li>一括作業・一鉢別状態</li><li>作業前後・異常・交換写真</li><li>お客様公開・社内限定</li></ul></article>
+<article class="gp-card"><b>06 / REPLACEMENT</b><h3>交換・回収・養生</h3><ul><li>提案・承認・代替植物</li><li>積込・現地交換・旧植物回収</li><li>養生日誌・再利用・廃棄・返却</li></ul></article>
+</div>
+</div>
+</section>
+
+<section class="gp-section gp-dark">
+<div class="gp-container">
+<div class="gp-heading"><div><small>WORKFLOW</small><h2>設置した後こそ、<br>管理しやすく。</h2></div><p>巡回・作業・交換・養生の状態を更新すると、管理画面とお客様マイページへ同じ情報がつながります。</p></div>
+<div class="gp-flow">
+<article class="gp-step"><span>01</span><strong>相談受付</strong><p>写真と希望を受付。</p></article>
+<article class="gp-step"><span>02</span><strong>現地確認</strong><p>設置条件を確認。</p></article>
+<article class="gp-step"><span>03</span><strong>設置登録</strong><p>植物・鉢・場所を紐付け。</p></article>
+<article class="gp-step"><span>04</span><strong>定期巡回</strong><p>担当・順番・作業。</p></article>
+<article class="gp-step"><span>05</span><strong>写真報告</strong><p>公開写真とコメント。</p></article>
+<article class="gp-step"><span>06</span><strong>交換・養生</strong><p>回収後も履歴を継続。</p></article>
+</div>
+</div>
+</section>
+
+<section class="gp-section gp-soft" id="screens">
+<div class="gp-container">
+<div class="gp-heading"><div><small>LIVE PRODUCT</small><h2>4つの実画面を、<br>そのまま体験。</h2></div><p>説明用の画像ではなく、公開中のGREENシステム画面を直接表示しています。</p></div>
+<div class="gp-screen-grid">
+<article class="gp-screen"><div class="gp-screen-head"><div><small>CUSTOMER</small><strong>お客様マイページ</strong></div><a href="https://dpromstk2000-lab.github.io/dpro-green-rental-line/member.html" target="_blank" rel="noopener">開く ↗</a></div><iframe title="お客様マイページ" loading="lazy" src="https://dpromstk2000-lab.github.io/dpro-green-rental-line/member.html"></iframe></article>
+<article class="gp-screen"><div class="gp-screen-head"><div><small>OWNER PC</small><strong>管理PC</strong></div><a href="https://dpromstk2000-lab.github.io/dpro-green-rental-line/owner.html" target="_blank" rel="noopener">開く ↗</a></div><iframe title="管理PC" loading="lazy" src="https://dpromstk2000-lab.github.io/dpro-green-rental-line/owner.html"></iframe></article>
+<article class="gp-screen"><div class="gp-screen-head"><div><small>OWNER iPAD</small><strong>本日の巡回・交換ボード</strong></div><a href="https://dpromstk2000-lab.github.io/dpro-green-rental-line/owner-ipad.html" target="_blank" rel="noopener">開く ↗</a></div><iframe title="管理iPad" loading="lazy" src="https://dpromstk2000-lab.github.io/dpro-green-rental-line/owner-ipad.html"></iframe></article>
+<article class="gp-screen"><div class="gp-screen-head"><div><small>STAFF</small><strong>スタッフスマホ</strong></div><a href="https://dpromstk2000-lab.github.io/dpro-green-rental-line/staff.html" target="_blank" rel="noopener">開く ↗</a></div><iframe title="スタッフ画面" loading="lazy" src="https://dpromstk2000-lab.github.io/dpro-green-rental-line/staff.html"></iframe></article>
+</div>
+<div class="gp-demo-info"><strong>デモログイン</strong><span>管理：<code>dpro_green_rental_demo</code>／<code>1234</code></span><span>スタッフ：<code>DEMO-YAMAMOTO</code>／<code>1234</code></span><span>お客様：<code>DEMO-GREEN-001</code></span></div>
+<div class="gp-scope"><strong>対象範囲：</strong>受付・顧客・拠点・植物資産・在庫・巡回・作業報告・交換・回収・養生を対象としています。料金、請求、入金、原価、利益、会計は対象外です。</div>
+</div>
+</section>
+
+<section class="gp-official">
+<div class="gp-official-inner">
+<div><h2>機能・導入条件・料金は、<br>DPRO SHOP公式ページへ。</h2><p>公開デモで操作を確認した後、現在の巡回方法や設置鉢数に合わせた導入内容をご相談いただけます。</p></div>
+<a class="gp-button gp-button-primary" href="https://dpro-shop.com/systems/green-rental" target="_blank" rel="noopener">公式紹介ページを見る →</a>
+</div>
+</section>
+</main>
+
+<footer class="site-footer">
+<div class="footer-inner">
+<a class="brand footer-brand" href="../index.html"><span class="brand-mark">D</span><span class="brand-copy"><strong>DPRO LINE SYSTEMS</strong><small>OFFICIAL PRODUCT SITE</small></span></a>
+<p>店舗業務を、LINEでもっと簡単に。</p>
+<nav><a href="../index.html">トップ</a><a href="../systems.html">製品一覧</a><a href="https://lin.ee/YxJGXV6D" rel="noopener" target="_blank">LINEでデモを見る</a></nav>
+<small>© 2026 DPRO SHOP</small>
+</div>
+</footer>
+<button class="back-to-top" type="button">↑</button>
+<script src="../script.js"></script>
+</body>
+</html>
