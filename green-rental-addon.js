@@ -60,14 +60,14 @@
         <iframe
           title="グリーンレンタル管理PC実画面プレビュー"
           loading="lazy"
-          src="https://dpromstk2000-lab.github.io/dpro-green-rental-line/owner.html"
+          src="https://dpromstk2000-lab.github.io/dpro-green-rental-line/owner.html?demo=1&view=dashboard&v=GREEN-SITE-R2"
         ></iframe>
         <span class="catalog-live-badge">実画面あり</span>
       </div>
       <div class="catalog-card-copy">
         <small>${GREEN_CATEGORY}</small>
         <h3>${GREEN_TITLE}</h3>
-        <p>写真相談・植物資産・定期巡回・作業写真・交換・回収・養生・お客様報告。</p>
+        <p>写真相談・植物資産・定期巡回・作業写真・交換・回収・養生・お客様報告を、ログイン後の実画面で確認できます。</p>
         <b class="catalog-card-cta">今すぐ製品ページを見る →</b>
       </div>`;
     grid.appendChild(card);
