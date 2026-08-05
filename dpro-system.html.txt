@@ -1,86 +1,82 @@
 <!DOCTYPE html>
+
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="DPROの業種専用店舗システム。LINEを入口に、予約・受付・顧客管理・進捗・スタッフ共有をスマホ・PC・iPadで一元管理します。">
-  <meta name="theme-color" content="#0b0b0d">
-  <title>DPROシステム｜LINEから店舗業務までつながる業種専用システム</title>
-  <link rel="stylesheet" href="styles.css">
-  <link rel="stylesheet" href="business-integration.css">
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta content="DPROの業種専用店舗システム。LINEを入口に、予約・受付・顧客管理・進捗・スタッフ共有をスマホ・PC・iPadで一元管理します。" name="description"/>
+<meta content="#0b0b0d" name="theme-color"/>
+<title>DPROシステム｜LINEから店舗業務までつながる業種専用システム</title>
+<link href="styles.css" rel="stylesheet"/>
+<link href="business-integration.css" rel="stylesheet"/>
 </head>
 <body class="dpro-system-page">
 <header class="site-header phase-header" id="top">
-  <div class="header-inner">
-    <a class="brand" href="index.html" aria-label="DPRO LINE SYSTEMS トップへ"><span class="brand-mark">D</span><span class="brand-copy"><strong>DPRO LINE SYSTEMS</strong><small>BUSINESS SYSTEM SERVICE</small></span></a>
-    <button class="menu-button" type="button" aria-expanded="false" aria-controls="global-nav" aria-label="メニューを開く"><span></span><span></span><span></span></button>
-    <nav class="global-nav dpro-service-nav" id="global-nav" aria-label="メインナビゲーション"><a href="#features">特徴</a><a href="#functions">できること</a><a href="#price">料金</a><a href="systems.html">48製品一覧</a><a href="line.html">LINE公式</a><a href="website.html">ホームページ</a><a class="nav-cta" href="https://lin.ee/YxJGXV6D" target="_blank" rel="noopener">LINEでデモを見る</a></nav>
-  </div>
+<div class="header-inner">
+<a aria-label="DPRO LINE SYSTEMS トップへ" class="brand" href="index.html"><span class="brand-mark">D</span><span class="brand-copy"><strong>DPRO LINE SYSTEMS</strong><small>BUSINESS SYSTEM SERVICE</small></span></a>
+<button aria-controls="global-nav" aria-expanded="false" aria-label="メニューを開く" class="menu-button" type="button"><span></span><span></span><span></span></button>
+<nav aria-label="メインナビゲーション" class="global-nav dpro-service-nav" id="global-nav"><a href="#features">特徴</a><a href="#functions">できること</a><a href="#price">料金</a><a href="systems.html">48製品一覧</a><a href="line.html">LINE公式</a><a href="website.html">ホームページ</a><a class="dpro-official-site-link" data-official-site-link="" href="https://dpro-shop.com/">DPRO SHOP公式 ↗</a><a class="nav-cta" href="https://lin.ee/YxJGXV6D" rel="noopener" target="_blank">LINEでデモを見る</a></nav>
+</div>
 </header>
 <main>
 <section class="dpro-system-hero">
-  <div class="dpro-system-hero__copy reveal">
-    <p class="eyebrow">DPRO BUSINESS SYSTEM</p>
-    <h1><span>LINEの入口から、</span><span>店舗の仕事まで。</span><span class="is-accent">業種専用システムでひとつに。</span></h1>
-    <p>予約・受付・顧客管理・カルテ・注文・案件進捗・訪問予定など、業種ごとに必要な仕事を一つの管理画面へ。お客様、店舗、スタッフが同じ情報で動ける仕組みを作ります。</p>
-    <div class="phase-hero-actions"><a class="button button-line-demo" href="https://lin.ee/YxJGXV6D" target="_blank" rel="noopener">LINEでデモを見る</a><a class="button button-secondary" href="systems.html">48製品を確認する</a></div>
-    <div class="dpro-system-hero__proof"><span>48業種</span><span>スマホ・PC・iPad</span><span>実画面デモ</span><span>導入後も改善</span></div>
-  </div>
-  <div class="dpro-system-stage reveal" aria-label="DPROシステムの利用画面イメージ">
-    <div class="dpro-system-monitor"><div class="dpro-system-monitor__bar"><i></i><i></i><i></i><b>店舗管理画面</b></div><div class="dpro-system-dashboard"><div><small>本日の受付</small><strong>12</strong><span>件</span></div><div><small>対応中</small><strong>5</strong><span>件</span></div><div><small>完了</small><strong>7</strong><span>件</span></div><ul><li><i></i><span>10:00　予約・受付</span><b>確認済</b></li><li><i></i><span>11:30　お客様対応</span><b>対応中</b></li><li><i></i><span>14:00　次回案内</span><b>予定</b></li></ul></div></div>
-    <div class="dpro-system-phone"><small>お客様画面</small><strong>予約・会員</strong><span>LINEから利用</span><div><b>予約する</b><b>履歴を見る</b><b>相談する</b><b>お知らせ</b></div></div>
-    <div class="dpro-system-tablet"><small>スタッフ画面</small><strong>今日の業務</strong><p><span>受付確認</span><b>完了</b></p><p><span>作業報告</span><b>入力中</b></p><p><span>次回予定</span><b>確認</b></p></div>
-    <div class="dpro-system-badge"><b>DPRO</b><span>3つの画面が連動</span></div>
-  </div>
+<div class="dpro-system-hero__copy reveal">
+<p class="eyebrow">DPRO BUSINESS SYSTEM</p>
+<h1><span>LINEの入口から、</span><span>店舗の仕事まで。</span><span class="is-accent">業種専用システムでひとつに。</span></h1>
+<p>予約・受付・顧客管理・カルテ・注文・案件進捗・訪問予定など、業種ごとに必要な仕事を一つの管理画面へ。お客様、店舗、スタッフが同じ情報で動ける仕組みを作ります。</p>
+<div class="phase-hero-actions"><a class="button button-line-demo" href="https://lin.ee/YxJGXV6D" rel="noopener" target="_blank">LINEでデモを見る</a><a class="button button-secondary" href="systems.html">48製品を確認する</a></div>
+<div class="dpro-system-hero__proof"><span>48業種</span><span>スマホ・PC・iPad</span><span>実画面デモ</span><span>導入後も改善</span></div>
+</div>
+<div aria-label="DPROシステムの利用画面イメージ" class="dpro-system-stage reveal">
+<div class="dpro-system-monitor"><div class="dpro-system-monitor__bar"><i></i><i></i><i></i><b>店舗管理画面</b></div><div class="dpro-system-dashboard"><div><small>本日の受付</small><strong>12</strong><span>件</span></div><div><small>対応中</small><strong>5</strong><span>件</span></div><div><small>完了</small><strong>7</strong><span>件</span></div><ul><li><i></i><span>10:00　予約・受付</span><b>確認済</b></li><li><i></i><span>11:30　お客様対応</span><b>対応中</b></li><li><i></i><span>14:00　次回案内</span><b>予定</b></li></ul></div></div>
+<div class="dpro-system-phone"><small>お客様画面</small><strong>予約・会員</strong><span>LINEから利用</span><div><b>予約する</b><b>履歴を見る</b><b>相談する</b><b>お知らせ</b></div></div>
+<div class="dpro-system-tablet"><small>スタッフ画面</small><strong>今日の業務</strong><p><span>受付確認</span><b>完了</b></p><p><span>作業報告</span><b>入力中</b></p><p><span>次回予定</span><b>確認</b></p></div>
+<div class="dpro-system-badge"><b>DPRO</b><span>3つの画面が連動</span></div>
+</div>
 </section>
-
 <section class="dpro-system-section" id="features">
-  <div class="section-heading reveal"><p class="eyebrow">ONE SYSTEM, THREE USERS</p><h2 class="headline-lines headline-fixed"><span>お客様・店舗・スタッフを、</span><span>一つの運用につなぎます。</span></h2><p>別々のツールや紙へ情報を分散させず、必要な人が必要な画面から同じ情報を確認できます。</p></div>
-  <div class="dpro-system-role-grid">
-    <article class="reveal"><span>01</span><small>CUSTOMER</small><h3>お客様・ご家族</h3><p>LINEから予約、受付、注文、会員証、履歴、相談などを利用できます。</p><ul><li>迷わず使えるスマホ画面</li><li>店舗へ電話する手間を削減</li><li>必要な情報をいつでも確認</li></ul></article>
-    <article class="is-core reveal"><span>02</span><small>OWNER / OFFICE</small><h3>店舗・管理者</h3><p>予約・顧客・進捗・報告などをPCやiPadの管理画面へ集約します。</p><ul><li>情報を一元管理</li><li>対応状況を見える化</li><li>LINE・WEBへ情報を連携</li></ul></article>
-    <article class="reveal"><span>03</span><small>STAFF</small><h3>現場スタッフ</h3><p>スマートフォンから今日の業務、訪問先、作業内容、報告を確認できます。</p><ul><li>外出先でも確認</li><li>重複対応・確認漏れを防止</li><li>店舗全体で進捗を共有</li></ul></article>
-  </div>
+<div class="section-heading reveal"><p class="eyebrow">ONE SYSTEM, THREE USERS</p><h2 class="headline-lines headline-fixed"><span>お客様・店舗・スタッフを、</span><span>一つの運用につなぎます。</span></h2><p>別々のツールや紙へ情報を分散させず、必要な人が必要な画面から同じ情報を確認できます。</p></div>
+<div class="dpro-system-role-grid">
+<article class="reveal"><span>01</span><small>CUSTOMER</small><h3>お客様・ご家族</h3><p>LINEから予約、受付、注文、会員証、履歴、相談などを利用できます。</p><ul><li>迷わず使えるスマホ画面</li><li>店舗へ電話する手間を削減</li><li>必要な情報をいつでも確認</li></ul></article>
+<article class="is-core reveal"><span>02</span><small>OWNER / OFFICE</small><h3>店舗・管理者</h3><p>予約・顧客・進捗・報告などをPCやiPadの管理画面へ集約します。</p><ul><li>情報を一元管理</li><li>対応状況を見える化</li><li>LINE・WEBへ情報を連携</li></ul></article>
+<article class="reveal"><span>03</span><small>STAFF</small><h3>現場スタッフ</h3><p>スマートフォンから今日の業務、訪問先、作業内容、報告を確認できます。</p><ul><li>外出先でも確認</li><li>重複対応・確認漏れを防止</li><li>店舗全体で進捗を共有</li></ul></article>
+</div>
 </section>
-
 <section class="dpro-system-section dpro-system-section--soft" id="functions">
-  <div class="section-heading reveal"><p class="eyebrow">INDUSTRY-SPECIFIC FUNCTIONS</p><h2 class="headline-lines headline-fixed"><span>業種に必要な仕事を、</span><span>使う機能だけで組み立てます。</span></h2><p>すべてを詰め込むのではなく、店舗の営業スタイルに合わせて必要な機能をON・OFFできます。</p></div>
-  <div class="dpro-system-function-grid">
-    <article class="reveal"><span>予約・受付</span><h3>電話対応を減らす</h3><p>予約、順番受付、注文、見積依頼などをLINEやWEBから受け付けます。</p></article>
-    <article class="reveal"><span>顧客管理</span><h3>お客様情報をまとめる</h3><p>基本情報、利用履歴、会員情報、家族・ペット・車両などを業種に合わせて管理します。</p></article>
-    <article class="reveal"><span>カルテ・記録</span><h3>対応内容を残す</h3><p>写真、施術、診療、相談、作業記録などを次回対応に活用できます。</p></article>
-    <article class="reveal"><span>案件・進捗</span><h3>今の状態を共有する</h3><p>受付から完了・引渡しまで、担当者と進行状況を店舗全体で確認できます。</p></article>
-    <article class="reveal"><span>通知・再来店</span><h3>次の利用につなげる</h3><p>予約確認、作業完了、次回案内、クーポンなどをLINE運用へつなげます。</p></article>
-    <article class="reveal"><span>WEB連携</span><h3>店舗情報を共有する</h3><p>営業時間、休業日、お知らせ、予約可能日などをホームページと連携できます。</p></article>
-  </div>
+<div class="section-heading reveal"><p class="eyebrow">INDUSTRY-SPECIFIC FUNCTIONS</p><h2 class="headline-lines headline-fixed"><span>業種に必要な仕事を、</span><span>使う機能だけで組み立てます。</span></h2><p>すべてを詰め込むのではなく、店舗の営業スタイルに合わせて必要な機能をON・OFFできます。</p></div>
+<div class="dpro-system-function-grid">
+<article class="reveal"><span>予約・受付</span><h3>電話対応を減らす</h3><p>予約、順番受付、注文、見積依頼などをLINEやWEBから受け付けます。</p></article>
+<article class="reveal"><span>顧客管理</span><h3>お客様情報をまとめる</h3><p>基本情報、利用履歴、会員情報、家族・ペット・車両などを業種に合わせて管理します。</p></article>
+<article class="reveal"><span>カルテ・記録</span><h3>対応内容を残す</h3><p>写真、施術、診療、相談、作業記録などを次回対応に活用できます。</p></article>
+<article class="reveal"><span>案件・進捗</span><h3>今の状態を共有する</h3><p>受付から完了・引渡しまで、担当者と進行状況を店舗全体で確認できます。</p></article>
+<article class="reveal"><span>通知・再来店</span><h3>次の利用につなげる</h3><p>予約確認、作業完了、次回案内、クーポンなどをLINE運用へつなげます。</p></article>
+<article class="reveal"><span>WEB連携</span><h3>店舗情報を共有する</h3><p>営業時間、休業日、お知らせ、予約可能日などをホームページと連携できます。</p></article>
+</div>
 </section>
-
 <section class="dpro-system-section dpro-system-section--dark">
-  <div class="section-heading section-heading-light reveal"><p class="eyebrow">WHY DPRO</p><h2 class="headline-lines headline-fixed"><span>説明だけのシステムではなく、</span><span>導入前に実際の画面を確認できます。</span></h2><p>完成済みの製品を土台にするため、業種の運用イメージを確認してから導入を検討できます。</p></div>
-  <div class="dpro-system-difference-grid">
-    <article class="reveal"><strong>48</strong><h3>完成済み業種システム</h3><p>美容、医療・ペット、飲食、小売、福祉、士業などの製品を公開しています。</p></article>
-    <article class="reveal"><strong>LIVE</strong><h3>実際に操作できるデモ</h3><p>見本画像ではなく、スマホ・PC・iPadの実画面を確認できます。</p></article>
-    <article class="reveal"><strong>UPDATE</strong><h3>導入後も改善</h3><p>現場の運用に合わせて、画面や設定、必要な機能を育てていきます。</p></article>
-  </div>
-  <div class="dpro-system-catalog-action reveal"><a class="button button-primary" href="systems.html">48製品を業種から探す</a><p>製品一覧では、業種別の機能・画面・デモをご確認いただけます。</p></div>
+<div class="section-heading section-heading-light reveal"><p class="eyebrow">WHY DPRO</p><h2 class="headline-lines headline-fixed"><span>説明だけのシステムではなく、</span><span>導入前に実際の画面を確認できます。</span></h2><p>完成済みの製品を土台にするため、業種の運用イメージを確認してから導入を検討できます。</p></div>
+<div class="dpro-system-difference-grid">
+<article class="reveal"><strong>48</strong><h3>完成済み業種システム</h3><p>美容、医療・ペット、飲食、小売、福祉、士業などの製品を公開しています。</p></article>
+<article class="reveal"><strong>LIVE</strong><h3>実際に操作できるデモ</h3><p>見本画像ではなく、スマホ・PC・iPadの実画面を確認できます。</p></article>
+<article class="reveal"><strong>UPDATE</strong><h3>導入後も改善</h3><p>現場の運用に合わせて、画面や設定、必要な機能を育てていきます。</p></article>
+</div>
+<div class="dpro-system-catalog-action reveal"><a class="button button-primary" href="systems.html">48製品を業種から探す</a><p>製品一覧では、業種別の機能・画面・デモをご確認いただけます。</p></div>
 </section>
-
 <section class="dpro-system-section" id="price">
-  <div class="section-heading reveal"><p class="eyebrow">PRICE & SUPPORT</p><h2 class="headline-lines headline-fixed"><span>完成済み製品を活用した、</span><span>導入しやすい料金設計</span></h2><p>業種・利用人数・追加機能・外部連携によって内容が異なるため、正式料金は導入前にご案内します。</p></div>
-  <div class="dpro-system-price-grid">
-    <article class="reveal"><small>DPROシステム 初期設定・導入</small><strong>33,000円〜</strong><p>完成済み製品を土台に、店舗情報、利用設定、画面、基本データを整えます。</p><ul><li>業種専用の基本構成</li><li>店舗別設定</li><li>公開前の接続・操作確認</li></ul></article>
-    <article class="reveal"><small>システム利用・基本保守</small><strong>月額 1,100円〜</strong><p>公開維持、基本的な接続確認、軽微な不具合修正などを行います。</p><ul><li>システム公開維持</li><li>基本的な障害確認</li><li>軽微な設定相談</li></ul></article>
-    <article class="is-integrated reveal"><span>DPRO統合運用</span><small>LINE＋システム＋ホームページ</small><strong>月額 5,500円〜</strong><p>お客様の入口から店舗運営、ホームページまでをまとめて利用する構成です。</p><ul><li>LINE公式運用</li><li>DPROシステム保守</li><li>ホームページ基本保守</li></ul></article>
-  </div>
-  <p class="dpro-system-price-note reveal">大幅な機能追加、独自開発、外部サービス連携、データ移行などは個別見積りとなります。</p>
+<div class="section-heading reveal"><p class="eyebrow">PRICE &amp; SUPPORT</p><h2 class="headline-lines headline-fixed"><span>完成済み製品を活用した、</span><span>導入しやすい料金設計</span></h2><p>業種・利用人数・追加機能・外部連携によって内容が異なるため、正式料金は導入前にご案内します。</p></div>
+<div class="dpro-system-price-grid">
+<article class="reveal"><small>DPROシステム 初期設定・導入</small><strong>33,000円〜</strong><p>完成済み製品を土台に、店舗情報、利用設定、画面、基本データを整えます。</p><ul><li>業種専用の基本構成</li><li>店舗別設定</li><li>公開前の接続・操作確認</li></ul></article>
+<article class="reveal"><small>システム利用・基本保守</small><strong>月額 1,100円〜</strong><p>公開維持、基本的な接続確認、軽微な不具合修正などを行います。</p><ul><li>システム公開維持</li><li>基本的な障害確認</li><li>軽微な設定相談</li></ul></article>
+<article class="is-integrated reveal"><span>DPRO統合運用</span><small>LINE＋システム＋ホームページ</small><strong>月額 5,500円〜</strong><p>お客様の入口から店舗運営、ホームページまでをまとめて利用する構成です。</p><ul><li>LINE公式運用</li><li>DPROシステム保守</li><li>ホームページ基本保守</li></ul></article>
+</div>
+<p class="dpro-system-price-note reveal">大幅な機能追加、独自開発、外部サービス連携、データ移行などは個別見積りとなります。</p>
 </section>
-
 <section class="phase-cta section section-dark">
-  <div class="phase-cta-inner reveal"><p class="eyebrow">START WITH A LIVE DEMO</p><h2 class="headline-lines dpro-system-final-title"><span>あなたの業種で、</span><span>実際の画面を確認しませんか？</span></h2><p>気になる業種と、現在困っている業務をお知らせください。近いDPRO製品をご案内します。</p><div class="dpro-final-actions"><a class="button button-line-demo large" href="https://lin.ee/YxJGXV6D" target="_blank" rel="noopener">LINEでデモを見る</a><a class="button button-secondary large" href="systems.html">48製品一覧を見る</a><a class="button button-secondary large" href="line.html">LINE公式サービス</a><a class="button button-secondary large" href="website.html">ホームページ制作</a></div></div>
+<div class="phase-cta-inner reveal"><p class="eyebrow">START WITH A LIVE DEMO</p><h2 class="headline-lines dpro-system-final-title"><span>あなたの業種で、</span><span>実際の画面を確認しませんか？</span></h2><p>気になる業種と、現在困っている業務をお知らせください。近いDPRO製品をご案内します。</p><div class="dpro-final-actions"><a class="button button-line-demo large" href="https://lin.ee/YxJGXV6D" rel="noopener" target="_blank">LINEでデモを見る</a><a class="button button-secondary large" href="systems.html">48製品一覧を見る</a><a class="button button-secondary large" href="line.html">LINE公式サービス</a><a class="button button-secondary large" href="website.html">ホームページ制作</a></div></div>
 </section>
 </main>
-<footer class="site-footer"><div><a class="brand footer-brand" href="index.html"><span class="brand-mark">D</span><span class="brand-copy"><strong>DPRO LINE SYSTEMS</strong><small>BUSINESS SYSTEM SERVICE</small></span></a><p>LINEから店舗業務まで、業種専用システムでひとつに。</p></div><nav aria-label="フッターナビゲーション"><a href="#features">DPROシステムとは</a><a href="#functions">できること</a><a href="#price">料金</a><a href="systems.html">48製品一覧</a><a href="line.html">LINE公式</a><a href="website.html">ホームページ制作</a></nav><p class="copyright">© <span id="year"></span> DPRO SHOP</p></footer>
-<button class="back-to-top" type="button" aria-label="ページ上部へ戻る">↑</button>
+<footer class="site-footer"><div><a class="brand footer-brand" href="index.html"><span class="brand-mark">D</span><span class="brand-copy"><strong>DPRO LINE SYSTEMS</strong><small>BUSINESS SYSTEM SERVICE</small></span></a><p>LINEから店舗業務まで、業種専用システムでひとつに。</p></div><nav aria-label="フッターナビゲーション"><a href="#features">DPROシステムとは</a><a href="#functions">できること</a><a href="#price">料金</a><a href="systems.html">48製品一覧</a><a href="line.html">LINE公式</a><a href="website.html">ホームページ制作</a><a data-official-site-link="" href="https://dpro-shop.com/">DPRO SHOP公式サイト ↗</a></nav><p class="copyright">© <span id="year"></span> DPRO SHOP</p></footer>
+<button aria-label="ページ上部へ戻る" class="back-to-top" type="button">↑</button>
 <script src="script.js"></script>
 <script src="business-integration.js"></script>
 </body>

@@ -454,3 +454,17 @@
   .dpro-system-final-title>span{white-space:normal}
 }
 @media(prefers-reduced-motion:reduce){.dpro-connection-node,.dpro-connection-core{transition:none}}
+
+
+/* V4 — DPRO SHOP OFFICIAL CROSS-SITE BRIDGE */
+.dpro-official-site-link{padding:9px 13px!important;border:1px solid rgba(255,255,255,.2)!important;border-radius:999px!important;color:#fff!important;background:rgba(255,255,255,.045)!important;white-space:nowrap}.dpro-official-site-link:hover{border-color:#a8ff2a!important;color:#a8ff2a!important;background:rgba(168,255,42,.06)!important}
+.dpro-official-bridge{position:relative;overflow:hidden;color:#fff;background:linear-gradient(135deg,#0b0b0e,#111018 65%,#0b1617)}
+.dpro-official-bridge::before{content:"";position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.018) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.018) 1px,transparent 1px);background-size:68px 68px;pointer-events:none}
+.dpro-official-bridge__glow{position:absolute;width:620px;height:330px;right:5%;top:50%;transform:translateY(-50%);border-radius:50%;background:radial-gradient(circle,rgba(170,33,77,.2),rgba(168,255,42,.04) 42%,transparent 70%);filter:blur(28px);animation:dproOfficialGlow 6s ease-in-out infinite}
+.dpro-official-bridge__inner{position:relative;z-index:2;width:min(calc(100% - 40px),1160px);margin:auto;padding:76px 0;display:grid;grid-template-columns:1fr auto;align-items:center;gap:60px}
+.dpro-official-bridge h2{margin:12px 0 18px;max-width:760px;font-size:clamp(39px,4.7vw,66px);line-height:1.08;letter-spacing:-.045em}.dpro-official-bridge p:not(.eyebrow){max-width:750px;margin:0;color:rgba(255,255,255,.65);font-size:16px;line-height:1.9}
+.dpro-official-bridge__inner>a{min-height:58px;padding:0 27px;display:inline-flex;align-items:center;justify-content:center;border-radius:999px;background:linear-gradient(135deg,#aa214d,#7b1636);color:#fff;font-size:14px;font-weight:900;white-space:nowrap;box-shadow:0 18px 45px rgba(170,33,77,.26);transition:transform .3s ease,box-shadow .3s ease}.dpro-official-bridge__inner>a:hover{transform:translateY(-4px);box-shadow:0 24px 58px rgba(170,33,77,.36)}.dpro-official-bridge__inner>a span{margin-left:9px;font-size:18px}
+@keyframes dproOfficialGlow{0%,100%{opacity:.65;transform:translateY(-50%) scale(.94)}50%{opacity:1;transform:translateY(-50%) scale(1.08)}}
+@media(max-width:1050px){.dpro-service-nav{gap:13px!important;font-size:12px!important}.dpro-official-bridge__inner{grid-template-columns:1fr;gap:30px}.dpro-official-bridge__inner>a{width:max-content}}
+@media(max-width:760px){.dpro-official-site-link{display:block!important;margin-top:8px!important;text-align:center!important;border-radius:12px!important}.dpro-official-bridge__inner{width:min(calc(100% - 32px),1160px);padding:64px 0}.dpro-official-bridge__inner>a{width:100%}.dpro-official-bridge h2{font-size:clamp(35px,10vw,48px)}}
+@media(prefers-reduced-motion:reduce){.dpro-official-bridge__glow{animation:none}.dpro-official-bridge__inner>a:hover{transform:none}}

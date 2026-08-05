@@ -1,89 +1,84 @@
 <!DOCTYPE html>
+
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="DPRO SHOPのホームページ制作。33,000円のかんたんホームページから、LINE公式・DPROシステム完全連携型のビジネスホームページまでご案内します。">
-  <meta name="theme-color" content="#0b0b0d">
-  <title>DPROホームページ制作｜4つの料金プランとシステム連携</title>
-  <link rel="stylesheet" href="styles.css">
-  <link rel="stylesheet" href="business-integration.css">
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta content="DPRO SHOPのホームページ制作。33,000円のかんたんホームページから、LINE公式・DPROシステム完全連携型のビジネスホームページまでご案内します。" name="description"/>
+<meta content="#0b0b0d" name="theme-color"/>
+<title>DPROホームページ制作｜4つの料金プランとシステム連携</title>
+<link href="styles.css" rel="stylesheet"/>
+<link href="business-integration.css" rel="stylesheet"/>
 </head>
 <body class="website-service-page">
 <header class="site-header phase-header" id="top">
-  <div class="header-inner">
-    <a class="brand" href="index.html" aria-label="DPRO LINE SYSTEMS トップへ"><span class="brand-mark">D</span><span class="brand-copy"><strong>DPRO LINE SYSTEMS</strong><small>WEBSITE SERVICE</small></span></a>
-    <button class="menu-button" type="button" aria-expanded="false" aria-controls="global-nav" aria-label="メニューを開く"><span></span><span></span><span></span></button>
-    <nav class="global-nav dpro-service-nav" id="global-nav" aria-label="メインナビゲーション"><a href="#plans">料金プラン</a><a href="dpro-system.html">DPROシステム</a><a href="line.html">LINE公式</a><a href="#maintenance">保守料金</a><a href="index.html">トップ</a><a class="nav-cta" href="https://lin.ee/YxJGXV6D" target="_blank" rel="noopener">LINEで相談</a></nav>
-  </div>
+<div class="header-inner">
+<a aria-label="DPRO LINE SYSTEMS トップへ" class="brand" href="index.html"><span class="brand-mark">D</span><span class="brand-copy"><strong>DPRO LINE SYSTEMS</strong><small>WEBSITE SERVICE</small></span></a>
+<button aria-controls="global-nav" aria-expanded="false" aria-label="メニューを開く" class="menu-button" type="button"><span></span><span></span><span></span></button>
+<nav aria-label="メインナビゲーション" class="global-nav dpro-service-nav" id="global-nav"><a href="#plans">料金プラン</a><a href="dpro-system.html">DPROシステム</a><a href="line.html">LINE公式</a><a href="#maintenance">保守料金</a><a href="index.html">トップ</a><a class="dpro-official-site-link" data-official-site-link="" href="https://dpro-shop.com/">DPRO SHOP公式 ↗</a><a class="nav-cta" href="https://lin.ee/YxJGXV6D" rel="noopener" target="_blank">LINEで相談</a></nav>
+</div>
 </header>
 <main>
 <section class="dpro-web-hero">
-  <div class="dpro-web-hero__copy reveal">
-    <p class="eyebrow">DPRO WEBSITE SERVICE</p>
-    <h1 class="dpro-web-hero-title"><span class="dpro-web-title-line is-white">見られるだけの</span><span class="dpro-web-title-line is-white">ホームページから、</span><span class="dpro-web-title-line">店舗と一緒に動く</span><span class="dpro-web-title-line">ホームページへ。</span></h1>
-    <p>DPRO SHOPでは、低価格の基本サイトから、LINE公式・業務システム・ホームページが完全連携する本格仕様まで、目的に合わせて選べます。</p>
-    <div class="phase-hero-actions"><a class="button button-primary" href="#plans">4プランを比較する</a><a class="button button-secondary" href="https://dpromstk2000-lab.github.io/dpro-green-website/" target="_blank" rel="noopener">完成実例を見る</a></div>
-    <div class="dpro-web-hero__proof"><span>スマホ対応</span><span>SEO・OGP</span><span>LINE導線</span><span>DPRO連携</span></div>
-  </div>
-  <div class="dpro-web-hero__visual reveal" aria-label="ホームページと店舗運営の連携イメージ">
-    <div class="dpro-browser-mock"><div class="dpro-browser-mock__bar"><i></i><i></i><i></i><b>店舗ホームページ</b></div><div class="dpro-browser-mock__hero"><small>INFORMATION</small><strong>夏季休業のお知らせ</strong><p>8月13日〜15日は休業いたします。</p></div><div class="dpro-browser-mock__cards"><span></span><span></span><span></span></div></div>
-    <div class="dpro-web-hero__sync"><b>DPRO</b><span>自動反映</span></div>
-  </div>
+<div class="dpro-web-hero__copy reveal">
+<p class="eyebrow">DPRO WEBSITE SERVICE</p>
+<h1 class="dpro-web-hero-title"><span class="dpro-web-title-line is-white">見られるだけの</span><span class="dpro-web-title-line is-white">ホームページから、</span><span class="dpro-web-title-line">店舗と一緒に動く</span><span class="dpro-web-title-line">ホームページへ。</span></h1>
+<p>DPRO SHOPでは、低価格の基本サイトから、LINE公式・業務システム・ホームページが完全連携する本格仕様まで、目的に合わせて選べます。</p>
+<div class="phase-hero-actions"><a class="button button-primary" href="#plans">4プランを比較する</a><a class="button button-secondary" href="https://dpromstk2000-lab.github.io/dpro-green-website/" rel="noopener" target="_blank">完成実例を見る</a></div>
+<div class="dpro-web-hero__proof"><span>スマホ対応</span><span>SEO・OGP</span><span>LINE導線</span><span>DPRO連携</span></div>
+</div>
+<div aria-label="ホームページと店舗運営の連携イメージ" class="dpro-web-hero__visual reveal">
+<div class="dpro-browser-mock"><div class="dpro-browser-mock__bar"><i></i><i></i><i></i><b>店舗ホームページ</b></div><div class="dpro-browser-mock__hero"><small>INFORMATION</small><strong>夏季休業のお知らせ</strong><p>8月13日〜15日は休業いたします。</p></div><div class="dpro-browser-mock__cards"><span></span><span></span><span></span></div></div>
+<div class="dpro-web-hero__sync"><b>DPRO</b><span>自動反映</span></div>
+</div>
 </section>
-
 <section class="dpro-web-section" id="plans">
-  <div class="section-heading reveal"><p class="eyebrow">FOUR WEBSITE PLANS</p><h2 class="headline-lines headline-fixed"><span>目的と運用方法で選べる、</span><span>4つのホームページ制作プラン</span></h2><p>価格だけでなく、「誰が更新するか」「DPROと連携するか」で違いが分かります。</p></div>
-  <div class="dpro-plan-grid">
-    <article class="dpro-plan-card reveal"><span class="dpro-plan-number">01</span><p class="dpro-plan-type">SIMPLE</p><h3>DPROかんたん<br>ホームページ</h3><strong class="dpro-plan-price">33,000<small>円</small></strong><p>基本情報を公開する、名刺代わりの小規模サイト。</p><ul><li>1〜3ページ程度</li><li>テンプレートデザイン</li><li>スマホ対応</li><li>LINE・電話へのリンク</li><li>原則手動更新</li></ul><em>低予算でまず公開したい方向け</em></article>
-    <article class="dpro-plan-card reveal"><span class="dpro-plan-number">02</span><p class="dpro-plan-type">LANDING PAGE</p><h3>DPRO<br>オリジナルLP</h3><strong class="dpro-plan-price">88,000<small>円</small></strong><p>一つの商品・サービスを集中して案内する縦長ページ。</p><ul><li>1ページ構成</li><li>オリジナルデザイン</li><li>強み・流れ・FAQ</li><li>問い合わせ導線</li><li>基本アニメーション</li></ul><em>広告・LINEからの誘導向け</em></article>
-    <article class="dpro-plan-card reveal"><span class="dpro-plan-number">03</span><p class="dpro-plan-type">ORIGINAL WEBSITE</p><h3>DPROオリジナル<br>ホームページ</h3><strong class="dpro-plan-price">165,000<small>円</small></strong><p>店舗や会社の情報を複数ページでしっかり伝えるサイト。</p><ul><li>5〜7ページ程度</li><li>オリジナルデザイン</li><li>問い合わせフォーム</li><li>SEO・OGP・404</li><li>基本は独立型サイト</li></ul><em>一般的な店舗・企業サイト向け</em></article>
-    <article class="dpro-plan-card is-business reveal" id="business"><span class="dpro-plan-badge">DPRO推奨・連携型</span><span class="dpro-plan-number">04</span><p class="dpro-plan-type">BUSINESS CONNECTED</p><h3>DPROビジネス<br>ホームページ</h3><strong class="dpro-plan-price">275,000<small>円〜</small></strong><p>LINE・DPROシステム・ホームページが同じ情報で動く、店舗運営連携型サイト。</p><ul><li>GREENサイト以上の品質</li><li>8〜12ページ程度</li><li>店舗情報の自動同期</li><li>休業日・お知らせの自動反映</li><li>予約・顧客・写真相談と連携</li></ul><em>ホームページを営業と運営に活かしたい方向け</em></article>
-  </div>
+<div class="section-heading reveal"><p class="eyebrow">FOUR WEBSITE PLANS</p><h2 class="headline-lines headline-fixed"><span>目的と運用方法で選べる、</span><span>4つのホームページ制作プラン</span></h2><p>価格だけでなく、「誰が更新するか」「DPROと連携するか」で違いが分かります。</p></div>
+<div class="dpro-plan-grid">
+<article class="dpro-plan-card reveal"><span class="dpro-plan-number">01</span><p class="dpro-plan-type">SIMPLE</p><h3>DPROかんたん<br/>ホームページ</h3><strong class="dpro-plan-price">33,000<small>円</small></strong><p>基本情報を公開する、名刺代わりの小規模サイト。</p><ul><li>1〜3ページ程度</li><li>テンプレートデザイン</li><li>スマホ対応</li><li>LINE・電話へのリンク</li><li>原則手動更新</li></ul><em>低予算でまず公開したい方向け</em></article>
+<article class="dpro-plan-card reveal"><span class="dpro-plan-number">02</span><p class="dpro-plan-type">LANDING PAGE</p><h3>DPRO<br/>オリジナルLP</h3><strong class="dpro-plan-price">88,000<small>円</small></strong><p>一つの商品・サービスを集中して案内する縦長ページ。</p><ul><li>1ページ構成</li><li>オリジナルデザイン</li><li>強み・流れ・FAQ</li><li>問い合わせ導線</li><li>基本アニメーション</li></ul><em>広告・LINEからの誘導向け</em></article>
+<article class="dpro-plan-card reveal"><span class="dpro-plan-number">03</span><p class="dpro-plan-type">ORIGINAL WEBSITE</p><h3>DPROオリジナル<br/>ホームページ</h3><strong class="dpro-plan-price">165,000<small>円</small></strong><p>店舗や会社の情報を複数ページでしっかり伝えるサイト。</p><ul><li>5〜7ページ程度</li><li>オリジナルデザイン</li><li>問い合わせフォーム</li><li>SEO・OGP・404</li><li>基本は独立型サイト</li></ul><em>一般的な店舗・企業サイト向け</em></article>
+<article class="dpro-plan-card is-business reveal" id="business"><span class="dpro-plan-badge">DPRO推奨・連携型</span><span class="dpro-plan-number">04</span><p class="dpro-plan-type">BUSINESS CONNECTED</p><h3>DPROビジネス<br/>ホームページ</h3><strong class="dpro-plan-price">275,000<small>円〜</small></strong><p>LINE・DPROシステム・ホームページが同じ情報で動く、店舗運営連携型サイト。</p><ul><li>GREENサイト以上の品質</li><li>8〜12ページ程度</li><li>店舗情報の自動同期</li><li>休業日・お知らせの自動反映</li><li>予約・顧客・写真相談と連携</li></ul><em>ホームページを営業と運営に活かしたい方向け</em></article>
+</div>
 </section>
-
-<section class="dpro-web-section dpro-web-section--dark" aria-labelledby="business-title">
-  <div class="section-heading section-heading-light reveal"><p class="eyebrow">BUSINESS WEBSITE STANDARD</p><h2 id="business-title" class="headline-lines headline-fixed"><span>ビジネス仕様の違いは、</span><span>「更新」と「運用」がつながること。</span></h2><p>管理画面で変更した店舗情報を、ホームページ・LINE案内・予約受付へ共有できます。</p></div>
-  <div class="dpro-sync-demo dpro-sync-demo--light reveal" data-sync-demo>
-    <div class="dpro-sync-demo__head"><div><span>CONNECTED UPDATE DEMO</span><h3>休日設定を各画面へ自動反映</h3></div><p>実際の利用イメージを操作できます。</p></div>
-    <div class="dpro-sync-demo__grid">
-      <section class="dpro-admin-panel" aria-label="DPRO管理画面の例"><p class="dpro-panel-label">DPRO管理画面</p><label>お知らせタイトル<input type="text" value="夏季休業のお知らせ" data-sync-input-title></label><div class="dpro-date-row"><label>開始日<input type="date" value="2026-08-13" data-sync-input-start></label><label>終了日<input type="date" value="2026-08-15" data-sync-input-end></label></div><button type="button" class="button button-primary dpro-publish-button" data-sync-publish>休日を公開する</button><small>管理画面で一度設定するだけ</small></section>
-      <div class="dpro-sync-route" aria-hidden="true"><i></i><span>自動連携</span><i></i></div>
-      <section class="dpro-output-panel" aria-label="連携先の表示例"><div class="dpro-output-card is-web"><span>ホームページ</span><strong data-sync-title>夏季休業のお知らせ</strong><p><b data-sync-period>8月13日〜8月15日</b>は休業いたします。</p></div><div class="dpro-output-card is-line"><span>LINE案内</span><strong>同じ休業情報を案内</strong><p>別々に内容を作り直す手間を減らします。</p></div><div class="dpro-output-card is-calendar"><span>予約カレンダー</span><strong>休業日を受付対象外へ</strong><p>営業情報と予約枠の食い違いを防ぎます。</p></div><p class="dpro-sync-status" role="status" aria-live="polite" data-sync-status>公開準備ができています。</p></section>
-    </div>
-  </div>
+<section aria-labelledby="business-title" class="dpro-web-section dpro-web-section--dark">
+<div class="section-heading section-heading-light reveal"><p class="eyebrow">BUSINESS WEBSITE STANDARD</p><h2 class="headline-lines headline-fixed" id="business-title"><span>ビジネス仕様の違いは、</span><span>「更新」と「運用」がつながること。</span></h2><p>管理画面で変更した店舗情報を、ホームページ・LINE案内・予約受付へ共有できます。</p></div>
+<div class="dpro-sync-demo dpro-sync-demo--light reveal" data-sync-demo="">
+<div class="dpro-sync-demo__head"><div><span>CONNECTED UPDATE DEMO</span><h3>休日設定を各画面へ自動反映</h3></div><p>実際の利用イメージを操作できます。</p></div>
+<div class="dpro-sync-demo__grid">
+<section aria-label="DPRO管理画面の例" class="dpro-admin-panel"><p class="dpro-panel-label">DPRO管理画面</p><label>お知らせタイトル<input data-sync-input-title="" type="text" value="夏季休業のお知らせ"/></label><div class="dpro-date-row"><label>開始日<input data-sync-input-start="" type="date" value="2026-08-13"/></label><label>終了日<input data-sync-input-end="" type="date" value="2026-08-15"/></label></div><button class="button button-primary dpro-publish-button" data-sync-publish="" type="button">休日を公開する</button><small>管理画面で一度設定するだけ</small></section>
+<div aria-hidden="true" class="dpro-sync-route"><i></i><span>自動連携</span><i></i></div>
+<section aria-label="連携先の表示例" class="dpro-output-panel"><div class="dpro-output-card is-web"><span>ホームページ</span><strong data-sync-title="">夏季休業のお知らせ</strong><p><b data-sync-period="">8月13日〜8月15日</b>は休業いたします。</p></div><div class="dpro-output-card is-line"><span>LINE案内</span><strong>同じ休業情報を案内</strong><p>別々に内容を作り直す手間を減らします。</p></div><div class="dpro-output-card is-calendar"><span>予約カレンダー</span><strong>休業日を受付対象外へ</strong><p>営業情報と予約枠の食い違いを防ぎます。</p></div><p aria-live="polite" class="dpro-sync-status" data-sync-status="" role="status">公開準備ができています。</p></section>
+</div>
+</div>
 </section>
-
 <section class="dpro-web-section" id="compare">
-  <div class="section-heading reveal"><p class="eyebrow">CLEAR DIFFERENCE</p><h2 class="headline-lines headline-fixed"><span>一般的なホームページと、</span><span>DPROビジネス仕様の違い</span></h2></div>
-  <div class="dpro-large-compare reveal"><div class="dpro-large-compare__head"><span>一般的なホームページ</span><strong>DPROビジネスホームページ</strong></div><div><span>休日・営業時間変更を制作業者へ連絡</span><strong>店舗の管理画面で変更</strong></div><div><span>ホームページを手作業で更新</span><strong>設定内容をホームページへ反映</strong></div><div><span>LINEにも別途同じ内容を投稿</span><strong>同じ情報をLINE案内に利用</strong></div><div><span>予約枠は別サービスで調整</span><strong>DPRO予約・受付システムと連携</strong></div><div><span>問い合わせ・写真が複数箇所へ分散</span><strong>顧客・相談・写真を一元管理</strong></div><div><span>ホームページは情報を見るだけ</span><strong>予約・相談・会員画面への入口</strong></div></div>
+<div class="section-heading reveal"><p class="eyebrow">CLEAR DIFFERENCE</p><h2 class="headline-lines headline-fixed"><span>一般的なホームページと、</span><span>DPROビジネス仕様の違い</span></h2></div>
+<div class="dpro-large-compare reveal"><div class="dpro-large-compare__head"><span>一般的なホームページ</span><strong>DPROビジネスホームページ</strong></div><div><span>休日・営業時間変更を制作業者へ連絡</span><strong>店舗の管理画面で変更</strong></div><div><span>ホームページを手作業で更新</span><strong>設定内容をホームページへ反映</strong></div><div><span>LINEにも別途同じ内容を投稿</span><strong>同じ情報をLINE案内に利用</strong></div><div><span>予約枠は別サービスで調整</span><strong>DPRO予約・受付システムと連携</strong></div><div><span>問い合わせ・写真が複数箇所へ分散</span><strong>顧客・相談・写真を一元管理</strong></div><div><span>ホームページは情報を見るだけ</span><strong>予約・相談・会員画面への入口</strong></div></div>
 </section>
-
 <section class="dpro-web-section dpro-web-section--soft">
-  <div class="section-heading reveal"><p class="eyebrow">CONNECTED INFORMATION</p><h2 class="headline-lines headline-fixed"><span>標準連携と、</span><span>業種別連携を組み合わせます。</span></h2></div>
-  <div class="dpro-connect-feature-grid">
-    <article class="reveal"><span>STANDARD</span><h3>全業種の標準連携</h3><ul><li>店舗名・住所・電話番号</li><li>営業時間・定休日</li><li>臨時休業・特別営業</li><li>店舗からのお知らせ</li><li>問い合わせ・写真相談</li><li>お客様専用画面への入口</li></ul></article>
-    <article class="reveal"><span>INDUSTRY</span><h3>業種に合わせた連携</h3><ul><li>予約可能日時・営業日カレンダー</li><li>商品・メニュー・在庫情報</li><li>注文・取り置き・受付状況</li><li>訪問予定・作業報告</li><li>会員・家族向け確認画面</li><li>イベント・キャンペーン</li></ul></article>
-    <article class="reveal"><span>QUALITY</span><h3>GREENサイトを最低品質基準に</h3><ul><li>PC・スマホ最適化</li><li>高品質画像・アニメーション</li><li>SEO・OGP・構造化データ</li><li>問い合わせ・写真添付</li><li>プライバシー・エラーページ</li><li>公開前の表示・構文・リンク検査</li></ul><a href="https://dpromstk2000-lab.github.io/dpro-green-website/" target="_blank" rel="noopener">完成実例を見る →</a></article>
-  </div>
+<div class="section-heading reveal"><p class="eyebrow">CONNECTED INFORMATION</p><h2 class="headline-lines headline-fixed"><span>標準連携と、</span><span>業種別連携を組み合わせます。</span></h2></div>
+<div class="dpro-connect-feature-grid">
+<article class="reveal"><span>STANDARD</span><h3>全業種の標準連携</h3><ul><li>店舗名・住所・電話番号</li><li>営業時間・定休日</li><li>臨時休業・特別営業</li><li>店舗からのお知らせ</li><li>問い合わせ・写真相談</li><li>お客様専用画面への入口</li></ul></article>
+<article class="reveal"><span>INDUSTRY</span><h3>業種に合わせた連携</h3><ul><li>予約可能日時・営業日カレンダー</li><li>商品・メニュー・在庫情報</li><li>注文・取り置き・受付状況</li><li>訪問予定・作業報告</li><li>会員・家族向け確認画面</li><li>イベント・キャンペーン</li></ul></article>
+<article class="reveal"><span>QUALITY</span><h3>GREENサイトを最低品質基準に</h3><ul><li>PC・スマホ最適化</li><li>高品質画像・アニメーション</li><li>SEO・OGP・構造化データ</li><li>問い合わせ・写真添付</li><li>プライバシー・エラーページ</li><li>公開前の表示・構文・リンク検査</li></ul><a href="https://dpromstk2000-lab.github.io/dpro-green-website/" rel="noopener" target="_blank">完成実例を見る →</a></article>
+</div>
 </section>
-
 <section class="dpro-web-section" id="maintenance">
-  <div class="section-heading reveal"><p class="eyebrow">MAINTENANCE</p><h2 class="headline-lines headline-fixed"><span>公開後も安心して使える、</span><span>月額保守プラン</span></h2></div>
-  <div class="dpro-maintenance-grid">
-    <article class="reveal"><small>ホームページ単体</small><strong>月額 3,300円</strong><p>公開維持、軽微な不具合修正、接続・表示確認、障害時の復旧対応。</p></article>
-    <article class="reveal"><small>LINE運用契約店舗の追加保守</small><strong>月額 1,100円</strong><p>LINE公式運用と一緒に契約する場合のホームページ基本保守。</p></article>
-    <article class="is-total reveal"><small>LINE＋DPROシステム＋ホームページ</small><strong>月額 5,500円</strong><p>3つの運用をまとめたDPRO統合プラン。</p></article>
-  </div>
-  <p class="dpro-maintenance-note reveal">文章・写真・商品・料金・ページ・デザインの追加更新は、内容に応じて別途お見積りします。</p>
+<div class="section-heading reveal"><p class="eyebrow">MAINTENANCE</p><h2 class="headline-lines headline-fixed"><span>公開後も安心して使える、</span><span>月額保守プラン</span></h2></div>
+<div class="dpro-maintenance-grid">
+<article class="reveal"><small>ホームページ単体</small><strong>月額 3,300円</strong><p>公開維持、軽微な不具合修正、接続・表示確認、障害時の復旧対応。</p></article>
+<article class="reveal"><small>LINE運用契約店舗の追加保守</small><strong>月額 1,100円</strong><p>LINE公式運用と一緒に契約する場合のホームページ基本保守。</p></article>
+<article class="is-total reveal"><small>LINE＋DPROシステム＋ホームページ</small><strong>月額 5,500円</strong><p>3つの運用をまとめたDPRO統合プラン。</p></article>
+</div>
+<p class="dpro-maintenance-note reveal">文章・写真・商品・料金・ページ・デザインの追加更新は、内容に応じて別途お見積りします。</p>
 </section>
-
 <section class="phase-cta section section-dark">
-  <div class="phase-cta-inner reveal"><p class="eyebrow">WEBSITE CONSULTATION</p><h2 class="headline-lines headline-fixed"><span>どのプランが合うか、</span><span>業種と運用からご提案します。</span></h2><p>現在のホームページ、LINE公式、予約や顧客管理の状況をお知らせください。</p><div class="dpro-final-actions"><a class="button button-line-demo large" href="https://lin.ee/YxJGXV6D" target="_blank" rel="noopener">LINEで相談する</a><a class="button button-secondary large" href="dpro-system.html">DPROシステムを見る</a><a class="button button-secondary large" href="index.html">トップへ戻る</a></div></div>
+<div class="phase-cta-inner reveal"><p class="eyebrow">WEBSITE CONSULTATION</p><h2 class="headline-lines headline-fixed"><span>どのプランが合うか、</span><span>業種と運用からご提案します。</span></h2><p>現在のホームページ、LINE公式、予約や顧客管理の状況をお知らせください。</p><div class="dpro-final-actions"><a class="button button-line-demo large" href="https://lin.ee/YxJGXV6D" rel="noopener" target="_blank">LINEで相談する</a><a class="button button-secondary large" href="dpro-system.html">DPROシステムを見る</a><a class="button button-secondary large" href="index.html">トップへ戻る</a></div></div>
 </section>
 </main>
-<footer class="site-footer"><div><a class="brand footer-brand" href="index.html"><span class="brand-mark">D</span><span class="brand-copy"><strong>DPRO LINE SYSTEMS</strong><small>WEBSITE SERVICE</small></span></a><p>LINE・業務システム・ホームページを、ひとつの店舗運営へ。</p></div><nav aria-label="フッターナビゲーション"><a href="#plans">料金プラン</a><a href="dpro-system.html">DPROシステム</a><a href="line.html">LINE公式構築・運用</a><a href="#maintenance">保守料金</a><a href="systems.html">48製品一覧</a></nav><p class="copyright">© <span id="year"></span> DPRO SHOP</p></footer>
-<button class="back-to-top" type="button" aria-label="ページ上部へ戻る">↑</button>
+<footer class="site-footer"><div><a class="brand footer-brand" href="index.html"><span class="brand-mark">D</span><span class="brand-copy"><strong>DPRO LINE SYSTEMS</strong><small>WEBSITE SERVICE</small></span></a><p>LINE・業務システム・ホームページを、ひとつの店舗運営へ。</p></div><nav aria-label="フッターナビゲーション"><a href="#plans">料金プラン</a><a href="dpro-system.html">DPROシステム</a><a href="line.html">LINE公式構築・運用</a><a href="#maintenance">保守料金</a><a href="systems.html">48製品一覧</a><a data-official-site-link="" href="https://dpro-shop.com/">DPRO SHOP公式サイト ↗</a></nav><p class="copyright">© <span id="year"></span> DPRO SHOP</p></footer>
+<button aria-label="ページ上部へ戻る" class="back-to-top" type="button">↑</button>
 <script src="script.js"></script>
 <script src="business-integration.js"></script>
 </body>

@@ -1,87 +1,83 @@
 <!DOCTYPE html>
+
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="DPRO SHOPのLINE公式アカウント構築・運用サービス。初期設定、あいさつメッセージ、リッチメニュー、クーポン、ショップカードから、DPROシステム・ホームページ連携までご案内します。">
-  <meta name="theme-color" content="#0b0b0d">
-  <title>DPRO LINE公式構築・運用｜店舗運営につながるLINE公式へ</title>
-  <link rel="stylesheet" href="styles.css">
-  <link rel="stylesheet" href="business-integration.css">
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta content="DPRO SHOPのLINE公式アカウント構築・運用サービス。初期設定、あいさつメッセージ、リッチメニュー、クーポン、ショップカードから、DPROシステム・ホームページ連携までご案内します。" name="description"/>
+<meta content="#0b0b0d" name="theme-color"/>
+<title>DPRO LINE公式構築・運用｜店舗運営につながるLINE公式へ</title>
+<link href="styles.css" rel="stylesheet"/>
+<link href="business-integration.css" rel="stylesheet"/>
 </head>
 <body class="line-service-page">
 <header class="site-header phase-header" id="top">
-  <div class="header-inner">
-    <a class="brand" href="index.html" aria-label="DPRO LINE SYSTEMS トップへ"><span class="brand-mark">D</span><span class="brand-copy"><strong>DPRO LINE SYSTEMS</strong><small>LINE OFFICIAL SERVICE</small></span></a>
-    <button class="menu-button" type="button" aria-expanded="false" aria-controls="global-nav" aria-label="メニューを開く"><span></span><span></span><span></span></button>
-    <nav class="global-nav dpro-service-nav" id="global-nav" aria-label="メインナビゲーション"><a href="#setup">構築内容</a><a href="dpro-system.html">DPROシステム</a><a href="website.html">ホームページ</a><a href="#price">料金</a><a href="index.html">トップ</a><a class="nav-cta" href="https://lin.ee/YxJGXV6D" target="_blank" rel="noopener">LINEで相談</a></nav>
-  </div>
+<div class="header-inner">
+<a aria-label="DPRO LINE SYSTEMS トップへ" class="brand" href="index.html"><span class="brand-mark">D</span><span class="brand-copy"><strong>DPRO LINE SYSTEMS</strong><small>LINE OFFICIAL SERVICE</small></span></a>
+<button aria-controls="global-nav" aria-expanded="false" aria-label="メニューを開く" class="menu-button" type="button"><span></span><span></span><span></span></button>
+<nav aria-label="メインナビゲーション" class="global-nav dpro-service-nav" id="global-nav"><a href="#setup">構築内容</a><a href="dpro-system.html">DPROシステム</a><a href="website.html">ホームページ</a><a href="#price">料金</a><a href="index.html">トップ</a><a class="dpro-official-site-link" data-official-site-link="" href="https://dpro-shop.com/">DPRO SHOP公式 ↗</a><a class="nav-cta" href="https://lin.ee/YxJGXV6D" rel="noopener" target="_blank">LINEで相談</a></nav>
+</div>
 </header>
 <main>
 <section class="dpro-line-hero">
-  <div class="dpro-line-hero__copy reveal">
-    <p class="eyebrow">DPRO LINE OFFICIAL SERVICE</p>
-    <h1><span>LINE公式を、</span><span>つくるだけで終わらせない。</span><span class="is-accent">店舗運営につながる入口へ。</span></h1>
-    <p>初期設定、あいさつメッセージ、リッチメニュー、クーポン・ショップカードまで丁寧に構築。さらにDPROシステムやホームページとつなぎ、予約・相談・会員画面へ迷わず進めるLINE公式を作ります。</p>
-    <div class="phase-hero-actions"><a class="button button-line-demo" href="https://lin.ee/YxJGXV6D" target="_blank" rel="noopener">LINEで相談する</a><a class="button button-secondary" href="#setup">構築内容を見る</a></div>
-    <div class="dpro-line-hero__proof"><span>初期構築</span><span>リッチメニュー</span><span>運用サポート</span><span>DPRO連携</span></div>
-  </div>
-  <div class="dpro-line-phone reveal" aria-label="LINE公式リッチメニューのイメージ">
-    <div class="dpro-line-phone__frame">
-      <div class="dpro-line-phone__top"><i></i><strong>店舗公式LINE</strong><small>•••</small></div>
-      <div class="dpro-line-phone__chat"><span>ご登録ありがとうございます。</span><p>予約・お問い合わせ・会員メニューはこちらからご利用いただけます。</p></div>
-      <div class="dpro-line-richmenu">
-        <div><b>予約する</b><small>BOOKING</small></div><div><b>サービス</b><small>SERVICE</small></div><div><b>クーポン</b><small>COUPON</small></div><div><b>会員画面</b><small>MEMBER</small></div><div><b>お知らせ</b><small>NEWS</small></div><div><b>相談する</b><small>CONTACT</small></div>
-      </div>
-    </div>
-    <div class="dpro-line-sync-badge"><b>DPRO</b><span>予約・顧客・WEB連携</span></div>
-  </div>
+<div class="dpro-line-hero__copy reveal">
+<p class="eyebrow">DPRO LINE OFFICIAL SERVICE</p>
+<h1><span>LINE公式を、</span><span>つくるだけで終わらせない。</span><span class="is-accent">店舗運営につながる入口へ。</span></h1>
+<p>初期設定、あいさつメッセージ、リッチメニュー、クーポン・ショップカードまで丁寧に構築。さらにDPROシステムやホームページとつなぎ、予約・相談・会員画面へ迷わず進めるLINE公式を作ります。</p>
+<div class="phase-hero-actions"><a class="button button-line-demo" href="https://lin.ee/YxJGXV6D" rel="noopener" target="_blank">LINEで相談する</a><a class="button button-secondary" href="#setup">構築内容を見る</a></div>
+<div class="dpro-line-hero__proof"><span>初期構築</span><span>リッチメニュー</span><span>運用サポート</span><span>DPRO連携</span></div>
+</div>
+<div aria-label="LINE公式リッチメニューのイメージ" class="dpro-line-phone reveal">
+<div class="dpro-line-phone__frame">
+<div class="dpro-line-phone__top"><i></i><strong>店舗公式LINE</strong><small>•••</small></div>
+<div class="dpro-line-phone__chat"><span>ご登録ありがとうございます。</span><p>予約・お問い合わせ・会員メニューはこちらからご利用いただけます。</p></div>
+<div class="dpro-line-richmenu">
+<div><b>予約する</b><small>BOOKING</small></div><div><b>サービス</b><small>SERVICE</small></div><div><b>クーポン</b><small>COUPON</small></div><div><b>会員画面</b><small>MEMBER</small></div><div><b>お知らせ</b><small>NEWS</small></div><div><b>相談する</b><small>CONTACT</small></div>
+</div>
+</div>
+<div class="dpro-line-sync-badge"><b>DPRO</b><span>予約・顧客・WEB連携</span></div>
+</div>
 </section>
-
 <section class="dpro-line-section" id="setup">
-  <div class="section-heading reveal"><p class="eyebrow">COMPLETE INITIAL SETUP</p><h2 class="headline-lines headline-fixed"><span>見た目だけでなく、</span><span>使われる導線まで構築します。</span></h2><p>友だち追加後にお客様が迷わないよう、店舗の目的と業種に合わせて必要な入口を整理します。</p></div>
-  <div class="dpro-line-service-grid">
-    <article class="reveal"><span>01</span><h3>基本情報・プロフィール</h3><p>店舗名、説明文、営業時間、所在地、連絡先などを整えます。</p></article>
-    <article class="reveal"><span>02</span><h3>あいさつメッセージ</h3><p>友だち追加直後に、次に何をすればよいか分かる案内を作ります。</p></article>
-    <article class="reveal"><span>03</span><h3>リッチメニュー</h3><p>予約、相談、クーポン、会員画面など、よく使う機能を分かりやすく配置します。</p></article>
-    <article class="reveal"><span>04</span><h3>クーポン・ショップカード</h3><p>再来店につながる特典やポイント施策を、店舗の運用に合わせて初期設定します。</p></article>
-    <article class="reveal"><span>05</span><h3>友だち追加導線</h3><p>QRコード、店頭POP、ホームページなど、友だち追加へつなぐ入口を整理します。</p></article>
-    <article class="reveal"><span>06</span><h3>公開前の動作確認</h3><p>リンク、表示、スマホ操作、メニュー遷移などを確認してから運用を開始します。</p></article>
-  </div>
+<div class="section-heading reveal"><p class="eyebrow">COMPLETE INITIAL SETUP</p><h2 class="headline-lines headline-fixed"><span>見た目だけでなく、</span><span>使われる導線まで構築します。</span></h2><p>友だち追加後にお客様が迷わないよう、店舗の目的と業種に合わせて必要な入口を整理します。</p></div>
+<div class="dpro-line-service-grid">
+<article class="reveal"><span>01</span><h3>基本情報・プロフィール</h3><p>店舗名、説明文、営業時間、所在地、連絡先などを整えます。</p></article>
+<article class="reveal"><span>02</span><h3>あいさつメッセージ</h3><p>友だち追加直後に、次に何をすればよいか分かる案内を作ります。</p></article>
+<article class="reveal"><span>03</span><h3>リッチメニュー</h3><p>予約、相談、クーポン、会員画面など、よく使う機能を分かりやすく配置します。</p></article>
+<article class="reveal"><span>04</span><h3>クーポン・ショップカード</h3><p>再来店につながる特典やポイント施策を、店舗の運用に合わせて初期設定します。</p></article>
+<article class="reveal"><span>05</span><h3>友だち追加導線</h3><p>QRコード、店頭POP、ホームページなど、友だち追加へつなぐ入口を整理します。</p></article>
+<article class="reveal"><span>06</span><h3>公開前の動作確認</h3><p>リンク、表示、スマホ操作、メニュー遷移などを確認してから運用を開始します。</p></article>
+</div>
 </section>
-
 <section class="dpro-line-section dpro-line-section--soft" id="price">
-  <div class="section-heading reveal"><p class="eyebrow">PRICE</p><h2 class="headline-lines headline-fixed"><span>構築から運用まで、</span><span>分かりやすい料金設計</span></h2><p>必要な設定をまとめて構築し、公開後も相談できる体制を用意します。</p></div>
-  <div class="dpro-line-price-grid">
-    <article class="reveal"><small>LINE公式アカウント構築</small><strong>77,000円</strong><p>基本設定、あいさつ文、リッチメニュー、クーポン・ショップカードなどの標準構築。</p><ul><li>業種に合わせた初期設計</li><li>画像・文章の基本作成</li><li>公開前の操作確認</li></ul></article>
-    <article class="reveal"><small>LINE公式 運用サポート</small><strong>月額 3,300円</strong><p>配信や設定の相談、軽微な修正、運用上の確認を継続してサポート。</p><ul><li>運用相談</li><li>軽微な設定変更</li><li>不具合・導線確認</li></ul></article>
-    <article class="is-connected reveal"><span class="dpro-line-price-badge">DPRO同時導入</span><small>DPROシステム導入店舗向け</small><strong>33,000円〜</strong><p>標準構成を活用し、DPROシステムと連携するLINE公式を特別価格で構築します。</p><ul><li>予約・受付への入口</li><li>会員・顧客画面への入口</li><li>ホームページ連携導線</li></ul><em>業種・追加機能により個別見積り</em></article>
-  </div>
+<div class="section-heading reveal"><p class="eyebrow">PRICE</p><h2 class="headline-lines headline-fixed"><span>構築から運用まで、</span><span>分かりやすい料金設計</span></h2><p>必要な設定をまとめて構築し、公開後も相談できる体制を用意します。</p></div>
+<div class="dpro-line-price-grid">
+<article class="reveal"><small>LINE公式アカウント構築</small><strong>77,000円</strong><p>基本設定、あいさつ文、リッチメニュー、クーポン・ショップカードなどの標準構築。</p><ul><li>業種に合わせた初期設計</li><li>画像・文章の基本作成</li><li>公開前の操作確認</li></ul></article>
+<article class="reveal"><small>LINE公式 運用サポート</small><strong>月額 3,300円</strong><p>配信や設定の相談、軽微な修正、運用上の確認を継続してサポート。</p><ul><li>運用相談</li><li>軽微な設定変更</li><li>不具合・導線確認</li></ul></article>
+<article class="is-connected reveal"><span class="dpro-line-price-badge">DPRO同時導入</span><small>DPROシステム導入店舗向け</small><strong>33,000円〜</strong><p>標準構成を活用し、DPROシステムと連携するLINE公式を特別価格で構築します。</p><ul><li>予約・受付への入口</li><li>会員・顧客画面への入口</li><li>ホームページ連携導線</li></ul><em>業種・追加機能により個別見積り</em></article>
+</div>
 </section>
-
 <section class="dpro-line-section dpro-line-section--dark" id="connection">
-  <div class="section-heading section-heading-light reveal"><p class="eyebrow">LINE × DPRO × WEBSITE</p><h2 class="headline-lines headline-fixed"><span>LINEを単独で運用せず、</span><span>店舗の仕組みにつなげます。</span></h2><p>LINE公式をお客様の入口として、予約・顧客管理・ホームページ・会員画面へつなげます。</p></div>
-  <div class="dpro-line-connect-flow reveal">
-    <article><span>LINE公式</span><strong>相談・予約・通知</strong><p>お客様が日常的に使う入口</p></article><i></i><article class="is-core"><span>DPRO SYSTEM</span><strong>予約・顧客・業務管理</strong><p>店舗運営の中心</p></article><i></i><article><span>ホームページ</span><strong>検索・集客・お知らせ</strong><p>新しいお客様の入口</p></article>
-  </div>
-  <div class="dpro-line-benefit-grid">
-    <article class="reveal"><span>01</span><h3>予約・受付とつながる</h3><p>リッチメニューから、業種専用の予約・受付画面へ直接案内できます。</p></article>
-    <article class="reveal"><span>02</span><h3>顧客・会員画面とつながる</h3><p>会員証、利用履歴、家族画面など、契約中のお客様向けの入口として使えます。</p></article>
-    <article class="reveal"><span>03</span><h3>ホームページと役割を分ける</h3><p>検索はホームページ、継続利用はLINEという自然な導線を作ります。</p></article>
-  </div>
+<div class="section-heading section-heading-light reveal"><p class="eyebrow">LINE × DPRO × WEBSITE</p><h2 class="headline-lines headline-fixed"><span>LINEを単独で運用せず、</span><span>店舗の仕組みにつなげます。</span></h2><p>LINE公式をお客様の入口として、予約・顧客管理・ホームページ・会員画面へつなげます。</p></div>
+<div class="dpro-line-connect-flow reveal">
+<article><span>LINE公式</span><strong>相談・予約・通知</strong><p>お客様が日常的に使う入口</p></article><i></i><article class="is-core"><span>DPRO SYSTEM</span><strong>予約・顧客・業務管理</strong><p>店舗運営の中心</p></article><i></i><article><span>ホームページ</span><strong>検索・集客・お知らせ</strong><p>新しいお客様の入口</p></article>
+</div>
+<div class="dpro-line-benefit-grid">
+<article class="reveal"><span>01</span><h3>予約・受付とつながる</h3><p>リッチメニューから、業種専用の予約・受付画面へ直接案内できます。</p></article>
+<article class="reveal"><span>02</span><h3>顧客・会員画面とつながる</h3><p>会員証、利用履歴、家族画面など、契約中のお客様向けの入口として使えます。</p></article>
+<article class="reveal"><span>03</span><h3>ホームページと役割を分ける</h3><p>検索はホームページ、継続利用はLINEという自然な導線を作ります。</p></article>
+</div>
 </section>
-
 <section class="dpro-line-section">
-  <div class="section-heading reveal"><p class="eyebrow">CLEAR DIFFERENCE</p><h2 class="headline-lines headline-fixed"><span>一般的な初期設定と、</span><span>DPRO構築の違い</span></h2></div>
-  <div class="dpro-large-compare reveal"><div class="dpro-large-compare__head"><span>一般的なLINE初期設定</span><strong>DPRO LINE公式構築・運用</strong></div><div><span>メニューを作って終了</span><strong>お客様の行動導線まで設計</strong></div><div><span>予約・顧客管理は別サービス</span><strong>DPROシステムへ直接接続</strong></div><div><span>ホームページと別々に運用</span><strong>役割を分けて相互に連携</strong></div><div><span>更新方法が分からず止まりやすい</span><strong>公開後も運用をサポート</strong></div></div>
+<div class="section-heading reveal"><p class="eyebrow">CLEAR DIFFERENCE</p><h2 class="headline-lines headline-fixed"><span>一般的な初期設定と、</span><span>DPRO構築の違い</span></h2></div>
+<div class="dpro-large-compare reveal"><div class="dpro-large-compare__head"><span>一般的なLINE初期設定</span><strong>DPRO LINE公式構築・運用</strong></div><div><span>メニューを作って終了</span><strong>お客様の行動導線まで設計</strong></div><div><span>予約・顧客管理は別サービス</span><strong>DPROシステムへ直接接続</strong></div><div><span>ホームページと別々に運用</span><strong>役割を分けて相互に連携</strong></div><div><span>更新方法が分からず止まりやすい</span><strong>公開後も運用をサポート</strong></div></div>
 </section>
-
 <section class="phase-cta section section-dark">
-  <div class="phase-cta-inner reveal"><p class="eyebrow">LINE OFFICIAL CONSULTATION</p><h2 class="headline-lines dpro-line-final-title"><span>LINE公式を、</span><span>店舗で本当に使える入口へ。</span></h2><p>現在のLINE公式の有無、業種、予約や顧客管理の状況をお知らせください。</p><div class="dpro-final-actions"><a class="button button-line-demo large" href="https://lin.ee/YxJGXV6D" target="_blank" rel="noopener">LINEで相談する</a><a class="button button-secondary large" href="dpro-system.html">DPROシステムを見る</a><a class="button button-secondary large" href="website.html">ホームページ制作を見る</a><a class="button button-secondary large" href="index.html">トップへ戻る</a></div></div>
+<div class="phase-cta-inner reveal"><p class="eyebrow">LINE OFFICIAL CONSULTATION</p><h2 class="headline-lines dpro-line-final-title"><span>LINE公式を、</span><span>店舗で本当に使える入口へ。</span></h2><p>現在のLINE公式の有無、業種、予約や顧客管理の状況をお知らせください。</p><div class="dpro-final-actions"><a class="button button-line-demo large" href="https://lin.ee/YxJGXV6D" rel="noopener" target="_blank">LINEで相談する</a><a class="button button-secondary large" href="dpro-system.html">DPROシステムを見る</a><a class="button button-secondary large" href="website.html">ホームページ制作を見る</a><a class="button button-secondary large" href="index.html">トップへ戻る</a></div></div>
 </section>
 </main>
-<footer class="site-footer"><div><a class="brand footer-brand" href="index.html"><span class="brand-mark">D</span><span class="brand-copy"><strong>DPRO LINE SYSTEMS</strong><small>LINE OFFICIAL SERVICE</small></span></a><p>LINE公式を、店舗運営につながる入口へ。</p></div><nav aria-label="フッターナビゲーション"><a href="#setup">構築内容</a><a href="dpro-system.html">DPROシステム</a><a href="#price">料金</a><a href="website.html">ホームページ制作</a><a href="systems.html">48製品一覧</a></nav><p class="copyright">© <span id="year"></span> DPRO SHOP</p></footer>
-<button class="back-to-top" type="button" aria-label="ページ上部へ戻る">↑</button>
+<footer class="site-footer"><div><a class="brand footer-brand" href="index.html"><span class="brand-mark">D</span><span class="brand-copy"><strong>DPRO LINE SYSTEMS</strong><small>LINE OFFICIAL SERVICE</small></span></a><p>LINE公式を、店舗運営につながる入口へ。</p></div><nav aria-label="フッターナビゲーション"><a href="#setup">構築内容</a><a href="dpro-system.html">DPROシステム</a><a href="#price">料金</a><a href="website.html">ホームページ制作</a><a href="systems.html">48製品一覧</a><a data-official-site-link="" href="https://dpro-shop.com/">DPRO SHOP公式サイト ↗</a></nav><p class="copyright">© <span id="year"></span> DPRO SHOP</p></footer>
+<button aria-label="ページ上部へ戻る" class="back-to-top" type="button">↑</button>
 <script src="script.js"></script>
 <script src="business-integration.js"></script>
 </body>

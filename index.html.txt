@@ -1,159 +1,150 @@
 <!DOCTYPE html>
+
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="DPRO LINE SYSTEMS。LINE公式・業種専用DPROシステム・ビジネスホームページを一つにつなぎ、予約・顧客管理・営業時間・休業日・お知らせを一元管理します。">
-  <meta name="theme-color" content="#0b0b0d">
-  <title>DPRO LINE SYSTEMS｜LINE・業務システム・ホームページを一つに</title>
-  <link rel="stylesheet" href="styles.css">
-  <link rel="stylesheet" href="business-integration.css">
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta content="DPRO LINE SYSTEMS。LINE公式・業種専用DPROシステム・ビジネスホームページを一つにつなぎ、予約・顧客管理・営業時間・休業日・お知らせを一元管理します。" name="description"/>
+<meta content="#0b0b0d" name="theme-color"/>
+<title>DPRO LINE SYSTEMS｜LINE・業務システム・ホームページを一つに</title>
+<link href="styles.css" rel="stylesheet"/>
+<link href="business-integration.css" rel="stylesheet"/>
 </head>
-
 <body class="brand-home">
 <!-- STEP OFFICIAL-WEB-CONNECTION-1 / LINE × SYSTEM × WEBSITE / 20260805 -->
 <header class="site-header phase-header" id="top">
-  <div class="header-inner">
-    <a class="brand" href="#top" aria-label="DPRO LINE SYSTEMS トップへ">
-      <span class="brand-mark">D</span>
-      <span class="brand-copy"><strong>DPRO LINE SYSTEMS</strong><small>OFFICIAL PRODUCT SITE</small></span>
-    </a>
-    <button class="menu-button" type="button" aria-expanded="false" aria-controls="global-nav" aria-label="メニューを開く"><span></span><span></span><span></span></button>
-    <nav class="global-nav dpro-service-nav" id="global-nav" aria-label="メインナビゲーション">
-      <a href="dpro-system.html">DPROシステム</a>
-      <a href="line.html">LINE公式</a>
-      <a href="website.html">ホームページ</a>
-      <a href="systems.html">48製品一覧</a>
-      <a class="nav-cta" href="https://lin.ee/YxJGXV6D" target="_blank" rel="noopener">LINEでデモを見る</a>
-    </nav>
-  </div>
+<div class="header-inner">
+<a aria-label="DPRO LINE SYSTEMS トップへ" class="brand" href="#top">
+<span class="brand-mark">D</span>
+<span class="brand-copy"><strong>DPRO LINE SYSTEMS</strong><small>OFFICIAL PRODUCT SITE</small></span>
+</a>
+<button aria-controls="global-nav" aria-expanded="false" aria-label="メニューを開く" class="menu-button" type="button"><span></span><span></span><span></span></button>
+<nav aria-label="メインナビゲーション" class="global-nav dpro-service-nav" id="global-nav">
+<a href="dpro-system.html">DPROシステム</a>
+<a href="line.html">LINE公式</a>
+<a href="website.html">ホームページ</a>
+<a href="systems.html">48製品一覧</a>
+<a class="dpro-official-site-link" data-official-site-link="" href="https://dpro-shop.com/">DPRO SHOP公式 ↗</a><a class="nav-cta" href="https://lin.ee/YxJGXV6D" rel="noopener" target="_blank">LINEでデモを見る</a>
+</nav>
+</div>
 </header>
-
 <main>
-<section class="phase-hero dpro-connected-hero" aria-labelledby="phase-hero-title">
-  <div class="phase-hero-glow glow-a"></div>
-  <div class="phase-hero-glow glow-b"></div>
-  <div class="phase-hero-copy reveal">
-    <p class="eyebrow">LINE × DPRO SYSTEM × BUSINESS WEBSITE</p>
-    <h1 id="phase-hero-title" class="headline-lines headline-hero">
-      <span>LINE・システム・</span>
-      <span>ホームページを、</span>
-      <span>ひとつの店舗運営へ。</span>
-    </h1>
-    <p class="phase-hero-lead">予約・受付・顧客管理・営業時間・休業日・お知らせを一元管理。<br>業種専用DPROシステムの情報を、LINE公式とホームページにもつなげます。</p>
-    <p class="phase-brand-statement">同じ情報を何度も入力したり、ホームページの更新をその都度業者へ依頼したりする手間を減らします。</p>
-    <div class="phase-hero-actions">
-      <a class="button button-primary button-line-demo" href="https://lin.ee/YxJGXV6D" target="_blank" rel="noopener">LINEでデモを見る</a>
-      <a class="button button-secondary" href="dpro-system.html">DPROシステムを見る</a>
-      <a class="button button-secondary" href="website.html">ホームページ制作を見る</a>
-    </div>
-    <p class="phase-mini-proof"><span>48業種</span><span>スマホ・PC・iPad</span><span>LINE × SYSTEM × WEB</span></p>
-  </div>
-
-  <div class="phase-device-stage reveal" aria-label="DPROの実画面プレビュー">
-    <div class="phase-monitor">
-      <div class="live-browser-bar"><span></span><span></span><span></span><b>受付・店舗管理</b></div>
-      <iframe title="DPRO 動物病院受付PCデモ" loading="eager" src="https://dpromstk2000-lab.github.io/DPRO-VET-QR/scan-pc.html?v=step-vet-52-5v"></iframe>
-    </div>
-    <div class="phase-phone">
-      <iframe title="DPRO ペットサロン会員画面デモ" loading="eager" src="https://dpromstk2000-lab.github.io/dpro-pet-salon-liff/member.html?phone=08000002004&amp;v=petsalon-photo-1c"></iframe>
-    </div>
-    <div class="phase-tablet">
-      <iframe title="DPRO ペットサロンiPad画面デモ" loading="eager" src="https://dpromstk2000-lab.github.io/dpro-pet-salon-liff/owner-ipad.html?v=petsalon-photo-1d-r2"></iframe>
-    </div>
-    <div class="phase-live-badge"><i></i><span>CONNECTED PRODUCT</span><strong>3つの入口が連動</strong></div>
-  </div>
-  <a class="scroll-indicator" href="#numbers"><span>SCROLL</span><i></i></a>
+<section aria-labelledby="phase-hero-title" class="phase-hero dpro-connected-hero">
+<div class="phase-hero-glow glow-a"></div>
+<div class="phase-hero-glow glow-b"></div>
+<div class="phase-hero-copy reveal">
+<p class="eyebrow">LINE × DPRO SYSTEM × BUSINESS WEBSITE</p>
+<h1 class="headline-lines headline-hero" id="phase-hero-title">
+<span>LINE・システム・</span>
+<span>ホームページを、</span>
+<span>ひとつの店舗運営へ。</span>
+</h1>
+<p class="phase-hero-lead">予約・受付・顧客管理・営業時間・休業日・お知らせを一元管理。<br/>業種専用DPROシステムの情報を、LINE公式とホームページにもつなげます。</p>
+<p class="phase-brand-statement">同じ情報を何度も入力したり、ホームページの更新をその都度業者へ依頼したりする手間を減らします。</p>
+<div class="phase-hero-actions">
+<a class="button button-primary button-line-demo" href="https://lin.ee/YxJGXV6D" rel="noopener" target="_blank">LINEでデモを見る</a>
+<a class="button button-secondary" href="dpro-system.html">DPROシステムを見る</a>
+<a class="button button-secondary" href="website.html">ホームページ制作を見る</a>
+</div>
+<p class="phase-mini-proof"><span>48業種</span><span>スマホ・PC・iPad</span><span>LINE × SYSTEM × WEB</span></p>
+</div>
+<div aria-label="DPROの実画面プレビュー" class="phase-device-stage reveal">
+<div class="phase-monitor">
+<div class="live-browser-bar"><span></span><span></span><span></span><b>受付・店舗管理</b></div>
+<iframe loading="eager" src="https://dpromstk2000-lab.github.io/DPRO-VET-QR/scan-pc.html?v=step-vet-52-5v" title="DPRO 動物病院受付PCデモ"></iframe>
+</div>
+<div class="phase-phone">
+<iframe loading="eager" src="https://dpromstk2000-lab.github.io/dpro-pet-salon-liff/member.html?phone=08000002004&amp;v=petsalon-photo-1c" title="DPRO ペットサロン会員画面デモ"></iframe>
+</div>
+<div class="phase-tablet">
+<iframe loading="eager" src="https://dpromstk2000-lab.github.io/dpro-pet-salon-liff/owner-ipad.html?v=petsalon-photo-1d-r2" title="DPRO ペットサロンiPad画面デモ"></iframe>
+</div>
+<div class="phase-live-badge"><i></i><span>CONNECTED PRODUCT</span><strong>3つの入口が連動</strong></div>
+</div>
+<a class="scroll-indicator" href="#numbers"><span>SCROLL</span><i></i></a>
 </section>
-
 <section class="phase-numbers section" id="numbers">
-  <div class="phase-number-grid">
-    <article class="phase-number reveal"><strong>48</strong><span>完成済み業種システム</span><p>店舗ごとの運用に合わせた製品を公開。</p></article>
-    <article class="phase-number reveal"><strong>3</strong><span>LINE・システム・WEB</span><p>お客様の入口と店舗運営を一つにつなぎます。</p></article>
-    <article class="phase-number reveal"><strong>1</strong><span>一度の設定で情報を共有</span><p>休日やお知らせを複数の画面へ反映できます。</p></article>
-  </div>
+<div class="phase-number-grid">
+<article class="phase-number reveal"><strong>48</strong><span>完成済み業種システム</span><p>店舗ごとの運用に合わせた製品を公開。</p></article>
+<article class="phase-number reveal"><strong>3</strong><span>LINE・システム・WEB</span><p>お客様の入口と店舗運営を一つにつなぎます。</p></article>
+<article class="phase-number reveal"><strong>1</strong><span>一度の設定で情報を共有</span><p>休日やお知らせを複数の画面へ反映できます。</p></article>
+</div>
 </section>
-
-<section class="dpro-connection section" id="connection" aria-labelledby="connection-title">
-  <div class="section-heading reveal">
-    <p class="eyebrow">ONE OPERATION, THREE CONNECTED TOUCHPOINTS</p>
-    <h2 id="connection-title" class="headline-lines headline-fixed"><span>更新を業者に頼まない。</span><span>店舗の設定が、そのままホームページへ。</span></h2>
-    <p>DPROビジネスホームページは、きれいなだけのホームページではありません。LINE公式と業務システムにつながり、日常の店舗運営と一緒に動きます。</p>
-  </div>
-
-  <div class="dpro-connection-map reveal" aria-label="LINE、DPROシステム、ホームページの連携図">
-    <a class="dpro-connection-node is-line" href="line.html">
-      <span class="dpro-node-icon">LINE</span>
-      <small>お客様の入口</small>
-      <h3>LINE公式</h3>
-      <p>相談・予約・通知・会員画面</p>
-      <b class="dpro-node-link">サービスを見る →</b>
-    </a>
-    <a class="dpro-connection-core" href="dpro-system.html">
-      <i></i><span>DPRO</span><strong>業種専用システム</strong><small>予約・顧客・休日・業務</small><b>詳しく見る →</b>
-    </a>
-    <a class="dpro-connection-node is-web" href="website.html">
-      <span class="dpro-node-icon">WEB</span>
-      <small>検索・集客の入口</small>
-      <h3>ビジネスホームページ</h3>
-      <p>情報・予約・お知らせを自動反映</p>
-      <b class="dpro-node-link">サービスを見る →</b>
-    </a>
-  </div>
-
-  <div class="dpro-sync-demo reveal" data-sync-demo>
-    <div class="dpro-sync-demo__head">
-      <div><span>LIVE CONNECTION DEMO</span><h3>休日を一度設定すると、各画面へ反映</h3></div>
-      <p>下の「公開する」を押して、連携イメージを確認できます。</p>
-    </div>
-    <div class="dpro-sync-demo__grid">
-      <section class="dpro-admin-panel" aria-label="DPRO管理画面の例">
-        <p class="dpro-panel-label">DPRO管理画面</p>
-        <label>お知らせタイトル<input type="text" value="夏季休業のお知らせ" data-sync-input-title></label>
-        <div class="dpro-date-row">
-          <label>開始日<input type="date" value="2026-08-13" data-sync-input-start></label>
-          <label>終了日<input type="date" value="2026-08-15" data-sync-input-end></label>
-        </div>
-        <button type="button" class="button button-primary dpro-publish-button" data-sync-publish>休日を公開する</button>
-        <small>管理画面で一度設定するだけ</small>
-      </section>
-      <div class="dpro-sync-route" aria-hidden="true"><i></i><span>自動連携</span><i></i></div>
-      <section class="dpro-output-panel" aria-label="連携先の表示例">
-        <div class="dpro-output-card is-web">
-          <span>ホームページ</span>
-          <strong data-sync-title>夏季休業のお知らせ</strong>
-          <p><b data-sync-period>8月13日〜8月15日</b>は休業いたします。</p>
-        </div>
-        <div class="dpro-output-card is-line">
-          <span>LINE案内</span>
-          <strong>休業情報を案内に利用</strong>
-          <p>予約前のお客様にも同じ情報を表示できます。</p>
-        </div>
-        <div class="dpro-output-card is-calendar">
-          <span>予約カレンダー</span>
-          <strong>休業日を受付対象外へ</strong>
-          <p>予約枠と営業情報の食い違いを防ぎます。</p>
-        </div>
-        <p class="dpro-sync-status" role="status" aria-live="polite" data-sync-status>公開準備ができています。</p>
-      </section>
-    </div>
-  </div>
-
-  <div class="dpro-compare reveal">
-    <div class="dpro-compare__head"><span>一般的なホームページ</span><strong>DPROビジネスホームページ</strong></div>
-    <div><span>休日変更を制作業者へ連絡</span><strong>管理画面で休日を設定</strong></div>
-    <div><span>業者がページを手作業で修正</span><strong>ホームページへ自動反映</strong></div>
-    <div><span>LINEにも別途投稿・設定</span><strong>同じ情報をLINE案内に利用</strong></div>
-    <div><span>予約枠も別画面で調整</span><strong>DPRO予約システムと連動</strong></div>
-    <div><span>問い合わせはメールで分散</span><strong>顧客・相談・写真を一元管理</strong></div>
-  </div>
-
-  <div class="dpro-connection-actions reveal">
-    <a class="button button-primary" href="website.html">ホームページ4プランを見る</a>
-    <a class="button button-secondary" href="https://dpromstk2000-lab.github.io/dpro-green-website/" target="_blank" rel="noopener">ビジネス仕様の実例を見る</a>
-  </div>
+<section aria-labelledby="connection-title" class="dpro-connection section" id="connection">
+<div class="section-heading reveal">
+<p class="eyebrow">ONE OPERATION, THREE CONNECTED TOUCHPOINTS</p>
+<h2 class="headline-lines headline-fixed" id="connection-title"><span>更新を業者に頼まない。</span><span>店舗の設定が、そのままホームページへ。</span></h2>
+<p>DPROビジネスホームページは、きれいなだけのホームページではありません。LINE公式と業務システムにつながり、日常の店舗運営と一緒に動きます。</p>
+</div>
+<div aria-label="LINE、DPROシステム、ホームページの連携図" class="dpro-connection-map reveal">
+<a class="dpro-connection-node is-line" href="line.html">
+<span class="dpro-node-icon">LINE</span>
+<small>お客様の入口</small>
+<h3>LINE公式</h3>
+<p>相談・予約・通知・会員画面</p>
+<b class="dpro-node-link">サービスを見る →</b>
+</a>
+<a class="dpro-connection-core" href="dpro-system.html">
+<i></i><span>DPRO</span><strong>業種専用システム</strong><small>予約・顧客・休日・業務</small><b>詳しく見る →</b>
+</a>
+<a class="dpro-connection-node is-web" href="website.html">
+<span class="dpro-node-icon">WEB</span>
+<small>検索・集客の入口</small>
+<h3>ビジネスホームページ</h3>
+<p>情報・予約・お知らせを自動反映</p>
+<b class="dpro-node-link">サービスを見る →</b>
+</a>
+</div>
+<div class="dpro-sync-demo reveal" data-sync-demo="">
+<div class="dpro-sync-demo__head">
+<div><span>LIVE CONNECTION DEMO</span><h3>休日を一度設定すると、各画面へ反映</h3></div>
+<p>下の「公開する」を押して、連携イメージを確認できます。</p>
+</div>
+<div class="dpro-sync-demo__grid">
+<section aria-label="DPRO管理画面の例" class="dpro-admin-panel">
+<p class="dpro-panel-label">DPRO管理画面</p>
+<label>お知らせタイトル<input data-sync-input-title="" type="text" value="夏季休業のお知らせ"/></label>
+<div class="dpro-date-row">
+<label>開始日<input data-sync-input-start="" type="date" value="2026-08-13"/></label>
+<label>終了日<input data-sync-input-end="" type="date" value="2026-08-15"/></label>
+</div>
+<button class="button button-primary dpro-publish-button" data-sync-publish="" type="button">休日を公開する</button>
+<small>管理画面で一度設定するだけ</small>
 </section>
-
+<div aria-hidden="true" class="dpro-sync-route"><i></i><span>自動連携</span><i></i></div>
+<section aria-label="連携先の表示例" class="dpro-output-panel">
+<div class="dpro-output-card is-web">
+<span>ホームページ</span>
+<strong data-sync-title="">夏季休業のお知らせ</strong>
+<p><b data-sync-period="">8月13日〜8月15日</b>は休業いたします。</p>
+</div>
+<div class="dpro-output-card is-line">
+<span>LINE案内</span>
+<strong>休業情報を案内に利用</strong>
+<p>予約前のお客様にも同じ情報を表示できます。</p>
+</div>
+<div class="dpro-output-card is-calendar">
+<span>予約カレンダー</span>
+<strong>休業日を受付対象外へ</strong>
+<p>予約枠と営業情報の食い違いを防ぎます。</p>
+</div>
+<p aria-live="polite" class="dpro-sync-status" data-sync-status="" role="status">公開準備ができています。</p>
+</section>
+</div>
+</div>
+<div class="dpro-compare reveal">
+<div class="dpro-compare__head"><span>一般的なホームページ</span><strong>DPROビジネスホームページ</strong></div>
+<div><span>休日変更を制作業者へ連絡</span><strong>管理画面で休日を設定</strong></div>
+<div><span>業者がページを手作業で修正</span><strong>ホームページへ自動反映</strong></div>
+<div><span>LINEにも別途投稿・設定</span><strong>同じ情報をLINE案内に利用</strong></div>
+<div><span>予約枠も別画面で調整</span><strong>DPRO予約システムと連動</strong></div>
+<div><span>問い合わせはメールで分散</span><strong>顧客・相談・写真を一元管理</strong></div>
+</div>
+<div class="dpro-connection-actions reveal">
+<a class="button button-primary" href="website.html">ホームページ4プランを見る</a>
+<a class="button button-secondary" href="https://dpromstk2000-lab.github.io/dpro-green-website/" rel="noopener" target="_blank">ビジネス仕様の実例を見る</a>
+</div>
+</section>
 <section class="owner-problems section section-soft" id="owner-problems">
 <div class="section-heading reveal">
 <p class="eyebrow">FOR STORE OWNERS</p>
@@ -167,86 +158,79 @@
 <article class="owner-problem-card reveal"><span>04</span><h3>ホームページを営業に活かしたい</h3><p>検索から相談・予約・会員画面まで、店舗運営につながる導線を作ります。</p></article>
 </div>
 </section>
-
 <section class="phase-industries section section-soft" id="industries">
-  <div class="section-heading reveal">
-    <p class="eyebrow">FIND YOUR BUSINESS</p>
-    <h2 class="headline-lines headline-fixed"><span>あなたの業種は、</span><span>どちらですか？</span></h2>
-    <p>業種を選ぶと、実際に完成しているDPROシステムを確認できます。</p>
-  </div>
-  <div class="industry-selector">
-    <a class="industry-panel reveal" href="systems.html?category=%E7%BE%8E%E5%AE%B9%E3%83%BB%E5%81%A5%E5%BA%B7#catalog"><span>01</span><small>BEAUTY & WELLNESS</small><h3>美容・健康</h3><p>美容室、美容サロン、まつげ・眉サロン、ネイル、エステ、ヨガ、整骨院</p><b>該当システムを見る →</b></a>
-    <a class="industry-panel reveal" href="systems.html?category=%E5%8C%BB%E7%99%82%E3%83%BB%E3%83%9A%E3%83%83%E3%83%88#catalog"><span>02</span><small>MEDICAL & PET</small><h3>医療・ペット</h3><p>動物病院、ペットサロン、歯科</p><b>該当システムを見る →</b></a>
-    <a class="industry-panel reveal" href="systems.html?category=%E9%A3%B2%E9%A3%9F%E3%83%BB%E5%B0%8F%E5%A3%B2#catalog"><span>03</span><small>FOOD & RETAIL</small><h3>飲食・小売</h3><p>ベーカリー、ケーキ・洋菓子店、居酒屋、テイクアウト</p><b>該当システムを見る →</b></a>
-    <a class="industry-panel reveal" href="systems.html?category=%E8%B2%B7%E5%8F%96%E3%83%BB%E3%83%AA%E3%83%A6%E3%83%BC%E3%82%B9#catalog"><span>04</span><small>BUYBACK & REUSE</small><h3>買取・リユース</h3><p>総合買取・査定、ブランド品・貴金属、中古車買取・販売</p><b>該当システムを見る →</b></a>
-    <a class="industry-panel reveal" href="systems.html?category=%E4%BD%8F%E3%81%BE%E3%81%84%E3%83%BB%E5%BB%BA%E7%AF%89#catalog"><span>05</span><small>HOUSING & CONSTRUCTION</small><h3>住まい・建築</h3><p>不動産・賃貸内見、リフォーム・工務店</p><b>該当システムを見る →</b></a>
-    <a class="industry-panel reveal" href="systems.html?category=%E6%95%99%E8%82%B2%E3%83%BB%E7%94%9F%E6%B4%BB%E3%82%B5%E3%83%BC%E3%83%93%E3%82%B9#catalog"><span>06</span><small>EDUCATION & SERVICE</small><h3>教育・生活サービス</h3><p>学習塾、車検・整備、修理受付、クリーニング、デイサービス、就労継続支援B型、葬儀・法要、写真館</p><b>該当システムを見る →</b></a>
-    <a class="industry-panel industry-panel-wide reveal" href="systems.html?category=%E5%A3%AB%E6%A5%AD%E3%83%BB%E4%BC%81%E6%A5%AD%E6%94%AF%E6%8F%B4#catalog"><span>07</span><small>PROFESSIONAL & BUSINESS SUPPORT</small><h3>士業・企業支援</h3><p>社労士・顧問先対応、税理士・会計事務所</p><b>該当システムを見る →</b></a>
-  </div><div class="catalog-more-link reveal"><a class="button button-primary" href="systems.html">48システムをすべて見る</a></div>
+<div class="section-heading reveal">
+<p class="eyebrow">FIND YOUR BUSINESS</p>
+<h2 class="headline-lines headline-fixed"><span>あなたの業種は、</span><span>どちらですか？</span></h2>
+<p>業種を選ぶと、実際に完成しているDPROシステムを確認できます。</p>
+</div>
+<div class="industry-selector">
+<a class="industry-panel reveal" href="systems.html?category=%E7%BE%8E%E5%AE%B9%E3%83%BB%E5%81%A5%E5%BA%B7#catalog"><span>01</span><small>BEAUTY &amp; WELLNESS</small><h3>美容・健康</h3><p>美容室、美容サロン、まつげ・眉サロン、ネイル、エステ、ヨガ、整骨院</p><b>該当システムを見る →</b></a>
+<a class="industry-panel reveal" href="systems.html?category=%E5%8C%BB%E7%99%82%E3%83%BB%E3%83%9A%E3%83%83%E3%83%88#catalog"><span>02</span><small>MEDICAL &amp; PET</small><h3>医療・ペット</h3><p>動物病院、ペットサロン、歯科</p><b>該当システムを見る →</b></a>
+<a class="industry-panel reveal" href="systems.html?category=%E9%A3%B2%E9%A3%9F%E3%83%BB%E5%B0%8F%E5%A3%B2#catalog"><span>03</span><small>FOOD &amp; RETAIL</small><h3>飲食・小売</h3><p>ベーカリー、ケーキ・洋菓子店、居酒屋、テイクアウト</p><b>該当システムを見る →</b></a>
+<a class="industry-panel reveal" href="systems.html?category=%E8%B2%B7%E5%8F%96%E3%83%BB%E3%83%AA%E3%83%A6%E3%83%BC%E3%82%B9#catalog"><span>04</span><small>BUYBACK &amp; REUSE</small><h3>買取・リユース</h3><p>総合買取・査定、ブランド品・貴金属、中古車買取・販売</p><b>該当システムを見る →</b></a>
+<a class="industry-panel reveal" href="systems.html?category=%E4%BD%8F%E3%81%BE%E3%81%84%E3%83%BB%E5%BB%BA%E7%AF%89#catalog"><span>05</span><small>HOUSING &amp; CONSTRUCTION</small><h3>住まい・建築</h3><p>不動産・賃貸内見、リフォーム・工務店</p><b>該当システムを見る →</b></a>
+<a class="industry-panel reveal" href="systems.html?category=%E6%95%99%E8%82%B2%E3%83%BB%E7%94%9F%E6%B4%BB%E3%82%B5%E3%83%BC%E3%83%93%E3%82%B9#catalog"><span>06</span><small>EDUCATION &amp; SERVICE</small><h3>教育・生活サービス</h3><p>学習塾、車検・整備、修理受付、クリーニング、デイサービス、就労継続支援B型、葬儀・法要、写真館</p><b>該当システムを見る →</b></a>
+<a class="industry-panel industry-panel-wide reveal" href="systems.html?category=%E5%A3%AB%E6%A5%AD%E3%83%BB%E4%BC%81%E6%A5%AD%E6%94%AF%E6%8F%B4#catalog"><span>07</span><small>PROFESSIONAL &amp; BUSINESS SUPPORT</small><h3>士業・企業支援</h3><p>社労士・顧問先対応、税理士・会計事務所</p><b>該当システムを見る →</b></a>
+</div><div class="catalog-more-link reveal"><a class="button button-primary" href="systems.html">48システムをすべて見る</a></div>
 </section>
-
 <section class="phase-live section section-dark" id="live">
-  <div class="section-heading section-heading-light reveal">
-    <p class="eyebrow">REAL SCREEN, REAL OPERATION</p>
-    <h2 class="headline-lines headline-fixed"><span>説明するだけではなく、</span><span>実際に動いています。</span></h2>
-    <p>代表的な完成システムを、ページ内でそのまま確認できます。</p>
-  </div>
-
-  <div class="phase-live-grid">
-    <article class="phase-live-card reveal">
-      <div class="phase-live-copy"><span>PET SALON</span><h3 class="headline-lines"><span>予約・顧客・</span><span>ペット情報を、</span><span>ひとつに。</span></h3><p>お客様用会員画面から、PC・iPadの店舗管理まで。</p><a href="systems/pet-salon.html">製品ページを見る →</a></div>
-      <div class="phase-live-frame phone"><iframe title="ペットサロン会員画面" loading="lazy" src="https://dpromstk2000-lab.github.io/dpro-pet-salon-liff/member.html?phone=08000002004&amp;v=petsalon-photo-1c"></iframe></div>
-    </article>
-    <article class="phase-live-card reverse reveal">
-      <div class="phase-live-copy"><span>PET CARE</span><h3 class="headline-lines"><span>受付前から、</span><span>診察・会計待ちまで。</span></h3><p>LINE診察券、順番受付、受付PC・iPad、医師画面が連動。</p><a href="systems/pet-care.html">製品ページを見る →</a></div>
-      <div class="phase-live-frame desktop"><iframe title="動物病院受付PC画面" loading="lazy" src="https://dpromstk2000-lab.github.io/DPRO-VET-QR/scan-pc.html?v=step-vet-52-5v"></iframe></div>
-    </article>
-    <article class="phase-live-card reveal">
-      <div class="phase-live-copy"><span>BAKERY</span><h3 class="headline-lines"><span>写真で選び、</span><span>そのままLINEで</span><span>取り置きへ。</span></h3><p>店舗公式パンカタログ・商品写真管理・LINE取り置きを一つに。</p><div class="phase-live-links"><a href="systems/bakery.html">製品ページを見る →</a><a href="https://dpromstk2000-lab.github.io/bakery-line-system/catalog.html?shop_code=bakery_demo&catalog_api=https%3A%2F%2Fdpro-bakery-catalog-api.dpromstk2000.workers.dev&api=https%3A%2F%2Fdpro-bakery-wallet-api.dpromstk2000.workers.dev&v=32" target="_blank" rel="noopener">写真付きカタログを開く →</a></div></div>
-      <div class="phase-live-frame desktop bakery-live-frame">
-        <iframe id="bakery-live-iframe" title="ベーカリー写真付き商品カタログ" loading="lazy" src="https://dpromstk2000-lab.github.io/bakery-line-system/catalog.html?shop_code=bakery_demo&amp;catalog_api=https%3A%2F%2Fdpro-bakery-catalog-api.dpromstk2000.workers.dev&amp;api=https%3A%2F%2Fdpro-bakery-wallet-api.dpromstk2000.workers.dev&amp;v=32"></iframe>
-        <div class="iframe-fallback bakery-fallback" aria-hidden="true"><div class="iframe-fallback-mark">BK</div><p class="eyebrow">PHOTO CATALOG × LINE PREORDER</p><h4>パンの魅力を写真で伝え、<br>そのまま取り置きへ</h4><p>実画面が読み込めない場合は、製品ページからカタログを開けます。</p><a href="systems/bakery.html">ベーカリー製品ページを見る →</a></div>
-      </div>
-    </article>
-  </div>
+<div class="section-heading section-heading-light reveal">
+<p class="eyebrow">REAL SCREEN, REAL OPERATION</p>
+<h2 class="headline-lines headline-fixed"><span>説明するだけではなく、</span><span>実際に動いています。</span></h2>
+<p>代表的な完成システムを、ページ内でそのまま確認できます。</p>
+</div>
+<div class="phase-live-grid">
+<article class="phase-live-card reveal">
+<div class="phase-live-copy"><span>PET SALON</span><h3 class="headline-lines"><span>予約・顧客・</span><span>ペット情報を、</span><span>ひとつに。</span></h3><p>お客様用会員画面から、PC・iPadの店舗管理まで。</p><a href="systems/pet-salon.html">製品ページを見る →</a></div>
+<div class="phase-live-frame phone"><iframe loading="lazy" src="https://dpromstk2000-lab.github.io/dpro-pet-salon-liff/member.html?phone=08000002004&amp;v=petsalon-photo-1c" title="ペットサロン会員画面"></iframe></div>
+</article>
+<article class="phase-live-card reverse reveal">
+<div class="phase-live-copy"><span>PET CARE</span><h3 class="headline-lines"><span>受付前から、</span><span>診察・会計待ちまで。</span></h3><p>LINE診察券、順番受付、受付PC・iPad、医師画面が連動。</p><a href="systems/pet-care.html">製品ページを見る →</a></div>
+<div class="phase-live-frame desktop"><iframe loading="lazy" src="https://dpromstk2000-lab.github.io/DPRO-VET-QR/scan-pc.html?v=step-vet-52-5v" title="動物病院受付PC画面"></iframe></div>
+</article>
+<article class="phase-live-card reveal">
+<div class="phase-live-copy"><span>BAKERY</span><h3 class="headline-lines"><span>写真で選び、</span><span>そのままLINEで</span><span>取り置きへ。</span></h3><p>店舗公式パンカタログ・商品写真管理・LINE取り置きを一つに。</p><div class="phase-live-links"><a href="systems/bakery.html">製品ページを見る →</a><a href="https://dpromstk2000-lab.github.io/bakery-line-system/catalog.html?shop_code=bakery_demo&amp;catalog_api=https%3A%2F%2Fdpro-bakery-catalog-api.dpromstk2000.workers.dev&amp;api=https%3A%2F%2Fdpro-bakery-wallet-api.dpromstk2000.workers.dev&amp;v=32" rel="noopener" target="_blank">写真付きカタログを開く →</a></div></div>
+<div class="phase-live-frame desktop bakery-live-frame">
+<iframe id="bakery-live-iframe" loading="lazy" src="https://dpromstk2000-lab.github.io/bakery-line-system/catalog.html?shop_code=bakery_demo&amp;catalog_api=https%3A%2F%2Fdpro-bakery-catalog-api.dpromstk2000.workers.dev&amp;api=https%3A%2F%2Fdpro-bakery-wallet-api.dpromstk2000.workers.dev&amp;v=32" title="ベーカリー写真付き商品カタログ"></iframe>
+<div aria-hidden="true" class="iframe-fallback bakery-fallback"><div class="iframe-fallback-mark">BK</div><p class="eyebrow">PHOTO CATALOG × LINE PREORDER</p><h4>パンの魅力を写真で伝え、<br/>そのまま取り置きへ</h4><p>実画面が読み込めない場合は、製品ページからカタログを開けます。</p><a href="systems/bakery.html">ベーカリー製品ページを見る →</a></div>
+</div>
+</article>
+</div>
 </section>
-
 <section class="phase-why section" id="why">
-  <div class="phase-why-copy reveal">
-    <p class="eyebrow">WHY DPRO</p>
-    <h2 class="headline-lines headline-why"><span>現場で本当に使われる</span><span>仕組みを、</span><span>自社で設計・改善しています。</span></h2>
-    <p>見た目だけの予約フォームではありません。お客様が使うLINEとホームページ、店舗が使うPC・iPadが、同じ情報で動くように作っています。</p>
-  </div>
-  <div class="phase-why-flow reveal dpro-why-flow-connected">
-    <div><span>LINE</span><small>相談・予約・通知</small></div><i></i>
-    <div><span>DPRO SYSTEM</span><small>予約・顧客・休日を管理</small></div><i></i>
-    <div><span>WEBSITE</span><small>検索・集客・自動反映</small></div>
-  </div>
-  <div class="phase-principles">
-    <article class="reveal"><span>01</span><h3>業種専用</h3><p>共通テンプレートではなく、各業種の仕事の流れに合わせます。</p></article>
-    <article class="reveal"><span>02</span><h3>実際に触れる</h3><p>完成済みの画面を、導入前にそのまま体験できます。</p></article>
-    <article class="reveal"><span>03</span><h3>導入後も育てる</h3><p>LINE・システム・ホームページを、店舗の運用に合わせて改善できます。</p></article>
-  </div>
+<div class="phase-why-copy reveal">
+<p class="eyebrow">WHY DPRO</p>
+<h2 class="headline-lines headline-why"><span>現場で本当に使われる</span><span>仕組みを、</span><span>自社で設計・改善しています。</span></h2>
+<p>見た目だけの予約フォームではありません。お客様が使うLINEとホームページ、店舗が使うPC・iPadが、同じ情報で動くように作っています。</p>
+</div>
+<div class="phase-why-flow reveal dpro-why-flow-connected">
+<div><span>LINE</span><small>相談・予約・通知</small></div><i></i>
+<div><span>DPRO SYSTEM</span><small>予約・顧客・休日を管理</small></div><i></i>
+<div><span>WEBSITE</span><small>検索・集客・自動反映</small></div>
+</div>
+<div class="phase-principles">
+<article class="reveal"><span>01</span><h3>業種専用</h3><p>共通テンプレートではなく、各業種の仕事の流れに合わせます。</p></article>
+<article class="reveal"><span>02</span><h3>実際に触れる</h3><p>完成済みの画面を、導入前にそのまま体験できます。</p></article>
+<article class="reveal"><span>03</span><h3>導入後も育てる</h3><p>LINE・システム・ホームページを、店舗の運用に合わせて改善できます。</p></article>
+</div>
 </section>
-
-<section class="phase-cta section section-dark" id="contact">
-  <div class="phase-cta-inner reveal">
-    <p class="eyebrow">START WITH A CONNECTED DEMO</p>
-    <h2 class="headline-lines dpro-connected-cta-title"><span>あなたの業種で、</span><span>どこまでつながるか</span><span>確認しませんか？</span></h2>
-    <p>完成済みシステムと、LINE・ホームページ連携のデモをご案内します。</p>
-    <div class="dpro-final-actions"><a class="button button-line-demo large" href="https://lin.ee/YxJGXV6D" target="_blank" rel="noopener">LINEでデモを見る</a><a class="button button-secondary large" href="dpro-system.html">DPROシステムを見る</a><a class="button button-secondary large" href="line.html">LINE公式サービスを見る</a><a class="button button-secondary large" href="website.html">ホームページ料金を見る</a></div>
-    <small>友だち追加後、「デモ希望」と送るだけで大丈夫です。</small>
-  </div>
+<section class="dpro-official-bridge section" id="official-site"><div class="dpro-official-bridge__glow"></div><div class="dpro-official-bridge__inner reveal"><div><p class="eyebrow">DPRO SHOP OFFICIAL</p><h2>サービス・料金・導入相談は、<br/>DPRO SHOP公式サイトへ。</h2><p>このサイトは、完成済みDPROシステムを体験する製品サイトです。LINE公式構築・運用、ホームページ制作、料金、DPRO SHOPについては公式サイトでご案内しています。</p></div><a href="https://dpro-shop.com/">DPRO SHOP公式サイトを見る <span>↗</span></a></div></section><section class="phase-cta section section-dark" id="contact">
+<div class="phase-cta-inner reveal">
+<p class="eyebrow">START WITH A CONNECTED DEMO</p>
+<h2 class="headline-lines dpro-connected-cta-title"><span>あなたの業種で、</span><span>どこまでつながるか</span><span>確認しませんか？</span></h2>
+<p>完成済みシステムと、LINE・ホームページ連携のデモをご案内します。</p>
+<div class="dpro-final-actions"><a class="button button-line-demo large" href="https://lin.ee/YxJGXV6D" rel="noopener" target="_blank">LINEでデモを見る</a><a class="button button-secondary large" href="dpro-system.html">DPROシステムを見る</a><a class="button button-secondary large" href="line.html">LINE公式サービスを見る</a><a class="button button-secondary large" href="website.html">ホームページ料金を見る</a></div>
+<small>友だち追加後、「デモ希望」と送るだけで大丈夫です。</small>
+</div>
 </section>
 </main>
-
 <footer class="site-footer">
-  <div><a class="brand footer-brand" href="#top"><span class="brand-mark">D</span><span class="brand-copy"><strong>DPRO LINE SYSTEMS</strong><small>BUSINESS SOLUTION</small></span></a><p>LINE・業務システム・ホームページを、ひとつの店舗運営へ。</p></div>
-  <nav aria-label="フッターナビゲーション"><a href="dpro-system.html">DPROシステム</a><a href="line.html">LINE公式構築・運用</a><a href="website.html">ホームページ制作</a><a href="systems.html">48製品一覧</a><a href="#contact">お問い合わせ</a></nav>
-  <p class="copyright">© <span id="year"></span> DPRO SHOP</p>
+<div><a class="brand footer-brand" href="#top"><span class="brand-mark">D</span><span class="brand-copy"><strong>DPRO LINE SYSTEMS</strong><small>BUSINESS SOLUTION</small></span></a><p>LINE・業務システム・ホームページを、ひとつの店舗運営へ。</p></div>
+<nav aria-label="フッターナビゲーション"><a href="dpro-system.html">DPROシステム</a><a href="line.html">LINE公式構築・運用</a><a href="website.html">ホームページ制作</a><a href="systems.html">48製品一覧</a><a href="#contact">お問い合わせ</a><a data-official-site-link="" href="https://dpro-shop.com/">DPRO SHOP公式サイト ↗</a></nav>
+<p class="copyright">© <span id="year"></span> DPRO SHOP</p>
 </footer>
-
-<button class="back-to-top" type="button" aria-label="ページ上部へ戻る">↑</button>
+<button aria-label="ページ上部へ戻る" class="back-to-top" type="button">↑</button>
 <script src="script.js"></script>
 <script src="business-integration.js"></script>
 </body>
