@@ -193,3 +193,136 @@
   .dpro-connection-core i { animation:none; }
   .dpro-sync-demo.is-publishing .dpro-output-card { animation:none; }
 }
+
+
+/* =========================================================
+   DPRO OFFICIAL BRUSHUP V2
+   Headline control + LINE official service page
+   ========================================================= */
+.dpro-service-nav { gap:18px; font-size:12px; }
+
+.dpro-connected-cta-title {
+  max-width:1120px;
+  margin:18px auto 24px!important;
+  color:#fff;
+  font-size:clamp(46px,5.45vw,78px)!important;
+  line-height:1.08!important;
+  letter-spacing:-.052em!important;
+  text-align:center;
+}
+.dpro-connected-cta-title > span { display:block; white-space:nowrap; }
+
+.dpro-web-hero { grid-template-columns:minmax(600px,1.08fr) minmax(460px,.92fr); gap:clamp(36px,4vw,68px); }
+.dpro-web-hero-title { font-size:clamp(45px,4.4vw,68px)!important; line-height:1.13!important; }
+.dpro-web-title-line { display:block; white-space:nowrap; color:var(--dpro-lime); }
+.dpro-web-title-line.is-white { color:#fff; }
+
+/* LINE official service page */
+.line-service-page { background:#090a0e; color:#fff; }
+.line-service-page .eyebrow { color:#06c755; }
+.line-service-page .section-heading h2 { color:#fff; }
+.line-service-page .section-heading > p:last-child { color:#b8bec8; }
+
+.dpro-line-hero {
+  position:relative;
+  min-height:780px;
+  display:grid;
+  grid-template-columns:minmax(580px,1.06fr) minmax(400px,.94fr);
+  align-items:center;
+  gap:clamp(38px,5vw,82px);
+  padding:150px max(6vw,32px) 90px;
+  overflow:hidden;
+  background:radial-gradient(circle at 78% 23%,rgba(6,199,85,.18),transparent 27%),radial-gradient(circle at 16% 18%,rgba(170,33,77,.14),transparent 31%),#090a0e;
+}
+.dpro-line-hero::after { content:""; position:absolute; inset:0; background-image:linear-gradient(rgba(255,255,255,.024) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.024) 1px,transparent 1px); background-size:48px 48px; mask-image:linear-gradient(to bottom,#000,transparent 86%); pointer-events:none; }
+.dpro-line-hero__copy,.dpro-line-phone { position:relative; z-index:1; }
+.dpro-line-hero h1 { margin:16px 0 26px; font-size:clamp(48px,5.1vw,78px); line-height:1.08; letter-spacing:-.055em; }
+.dpro-line-hero h1 span { display:block; white-space:nowrap; }
+.dpro-line-hero h1 .is-accent { color:#40e87d; }
+.dpro-line-hero__copy > p:not(.eyebrow) { max-width:760px; color:#c4c9d1; font-size:18px; line-height:1.9; }
+.dpro-line-hero__proof { display:flex; flex-wrap:wrap; gap:9px; margin-top:26px; }
+.dpro-line-hero__proof span { padding:8px 12px; border:1px solid rgba(255,255,255,.14); border-radius:999px; color:#dce1e7; font-size:12px; font-weight:800; }
+
+.dpro-line-phone { max-width:520px; margin-inline:auto; }
+.dpro-line-phone__frame { overflow:hidden; border:8px solid #20232c; border-radius:42px; background:#eff2f4; box-shadow:0 40px 100px rgba(0,0,0,.5); transform:perspective(1000px) rotateY(-5deg) rotateX(1deg); }
+.dpro-line-phone__top { height:58px; display:grid; grid-template-columns:24px 1fr 24px; align-items:center; padding:0 20px; color:#fff; background:#11151b; }
+.dpro-line-phone__top i { width:10px; height:10px; border-radius:50%; background:#06c755; box-shadow:0 0 0 6px rgba(6,199,85,.12); }
+.dpro-line-phone__top strong { text-align:center; font-size:14px; }
+.dpro-line-phone__top small { color:#9299a4; }
+.dpro-line-phone__chat { min-height:235px; padding:32px 26px; color:#263029; background:linear-gradient(150deg,#dfece5,#f6f8f7); }
+.dpro-line-phone__chat span { display:inline-block; padding:8px 12px; border-radius:999px; color:#057532; background:#c7f2d7; font-size:11px; font-weight:900; }
+.dpro-line-phone__chat p { max-width:330px; margin:20px 0 0; padding:16px; border-radius:6px 18px 18px 18px; background:#fff; box-shadow:0 12px 30px rgba(35,70,50,.1); line-height:1.75; }
+.dpro-line-richmenu { display:grid; grid-template-columns:repeat(3,1fr); background:#fff; border-top:1px solid #d8dde0; }
+.dpro-line-richmenu div { min-height:98px; display:grid; align-content:center; gap:4px; padding:12px; text-align:center; color:#172019; border-right:1px solid #e2e6e8; border-bottom:1px solid #e2e6e8; }
+.dpro-line-richmenu div:nth-child(3n) { border-right:0; }
+.dpro-line-richmenu b { font-size:14px; }
+.dpro-line-richmenu small { color:#07953d; font-size:8px; font-weight:900; letter-spacing:.12em; }
+.dpro-line-sync-badge { position:absolute; right:-28px; bottom:-30px; display:grid; place-items:center; width:142px; height:142px; padding:18px; border:1px solid rgba(64,232,125,.55); border-radius:50%; text-align:center; background:#11151b; box-shadow:0 0 0 12px rgba(6,199,85,.065); }
+.dpro-line-sync-badge b { color:#40e87d; font-size:24px; }
+.dpro-line-sync-badge span { margin-top:-18px; color:#cbd0d7; font-size:10px; line-height:1.45; }
+
+.dpro-line-section { padding:100px max(6vw,32px); background:#0d0f14; }
+.dpro-line-section:nth-of-type(even) { background:#0a0c10; }
+.dpro-line-section--soft { background:#11141a!important; }
+.dpro-line-section--dark { background:#07080b!important; }
+.dpro-line-service-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:18px; max-width:1240px; margin:42px auto 0; }
+.dpro-line-service-grid article,.dpro-line-benefit-grid article { padding:28px; border:1px solid rgba(255,255,255,.11); border-radius:24px; background:linear-gradient(150deg,rgba(255,255,255,.06),rgba(255,255,255,.02)); }
+.dpro-line-service-grid article > span,.dpro-line-benefit-grid article > span { color:#40e87d; font-size:11px; font-weight:950; letter-spacing:.15em; }
+.dpro-line-service-grid h3,.dpro-line-benefit-grid h3 { margin:14px 0 10px; font-size:22px; }
+.dpro-line-service-grid p,.dpro-line-benefit-grid p { margin:0; color:#bdc3cc; line-height:1.8; }
+
+.dpro-line-price-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:20px; max-width:1180px; margin:42px auto 0; }
+.dpro-line-price-grid article { position:relative; display:flex; flex-direction:column; min-height:470px; padding:30px; border:1px solid rgba(255,255,255,.12); border-radius:26px; background:rgba(255,255,255,.045); }
+.dpro-line-price-grid article.is-connected { border-color:rgba(64,232,125,.55); background:linear-gradient(150deg,rgba(6,199,85,.13),rgba(255,255,255,.025)); }
+.dpro-line-price-grid small { color:#a7aeb8; font-weight:850; }
+.dpro-line-price-grid strong { display:block; margin:18px 0; font-size:38px; }
+.dpro-line-price-grid p { color:#c5cad2; line-height:1.8; }
+.dpro-line-price-grid ul { display:grid; gap:10px; margin:20px 0 0; padding:0; list-style:none; }
+.dpro-line-price-grid li { position:relative; padding-left:20px; color:#e0e4e9; font-size:13px; }
+.dpro-line-price-grid li::before { content:"✓"; position:absolute; left:0; color:#40e87d; font-weight:900; }
+.dpro-line-price-grid em { margin-top:auto; padding-top:20px; color:#9ca4af; font-size:12px; font-style:normal; }
+.dpro-line-price-badge { position:absolute; right:18px; top:18px; padding:7px 10px; border-radius:999px; color:#07140b; background:#40e87d; font-size:10px; font-weight:950; }
+
+.dpro-line-connect-flow { display:grid; grid-template-columns:1fr 56px 1.1fr 56px 1fr; align-items:center; max-width:1180px; margin:42px auto 0; }
+.dpro-line-connect-flow article { min-height:210px; display:grid; place-content:center; padding:26px; text-align:center; border:1px solid rgba(255,255,255,.12); border-radius:25px; background:rgba(255,255,255,.045); }
+.dpro-line-connect-flow article.is-core { border-color:rgba(64,232,125,.55); background:rgba(6,199,85,.11); }
+.dpro-line-connect-flow article span { color:#40e87d; font-size:11px; font-weight:950; letter-spacing:.14em; }
+.dpro-line-connect-flow article strong { margin:12px 0 8px; font-size:23px; }
+.dpro-line-connect-flow article p { margin:0; color:#aeb5c0; }
+.dpro-line-connect-flow > i { height:2px; background:linear-gradient(90deg,rgba(64,232,125,.1),#40e87d,rgba(64,232,125,.1)); }
+.dpro-line-benefit-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:18px; max-width:1180px; margin:24px auto 0; }
+.dpro-line-final-title { max-width:1050px; margin:18px auto 24px!important; color:#fff; font-size:clamp(46px,5.3vw,76px)!important; line-height:1.08!important; letter-spacing:-.052em!important; }
+.dpro-line-final-title > span { display:block; white-space:nowrap; }
+
+@media (max-width:1200px) {
+  .dpro-service-nav { gap:13px; font-size:11px; }
+  .dpro-web-hero { grid-template-columns:minmax(500px,1fr) minmax(420px,.9fr); }
+  .dpro-web-hero-title { font-size:clamp(43px,4.5vw,60px)!important; }
+  .dpro-line-hero { grid-template-columns:minmax(480px,1fr) minmax(360px,.9fr); }
+  .dpro-line-hero h1 { font-size:clamp(45px,4.7vw,64px); }
+}
+
+@media (max-width:1050px) {
+  .dpro-web-hero,.dpro-line-hero { grid-template-columns:1fr; padding-top:126px; }
+  .dpro-web-hero__visual,.dpro-line-phone { max-width:720px; }
+  .dpro-web-title-line,.dpro-line-hero h1 span { white-space:normal; }
+  .dpro-line-service-grid,.dpro-line-price-grid,.dpro-line-benefit-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .dpro-line-connect-flow { grid-template-columns:1fr; gap:14px; max-width:720px; }
+  .dpro-line-connect-flow > i { width:2px; height:34px; margin:auto; }
+}
+
+@media (max-width:700px) {
+  .dpro-connected-cta-title { font-size:clamp(37px,10.5vw,50px)!important; }
+  .dpro-connected-cta-title > span,.dpro-line-final-title > span { white-space:normal; }
+  .dpro-web-hero-title { font-size:clamp(39px,11.2vw,52px)!important; line-height:1.14!important; }
+  .dpro-web-title-line { white-space:normal; }
+  .dpro-line-hero { min-height:auto; padding:116px 20px 72px; }
+  .dpro-line-hero h1 { font-size:clamp(40px,11.4vw,54px); }
+  .dpro-line-hero__copy > p:not(.eyebrow) { font-size:16px; }
+  .dpro-line-phone__frame { transform:none; border-width:6px; border-radius:32px; }
+  .dpro-line-sync-badge { width:110px; height:110px; right:-5px; bottom:-28px; }
+  .dpro-line-section { padding:82px 20px; }
+  .dpro-line-service-grid,.dpro-line-price-grid,.dpro-line-benefit-grid { grid-template-columns:1fr; }
+  .dpro-line-price-grid article { min-height:auto; }
+  .dpro-line-final-title { font-size:clamp(38px,10.8vw,52px)!important; }
+}
