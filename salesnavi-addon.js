@@ -2,6 +2,7 @@
   "use strict";
 
   const PRODUCT_COUNT = 50;
+  const INDUSTRY_COUNT = 49;
   const TITLE = "DPRO営業ナビ";
   const CATEGORY = "士業・企業支援";
   const DEMO_URL = "https://dpro-salesnavi-demo.pages.dev";
@@ -14,21 +15,20 @@
   const updateMetaAndCounts = () => {
     document.querySelectorAll('meta[name="description"]').forEach((meta) => {
       meta.content = meta.content
-        .replace(/\d+業種/g, `${PRODUCT_COUNT}業種`)
         .replace(/\d+製品/g, `${PRODUCT_COUNT}製品`)
         .replace(/\d+システム/g, `${PRODUCT_COUNT}システム`);
     });
 
-    setText(".phase-mini-proof span:first-child", `${PRODUCT_COUNT}業種`);
-    setText(".phase-number-grid .phase-number:first-child strong", String(PRODUCT_COUNT));
+    setText(".phase-mini-proof span:first-child", `${INDUSTRY_COUNT}業種`);
+    setText(".phase-number-grid .phase-number:first-child strong", String(INDUSTRY_COUNT));
     setText(".catalog-orbit .orbit-core", String(PRODUCT_COUNT));
     setText(".catalog-summary-grid article:first-child strong", String(PRODUCT_COUNT));
-    setText(".dpro-system-hero__proof span:first-child", `${PRODUCT_COUNT}業種`);
-    setText(".dpro-system-difference-grid article:first-child strong", String(PRODUCT_COUNT));
+    setText(".dpro-system-hero__proof span:first-child", `${INDUSTRY_COUNT}業種`);
+    setText(".dpro-system-difference-grid article:first-child strong", String(INDUSTRY_COUNT));
 
     const catalogHeroText = document.querySelector(".catalog-hero-inner > p:not(.eyebrow)");
     if (catalogHeroText) {
-      catalogHeroText.innerHTML = catalogHeroText.innerHTML.replace(/\d+業種/g, `${PRODUCT_COUNT}業種`);
+      catalogHeroText.innerHTML = catalogHeroText.innerHTML.replace(/\d+業種/g, `${INDUSTRY_COUNT}業種`);
     }
 
     const more = document.querySelector(".catalog-more-link a");
