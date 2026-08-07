@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="DPRO営業ナビ。営業先探し、今日の訪問先、おすすめルート、営業記録、再訪予定、複数スタッフ共有、分析まで、外回り営業をスマホ中心で整理する営業支援システムです。">
+<meta name="theme-color" content="#09281e">
+<title>DPRO営業ナビ｜営業先検索・おすすめルート・営業記録・再訪管理</title>
+<link rel="stylesheet" href="../styles.css">
+<style>
+:root{--sn-deep:#061c15;--sn-green:#167a54;--sn-green2:#25a574;--sn-soft:#f0f7f3;--sn-line:#d6e6de;--sn-muted:#64756d}
+body.salesnavi-product{background:#fff;color:#102d22}
+.salesnavi-product .product-hero{background:radial-gradient(circle at 78% 16%,rgba(55,193,130,.18),transparent 28%),radial-gradient(circle at 16% 82%,rgba(20,118,81,.2),transparent 34%),linear-gradient(145deg,#020906,#09281e 52%,#0d4934)}
+.salesnavi-product .product-hero:before{content:"";position:absolute;inset:0;opacity:.16;background-image:linear-gradient(rgba(255,255,255,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.05) 1px,transparent 1px);background-size:48px 48px;pointer-events:none}
+.salesnavi-product .product-hero-copy,.salesnavi-product .product-visual{position:relative;z-index:1}
+.salesnavi-product .product-symbol{background:linear-gradient(135deg,#16845a,#7addab);box-shadow:0 18px 48px rgba(23,126,87,.28)}
+.sn-hero-device{width:min(540px,100%);margin:auto;padding:18px;border-radius:28px;background:#071f17;box-shadow:0 28px 80px rgba(0,0,0,.35);transform:rotate(1deg)}
+.sn-device-bar{display:flex;gap:7px;align-items:center;padding:0 0 12px}.sn-device-bar i{width:9px;height:9px;border-radius:50%;background:rgba(255,255,255,.28)}.sn-device-bar b{margin-left:auto;color:rgba(255,255,255,.72);font-size:11px;letter-spacing:.08em}
+.sn-screen{padding:18px;border-radius:18px;background:#f0f6f3;color:#15382b}.sn-screen-head{display:flex;justify-content:space-between;align-items:center}.sn-screen-head strong{font-size:18px}.sn-demo{padding:6px 9px;border-radius:999px;background:#f6eafd;color:#7a378e;font-size:10px;font-weight:900}.sn-kpi{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-top:13px}.sn-kpi div{padding:10px 5px;border-radius:10px;background:#fff;border:1px solid #dce8e2;text-align:center}.sn-kpi b{display:block;font-size:19px}.sn-kpi small{font-size:9px;color:#73827b}.sn-route{margin-top:12px;padding:13px;border-radius:12px;background:#167a54;color:#fff}.sn-route span{display:block;font-size:10px;opacity:.82}.sn-route strong{display:block;margin-top:3px;font-size:14px}.sn-stops{display:grid;gap:7px;margin-top:10px}.sn-stops div{display:flex;align-items:center;gap:9px;padding:9px 10px;border:1px solid #d9e6df;border-radius:10px;background:#fff;font-size:10px}.sn-stops b{display:grid;place-items:center;width:22px;height:22px;border-radius:7px;background:#e4f3eb;color:#167a54}.sn-stops span{color:#253d33;font-weight:800}
+.sn-summary-number,.salesnavi-product .product-feature>span{color:var(--sn-green)}
+.salesnavi-product .product-feature{border-color:var(--sn-line)}
+.sn-flow-section{background:var(--sn-soft)}
+.sn-flow-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;margin-top:42px}.sn-flow-card{padding:22px 18px;border:1px solid var(--sn-line);border-radius:18px;background:#fff;box-shadow:0 14px 34px rgba(8,52,31,.055)}.sn-flow-card span{color:var(--sn-green);font-size:11px;font-weight:900;letter-spacing:.12em}.sn-flow-card h3{margin:13px 0 0;font-size:18px}.sn-flow-card p{margin:9px 0 0;color:var(--sn-muted);font-size:12px;line-height:1.75}
+.sn-team-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-top:42px}.sn-team-card{padding:28px;border:1px solid var(--sn-line);border-radius:22px;background:#fff;box-shadow:0 16px 40px rgba(7,55,38,.055)}.sn-team-card small{color:var(--sn-green);font-weight:900;letter-spacing:.12em}.sn-team-card h3{margin:13px 0 0;font-size:21px}.sn-team-card p{margin:10px 0 0;color:var(--sn-muted);font-size:13px;line-height:1.8}
+.sn-demo-section{background:linear-gradient(145deg,#020a07,#08261c 58%,#0d4934);color:#fff}.sn-demo-panel{margin-top:40px;padding:30px;border:1px solid rgba(255,255,255,.14);border-radius:28px;background:rgba(255,255,255,.06);display:grid;grid-template-columns:minmax(0,1fr) auto;gap:28px;align-items:center}.sn-demo-panel small{color:#9ce0bd;font-weight:900;letter-spacing:.13em}.sn-demo-panel h3{margin:10px 0 0;font-size:clamp(27px,4vw,44px)}.sn-demo-panel p{margin:14px 0 0;color:rgba(255,255,255,.72);line-height:1.85}.sn-demo-panel a{display:inline-flex;align-items:center;justify-content:center;min-width:220px;min-height:56px;padding:0 22px;border-radius:999px;background:#fff;color:#123e2e;text-decoration:none;font-weight:900}
+.sn-for-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-top:38px}.sn-for-card{padding:22px;border:1px solid var(--sn-line);border-radius:18px;background:#fff}.sn-for-card b{display:block;color:var(--sn-green);font-size:11px;letter-spacing:.12em}.sn-for-card strong{display:block;margin-top:10px;font-size:18px}.sn-for-card p{margin:9px 0 0;color:var(--sn-muted);font-size:12px;line-height:1.7}
+.sn-note{margin-top:25px;padding:18px 20px;border:1px solid var(--sn-line);border-radius:18px;background:#f6faf8;color:#5f7268;line-height:1.8}.sn-note strong{color:#173d2e}
+@media(max-width:1050px){.sn-flow-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.sn-for-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:760px){.sn-flow-grid,.sn-team-grid,.sn-for-grid{grid-template-columns:1fr}.sn-demo-panel{grid-template-columns:1fr}.sn-demo-panel a{width:100%}.sn-kpi{grid-template-columns:repeat(2,1fr)}.sn-hero-device{transform:none}}
+</style>
+</head>
+<body class="salesnavi-product">
+<header class="site-header" id="top">
+  <div class="header-inner">
+    <a class="brand" href="../index.html"><span class="brand-mark">D</span><span class="brand-copy"><strong>DPRO LINE SYSTEMS</strong><small>OFFICIAL PRODUCT SITE</small></span></a>
+    <button class="menu-button" type="button" aria-expanded="false" aria-controls="global-nav" aria-label="メニューを開く"><span></span><span></span><span></span></button>
+    <nav class="global-nav" id="global-nav">
+      <a href="../systems.html">システム一覧</a>
+      <a href="#flow">使い方</a>
+      <a href="#features">できること</a>
+      <a class="nav-cta" href="https://dpro-salesnavi-demo.pages.dev" target="_blank" rel="noopener">公開DEMOを体験</a>
+    </nav>
+  </div>
+</header>
+<main>
+<section class="product-hero">
+  <div class="product-hero-copy reveal">
+    <div class="product-breadcrumb"><a href="../systems.html">システム一覧</a><span>/</span><span>DPRO営業ナビ</span></div>
+    <span class="product-symbol">SN</span>
+    <p class="eyebrow">SALES FIELD NAVIGATION SYSTEM</p>
+    <h1>DPRO営業ナビ</h1>
+    <h2 class="headline-lines headline-fixed"><span>営業先を探す。</span><span>今日回る。記録する。</span></h2>
+    <p>Googleから営業候補を探し、今日の訪問先を決め、現在地からおすすめ順を計算。訪問結果と次回予定まで、スマートフォン中心で一つにつなぎます。</p>
+    <div class="hero-actions">
+      <a class="button button-primary" href="https://dpro-salesnavi-demo.pages.dev" target="_blank" rel="noopener">公開DEMOを体験する</a>
+      <a class="button button-secondary" href="#features">できることを見る</a>
+    </div>
+  </div>
+  <div class="product-visual reveal">
+    <div class="sn-hero-device">
+      <div class="sn-device-bar"><i></i><i></i><i></i><b>今日の営業 / SMARTPHONE</b></div>
+      <div class="sn-screen">
+        <div class="sn-screen-head"><strong>今日の営業</strong><span class="sn-demo">DEMO</span></div>
+        <div class="sn-kpi"><div><b>7</b><small>今日の営業先</small></div><div><b>1</b><small>再訪</small></div><div><b>2</b><small>期限超過</small></div><div><b>0</b><small>完了</small></div></div>
+        <div class="sn-route"><span>おすすめルートを使用中</span><strong>現在地から訪問順を自動計算</strong></div>
+        <div class="sn-stops"><div><b>1</b><span>営業先 A</span></div><div><b>2</b><span>営業先 B</span></div><div><b>3</b><span>営業先 C</span></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sales-summary section">
+  <div class="section-heading reveal"><p class="eyebrow">UNDERSTAND IN 30 SECONDS</p><h2 class="headline-lines headline-fixed"><span>営業の「探す・回る・残す」を、</span><span>一つにまとめます。</span></h2><p>外回り営業で毎日起きる「どこへ行くか」「どの順で回るか」「前回どうだったか」を、同じ画面から確認できます。</p></div>
+  <div class="sales-summary-grid">
+    <article class="sales-summary-card reveal"><span class="sales-summary-number sn-summary-number">01</span><h3>現場スタッフ</h3><ul><li>現在地周辺から営業先を検索</li><li>今日回る営業先を一覧化</li><li>訪問結果・次回予定をその場で記録</li></ul></article>
+    <article class="sales-summary-card reveal"><span class="sales-summary-number sn-summary-number">02</span><h3>管理者</h3><ul><li>営業先・商品・検索条件を設定</li><li>スタッフごとの活動を共有</li><li>営業状況を集計・CSV出力</li></ul></article>
+  </div>
+</section>
+
+<section class="sn-flow-section section" id="flow">
+  <div class="section-heading reveal"><p class="eyebrow">ONE SALES FLOW</p><h2 class="headline-lines headline-fixed"><span>営業先探しから、</span><span>次の訪問まで。</span></h2><p>毎日の外回り営業を、5つの流れで迷わず進められます。</p></div>
+  <div class="sn-flow-grid">
+    <article class="sn-flow-card reveal"><span>STEP 01</span><h3>営業先を探す</h3><p>現在地や地域、キーワードから新しい営業候補を検索。</p></article>
+    <article class="sn-flow-card reveal"><span>STEP 02</span><h3>今日回る</h3><p>訪問したい営業先だけを今日のリストへ追加。</p></article>
+    <article class="sn-flow-card reveal"><span>STEP 03</span><h3>おすすめ順</h3><p>現在地から効率のよい訪問順を計算して並び替え。</p></article>
+    <article class="sn-flow-card reveal"><span>STEP 04</span><h3>結果を記録</h3><p>訪問結果、メモ、担当状況をスマホからその場で保存。</p></article>
+    <article class="sn-flow-card reveal"><span>STEP 05</span><h3>再訪につなぐ</h3><p>次回予定や期限を管理し、フォロー漏れを防止。</p></article>
+  </div>
+</section>
+
+<section class="product-intro section" id="features">
+  <div class="section-heading reveal"><p class="eyebrow">BUILT FOR FIELD SALES</p><h2 class="headline-lines headline-fixed"><span>外回り営業に必要な機能を、</span><span>スマホ中心で。</span></h2><p>営業先の発見からチーム共有まで、現場が毎日使う機能に絞って設計しています。</p></div>
+  <div class="product-feature-grid">
+    <article class="product-feature reveal"><span>01</span><h3>Google営業先検索</h3><p>キーワード、検索範囲、現在地を使って新規営業候補を探せます。</p></article>
+    <article class="product-feature reveal"><span>02</span><h3>今日の営業先</h3><p>その日回る営業先だけをまとめ、自由な順番でも営業できます。</p></article>
+    <article class="product-feature reveal"><span>03</span><h3>おすすめルート</h3><p>現在地と営業先から訪問順を計算。使わない日は自由訪問へ切り替えられます。</p></article>
+    <article class="product-feature reveal"><span>04</span><h3>営業結果・履歴</h3><p>訪問結果、営業ステージ、メモ、次回予定を記録して履歴化します。</p></article>
+    <article class="product-feature reveal"><span>05</span><h3>複数スタッフ共有</h3><p>担当中の営業先を共有し、同じ営業先への重複訪問を減らします。</p></article>
+    <article class="product-feature reveal"><span>06</span><h3>分析・CSV</h3><p>活動状況を管理画面で確認し、必要な営業履歴をCSVでも取り出せます。</p></article>
+  </div>
+</section>
+
+<section class="section">
+  <div class="section-heading reveal"><p class="eyebrow">FOR SALES TEAMS</p><h2 class="headline-lines headline-fixed"><span>地域の新規開拓を行う企業に、</span><span>使いやすい営業基盤。</span></h2><p>業種ごとに別システムを作るのではなく、会社の営業スタイルに合わせて設定して利用します。</p></div>
+  <div class="sn-team-grid">
+    <article class="sn-team-card reveal"><small>FIELD STAFF</small><h3>営業スタッフ</h3><p>スマホから営業先を探し、訪問順を確認し、結果を記録。外出先で作業が完結します。</p></article>
+    <article class="sn-team-card reveal"><small>OWNER / MANAGER</small><h3>営業管理者</h3><p>会社情報、商品、検索条件、スタッフ、営業ステージなどを管理画面から設定できます。</p></article>
+    <article class="sn-team-card reveal"><small>TEAM</small><h3>複数スタッフ</h3><p>同じ営業先情報を共有しながら、担当・履歴・再訪予定をチームで確認できます。</p></article>
+  </div>
+</section>
+
+<section class="section section-soft">
+  <div class="section-heading reveal"><p class="eyebrow">RECOMMENDED FOR</p><h2 class="headline-lines headline-fixed"><span>こんな営業スタイルに。</span></h2></div>
+  <div class="sn-for-grid">
+    <article class="sn-for-card reveal"><b>01</b><strong>地域密着の新規開拓</strong><p>店舗・事業所・施設などをエリアごとに回る営業。</p></article>
+    <article class="sn-for-card reveal"><b>02</b><strong>訪問営業</strong><p>その日の状況で訪問先を決めながら動く営業。</p></article>
+    <article class="sn-for-card reveal"><b>03</b><strong>少人数営業チーム</strong><p>複数スタッフで営業先と履歴を共有したい会社。</p></article>
+    <article class="sn-for-card reveal"><b>04</b><strong>再訪が重要な営業</strong><p>一度の訪問で終わらず、次回フォローを管理したい営業。</p></article>
+  </div>
+  <div class="sn-note reveal"><strong>会社ごとに設定して導入。</strong> 商品・サービス、営業ステージ、検索条件、スタッフ構成などを導入時に整えてから利用を開始します。</div>
+</section>
+
+<section class="sn-demo-section section" id="demo">
+  <div class="section-heading section-heading-light reveal"><p class="eyebrow">PUBLIC LIVE DEMO</p><h2 class="headline-lines headline-fixed"><span>説明を見るだけでなく、</span><span>実際に操作できます。</span></h2><p>公開DEMOでは、契約会社管理画面とスマートフォン営業画面を実際に確認できます。</p></div>
+  <div class="sn-demo-panel reveal"><div><small>DPRO SALES NAVI / PUBLIC DEMO</small><h3>営業先を探して、今日回る。</h3><p>DEMO画面には入力補助ボタンがあります。営業先検索、今日の営業先、営業記録、再訪、ルートなどをブラウザから体験できます。</p></div><a href="https://dpro-salesnavi-demo.pages.dev" target="_blank" rel="noopener">公開DEMOを開く ↗</a></div>
+</section>
+
+<section class="phase-cta section section-dark">
+  <div class="phase-cta-inner reveal"><p class="eyebrow">START WITH A LIVE DEMO</p><h2 class="headline-lines"><span>まずは、実際の営業画面を</span><span>触って確認してください。</span></h2><p>導入料金は利用人数・営業方法・必要機能に合わせてご案内します。</p><div class="hero-actions"><a class="button button-primary large" href="https://dpro-salesnavi-demo.pages.dev" target="_blank" rel="noopener">公開DEMOを体験する</a><a class="button button-secondary large" href="https://lin.ee/YxJGXV6D" target="_blank" rel="noopener">LINEで導入相談</a></div></div>
+</section>
+</main>
+<footer class="site-footer"><div class="footer-inner"><a class="brand footer-brand" href="../index.html"><span class="brand-mark">D</span><span class="brand-copy"><strong>DPRO LINE SYSTEMS</strong><small>OFFICIAL PRODUCT SITE</small></span></a><nav><a href="../systems.html">システム一覧</a><a href="https://dpro-salesnavi-demo.pages.dev" target="_blank" rel="noopener">公開DEMO</a><a href="https://lin.ee/YxJGXV6D" target="_blank" rel="noopener">導入相談</a></nav></div></footer>
+<script src="../script.js"></script>
+</body>
+</html>
