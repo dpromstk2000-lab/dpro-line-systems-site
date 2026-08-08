@@ -14,6 +14,27 @@
 
   const localAddon = (name) => new URL(name, currentScriptUrl).href;
 
+  const installFavicon = () => {
+    if (document.querySelector('link[data-dpro-product-favicon="true"]')) return;
+
+    const svg = `
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+        <rect width="64" height="64" rx="14" fill="#0b0b0d"/>
+        <path fill="#ffffff" d="M15 13h18c11 0 19 8 19 19s-8 19-19 19H15V13zm10 9v20h8c6 0 10-4 10-10s-4-10-10-10h-8z"/>
+        <circle cx="52" cy="12" r="6" fill="#a8ff2a"/>
+      </svg>
+    `.trim();
+
+    document.querySelectorAll('link[rel~="icon"]').forEach((node) => node.remove());
+
+    const link = document.createElement("link");
+    link.rel = "icon";
+    link.type = "image/svg+xml";
+    link.href = `data:image/svg+xml,${encodeURIComponent(svg)}`;
+    link.dataset.dproProductFavicon = "true";
+    document.head.appendChild(link);
+  };
+
   const load = (src) =>
     new Promise((resolve, reject) => {
       const s = document.createElement("script");
@@ -67,6 +88,8 @@
   };
 
   const run = async () => {
+    installFavicon();
+
     try {
       await loadFirstAvailable(legacySources);
     } catch (error) {
