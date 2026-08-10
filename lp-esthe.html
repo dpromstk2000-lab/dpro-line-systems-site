@@ -1,0 +1,362 @@
+<!doctype html>
+<!-- DPRO LP ESTHE V1.0 | MASTER DPRO-LP-MASTER-V1.3 | PUBLIC CANDIDATE -->
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>DPROエステ・リラクゼーションシステム｜予約から次回来店までをひとつに</title>
+  <meta name="description" content="予約、事前カウンセリング、施術進捗、顧客カルテ、回数券、再来店フォロー、次回予約まで。エステ・リラクゼーションサロン向けDPROの営業案内ページです。">
+  <meta name="robots" content="index,follow">
+  <meta property="og:title" content="DPROエステ・リラクゼーションシステム｜予約から次回来店までをひとつに">
+  <meta property="og:description" content="予約から次回来店まで、サロンの接客をひとつにつなぐ。エステ・リラクゼーションサロン向けDPRO。">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://dpromstk2000-lab.github.io/dpro-line-systems-site/lp-esthe.html">
+  <link rel="canonical" href="https://dpromstk2000-lab.github.io/dpro-line-systems-site/lp-esthe.html">
+  <meta name="theme-color" content="#73483e">
+  <style>
+    :root{
+      --bg:#fffaf7;--bg2:#f9efea;--card:#fff;--ink:#2e211d;--muted:#7f6961;
+      --line:#ead7cf;--main:#73483e;--main2:#9b695b;--accent:#b98a55;--ok:#15785f;
+      --soft:#f8eee9;--soft2:#fff4ee;--shadow:0 18px 50px rgba(76,48,40,.11);
+      --radius:22px;--radius-sm:16px;--max:1120px;
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth;overflow-x:hidden}
+    body{margin:0;overflow-x:hidden;background:linear-gradient(180deg,var(--bg),#fff 28%,var(--bg) 100%);color:var(--ink);font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;line-height:1.75}
+    body.modal-open{overflow:hidden}
+    a{color:inherit}
+    button,a.btn{font:inherit}
+    img,svg,iframe{max-width:100%}
+    .wrap{width:min(var(--max),calc(100% - 28px));margin-inline:auto}
+    .section{padding:72px 0;border-top:1px solid rgba(234,215,207,.72)}
+    .section:first-of-type{border-top:0}
+    .eyebrow{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:999px;background:#fff;padding:7px 11px;color:var(--main);font-size:12px;font-weight:900;letter-spacing:.04em}
+    h1,h2,h3{line-height:1.25;letter-spacing:-.035em;margin:0}
+    h1{font-size:clamp(36px,8.4vw,68px)}
+    h2{font-size:clamp(30px,6vw,46px)}
+    h3{font-size:20px}
+    .lead{font-size:clamp(17px,2.6vw,21px);font-weight:800;color:#4b3933}
+    .sub{color:var(--muted);font-size:15px}
+    .muted{color:var(--muted)}
+    .section-head{max-width:760px;margin-bottom:30px}
+    .section-head h2{margin-top:12px}
+    .section-head p{margin:14px 0 0}
+    .btn{display:inline-flex;min-height:50px;align-items:center;justify-content:center;gap:8px;border:1px solid var(--main);border-radius:999px;padding:12px 18px;background:var(--main);color:#fff;text-decoration:none;font-weight:950;cursor:pointer;transition:.15s ease}
+    .btn:hover{transform:translateY(-1px)}
+    .btn.secondary{background:#fff;color:var(--main);border-color:var(--line)}
+    .btn.soft{background:var(--soft);color:var(--main);border-color:var(--line)}
+    .btn.full{width:100%}
+    .cta-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:24px}
+    .card{background:rgba(255,255,255,.96);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:20px}
+    .icon{width:44px;height:44px;border-radius:14px;display:grid;place-items:center;background:var(--soft);color:var(--main);font-size:21px;font-weight:1000}
+    .grid-2,.grid-3,.grid-4{display:grid;gap:14px}
+    .grid-2{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .grid-3{grid-template-columns:repeat(3,minmax(0,1fr))}
+    .grid-4{grid-template-columns:repeat(4,minmax(0,1fr))}
+
+    /* P1 */
+    #p1{padding:24px 0 68px;background:radial-gradient(circle at 80% 10%,rgba(185,138,85,.16),transparent 32%),radial-gradient(circle at 10% 12%,rgba(115,72,62,.12),transparent 31%)}
+    .hero{display:grid;grid-template-columns:1.05fr .95fr;gap:34px;align-items:center;min-height:680px}
+    .hero-copy .eyebrow{margin-bottom:16px}
+    .hero-copy h1 span{color:var(--main)}
+    .hero-copy .lead{margin:22px 0 0;max-width:720px}
+    .hero-copy .sub{margin:14px 0 0;max-width:680px}
+    .screen-stage{position:relative;min-height:500px;display:grid;place-items:center}
+    .screen-stage:before{content:"";position:absolute;inset:8% 2% 3% 10%;border-radius:36px;background:linear-gradient(145deg,#ead6cc,#fff);transform:rotate(3deg);box-shadow:var(--shadow)}
+    .real-screen-card{position:relative;z-index:2;width:min(480px,94%);border-radius:30px;background:linear-gradient(160deg,#fff,#fff7f2);border:1px solid var(--line);padding:24px;box-shadow:0 24px 80px rgba(61,37,30,.18)}
+    .real-screen-inner{min-height:420px;display:flex;flex-direction:column;justify-content:center;gap:18px}
+    .real-label{font-size:11px;font-weight:950;color:var(--main);background:var(--soft);border:1px solid var(--line);padding:6px 9px;border-radius:999px;align-self:flex-start}
+    .screen-title{font-size:30px;font-weight:1000;color:var(--main);line-height:1.25}
+    .step-strip{display:grid;grid-template-columns:1fr;gap:8px}
+    .step-strip span{min-height:44px;border-radius:15px;background:#fff;border:1px solid var(--line);display:flex;align-items:center;padding:9px 12px;font-size:13px;font-weight:900;color:var(--main)}
+    .step-strip span::before{content:"✓";display:grid;place-items:center;width:24px;height:24px;border-radius:999px;background:var(--soft);margin-right:9px;color:var(--main);font-size:11px}
+    .feature-lines{display:none}
+    .flow-mini{display:flex;flex-wrap:wrap;gap:7px;margin-top:20px}
+    .flow-mini span{border-radius:999px;background:#fff;border:1px solid var(--line);padding:7px 9px;font-size:12px;font-weight:900;color:var(--main)}
+
+    /* P2/P3 */
+    .pain-card h3,.why-card h3{margin-top:12px}
+    .pain-card p,.why-card p{margin:8px 0 0;color:var(--muted);font-size:14px}
+    .islands{display:grid;grid-template-columns:1fr auto 1fr auto 1fr;align-items:center;gap:12px}
+    .island{text-align:center;padding:24px 18px;border-radius:22px;border:1px solid var(--line);background:#fff;box-shadow:var(--shadow)}
+    .island b{display:block;font-size:18px;color:var(--main)}
+    .separator{font-size:26px;color:var(--accent);font-weight:1000}
+    .why-bottom{margin-top:18px;text-align:center;background:var(--soft);border:1px solid var(--line);border-radius:18px;padding:17px;font-weight:950;color:var(--main)}
+
+    /* P4 */
+    #p4{background:linear-gradient(180deg,#fff,var(--soft2))}
+    .connected{display:grid;gap:12px;max-width:840px;margin:auto}
+    .flow-node{border:1px solid var(--line);border-radius:22px;background:#fff;box-shadow:var(--shadow);padding:20px}
+    .flow-node strong{display:block;color:var(--main);font-size:20px}
+    .flow-node small{display:block;margin-top:4px;color:var(--muted);font-weight:800}
+    .flow-arrow{text-align:center;color:var(--accent);font-size:32px;line-height:1}
+    .flow-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+    .flow-chips span{border:1px solid var(--line);background:var(--soft);border-radius:999px;padding:7px 10px;font-size:12px;font-weight:900}
+    .condition{margin-top:18px;padding:14px 16px;border-radius:16px;background:#fff;border:1px dashed var(--line);color:var(--muted);font-size:13px;font-weight:750}
+
+    /* P5/P6 */
+    .experience-card{display:flex;flex-direction:column;gap:10px;min-height:100%}
+    .experience-card .mini-kicker{color:var(--accent);font-size:11px;font-weight:950;letter-spacing:.05em}
+    .experience-card ul{margin:0;padding-left:18px;color:var(--muted);font-size:14px}
+    .experience-card .btn{margin-top:auto}
+    .owner-feature{display:grid;grid-template-columns:1.3fr .7fr;gap:14px}
+    .owner-main{padding:24px;background:linear-gradient(145deg,#fff,#fff6f1)}
+    .progress-demo{display:grid;grid-template-columns:repeat(5,1fr);gap:7px;margin-top:18px}
+    .progress-demo span{border:1px solid var(--line);background:#fff;border-radius:14px;padding:14px 7px;text-align:center;font-size:12px;font-weight:950;color:var(--main)}
+    .side-stack{display:grid;gap:14px}
+
+    /* P7 */
+    .ba-grid{display:grid;grid-template-columns:1fr auto 1fr;gap:18px;align-items:stretch}
+    .ba-card{border-radius:24px;border:1px solid var(--line);background:#fff;padding:22px;box-shadow:var(--shadow)}
+    .ba-card.after{background:linear-gradient(145deg,#fff,#f5fbf8);border-color:#cfe5dc}
+    .ba-title{font-size:12px;font-weight:950;letter-spacing:.08em;color:var(--muted)}
+    .ba-list{display:grid;gap:10px;margin-top:14px}
+    .ba-list div{border:1px solid var(--line);border-radius:14px;padding:12px;font-weight:900}
+    .ba-arrow{display:grid;place-items:center;font-size:36px;color:var(--accent);font-weight:1000}
+
+    /* P8 */
+    #p8{background:linear-gradient(180deg,#fffaf7,#f7ece6)}
+    .value-stack{max-width:900px;margin:auto;text-align:center}
+    .service-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:24px}
+    .service-card{border:1px solid var(--line);border-radius:22px;background:#fff;padding:22px;box-shadow:var(--shadow)}
+    .service-card strong{display:block;margin-top:8px;font-size:19px;color:var(--main)}
+    .plus{font-size:28px;font-weight:1000;color:var(--accent);margin:10px 0}
+    .bundle-label{display:inline-flex;margin:20px auto 0;border-radius:999px;background:var(--main);color:#fff;padding:9px 14px;font-weight:950}
+    .price{margin-top:18px;font-size:clamp(45px,11vw,74px);font-weight:1000;line-height:1;color:var(--main);letter-spacing:-.05em}
+    .price small{display:block;margin-top:10px;font-size:14px;letter-spacing:0;color:var(--muted)}
+    .price-note{max-width:720px;margin:20px auto 0;color:var(--muted);font-size:13px}
+
+    /* P9 */
+    .demo-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+    .demo-card{display:flex;flex-direction:column;gap:11px}
+    .demo-badge{align-self:flex-start;border-radius:999px;background:#edf8f4;color:var(--ok);border:1px solid #cce7dc;padding:6px 9px;font-size:11px;font-weight:950}
+    .demo-card p{margin:0;color:var(--muted);font-size:14px}
+    .demo-card .btn{margin-top:auto}
+
+    /* P10 */
+    #p10{padding:88px 0 110px;background:radial-gradient(circle at 50% 10%,rgba(185,138,85,.15),transparent 38%)}
+    .final-cta{max-width:800px;margin:auto;text-align:center}
+    .final-cta h2{font-size:clamp(34px,7vw,56px)}
+    .final-cta p{margin:18px auto 0;max-width:650px}
+    .final-actions{display:flex;justify-content:center;flex-wrap:wrap;gap:10px;margin-top:26px}
+    footer{padding:24px 0 38px;text-align:center;color:var(--muted);font-size:12px}
+
+    /* Modal: initial iframe is intentionally zero. */
+    .modal-layer{position:fixed;inset:0;z-index:1000;background:rgba(33,24,20,.68);display:none;align-items:center;justify-content:center;padding:14px}
+    .modal-layer.show{display:flex}
+    .modal{width:min(1120px,100%);height:min(88vh,820px);background:#fff;border-radius:24px;overflow:hidden;box-shadow:0 30px 100px rgba(0,0,0,.3);display:flex;flex-direction:column}
+    .modal-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 14px;border-bottom:1px solid var(--line);background:#fffaf7}
+    .modal-title{font-weight:1000;color:var(--main)}
+    .modal-close{min-width:46px;min-height:46px;border:1px solid var(--line);border-radius:999px;background:#fff;color:var(--main);font-size:22px;cursor:pointer}
+    .modal-body{flex:1;min-height:0;background:#f2ece9}
+    .modal-body iframe{width:100%;height:100%;border:0;background:#fff}
+    .modal-fallback{padding:18px;color:var(--muted);font-size:13px;background:#fff;border-top:1px solid var(--line)}
+    .modal-fallback a{font-weight:950;color:var(--main)}
+
+    @media(max-width:920px){
+      .hero{grid-template-columns:1fr;min-height:auto;padding-top:46px}.screen-stage{min-height:500px}
+      .grid-4{grid-template-columns:repeat(2,minmax(0,1fr))}.grid-3{grid-template-columns:1fr}.owner-feature{grid-template-columns:1fr}
+      .progress-demo{grid-template-columns:repeat(5,minmax(110px,1fr));overflow:auto;padding-bottom:5px}.service-grid{grid-template-columns:1fr}.plus{transform:none}
+    }
+    @media(max-width:680px){
+      .wrap{width:min(100% - 18px,var(--max))}.section{padding:58px 0}.grid-2,.grid-4,.demo-grid{grid-template-columns:1fr}
+      .hero{gap:16px}.hero-copy .lead{font-size:18px}.screen-stage{min-height:460px}.real-screen-card{width:min(360px,94%);padding:20px}.real-screen-inner{min-height:400px}
+      .step-strip{grid-template-columns:1fr}.step-strip span{padding:9px 12px}
+      .cta-row,.final-actions{display:grid;grid-template-columns:1fr}.cta-row .btn,.final-actions .btn{width:100%}
+      .islands{grid-template-columns:1fr}.separator{transform:rotate(90deg)}
+      .ba-grid{grid-template-columns:1fr}.ba-arrow{transform:rotate(90deg)}
+      .progress-demo{grid-template-columns:1fr}.service-grid{gap:10px}
+      .modal-layer{padding:0}.modal{height:100dvh;border-radius:0}.modal-head{padding-top:max(12px,env(safe-area-inset-top))}
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <section class="section" id="p1" data-page="P1">
+      <div class="wrap hero">
+        <div class="hero-copy">
+          <span class="eyebrow">エステ・リラクゼーションサロン向け</span>
+          <h1>予約から次回来店まで、<span>サロンの接客をひとつに。</span></h1>
+          <p class="lead">DPROエステ・リラクゼーションシステムは、予約受付だけで終わりません。</p>
+          <p class="sub">事前カウンセリング、来店・施術管理、顧客カルテ、回数券、再来店フォロー、次回予約まで。お客様が通いやすく、店舗が管理しやすい流れをつくります。</p>
+          <div class="flow-mini" aria-label="主な流れ">
+            <span>予約</span><span>カウンセリング</span><span>施術管理</span><span>カルテ</span><span>次回来店</span>
+          </div>
+          <div class="cta-row">
+            <a class="btn" href="#p9">DEMOを見る</a>
+            <a class="btn secondary" href="https://lin.ee/YxJGXV6D" target="_blank" rel="noopener noreferrer">相談する</a>
+          </div>
+        </div>
+        <div class="screen-stage" aria-label="予約画面イメージ">
+          <div class="real-screen-card">
+            <div class="real-screen-inner">
+              <span class="real-label">営業フロー図｜画面そのものはDEMOで表示</span>
+              <div class="screen-title">予約から、次回来店まで。</div>
+              <div class="step-strip" aria-label="システムの流れ"><span>予約・事前カウンセリング</span><span>来店・施術進捗</span><span>顧客カルテ・回数券</span><span>再来店フォロー</span><span>前回内容から再予約</span></div>
+              <button class="btn full demo-open" type="button" data-demo-title="お客様予約画面" data-demo-url="https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/index-brush.html?v=esthe-next-10b">実際の予約画面を見る</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="p2" data-page="P2">
+      <div class="wrap">
+        <div class="section-head"><span class="eyebrow">OWNER PAIN</span><h2>予約は取れている。でも、その後の管理がバラバラになっていませんか？</h2><p class="sub">エステ・リラクゼーションでは、予約を受けた後にも確認することが続きます。</p></div>
+        <div class="grid-4">
+          <article class="card pain-card"><div class="icon">予</div><h3>予約・希望内容</h3><p>メニュー、担当、日時などを確認。</p></article>
+          <article class="card pain-card"><div class="icon">問</div><h3>事前カウンセリング</h3><p>悩み、希望部位、体調などを確認。</p></article>
+          <article class="card pain-card"><div class="icon">進</div><h3>当日の施術進捗</h3><p>来店、施術中、会計待ち、完了を確認。</p></article>
+          <article class="card pain-card"><div class="icon">再</div><h3>カルテ・次回来店</h3><p>履歴、回数券、フォロー、再予約まで管理。</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="p3" data-page="P3">
+      <div class="wrap">
+        <div class="section-head"><span class="eyebrow">WHY PROBLEM</span><h2>予約だけでは、サロンの一連の仕事は終わりません。</h2><p class="sub">情報が分かれているほど、確認する場所や対応の切り替えが増えます。</p></div>
+        <div class="islands">
+          <div class="island"><b>予約情報</b><span class="muted">メニュー・担当・日時</span></div><div class="separator">×</div>
+          <div class="island"><b>施術・カルテ</b><span class="muted">当日の進捗・履歴</span></div><div class="separator">×</div>
+          <div class="island"><b>再来店</b><span class="muted">回数券・次回予約</span></div>
+        </div>
+        <div class="why-bottom">予約から次回来店まで、同じ流れで扱えることが大切です。</div>
+      </div>
+    </section>
+
+    <section class="section" id="p4" data-page="P4">
+      <div class="wrap">
+        <div class="section-head"><span class="eyebrow">CONNECTED SYSTEM</span><h2>予約前から次回来店まで、ひとつの流れに。</h2><p class="sub">確認できている実装だけで、接続関係をシンプルに整理しています。</p></div>
+        <div class="connected">
+          <div class="flow-node"><strong>お客様の予約入口</strong><small>LINE利用を想定した予約ページ</small></div><div class="flow-arrow">↓</div>
+          <div class="flow-node"><strong>DPRO予約</strong><div class="flow-chips"><span>メニュー</span><span>スタッフ</span><span>空き日時</span><span>事前カウンセリング</span></div></div><div class="flow-arrow">↓</div>
+          <div class="flow-node"><strong>店舗運用</strong><div class="flow-chips"><span>来店</span><span>施術進捗</span><span>顧客カルテ</span><span>回数券</span></div></div><div class="flow-arrow">↓</div>
+          <div class="flow-node"><strong>来店後</strong><div class="flow-chips"><span>マイページ</span><span>次回来店目安</span><span>前回内容から再予約</span><span>再来店フォロー</span></div></div>
+        </div>
+        <div class="condition">個別店舗のLINE公式アカウントとの本番接続は、導入時の設定・確認が必要です。この図は現在確認できているDPRO内の流れに限定しています。</div>
+      </div>
+    </section>
+
+    <section class="section" id="p5" data-page="P5">
+      <div class="wrap">
+        <div class="section-head"><span class="eyebrow">CUSTOMER EXPERIENCE</span><h2>お客様自身で、予約から次回予約まで確認できます。</h2></div>
+        <div class="grid-3">
+          <article class="card experience-card"><span class="mini-kicker">01 予約</span><h3>メニュー・担当・日時を選ぶ</h3><ul><li>空き時間を確認</li><li>事前カウンセリング</li><li>確認して予約</li></ul><button class="btn secondary demo-open" type="button" data-demo-title="お客様予約画面" data-demo-url="https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/index-brush.html?v=esthe-next-10b">実画面を見る</button></article>
+          <article class="card experience-card"><span class="mini-kicker">02 マイページ</span><h3>予約・履歴・回数券を確認</h3><ul><li>次回予約</li><li>予約変更・キャンセル</li><li>来店履歴・回数券残数</li></ul><button class="btn secondary demo-open" type="button" data-demo-title="お客様マイページ" data-demo-url="https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/member.html?phone=08000003002&v=esthe-next-10b">実画面を見る</button></article>
+          <article class="card experience-card"><span class="mini-kicker">03 再予約</span><h3>前回内容から次回へ</h3><ul><li>次回来店目安</li><li>過去の利用を確認</li><li>前回と同じ内容で予約</li></ul><button class="btn secondary demo-open" type="button" data-demo-title="再予約・履歴画面" data-demo-url="https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/member.html?phone=08000003002&v=esthe-next-10b">実画面を見る</button></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="p6" data-page="P6">
+      <div class="wrap">
+        <div class="section-head"><span class="eyebrow">OWNER / STAFF EXPERIENCE</span><h2>「今日、次に何をするか」が見える店舗運用へ。</h2><p class="sub">オーナーとスタッフ、それぞれに必要な情報を確認できます。</p></div>
+        <div class="owner-feature">
+          <article class="card owner-main"><span class="eyebrow">オーナー画面</span><h3 style="margin-top:12px">本日の施術進捗</h3><p class="sub">予約から完了までの状態を確認し、「今日やること」を優先して把握。</p><div class="progress-demo"><span>予約</span><span>来店済み</span><span>施術中</span><span>会計待ち</span><span>完了</span></div><div class="cta-row"><button class="btn demo-open" type="button" data-demo-title="オーナー管理画面" data-demo-url="https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/owner.html?v=esthe-next-10b">オーナー実画面を見る</button></div></article>
+          <div class="side-stack">
+            <article class="card"><div class="icon">顧</div><h3 style="margin-top:10px">顧客カルテ</h3><p class="sub">予約履歴、カウンセリング、カルテメモ、回数券を確認。</p></article>
+            <article class="card"><div class="icon">担</div><h3 style="margin-top:10px">スタッフ現場画面</h3><p class="sub">担当予約と次の操作を確認。</p><button class="btn secondary full demo-open" type="button" data-demo-title="スタッフ画面" data-demo-url="https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/staff.html?v=esthe-next-10b">スタッフ実画面を見る</button></article>
+          </div>
+        </div>
+        <div class="condition">「会計待ち」は店舗内の進捗状態を表す表示です。決済処理を行う機能ではありません。再来店フォローは、文面確認・コピー・個別送信を前提としています。</div>
+      </div>
+    </section>
+
+    <section class="section" id="p7" data-page="P7">
+      <div class="wrap">
+        <div class="section-head"><span class="eyebrow">BEFORE / AFTER</span><h2>情報を探す運用から、次の対応が見える運用へ。</h2></div>
+        <div class="ba-grid">
+          <div class="ba-card"><div class="ba-title">BEFORE</div><div class="ba-list"><div>予約情報を確認</div><div>カウンセリングを確認</div><div>当日の状況を確認</div><div>カルテ・回数券を確認</div><div>次回フォローを確認</div></div></div>
+          <div class="ba-arrow">→</div>
+          <div class="ba-card after"><div class="ba-title">AFTER</div><div class="ba-list"><div>予約からカウンセリングへ</div><div>来店から施術進捗へ</div><div>履歴からカルテへ</div><div>回数券から次回来店へ</div><div>必要な対応を整理しやすく</div></div></div>
+        </div>
+        <p class="sub" style="text-align:center;margin-top:18px">効果を保証するものではなく、確認や対応を整理しやすくするための仕組みです。</p>
+      </div>
+    </section>
+
+    <section class="section" id="p8" data-page="P8">
+      <div class="wrap value-stack">
+        <span class="eyebrow">PRICE / VALUE</span><h2 style="margin-top:12px">店舗の発信と予約・顧客管理を、まとめて運用。</h2>
+        <div class="service-grid">
+          <div class="service-card"><div class="icon" style="margin:auto">HP</div><strong>ホームページ</strong></div>
+          <div class="service-card"><div class="icon" style="margin:auto;font-size:12px">LINE</div><strong>LINE公式</strong></div>
+          <div class="service-card"><div class="icon" style="margin:auto">D</div><strong>DPROシステム</strong></div>
+        </div>
+        <div class="plus">↓</div><div class="bundle-label">ホームページ・LINE公式・DPROをまとめて運用</div>
+        <div class="price">5,500円<small>月額合計（税込）</small></div>
+        <p class="price-note">DPROシステムは、LINE公式アカウント構築・運用契約店舗向けの追加サービスです。この表示はサービス提供構成を示すもので、個別店舗のホームページやLINE公式との本番接続状態を示すものではありません。</p>
+      </div>
+    </section>
+
+    <section class="section" id="p9" data-page="P9">
+      <div class="wrap">
+        <div class="section-head"><span class="eyebrow">DEMO</span><h2>実際の画面で、使い方を確認できます。</h2><p class="sub">ボタンを押した時だけ実画面を読み込みます。ページ表示時にはDEMO画面を読み込みません。</p></div>
+        <div class="demo-grid">
+          <article class="card demo-card"><span class="demo-badge">お客様</span><h3>予約画面</h3><p>メニュー・スタッフ・日時・事前カウンセリングまで。</p><button class="btn demo-open" type="button" data-demo-title="お客様予約画面" data-demo-url="https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/index-brush.html?v=esthe-next-10b">DEMOを開く</button></article>
+          <article class="card demo-card"><span class="demo-badge">お客様</span><h3>マイページ</h3><p>予約、履歴、回数券、次回来店目安、再予約を確認。</p><button class="btn demo-open" type="button" data-demo-title="お客様マイページ" data-demo-url="https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/member.html?phone=08000003002&v=esthe-next-10b">DEMOを開く</button></article>
+          <article class="card demo-card"><span class="demo-badge">オーナー</span><h3>店舗管理</h3><p>本日の施術進捗、今日やること、顧客カルテ、回数券、再来店フォロー。</p><button class="btn demo-open" type="button" data-demo-title="オーナー管理画面" data-demo-url="https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/owner.html?v=esthe-next-10b">DEMOを開く</button></article>
+          <article class="card demo-card"><span class="demo-badge">スタッフ</span><h3>現場画面</h3><p>担当予約と、来店受付から完了までの次の操作を確認。</p><button class="btn demo-open" type="button" data-demo-title="スタッフ画面" data-demo-url="https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/staff.html?v=esthe-next-10b">DEMOを開く</button></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="p10" data-page="P10">
+      <div class="wrap final-cta">
+        <span class="eyebrow">CONSULT / CTA</span><h2 style="margin-top:14px">予約から次回来店まで、サロンの接客をひとつに。</h2><p class="lead">まずは実画面を確認するか、DPRO公式LINEからご相談ください。</p>
+        <div class="final-actions"><a class="btn" href="#p9">DEMOを確認する</a><a class="btn secondary" href="https://lin.ee/YxJGXV6D" target="_blank" rel="noopener noreferrer">LINE公式から相談する</a></div>
+      </div>
+    </section>
+  </main>
+
+  <footer><div class="wrap">DPROエステ・リラクゼーションシステム</div></footer>
+
+  <div class="modal-layer" id="demoModal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="demoModalTitle">
+    <div class="modal" role="document">
+      <div class="modal-head"><div class="modal-title" id="demoModalTitle">DEMO</div><button class="modal-close" id="demoModalClose" type="button" aria-label="DEMOを閉じる">×</button></div>
+      <div class="modal-body" id="demoModalBody"></div>
+      <div class="modal-fallback" id="demoModalFallback"></div>
+    </div>
+  </div>
+
+  <script>
+  (()=>{
+    const modal=document.getElementById('demoModal');
+    const body=document.getElementById('demoModalBody');
+    const title=document.getElementById('demoModalTitle');
+    const fallback=document.getElementById('demoModalFallback');
+    const closeBtn=document.getElementById('demoModalClose');
+    let lastFocus=null;
+    function openDemo(btn){
+      const url=btn.dataset.demoUrl;
+      if(!url)return;
+      lastFocus=btn;
+      title.textContent=btn.dataset.demoTitle||'DEMO';
+      body.textContent='';
+      const iframe=document.createElement('iframe');
+      iframe.src=url;
+      iframe.title=title.textContent;
+      iframe.loading='eager';
+      iframe.referrerPolicy='no-referrer';
+      body.appendChild(iframe);
+      fallback.innerHTML='画面が表示されない場合は <a href="'+url+'" target="_blank" rel="noopener noreferrer">別タブでDEMOを開く</a> こともできます。';
+      modal.classList.add('show');
+      modal.setAttribute('aria-hidden','false');
+      document.body.classList.add('modal-open');
+      closeBtn.focus();
+    }
+    function closeDemo(){
+      modal.classList.remove('show');
+      modal.setAttribute('aria-hidden','true');
+      document.body.classList.remove('modal-open');
+      body.textContent='';
+      fallback.textContent='';
+      if(lastFocus)lastFocus.focus();
+    }
+    document.querySelectorAll('.demo-open').forEach(btn=>btn.addEventListener('click',()=>openDemo(btn)));
+    closeBtn.addEventListener('click',closeDemo);
+    modal.addEventListener('click',e=>{if(e.target===modal)closeDemo()});
+    document.addEventListener('keydown',e=>{if(e.key==='Escape'&&modal.classList.contains('show'))closeDemo()});
+  })();
+  </script>
+</body>
+</html>

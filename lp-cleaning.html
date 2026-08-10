@@ -1,0 +1,582 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>DPROクリーニングシステム｜受付から受け渡しまでをひとつに</title>
+  <meta name="description" content="店頭受付、品物写真、作業工程、LINE会員証、受け渡し、未受取フォローまで。クリーニング店の『預かってから返すまで』をひとつにつなぐ業種専用システム。">
+  <meta name="robots" content="index,follow,max-image-preview:large">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="DPROクリーニングシステム｜受付から受け渡しまでをひとつに">
+  <meta property="og:description" content="クリーニング店の『預かってから返すまで』を、ひとつにつなぐ業種専用システム。">
+  <link rel="canonical" href="https://dpromstk2000-lab.github.io/dpro-line-systems-site/lp-cleaning.html">
+  <meta property="og:url" content="https://dpromstk2000-lab.github.io/dpro-line-systems-site/lp-cleaning.html">
+  <!-- LP_VERSION: V1.0 | MASTER_VERSION: DPRO-LP-MASTER-V1.3 -->
+  <style>
+    :root{
+      --bg:#f3f8f8;
+      --surface:#ffffff;
+      --surface-2:#eaf5f5;
+      --ink:#17343d;
+      --muted:#647a82;
+      --line:#d4e5e7;
+      --primary:#087f8c;
+      --primary-dark:#05636d;
+      --primary-soft:#dff2f3;
+      --accent:#d98a1b;
+      --accent-soft:#fff5e5;
+      --success:#1b7d5b;
+      --danger:#b74754;
+      --shadow:0 16px 46px rgba(19,63,69,.10);
+      --radius:22px;
+      --content:1160px;
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth;overflow-x:hidden}
+    body{
+      margin:0;
+      overflow-x:hidden;
+      background:var(--bg);
+      color:var(--ink);
+      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Hiragino Kaku Gothic ProN","Yu Gothic",Meiryo,sans-serif;
+      line-height:1.75;
+      -webkit-font-smoothing:antialiased;
+    }
+    body.modal-open{overflow:hidden}
+    a{color:inherit;text-decoration:none}
+    button{font:inherit}
+    img,svg{max-width:100%;display:block}
+    .site-header{
+      position:sticky;top:0;z-index:50;
+      border-bottom:1px solid rgba(212,229,231,.86);
+      background:rgba(255,255,255,.94);
+      backdrop-filter:blur(12px);
+    }
+    .header-inner{
+      width:min(var(--content),calc(100% - 28px));
+      min-height:68px;margin:auto;
+      display:flex;align-items:center;justify-content:space-between;gap:14px;
+    }
+    .brand{display:flex;align-items:center;gap:10px;min-width:0}
+    .brand-mark{
+      width:42px;height:42px;flex:0 0 auto;border-radius:13px;
+      display:grid;place-items:center;color:white;background:linear-gradient(135deg,var(--primary-dark),var(--primary));font-weight:900;
+    }
+    .brand-copy{min-width:0}
+    .brand-copy strong{display:block;font-size:15px;line-height:1.3}
+    .brand-copy span{display:block;color:var(--muted);font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .header-actions{display:flex;gap:8px;flex:0 0 auto}
+    .btn{
+      min-height:48px;border:0;border-radius:14px;padding:11px 17px;
+      display:inline-flex;align-items:center;justify-content:center;gap:8px;
+      font-weight:900;line-height:1.3;cursor:pointer;transition:transform .15s ease,box-shadow .15s ease,background .15s ease;
+    }
+    .btn:hover{transform:translateY(-1px)}
+    .btn-primary{color:#fff;background:var(--primary);box-shadow:0 10px 24px rgba(8,127,140,.20)}
+    .btn-dark{color:#fff;background:var(--ink);box-shadow:0 10px 24px rgba(23,52,61,.16)}
+    .btn-light{color:var(--primary-dark);background:var(--primary-soft);border:1px solid #c2e2e4}
+    .btn-line{color:#fff;background:#06c755;box-shadow:0 10px 24px rgba(6,199,85,.20)}
+    .btn-small{min-height:44px;padding:9px 13px;font-size:13px}
+    main{overflow:hidden}
+    .section{padding:78px 0;position:relative}
+    .section:nth-of-type(even){background:var(--surface)}
+    .wrap{width:min(var(--content),calc(100% - 28px));margin:auto}
+    .eyebrow{display:inline-flex;align-items:center;gap:8px;margin-bottom:12px;color:var(--primary-dark);font-size:12px;font-weight:900;letter-spacing:.08em}
+    .eyebrow::before{content:"";width:28px;height:3px;border-radius:999px;background:var(--primary)}
+    h1,h2,h3,p{margin-top:0}
+    h1{font-size:clamp(36px,7vw,72px);line-height:1.08;letter-spacing:-.035em;margin-bottom:20px}
+    h2{font-size:clamp(29px,5vw,46px);line-height:1.18;letter-spacing:-.025em;margin-bottom:16px}
+    h3{font-size:20px;line-height:1.35;margin-bottom:8px}
+    .lead{font-size:clamp(17px,2vw,20px);color:#39545d;max-width:760px}
+    .muted{color:var(--muted)}
+    .section-head{max-width:780px;margin-bottom:34px}
+    .section-head.center{text-align:center;margin-left:auto;margin-right:auto}
+    .section-head.center .eyebrow{justify-content:center}
+    .hero{padding:68px 0 74px;background:
+      radial-gradient(circle at 92% 12%,rgba(8,127,140,.16),transparent 31%),
+      radial-gradient(circle at 10% 84%,rgba(217,138,27,.10),transparent 28%),
+      linear-gradient(180deg,#fff,#edf7f7);
+    }
+    .hero-grid{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:48px;align-items:center}
+    .hero-copy .lead{margin-bottom:28px}
+    .hero-actions{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:22px}
+    .trust-row{display:flex;flex-wrap:wrap;gap:8px}
+    .trust-pill{padding:7px 10px;border-radius:999px;background:#fff;border:1px solid var(--line);font-size:12px;font-weight:800;color:#47616a}
+    .hero-visual{
+      position:relative;min-height:460px;border-radius:30px;padding:24px;
+      background:linear-gradient(145deg,#0a6973,#0b8b96);
+      box-shadow:0 30px 70px rgba(5,99,109,.22);overflow:hidden;
+    }
+    .hero-visual::before{content:"";position:absolute;inset:-70px auto auto -60px;width:220px;height:220px;border-radius:50%;background:rgba(255,255,255,.08)}
+    .hero-visual::after{content:"";position:absolute;right:-80px;bottom:-90px;width:250px;height:250px;border-radius:50%;background:rgba(255,255,255,.07)}
+    .flow-title{position:relative;z-index:1;color:#fff;margin-bottom:18px;font-size:14px;font-weight:900}
+    .flow-stack{position:relative;z-index:1;display:grid;gap:11px}
+    .flow-step{display:grid;grid-template-columns:48px 1fr auto;gap:12px;align-items:center;padding:13px;border-radius:16px;background:rgba(255,255,255,.94);box-shadow:0 8px 22px rgba(0,0,0,.08)}
+    .flow-icon{width:48px;height:48px;border-radius:14px;display:grid;place-items:center;background:var(--primary-soft);color:var(--primary-dark);font-weight:900}
+    .flow-step strong{display:block;line-height:1.35}
+    .flow-step span{font-size:11px;color:var(--muted)}
+    .flow-arrow{color:var(--primary);font-weight:900}
+    .hero-screen-launch{position:relative;z-index:1;margin-top:16px;display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .screen-chip{min-height:72px;border:1px solid rgba(255,255,255,.28);border-radius:16px;padding:12px;color:#fff;background:rgba(255,255,255,.10);display:flex;flex-direction:column;justify-content:center}
+    .screen-chip b{font-size:13px}.screen-chip small{opacity:.78;font-size:10px}
+    .card-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+    .card{border:1px solid var(--line);border-radius:var(--radius);padding:22px;background:var(--surface);box-shadow:0 8px 24px rgba(28,73,79,.05)}
+    .card-icon{width:44px;height:44px;border-radius:13px;display:grid;place-items:center;margin-bottom:14px;background:var(--primary-soft);color:var(--primary-dark);font-weight:900}
+    .pain-grid{grid-template-columns:repeat(5,minmax(0,1fr))}
+    .pain-card{padding:20px 16px;background:#fff}
+    .pain-card h3{font-size:16px}
+    .problem-board{display:grid;grid-template-columns:minmax(0,.9fr) 70px minmax(0,1.1fr);gap:18px;align-items:center}
+    .scatter{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .mini-card{min-height:92px;padding:16px;border-radius:16px;border:1px solid var(--line);background:#fff;display:flex;flex-direction:column;justify-content:center}
+    .mini-card strong{font-size:14px}.mini-card span{font-size:11px;color:var(--muted)}
+    .big-arrow{font-size:34px;text-align:center;color:var(--primary);font-weight:900}
+    .order-hub{padding:24px;border-radius:24px;background:var(--primary-dark);color:#fff;box-shadow:var(--shadow)}
+    .order-hub .hub-title{text-align:center;font-size:21px;font-weight:900;margin-bottom:15px}
+    .hub-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+    .hub-item{padding:12px;border-radius:13px;background:rgba(255,255,255,.12);font-size:12px;font-weight:800}
+    .connected{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:8px;align-items:stretch}
+    .connected-node{position:relative;min-height:128px;padding:16px 10px;border-radius:18px;border:1px solid var(--line);background:#fff;text-align:center;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:6px}
+    .connected-node:not(:last-child)::after{content:"→";position:absolute;right:-15px;top:50%;transform:translateY(-50%);z-index:2;color:var(--primary);font-size:18px;font-weight:900}
+    .connected-node .node-icon{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;background:var(--primary-soft);color:var(--primary-dark);font-weight:900}
+    .connected-node strong{font-size:13px;line-height:1.35}
+    .connected-node span{font-size:10px;color:var(--muted);line-height:1.45}
+    .screen-actions{margin-top:24px;display:flex;flex-wrap:wrap;gap:9px;justify-content:center}
+    .customer-grid{display:grid;grid-template-columns:minmax(280px,.85fr) minmax(0,1.15fr);gap:28px;align-items:center}
+    .real-screen-card{border:1px solid #b9dcdf;border-radius:26px;padding:24px;background:linear-gradient(145deg,#f6fcfc,#e9f6f7);box-shadow:var(--shadow)}
+    .real-badge{display:inline-flex;padding:6px 9px;border-radius:999px;background:var(--primary);color:#fff;font-size:10px;font-weight:900;letter-spacing:.06em;margin-bottom:13px}
+    .real-screen-card h3{font-size:25px;margin-bottom:8px}
+    .real-screen-card p{color:var(--muted);font-size:14px}
+    .phone-outline{width:210px;height:370px;border:10px solid var(--ink);border-radius:34px;margin:20px auto 0;position:relative;background:#fff;display:grid;place-items:center;text-align:center;padding:20px}
+    .phone-outline::before{content:"";position:absolute;top:6px;width:76px;height:18px;border-radius:0 0 10px 10px;background:var(--ink)}
+    .phone-outline .phone-label{font-size:12px;font-weight:900;color:var(--primary-dark)}
+    .phone-outline .phone-note{font-size:11px;color:var(--muted);margin-top:7px}
+    .feature-list{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .feature-item{padding:16px;border:1px solid var(--line);border-radius:15px;background:#fff;font-weight:800}
+    .progress-bar{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-top:18px}
+    .progress-step{padding:9px 5px;border-radius:10px;background:var(--primary-soft);color:var(--primary-dark);text-align:center;font-size:10px;font-weight:900}
+    .ops-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+    .ops-card{display:flex;flex-direction:column;min-height:330px;border:1px solid var(--line);border-radius:24px;padding:22px;background:#fff;box-shadow:0 9px 28px rgba(28,73,79,.06)}
+    .ops-card .role{font-size:11px;color:var(--primary);font-weight:900;letter-spacing:.08em}
+    .ops-card h3{font-size:22px;margin:7px 0 10px}
+    .ops-card ul{padding-left:19px;margin:0 0 18px;color:#48616a;font-size:14px}
+    .ops-card .btn{margin-top:auto}
+    .before-after{display:grid;grid-template-columns:1fr 70px 1fr;gap:18px;align-items:stretch}
+    .ba-panel{border-radius:24px;padding:24px;border:1px solid var(--line);background:#fff}
+    .ba-panel.before{background:#fff8f8;border-color:#efd8dc}
+    .ba-panel.after{background:#f0faf6;border-color:#cfe7dc}
+    .ba-title{font-size:12px;font-weight:900;letter-spacing:.12em;margin-bottom:14px}
+    .before .ba-title{color:var(--danger)}.after .ba-title{color:var(--success)}
+    .ba-list{display:grid;gap:9px}
+    .ba-row{padding:13px;border-radius:13px;background:rgba(255,255,255,.82);font-size:13px}
+    .price-intro{text-align:center;max-width:760px;margin:0 auto 28px}
+    .price-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;position:relative}
+    .price-card{position:relative;border:1px solid var(--line);border-radius:22px;padding:22px;background:#fff;text-align:center}
+    .price-card .price-role{color:var(--muted);font-size:12px;min-height:44px}
+    .price-card .price{font-size:27px;font-weight:900;margin:9px 0 2px}
+    .price-card .per{font-size:11px;color:var(--muted)}
+    .price-total{margin:18px auto 0;max-width:620px;padding:24px;border-radius:24px;background:linear-gradient(135deg,var(--primary-dark),var(--primary));color:#fff;text-align:center;box-shadow:var(--shadow)}
+    .price-total .small{font-size:12px;opacity:.84}.price-total strong{display:block;font-size:clamp(32px,6vw,48px);line-height:1.2;margin:4px 0}
+    .price-note{max-width:760px;margin:16px auto 0;color:var(--muted);font-size:12px;text-align:center}
+    .demo-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+    .demo-card{min-height:210px;border:1px solid var(--line);border-radius:22px;padding:22px;background:#fff;display:flex;flex-direction:column}
+    .demo-card .demo-number{font-size:11px;color:var(--primary);font-weight:900;letter-spacing:.10em}
+    .demo-card h3{font-size:22px;margin:7px 0 8px}
+    .demo-card p{color:var(--muted);font-size:13px;margin-bottom:16px}
+    .demo-card .btn{margin-top:auto;align-self:flex-start}
+    .consult{background:linear-gradient(150deg,#083f47,#087f8c 65%,#0a939e);color:#fff;padding:82px 0}
+    .consult .wrap{max-width:920px;text-align:center}
+    .consult .eyebrow{color:#dff7f8}.consult .eyebrow::before{background:#fff}
+    .consult h2{font-size:clamp(34px,7vw,58px)}
+    .consult p{color:rgba(255,255,255,.82);max-width:720px;margin-left:auto;margin-right:auto}
+    .consult-actions{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-top:26px}
+    .consult .btn-light{background:#fff;color:var(--primary-dark);border-color:#fff}
+    .footer{padding:28px 0 38px;background:#092d33;color:rgba(255,255,255,.75);font-size:11px}
+    .footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+    .modal{
+      position:fixed;inset:0;z-index:1000;display:none;align-items:center;justify-content:center;padding:12px;background:rgba(3,24,28,.82);
+    }
+    .modal.visible{display:flex}
+    .modal-shell{width:min(1180px,100%);height:min(820px,calc(100dvh - 24px));border-radius:20px;background:#fff;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 30px 90px rgba(0,0,0,.35)}
+    .modal-head{min-height:62px;padding:10px 12px 10px 16px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:12px;background:#fff}
+    .modal-title{font-size:14px;font-weight:900;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .modal-actions{display:flex;gap:7px;flex:0 0 auto}
+    .modal-link,.modal-close{min-height:44px;border-radius:12px;padding:8px 12px;border:1px solid var(--line);background:#f5f9fa;color:var(--ink);display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:900;cursor:pointer}
+    .modal-close{width:44px;padding:0;font-size:19px}
+    .modal-body{position:relative;flex:1;min-height:0;background:#edf3f4}
+    .modal-body iframe{width:100%;height:100%;border:0;background:#fff}
+    .modal-loading{position:absolute;inset:0;display:grid;place-items:center;color:var(--muted);font-size:13px;pointer-events:none}
+    .noscript{padding:14px;background:#fff3cd;color:#765a00;text-align:center;font-size:13px}
+    @media(max-width:1050px){
+      .pain-grid{grid-template-columns:repeat(3,1fr)}
+      .connected{grid-template-columns:repeat(4,1fr)}
+      .connected-node:not(:last-child)::after{display:none}
+    }
+    @media(max-width:820px){
+      .section{padding:62px 0}
+      .hero-grid,.customer-grid{grid-template-columns:1fr}
+      .hero-visual{min-height:auto}
+      .problem-board,.before-after{grid-template-columns:1fr}
+      .big-arrow{transform:rotate(90deg)}
+      .ops-grid,.price-grid{grid-template-columns:1fr}
+      .connected{grid-template-columns:1fr}
+      .connected-node{min-height:100px;display:grid;grid-template-columns:48px 1fr;text-align:left;justify-items:start}
+      .connected-node span{grid-column:2}
+      .demo-grid{grid-template-columns:1fr}
+    }
+    @media(max-width:620px){
+      .header-inner{width:min(100% - 20px,var(--content));min-height:62px}
+      .brand-copy span{display:none}
+      .header-actions .btn-line{display:none}
+      .header-actions .btn{min-height:44px;padding:8px 11px;font-size:12px}
+      .wrap{width:min(100% - 24px,var(--content))}
+      .section{padding:54px 0}
+      .hero{padding:44px 0 56px}
+      h1{font-size:clamp(36px,12vw,52px)}
+      h2{font-size:clamp(29px,9vw,38px)}
+      .lead{font-size:16px}
+      .hero-actions,.consult-actions{display:grid;grid-template-columns:1fr}
+      .hero-actions .btn,.consult-actions .btn{width:100%}
+      .hero-visual{padding:16px;border-radius:22px}
+      .flow-step{grid-template-columns:44px 1fr auto;padding:11px}
+      .flow-icon{width:44px;height:44px}
+      .hero-screen-launch{grid-template-columns:1fr}
+      .card-grid,.pain-grid,.scatter,.feature-list{grid-template-columns:1fr}
+      .card{padding:18px}
+      .phone-outline{width:min(210px,82%);height:350px}
+      .progress-bar{grid-template-columns:1fr;gap:5px}
+      .progress-step{text-align:left;padding-left:12px}
+      .ops-card{min-height:0}
+      .price-card{text-align:left}
+      .price-card .price-role{min-height:0}
+      .demo-card{min-height:0}
+      .demo-card .btn{width:100%}
+      .screen-actions{display:grid;grid-template-columns:1fr}
+      .screen-actions .btn{width:100%}
+      .consult{padding:64px 0}
+      .footer .wrap{display:grid}
+      .modal{padding:0}
+      .modal-shell{width:100%;height:100dvh;border-radius:0}
+      .modal-head{padding-left:12px}
+      .modal-link{display:none}
+    }
+    @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.btn{transition:none}}
+  </style>
+</head>
+<body>
+  <noscript><div class="noscript">JavaScriptが無効でも本文・料金・相談リンクはご覧いただけます。実画面DEMOは各リンクを新しいタブで開いてください。</div></noscript>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="brand" href="#p1" aria-label="ページ上部へ">
+        <span class="brand-mark">D</span>
+        <span class="brand-copy"><strong>DPROクリーニングシステム</strong><span>受付から受け渡しまでをひとつに</span></span>
+      </a>
+      <div class="header-actions">
+        <button class="btn btn-light btn-small js-demo" type="button" data-demo-label="公開操作DEMO" data-demo-url="https://dpromstk2000-lab.github.io/dpro-cleaning-line-liff/demo-guide.html?v=cleaning-18">DEMO</button>
+        <a class="btn btn-line btn-small" href="https://lin.ee/YxJGXV6D" target="_blank" rel="noopener">LINEで相談</a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero" id="p1" data-page="P1">
+      <div class="wrap hero-grid">
+        <div class="hero-copy">
+          <div class="eyebrow">P1 / FIRST VIEW</div>
+          <h1>預かった一着を、<br>受付から受け渡しまで<br>迷子にしない。</h1>
+          <p class="lead">店頭受付、品物タグ、写真、作業工程、LINE会員証、受け渡し、未受取フォローまで。<strong>クリーニング店の「預かってから返すまで」</strong>を、ひとつにつなぐ業種専用システムです。</p>
+          <div class="hero-actions">
+            <button class="btn btn-primary js-demo" type="button" data-demo-label="DPROクリーニング 公開操作DEMO" data-demo-url="https://dpromstk2000-lab.github.io/dpro-cleaning-line-liff/demo-guide.html?v=cleaning-18">実際の操作画面を見る</button>
+            <a class="btn btn-line" href="https://lin.ee/YxJGXV6D" target="_blank" rel="noopener">LINEで導入を相談する</a>
+          </div>
+          <div class="trust-row" aria-label="主要な特徴">
+            <span class="trust-pill">複数品物受付</span>
+            <span class="trust-pill">品物写真</span>
+            <span class="trust-pill">工程管理</span>
+            <span class="trust-pill">LINE会員証</span>
+          </div>
+        </div>
+        <div class="hero-visual" aria-label="受付から受け渡しまでの流れ">
+          <div class="flow-title">CLEANING WORKFLOW</div>
+          <div class="flow-stack">
+            <div class="flow-step"><div class="flow-icon">01</div><div><strong>店頭で受付</strong><span>顧客・複数品物・加工・予定日</span></div><div class="flow-arrow">↓</div></div>
+            <div class="flow-step"><div class="flow-icon">02</div><div><strong>品物を記録</strong><span>受付票・タグ・シミや傷の写真</span></div><div class="flow-arrow">↓</div></div>
+            <div class="flow-step"><div class="flow-icon">03</div><div><strong>工程を管理</strong><span>検品・洗浄・仕上げ・受取待ち</span></div><div class="flow-arrow">↓</div></div>
+            <div class="flow-step"><div class="flow-icon">04</div><div><strong>確認して受け渡し</strong><span>お客様・品物・支払い状況を確認</span></div><div class="flow-arrow">✓</div></div>
+          </div>
+          <div class="hero-screen-launch">
+            <button class="screen-chip js-demo" type="button" data-demo-label="店頭受付 実画面" data-demo-url="https://dpromstk2000-lab.github.io/dpro-cleaning-line-liff/reception.html?v=cleaning-18"><b>店頭受付 実画面</b><small>タップして現在のDEMOを表示</small></button>
+            <button class="screen-chip js-demo" type="button" data-demo-label="LINE会員証 実画面" data-demo-url="https://dpromstk2000-lab.github.io/dpro-cleaning-line-liff/member.html?token=demo-cleaning-member-003&v=cleaning-18"><b>LINE会員証 実画面</b><small>お客様側の確認画面</small></button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="p2" data-page="P2">
+      <div class="wrap">
+        <div class="section-head">
+          <div class="eyebrow">P2 / OWNER PAIN</div>
+          <h2>クリーニング店は、<br>「預かった後」の管理が多い。</h2>
+          <p class="lead">受付が終われば仕事が終わるわけではありません。品物、状態、工程、仕上がり、受け渡しまで、多くの確認が続きます。</p>
+        </div>
+        <div class="card-grid pain-grid">
+          <article class="card pain-card"><div class="card-icon">01</div><h3>「この品物、どのお客様の分？」</h3><p class="muted">受付情報と預かり品を照らし合わせる確認が必要。</p></article>
+          <article class="card pain-card"><div class="card-icon">02</div><h3>「このシミは最初から？」</h3><p class="muted">受付時の状態を後から確認しにくい。</p></article>
+          <article class="card pain-card"><div class="card-icon">03</div><h3>「今、どの工程？」</h3><p class="muted">検品・洗浄・仕上げの状況をスタッフ間で確認。</p></article>
+          <article class="card pain-card"><div class="card-icon">04</div><h3>「まだ受け取りに来ていない」</h3><p class="muted">未受取や長期保管への対応が必要。</p></article>
+          <article class="card pain-card"><div class="card-icon">05</div><h3>「仕上がっていますか？」</h3><p class="muted">状況を確認してお客様へ回答する手間が発生。</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="p3" data-page="P3">
+      <div class="wrap">
+        <div class="section-head center">
+          <div class="eyebrow">P3 / WHY PROBLEM</div>
+          <h2>単機能を増やすだけでは、<br>「預かった品物」はつながらない。</h2>
+          <p class="lead">顧客台帳だけ、会員証だけ、売上管理だけでは、クリーニング店の預かり業務全体は見えません。</p>
+        </div>
+        <div class="problem-board">
+          <div class="scatter" aria-label="分散しやすい情報">
+            <div class="mini-card"><strong>お客様</strong><span>氏名・会員番号・電話</span></div>
+            <div class="mini-card"><strong>品物</strong><span>品目・数量・加工</span></div>
+            <div class="mini-card"><strong>状態</strong><span>シミ・傷・付属品</span></div>
+            <div class="mini-card"><strong>工程</strong><span>検品・洗浄・仕上げ</span></div>
+            <div class="mini-card"><strong>予定</strong><span>仕上がり予定・保管</span></div>
+            <div class="mini-card"><strong>受け渡し</strong><span>支払い状況・完了</span></div>
+          </div>
+          <div class="big-arrow" aria-hidden="true">→</div>
+          <div class="order-hub">
+            <div class="hub-title">1つの注文を中心に管理</div>
+            <div class="hub-grid">
+              <div class="hub-item">顧客情報</div><div class="hub-item">預かり品</div>
+              <div class="hub-item">写真</div><div class="hub-item">工程</div>
+              <div class="hub-item">仕上がり</div><div class="hub-item">受け渡し</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="p4" data-page="P4">
+      <div class="wrap">
+        <div class="section-head center">
+          <div class="eyebrow">P4 / CONNECTED SYSTEM</div>
+          <h2>受付したその情報が、<br>受け渡しまでつながる。</h2>
+          <p class="lead">同じ注文を基準に、店頭受付、品物記録、作業工程、お客様確認、受け渡し、未受取フォローへつなぎます。</p>
+        </div>
+        <div class="connected" aria-label="DPROクリーニングシステム全体導線">
+          <div class="connected-node"><div class="node-icon">1</div><strong>店頭受付</strong><span>顧客・複数品物・加工・予定日</span></div>
+          <div class="connected-node"><div class="node-icon">2</div><strong>受付票・タグ</strong><span>お客様控え・店舗控え・品物タグ</span></div>
+          <div class="connected-node"><div class="node-icon">3</div><strong>品物写真</strong><span>シミ・傷・タグ・付属品</span></div>
+          <div class="connected-node"><div class="node-icon">4</div><strong>工程管理</strong><span>検品・洗浄・仕上げ・再洗い</span></div>
+          <div class="connected-node"><div class="node-icon">5</div><strong>LINE会員証</strong><span>お客様が預かり状況を確認</span></div>
+          <div class="connected-node"><div class="node-icon">6</div><strong>受け渡し</strong><span>お客様・品物・支払い状況を確認</span></div>
+          <div class="connected-node"><div class="node-icon">7</div><strong>未受取フォロー</strong><span>未通知・受取待ち・長期保管</span></div>
+        </div>
+        <div class="screen-actions">
+          <button class="btn btn-light js-demo" type="button" data-demo-label="店頭受付 実画面" data-demo-url="https://dpromstk2000-lab.github.io/dpro-cleaning-line-liff/reception.html?v=cleaning-18">店頭受付を見る</button>
+          <button class="btn btn-light js-demo" type="button" data-demo-label="スタッフ作業ボード 実画面" data-demo-url="https://dpromstk2000-lab.github.io/dpro-cleaning-line-liff/staff.html?v=cleaning-18">作業ボードを見る</button>
+          <button class="btn btn-light js-demo" type="button" data-demo-label="受け渡し 実画面" data-demo-url="https://dpromstk2000-lab.github.io/dpro-cleaning-line-liff/owner-ipad.html?v=cleaning-18">受け渡しを見る</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="p5" data-page="P5">
+      <div class="wrap customer-grid">
+        <div class="real-screen-card">
+          <span class="real-badge">REAL CUSTOMER SCREEN</span>
+          <h3>LINE会員証</h3>
+          <p>お客様自身が、現在のお預かり状況・工程・仕上がり予定などを確認できる実画面です。</p>
+          <div class="phone-outline" aria-hidden="true">
+            <div><div class="phone-label">実画面はボタンから表示</div><div class="phone-note">架空UIではなく、現在の公開DEMOをそのまま読み込みます。</div></div>
+          </div>
+          <button class="btn btn-primary js-demo" style="width:100%;margin-top:18px" type="button" data-demo-label="LINE会員証 実画面" data-demo-url="https://dpromstk2000-lab.github.io/dpro-cleaning-line-liff/member.html?token=demo-cleaning-member-003&v=cleaning-18">LINE会員証の実画面を見る</button>
+        </div>
+        <div>
+          <div class="eyebrow">P5 / CUSTOMER EXPERIENCE</div>
+          <h2>お客様も、<br>「今どうなっている？」を確認できる。</h2>
+          <p class="lead">店舗へ確認する前に、お客様自身のスマホで現在のお預かり状況を確認できます。</p>
+          <div class="feature-list">
+            <div class="feature-item">受付番号</div><div class="feature-item">現在の工程</div>
+            <div class="feature-item">仕上がり予定</div><div class="feature-item">合計金額</div>
+            <div class="feature-item">支払い状況</div><div class="feature-item">最近の受取履歴</div>
+          </div>
+          <div class="progress-bar" aria-label="工程表示例">
+            <div class="progress-step">受付</div><div class="progress-step">検品</div><div class="progress-step">洗浄</div><div class="progress-step">仕上げ</div><div class="progress-step">受取可能</div>
+          </div>
+          <p class="muted" style="font-size:12px;margin-top:14px">※お客様がLINE会員証から情報を確認する機能です。LINEへの完全自動配信を意味するものではありません。</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="p6" data-page="P6">
+      <div class="wrap">
+        <div class="section-head center">
+          <div class="eyebrow">P6 / OWNER & STAFF EXPERIENCE</div>
+          <h2>お客様には分かりやすく。<br>店舗には、管理しやすく。</h2>
+          <p class="lead">すべての機能を並べるのではなく、クリーニング店で特に営業価値の高い「品物写真」「工程」「オーナー管理」を中心に。</p>
+        </div>
+        <div class="ops-grid">
+          <article class="ops-card">
+            <div class="role">RECEPTION / PHOTO</div><h3>品物ごとの写真記録</h3>
+            <ul><li>品物全体</li><li>受付時の状態</li><li>シミ・破れ・傷</li><li>ボタン・タグ・付属品</li></ul>
+            <button class="btn btn-light js-demo" type="button" data-demo-label="品物写真撮影 実画面" data-demo-url="https://dpromstk2000-lab.github.io/dpro-cleaning-line-liff/item-photo-ipad.html?v=cleaning-18">品物写真の実画面を見る</button>
+          </article>
+          <article class="ops-card">
+            <div class="role">STAFF / WORK BOARD</div><h3>工程別の作業ボード</h3>
+            <ul><li>受付・検品</li><li>洗浄中</li><li>仕上げ中</li><li>受取待ち・保管</li><li>再洗い・確認</li></ul>
+            <button class="btn btn-light js-demo" type="button" data-demo-label="スタッフ作業ボード 実画面" data-demo-url="https://dpromstk2000-lab.github.io/dpro-cleaning-line-liff/staff.html?v=cleaning-18">作業ボードの実画面を見る</button>
+          </article>
+          <article class="ops-card">
+            <div class="role">OWNER / MANAGEMENT</div><h3>店舗全体を確認</h3>
+            <ul><li>売上・受付金額</li><li>平均客単価・新規顧客</li><li>工程別件数</li><li>品目・加工別実績</li><li>支払い状況</li></ul>
+            <button class="btn btn-light js-demo" type="button" data-demo-label="オーナー管理 実画面" data-demo-url="https://dpromstk2000-lab.github.io/dpro-cleaning-line-liff/owner.html?v=cleaning-18">オーナー画面を見る</button>
+          </article>
+        </div>
+        <p class="muted" style="font-size:12px;text-align:center;margin-top:16px">※支払い状況を記録・管理する機能であり、オンライン決済連携を意味するものではありません。</p>
+      </div>
+    </section>
+
+    <section class="section" id="p7" data-page="P7">
+      <div class="wrap">
+        <div class="section-head center">
+          <div class="eyebrow">P7 / BEFORE & AFTER</div>
+          <h2>「誰かが覚えている店」から、<br>「情報を見れば分かる店」へ。</h2>
+          <p class="lead">効果を保証するのではなく、確認の仕方を変える。必要な情報を、同じ注文を基準に必要な画面で確認できる形へ。</p>
+        </div>
+        <div class="before-after">
+          <div class="ba-panel before"><div class="ba-title">BEFORE</div><div class="ba-list">
+            <div class="ba-row"><strong>受付</strong><br><span class="muted">紙や複数の情報を確認</span></div>
+            <div class="ba-row"><strong>品物状態</strong><br><span class="muted">記憶や個別写真を探す</span></div>
+            <div class="ba-row"><strong>作業状況</strong><br><span class="muted">スタッフ同士で確認</span></div>
+            <div class="ba-row"><strong>未受取</strong><br><span class="muted">個別に気付いて対応</span></div>
+          </div></div>
+          <div class="big-arrow" aria-hidden="true">→</div>
+          <div class="ba-panel after"><div class="ba-title">AFTER</div><div class="ba-list">
+            <div class="ba-row"><strong>受付</strong><br><span class="muted">1つの注文へまとめる</span></div>
+            <div class="ba-row"><strong>品物状態</strong><br><span class="muted">品物ごとの写真から確認</span></div>
+            <div class="ba-row"><strong>作業状況</strong><br><span class="muted">工程別作業ボードで確認</span></div>
+            <div class="ba-row"><strong>未受取</strong><br><span class="muted">対象注文を一覧で確認</span></div>
+          </div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="p8" data-page="P8">
+      <div class="wrap">
+        <div class="price-intro">
+          <div class="eyebrow">P8 / PRICE & VALUE</div>
+          <h2>ホームページ・LINE公式・DPROを、<br>まとめて運用。</h2>
+          <p class="lead">価格を先に見せるのではなく、役割を分けて店舗運用を支える価値から。</p>
+        </div>
+        <div class="price-grid">
+          <article class="price-card"><div class="card-icon" style="margin:0 auto 12px">WEB</div><h3>ホームページ</h3><p class="price-role">知ってもらう場所<br>公開・基本保守</p><div class="price">1,100円</div><div class="per">/ 月</div></article>
+          <article class="price-card"><div class="card-icon" style="margin:0 auto 12px">LINE</div><h3>LINE公式</h3><p class="price-role">つながり続ける場所<br>運用サポート</p><div class="price">3,300円</div><div class="per">/ 月</div></article>
+          <article class="price-card"><div class="card-icon" style="margin:0 auto 12px">D</div><h3>DPRO</h3><p class="price-role">店舗業務を管理する場所<br>利用・基本保守</p><div class="price">1,100円</div><div class="per">/ 月</div></article>
+        </div>
+        <div class="price-total"><div class="small">3サービスの基本運用・基本保守</div><strong>月額合計 5,500円</strong><div>税込</div></div>
+        <p class="price-note"><strong>DPRO単体が月額5,500円ではありません。</strong><br>DPROシステムはLINE公式アカウント構築・運用契約店舗向けの追加サービスです。ホームページ保守1,100円とDPRO利用はLINE運用契約店舗限定です。初期制作費や基本範囲を超える更新・外部サービス等は別途ご案内します。</p>
+      </div>
+    </section>
+
+    <section class="section" id="p9" data-page="P9">
+      <div class="wrap">
+        <div class="section-head center">
+          <div class="eyebrow">P9 / DEMO</div>
+          <h2>説明だけではなく、<br>実際の画面を触って確認できます。</h2>
+          <p class="lead">架空データを使った公開操作DEMOです。ボタンを押した時だけ実画面を読み込みます。</p>
+        </div>
+        <div class="demo-grid">
+          <article class="demo-card"><div class="demo-number">DEMO 01</div><h3>店頭受付</h3><p>顧客検索、複数品物、加工、仕上がり予定、受付処理を確認。</p><button class="btn btn-primary js-demo" type="button" data-demo-label="店頭受付 実画面" data-demo-url="https://dpromstk2000-lab.github.io/dpro-cleaning-line-liff/reception.html?v=cleaning-18">実画面を開く</button></article>
+          <article class="demo-card"><div class="demo-number">DEMO 02</div><h3>品物写真</h3><p>シミ・傷・タグ・付属品など、品物単位の写真記録を確認。</p><button class="btn btn-primary js-demo" type="button" data-demo-label="品物写真 実画面" data-demo-url="https://dpromstk2000-lab.github.io/dpro-cleaning-line-liff/item-photo-ipad.html?v=cleaning-18">実画面を開く</button></article>
+          <article class="demo-card"><div class="demo-number">DEMO 03</div><h3>スタッフ作業ボード</h3><p>受付・検品、洗浄、仕上げ、受取待ち、再洗いを工程別に確認。</p><button class="btn btn-primary js-demo" type="button" data-demo-label="スタッフ作業ボード 実画面" data-demo-url="https://dpromstk2000-lab.github.io/dpro-cleaning-line-liff/staff.html?v=cleaning-18">実画面を開く</button></article>
+          <article class="demo-card"><div class="demo-number">DEMO 04</div><h3>LINE会員証</h3><p>お客様側から現在のお預かり、工程、仕上がり予定などを確認。</p><button class="btn btn-primary js-demo" type="button" data-demo-label="LINE会員証 実画面" data-demo-url="https://dpromstk2000-lab.github.io/dpro-cleaning-line-liff/member.html?token=demo-cleaning-member-003&v=cleaning-18">実画面を開く</button></article>
+        </div>
+        <div class="screen-actions">
+          <button class="btn btn-light js-demo" type="button" data-demo-label="受け渡し 実画面" data-demo-url="https://dpromstk2000-lab.github.io/dpro-cleaning-line-liff/owner-ipad.html?v=cleaning-18">受け渡し画面</button>
+          <button class="btn btn-light js-demo" type="button" data-demo-label="未受取フォロー 実画面" data-demo-url="https://dpromstk2000-lab.github.io/dpro-cleaning-line-liff/owner-followup.html?v=cleaning-18">未受取フォロー</button>
+          <button class="btn btn-light js-demo" type="button" data-demo-label="受付票・品物タグ 実画面" data-demo-url="https://dpromstk2000-lab.github.io/dpro-cleaning-line-liff/print.html?v=cleaning-18">受付票・品物タグ</button>
+          <button class="btn btn-light js-demo" type="button" data-demo-label="店舗設定 実画面" data-demo-url="https://dpromstk2000-lab.github.io/dpro-cleaning-line-liff/owner-settings.html?v=cleaning-18">店舗設定</button>
+          <button class="btn btn-light js-demo" type="button" data-demo-label="オーナー管理 実画面" data-demo-url="https://dpromstk2000-lab.github.io/dpro-cleaning-line-liff/owner.html?v=cleaning-18">オーナー管理</button>
+        </div>
+        <p class="muted" style="font-size:12px;text-align:center;margin-top:18px">※公開DEMOは架空データを使用する操作体験用画面です。DEMO画面の存在と、個別店舗への本番接続・設定完了は区別してご案内します。</p>
+      </div>
+    </section>
+
+    <section class="consult" id="p10" data-page="P10">
+      <div class="wrap">
+        <div class="eyebrow">P10 / CONSULT & CTA</div>
+        <h2>預かるところから、<br>安心して返すところまで。</h2>
+        <p class="lead">クリーニング店によって、品物の受け方、仕上がり日数、料金メニュー、スタッフの動き方は違います。まずは「今どこに手間がかかっているか」から整理します。</p>
+        <div class="consult-actions">
+          <button class="btn btn-light js-demo" type="button" data-demo-label="DPROクリーニング 公開操作DEMO" data-demo-url="https://dpromstk2000-lab.github.io/dpro-cleaning-line-liff/demo-guide.html?v=cleaning-18">公開DEMOを確認する</button>
+          <a class="btn btn-line" href="https://lin.ee/YxJGXV6D" target="_blank" rel="noopener">LINEで導入を相談する</a>
+        </div>
+        <p style="font-size:12px;margin-top:18px">相談したら必ず契約する必要はありません。現在の運用と必要な内容を確認してからご案内します。</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="wrap"><span>DPRO SHOP｜クリーニング店向け営業LP</span><span>表示価格は税込です。</span></div>
+  </footer>
+
+  <div class="modal" id="demoModal" role="dialog" aria-modal="true" aria-labelledby="demoModalTitle" aria-hidden="true">
+    <div class="modal-shell">
+      <div class="modal-head">
+        <div class="modal-title" id="demoModalTitle">公開操作DEMO</div>
+        <div class="modal-actions">
+          <a class="modal-link" id="demoExternalLink" href="#" target="_blank" rel="noopener">新しいタブで開く</a>
+          <button class="modal-close" id="demoClose" type="button" aria-label="DEMOを閉じる">×</button>
+        </div>
+      </div>
+      <div class="modal-body" id="demoBody"><div class="modal-loading">実画面を読み込みます…</div></div>
+    </div>
+  </div>
+
+  <script>
+    (()=>{
+      const modal=document.getElementById('demoModal');
+      const body=document.getElementById('demoBody');
+      const title=document.getElementById('demoModalTitle');
+      const close=document.getElementById('demoClose');
+      const external=document.getElementById('demoExternalLink');
+      let lastTrigger=null;
+
+      function destroyFrame(){
+        body.querySelectorAll('iframe').forEach(frame=>frame.remove());
+      }
+      function openDemo(trigger){
+        const url=trigger.dataset.demoUrl;
+        if(!url)return;
+        lastTrigger=trigger;
+        title.textContent=trigger.dataset.demoLabel||'公開操作DEMO';
+        external.href=url;
+        destroyFrame();
+        const frame=document.createElement('iframe');
+        frame.src=url;
+        frame.title=title.textContent;
+        frame.loading='eager';
+        frame.referrerPolicy='strict-origin-when-cross-origin';
+        body.appendChild(frame);
+        modal.classList.add('visible');
+        modal.setAttribute('aria-hidden','false');
+        document.body.classList.add('modal-open');
+        close.focus();
+      }
+      function closeDemo(){
+        modal.classList.remove('visible');
+        modal.setAttribute('aria-hidden','true');
+        document.body.classList.remove('modal-open');
+        destroyFrame();
+        if(lastTrigger)lastTrigger.focus();
+      }
+      document.querySelectorAll('.js-demo').forEach(btn=>btn.addEventListener('click',()=>openDemo(btn)));
+      close.addEventListener('click',closeDemo);
+      modal.addEventListener('click',e=>{if(e.target===modal)closeDemo();});
+      document.addEventListener('keydown',e=>{if(e.key==='Escape'&&modal.classList.contains('visible'))closeDemo();});
+    })();
+  </script>
+</body>
+</html>

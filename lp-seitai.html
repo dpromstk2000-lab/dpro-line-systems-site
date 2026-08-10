@@ -1,0 +1,563 @@
+<!doctype html>
+<!-- DPRO LP / SEITAI / LP_VERSION V1.0 / MASTER DPRO-LP-MASTER-V1.3 / PUBLIC CANDIDATE -->
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>DPRO整骨院・整体システム｜予約から、次の来院まで。</title>
+  <meta name="description" content="LINE予約だけで終わらず、来院受付、施術進捗、患者履歴、回数券、再来院フォローまでをつなぐ整骨院・整体院向けDPROシステム。実際のデモ画面も確認できます。">
+  <meta property="og:title" content="DPRO整骨院・整体システム｜予約から、次の来院まで。">
+  <meta property="og:description" content="患者様の予約から来院受付、施術進捗、患者履歴、回数券、再来院フォローまでをつなぐ整骨院・整体院向けシステム。">
+  <meta property="og:type" content="website">
+  <meta name="robots" content="index,follow">
+  <link rel="canonical" href="https://dpromstk2000-lab.github.io/dpro-line-systems-site/lp-seitai.html">
+  <meta name="theme-color" content="#0f766e">
+  <style>
+    :root{
+      --bg:#f6faf9;
+      --surface:#ffffff;
+      --surface-soft:#eefaf7;
+      --ink:#102033;
+      --muted:#5f6f7d;
+      --line:#d9e7e3;
+      --brand:#0f766e;
+      --brand2:#14a085;
+      --brand-dark:#0b5f59;
+      --accent:#f59e0b;
+      --ok:#15803d;
+      --warn:#b45309;
+      --danger:#b91c1c;
+      --shadow:0 18px 48px rgba(15, 71, 66, .10);
+      --radius:24px;
+      --max:1120px;
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth;overflow-x:hidden}
+    body{
+      margin:0;
+      overflow-x:hidden;
+      color:var(--ink);
+      background:
+        radial-gradient(circle at 12% 0%,rgba(20,160,133,.10),transparent 360px),
+        linear-gradient(180deg,#fbfefd 0%,var(--bg) 44%,#fff 100%);
+      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans JP","Hiragino Kaku Gothic ProN",Meiryo,sans-serif;
+      line-height:1.7;
+      -webkit-text-size-adjust:100%;
+    }
+    a{color:inherit}
+    button,input{font:inherit}
+    button{cursor:pointer}
+    img,svg,iframe{max-width:100%}
+    .container{width:min(var(--max),calc(100% - 32px));margin-inline:auto}
+    .section{padding:72px 0;scroll-margin-top:76px}
+    .section:nth-of-type(even){background:rgba(255,255,255,.68)}
+    .eyebrow{
+      display:inline-flex;align-items:center;gap:8px;
+      min-height:30px;padding:6px 10px;border-radius:999px;
+      background:var(--surface-soft);color:var(--brand-dark);
+      font-size:12px;font-weight:900;letter-spacing:.08em;
+    }
+    .section-title{margin:14px 0 12px;font-size:clamp(28px,6vw,46px);line-height:1.16;letter-spacing:-.04em}
+    .section-lead{margin:0;color:var(--muted);font-size:clamp(15px,2.7vw,18px);line-height:1.85}
+    .small{font-size:12px;color:var(--muted);line-height:1.75}
+    .note{font-size:13px;color:var(--muted);line-height:1.75}
+    .card{
+      min-width:0;background:var(--surface);border:1px solid var(--line);
+      border-radius:var(--radius);box-shadow:0 10px 28px rgba(15,71,66,.06);padding:22px;
+    }
+    .card h3{margin:0 0 8px;font-size:20px;line-height:1.4}
+    .card p{margin:0;color:var(--muted)}
+    .grid2,.grid3,.grid4{display:grid;gap:14px}
+    .grid2{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .grid3{grid-template-columns:repeat(3,minmax(0,1fr))}
+    .grid4{grid-template-columns:repeat(4,minmax(0,1fr))}
+    .btn{
+      display:inline-flex;align-items:center;justify-content:center;gap:8px;
+      min-height:48px;border:1px solid transparent;border-radius:14px;padding:11px 16px;
+      text-decoration:none;font-weight:900;line-height:1.25;transition:.18s ease;
+    }
+    .btn:hover{transform:translateY(-1px)}
+    .btn-primary{background:var(--brand);color:#fff;box-shadow:0 10px 24px rgba(15,118,110,.18)}
+    .btn-primary:hover{background:var(--brand-dark)}
+    .btn-secondary{background:#fff;color:var(--brand-dark);border-color:#b9dcd5}
+    .btn-line{background:#06c755;color:#fff}
+    .btn-row{display:flex;gap:10px;flex-wrap:wrap}
+    .icon{
+      width:42px;height:42px;flex:0 0 42px;border-radius:13px;
+      display:grid;place-items:center;background:var(--surface-soft);color:var(--brand-dark);font-weight:950;
+    }
+    .icon svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+    .topbar{
+      position:sticky;top:0;z-index:80;background:rgba(255,255,255,.90);backdrop-filter:blur(14px);
+      border-bottom:1px solid rgba(217,231,227,.92)
+    }
+    .topbar-inner{min-height:64px;display:flex;align-items:center;justify-content:space-between;gap:14px}
+    .brand{display:flex;align-items:center;gap:10px;text-decoration:none;font-weight:950}
+    .brand-mark{width:34px;height:34px;border-radius:11px;display:grid;place-items:center;background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff;font-weight:950}
+    .top-actions{display:flex;gap:8px}
+    .top-actions .btn{min-height:44px;padding:9px 12px;font-size:13px}
+
+    /* P1 */
+    .hero{padding:50px 0 62px;min-height:calc(100svh - 64px);display:grid;align-items:center}
+    .hero-grid{display:grid;grid-template-columns:minmax(0,1.04fr) minmax(360px,.96fr);gap:30px;align-items:center}
+    .hero h1{margin:14px 0 14px;font-size:clamp(44px,7vw,74px);line-height:1.05;letter-spacing:-.06em}
+    .hero .lead{font-size:clamp(17px,2.2vw,21px);line-height:1.8;color:#40535e}
+    .hero-points{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:24px 0}
+    .hero-point{display:flex;gap:10px;align-items:center;padding:12px;border:1px solid var(--line);border-radius:16px;background:rgba(255,255,255,.78);font-weight:800;font-size:13px}
+    .screen-stage{position:relative;min-height:490px;padding:28px 20px 20px;border-radius:34px;background:linear-gradient(145deg,#dff8f2,#f8fffd 60%,#fff8e8);border:1px solid #cce8e2;overflow:hidden}
+    .screen-stage:before{content:"";position:absolute;width:250px;height:250px;border-radius:50%;background:rgba(15,118,110,.12);right:-90px;top:-70px}
+    .screen-link{
+      position:relative;z-index:2;display:block;text-decoration:none;border:1px solid #cce1dd;border-radius:20px;background:#fff;
+      padding:16px;box-shadow:var(--shadow);transition:.18s ease
+    }
+    button.screen-link{width:100%;text-align:left;color:inherit}
+    .screen-link:hover{transform:translateY(-2px)}
+    .screen-link + .screen-link{margin-top:12px}
+    .screen-link.primary{margin-right:42px;padding:20px}
+    .screen-link.secondary{margin-left:55px}
+    .screen-label{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:12px;color:var(--muted);font-weight:900}
+    .screen-title{margin-top:8px;font-weight:950;font-size:20px;line-height:1.35}
+    .screen-tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px}
+    .tag{padding:6px 9px;border-radius:999px;background:#f0f7f5;color:#31534d;font-size:11px;font-weight:900}
+    .live-dot{width:8px;height:8px;border-radius:50%;background:#16a34a;box-shadow:0 0 0 4px rgba(22,163,74,.10)}
+    .flow-mini{position:relative;z-index:2;display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-top:18px}
+    .flow-mini div{padding:10px 6px;border-radius:12px;background:rgba(15,118,110,.09);text-align:center;color:var(--brand-dark);font-size:11px;font-weight:900}
+
+    /* P2 */
+    .pain-card{display:flex;gap:13px;align-items:flex-start}
+    .pain-card strong{display:block;margin-bottom:4px;font-size:17px}
+
+    /* P3 */
+    .why-grid{display:grid;grid-template-columns:.72fr 1.28fr;gap:18px;margin-top:28px;align-items:stretch}
+    .single-box{display:grid;place-items:center;text-align:center;min-height:340px;background:#f7f9fa;border:1px dashed #b7c6cc;border-radius:24px;padding:22px}
+    .single-box .big{font-size:58px}
+    .single-box strong{font-size:23px}
+    .journey{display:grid;gap:8px}
+    .journey-step{display:grid;grid-template-columns:42px 1fr;gap:10px;align-items:center;padding:11px 13px;border:1px solid var(--line);border-radius:15px;background:#fff}
+    .journey-step .n{width:36px;height:36px;border-radius:12px;display:grid;place-items:center;background:var(--surface-soft);color:var(--brand-dark);font-size:12px;font-weight:950}
+    .journey-step b{font-size:14px}
+
+    /* P4 */
+    .connected{margin-top:30px;display:grid;gap:10px}
+    .entry-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+    .flow-box{padding:16px;border-radius:18px;border:1px solid var(--line);background:#fff;text-align:center;font-weight:900}
+    .flow-box.brand{background:linear-gradient(135deg,var(--brand-dark),var(--brand2));color:#fff;border-color:transparent;font-size:20px}
+    .down{display:grid;place-items:center;height:30px;color:var(--brand);font-size:26px;font-weight:950}
+    .ops-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+    .ops-grid .flow-box{font-size:13px}
+    .connected-live{margin-top:18px;display:grid;grid-template-columns:1fr auto;gap:16px;align-items:center}
+
+    /* P5 */
+    .customer-steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:28px}
+    .experience-card{display:flex;flex-direction:column;min-height:100%}
+    .experience-card .num{font-size:12px;font-weight:950;color:var(--brand);letter-spacing:.08em}
+    .experience-card h3{margin:8px 0 8px;font-size:21px}
+    .experience-card ul{margin:4px 0 18px;padding-left:20px;color:#475a64}
+    .experience-card .btn{margin-top:auto;width:100%}
+
+    /* P6 */
+    .role-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:24px}
+    .role-card{position:relative;overflow:hidden}
+    .role-card:before{content:"";position:absolute;inset:0 auto 0 0;width:5px;background:var(--brand)}
+    .role-card .role{color:var(--brand);font-weight:950;font-size:12px;letter-spacing:.08em}
+    .status-strip{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:28px 0}
+    .status-step{padding:13px 8px;border-radius:14px;text-align:center;background:#eef7f5;border:1px solid #d4e8e3;font-weight:950;font-size:13px;color:var(--brand-dark)}
+    .status-step:nth-child(3){background:var(--brand);color:#fff}
+
+    /* P7 */
+    .ba-grid{display:grid;grid-template-columns:1fr 54px 1fr;gap:16px;align-items:stretch;margin-top:28px}
+    .ba-col{padding:22px;border-radius:24px;border:1px solid var(--line);background:#fff}
+    .ba-col.before{background:#f7f8f9}
+    .ba-col.after{background:linear-gradient(180deg,#f3fffb,#fff)}
+    .ba-col h3{margin:0 0 15px;font-size:24px}
+    .ba-list{display:grid;gap:10px}
+    .ba-item{padding:12px;border-radius:14px;background:#fff;border:1px solid #e1e8e6;font-size:14px;font-weight:800}
+    .ba-arrow{display:grid;place-items:center;font-size:34px;color:var(--brand)}
+
+    /* P8 */
+    .price-section{background:linear-gradient(180deg,#0d5f59 0%,#0f766e 100%)!important;color:#fff}
+    .price-section .section-lead,.price-section .small,.price-section .note{color:#d9f3ed}
+    .service-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:28px}
+    .service-card{background:rgba(255,255,255,.98);color:var(--ink);border-radius:20px;padding:20px;min-width:0}
+    .service-card .service-no{font-size:11px;font-weight:950;color:var(--brand);letter-spacing:.1em}
+    .service-card h3{margin:8px 0;font-size:20px}
+    .plus-row{text-align:center;font-size:28px;font-weight:950;margin:10px 0}
+    .price-total{margin-top:20px;padding:24px;border-radius:24px;background:#fff;color:var(--ink);text-align:center}
+    .price-kicker{font-weight:950;color:var(--brand);font-size:15px}
+    .price-number{font-size:clamp(44px,8vw,68px);line-height:1.05;font-weight:950;letter-spacing:-.05em;margin:8px 0}
+    .breakdown{display:flex;justify-content:center;gap:8px 16px;flex-wrap:wrap;margin-top:14px;font-size:13px;color:#52656f}
+
+    /* P9 */
+    .demo-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:28px}
+    .demo-card{display:flex;gap:15px;align-items:center}
+    .demo-card.featured{grid-column:1 / -1;padding:25px;background:linear-gradient(135deg,#f0fcf8,#fff)}
+    .demo-card .demo-meta{min-width:0;flex:1}
+    .demo-card .demo-meta span{display:block;color:var(--brand);font-size:11px;font-weight:950;letter-spacing:.08em}
+    .demo-card h3{margin:4px 0 5px}
+    .demo-card .btn{flex:0 0 auto}
+
+    /* P10 */
+    .final-cta{padding:76px 0 92px;background:radial-gradient(circle at 80% 10%,rgba(20,160,133,.15),transparent 340px),#f5fbf9}
+    .final-box{max-width:880px;margin:auto;text-align:center;padding:34px;border-radius:30px;background:#fff;border:1px solid var(--line);box-shadow:var(--shadow)}
+    .final-box h2{margin:12px 0;font-size:clamp(34px,7vw,56px);line-height:1.13;letter-spacing:-.045em}
+    .final-actions{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:24px}
+    .trust-row{display:flex;justify-content:center;gap:12px 20px;flex-wrap:wrap;margin-top:18px;color:#53666f;font-size:13px;font-weight:800}
+
+    /* modal */
+    .modal{position:fixed;inset:0;z-index:200;display:none;align-items:stretch;justify-content:center;padding:12px;background:rgba(4,25,24,.70);backdrop-filter:blur(6px)}
+    .modal.open{display:flex}
+    .modal-panel{width:min(1180px,100%);height:calc(100dvh - 24px);display:grid;grid-template-rows:auto 1fr;background:#fff;border-radius:22px;overflow:hidden;box-shadow:0 30px 100px rgba(0,0,0,.34)}
+    .modal-head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 14px;border-bottom:1px solid var(--line)}
+    .modal-title{font-weight:950;line-height:1.3}
+    .modal-close{min-width:48px;min-height:48px;border:0;border-radius:14px;background:#edf4f2;color:var(--ink);font-size:22px;font-weight:900}
+    .modal-body{min-height:0;background:#eef4f3}
+    .modal-body iframe{width:100%;height:100%;display:block;border:0;background:#fff}
+    body.modal-open{overflow:hidden}
+    .noscript{margin:16px auto;padding:14px 16px;border:1px solid #f7cc89;border-radius:14px;background:#fff8e7;color:#7c4a00;font-size:13px}
+
+    footer{padding:26px 0;background:#0d2e2b;color:#cce4df;font-size:12px;text-align:center}
+
+    @media (max-width:900px){
+      .hero{min-height:auto}
+      .hero-grid{grid-template-columns:1fr}
+      .screen-stage{min-height:0}
+      .screen-link.primary,.screen-link.secondary{margin-left:0;margin-right:0}
+      .why-grid{grid-template-columns:1fr}
+      .single-box{min-height:220px}
+      .grid4,.ops-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+      .grid3,.customer-steps,.role-grid,.service-grid{grid-template-columns:1fr}
+      .ba-grid{grid-template-columns:1fr}
+      .ba-arrow{transform:rotate(90deg);min-height:40px}
+      .connected-live{grid-template-columns:1fr}
+      .demo-card.featured{grid-column:auto}
+    }
+    @media (max-width:640px){
+      .container{width:min(100% - 24px,var(--max))}
+      .section{padding:56px 0}
+      .topbar-inner{min-height:58px}
+      .brand span:last-child{font-size:13px}
+      .top-actions .btn-secondary{display:none}
+      .top-actions .btn{min-height:44px;padding:9px 11px}
+      .hero{padding:34px 0 52px}
+      .hero h1{font-size:clamp(40px,13vw,58px)}
+      .hero-points{grid-template-columns:1fr}
+      .screen-stage{padding:18px 14px}
+      .screen-link.primary,.screen-link.secondary{margin-left:0;margin-right:0}
+      .flow-mini{grid-template-columns:1fr 1fr}
+      .grid2,.grid4,.entry-grid,.ops-grid,.status-strip,.demo-grid{grid-template-columns:1fr}
+      .card{padding:18px;border-radius:20px}
+      .connected-live .btn{width:100%}
+      .status-strip{gap:6px}
+      .status-step{display:grid;grid-template-columns:28px 1fr;gap:7px;text-align:left;align-items:center}
+      .status-step:before{counter-increment:status;content:counter(status);width:26px;height:26px;border-radius:50%;display:grid;place-items:center;background:#fff;color:var(--brand);font-size:11px}
+      .status-strip{counter-reset:status}
+      .demo-card,.demo-card.featured{display:block}
+      .demo-card .btn{width:100%;margin-top:14px}
+      .price-total{padding:20px 14px}
+      .final-box{padding:26px 17px}
+      .final-actions{display:grid;grid-template-columns:1fr}
+      .final-actions .btn{width:100%}
+      .modal{padding:0}
+      .modal-panel{width:100%;height:100dvh;border-radius:0}
+      .modal-head{padding:8px 10px}
+    }
+    @media (max-width:430px){
+      .section-title{font-size:34px}
+      .hero .lead{font-size:16px}
+      .screen-title{font-size:18px}
+      .price-number{font-size:48px}
+    }
+    @media (prefers-reduced-motion:reduce){
+      html{scroll-behavior:auto}
+      *,*:before,*:after{transition:none!important;animation:none!important}
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar" aria-label="ページ上部">
+    <div class="container topbar-inner">
+      <a class="brand" href="#p1" aria-label="DPRO整骨院・整体システム トップへ">
+        <span class="brand-mark">D</span><span>DPRO整骨院・整体システム</span>
+      </a>
+      <div class="top-actions">
+        <button class="btn btn-secondary demo-open" type="button" data-demo-url="https://dpromstk2000-lab.github.io/dpro-seitai-line/index.html" data-demo-title="患者予約デモ">DEMO</button>
+        <a class="btn btn-line" href="https://lin.ee/YxJGXV6D" target="_blank" rel="noopener">LINEで相談</a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- P1 FIRST VIEW -->
+    <section class="hero" id="p1" data-page="P1">
+      <div class="container hero-grid">
+        <div>
+          <span class="eyebrow">整骨院・整体・治療院向け</span>
+          <h1>予約から、<br>次の来院まで。</h1>
+          <p class="lead">LINEからの予約だけで終わらない。来院受付、施術の進み具合、患者情報、回数券、再来院フォローまで。<strong>整骨院・整体院の毎日の流れを、ひとつにつなぎます。</strong></p>
+          <div class="hero-points" aria-label="主な価値">
+            <div class="hero-point"><span class="live-dot"></span>LINE・電話・店頭予約をまとめて管理</div>
+            <div class="hero-point"><span class="live-dot"></span>予約→来院→施術中→完了を共有</div>
+            <div class="hero-point"><span class="live-dot"></span>PC・iPad・スタッフスマホで役割分担</div>
+            <div class="hero-point"><span class="live-dot"></span>回数券・再来院フォローまで確認</div>
+          </div>
+          <div class="btn-row">
+            <button class="btn btn-primary demo-open" type="button" data-demo-url="https://dpromstk2000-lab.github.io/dpro-seitai-line/index.html" data-demo-title="患者予約デモ">実際のDEMOを見る</button>
+            <a class="btn btn-line" href="https://lin.ee/YxJGXV6D" target="_blank" rel="noopener">導入について相談する</a>
+          </div>
+        </div>
+        <div class="screen-stage" aria-label="実画面への入口">
+          <button class="screen-link primary demo-open" type="button" data-demo-url="https://dpromstk2000-lab.github.io/dpro-seitai-line/index.html" data-demo-title="患者予約デモ">
+            <span class="screen-label"><span>REAL DEMO / CUSTOMER</span><span class="live-dot"></span></span>
+            <div class="screen-title">患者様のかんたん予約</div>
+            <div class="screen-tags"><span class="tag">メニュー</span><span class="tag">担当者</span><span class="tag">日時</span><span class="tag">症状・要望</span></div>
+          </button>
+          <button class="screen-link secondary demo-open" type="button" data-demo-url="https://dpromstk2000-lab.github.io/dpro-seitai-line/owner-ipad.html" data-demo-title="受付iPadデモ">
+            <span class="screen-label"><span>REAL DEMO / RECEPTION</span><span class="live-dot"></span></span>
+            <div class="screen-title">受付iPadで院内進捗を確認</div>
+            <div class="screen-tags"><span class="tag">予約</span><span class="tag">来院</span><span class="tag">施術中</span><span class="tag">完了</span></div>
+          </button>
+          <button class="screen-link demo-open" type="button" data-demo-url="https://dpromstk2000-lab.github.io/dpro-seitai-line/staff.html" data-demo-title="スタッフスマホデモ">
+            <span class="screen-label"><span>REAL DEMO / STAFF</span><span class="live-dot"></span></span>
+            <div class="screen-title">スタッフは本日の担当患者へ集中</div>
+          </button>
+          <div class="flow-mini" aria-hidden="true"><div>予約</div><div>来院</div><div>施術</div><div>次回来院</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- P2 OWNER PAIN -->
+    <section class="section" id="p2" data-page="P2">
+      <div class="container">
+        <span class="eyebrow">OWNER PAIN</span>
+        <h2 class="section-title">予約は取れても、<br>その後の管理がバラバラになっていませんか？</h2>
+        <p class="section-lead">整骨院・整体院では、予約を受けるだけで仕事は終わりません。予約方法が増えるほど、受付・施術・患者情報・次回案内の確認も増えやすくなります。</p>
+        <div class="grid4" style="margin-top:28px">
+          <article class="card pain-card"><span class="icon">01</span><div><strong>予約方法が複数</strong><p>LINEだけでなく、電話や店頭でも予約が入る。</p></div></article>
+          <article class="card pain-card"><span class="icon">02</span><div><strong>院内確認が増える</strong><p>「来院した？」「誰が担当？」「施術は終わった？」を確認。</p></div></article>
+          <article class="card pain-card"><span class="icon">03</span><div><strong>患者情報を探す</strong><p>前回の来院や回数券を必要な時に確認する。</p></div></article>
+          <article class="card pain-card"><span class="icon">04</span><div><strong>次回案内が後回しに</strong><p>施術後の案内は、忙しい日ほど後回しになりやすい。</p></div></article>
+        </div>
+        <div class="card" style="margin-top:16px;text-align:center"><strong style="font-size:22px">予約だけを便利にしても、院内の仕事すべてが楽になるとは限りません。</strong></div>
+      </div>
+    </section>
+
+    <!-- P3 WHY PROBLEM -->
+    <section class="section" id="p3" data-page="P3">
+      <div class="container">
+        <span class="eyebrow">WHY PROBLEM</span>
+        <h2 class="section-title">なぜ、予約システムだけでは足りないのか。</h2>
+        <p class="section-lead">整骨院・整体院の仕事は、予約の前後に続きます。必要なのは、機能を増やすことではなく、患者様の流れを前後でつなぐことです。</p>
+        <div class="why-grid">
+          <div class="single-box"><div><div class="big">📅</div><strong>予約だけ</strong><p class="note">予約表の管理は、院内業務の一部分。</p></div></div>
+          <div class="card">
+            <div class="journey" aria-label="予約から次回来院まで">
+              <div class="journey-step"><span class="n">01</span><b>予約</b></div>
+              <div class="journey-step"><span class="n">02</span><b>来院</b></div>
+              <div class="journey-step"><span class="n">03</span><b>受付</b></div>
+              <div class="journey-step"><span class="n">04</span><b>施術待ち</b></div>
+              <div class="journey-step"><span class="n">05</span><b>施術中</b></div>
+              <div class="journey-step"><span class="n">06</span><b>完了</b></div>
+              <div class="journey-step"><span class="n">07</span><b>患者履歴・回数券</b></div>
+              <div class="journey-step"><span class="n">08</span><b>再来院フォロー</b></div>
+              <div class="journey-step"><span class="n">09</span><b>次の予約へ</b></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- P4 CONNECTED SYSTEM -->
+    <section class="section" id="p4" data-page="P4">
+      <div class="container">
+        <span class="eyebrow">CONNECTED SYSTEM</span>
+        <h2 class="section-title">入口が違っても、<br>院内ではひとつの流れへ。</h2>
+        <p class="section-lead">LINEを使う患者様だけに限定しません。電話や店頭で受けた予約もDPROへ登録し、院内では同じ予約・来院管理へつなげられます。</p>
+        <div class="connected">
+          <div class="entry-grid">
+            <div class="flow-box">LINEから予約</div>
+            <div class="flow-box">電話予約</div>
+            <div class="flow-box">店頭・次回予約</div>
+          </div>
+          <div class="down">↓</div>
+          <div class="flow-box brand">DPROで予約をまとめて管理</div>
+          <div class="down">↓</div>
+          <div class="ops-grid">
+            <div class="flow-box">来院受付</div>
+            <div class="flow-box">施術進捗</div>
+            <div class="flow-box">患者履歴・回数券</div>
+            <div class="flow-box">再来院フォロー</div>
+          </div>
+          <div class="down">↓</div>
+          <div class="flow-box" style="font-size:19px">次の予約へ</div>
+        </div>
+        <div class="card connected-live">
+          <div><strong style="font-size:20px">実際の受付iPadで、4段階の進捗を確認できます。</strong><p class="note">予約 → 来院 → 施術中 → 完了</p></div>
+          <button class="btn btn-primary demo-open" type="button" data-demo-url="https://dpromstk2000-lab.github.io/dpro-seitai-line/owner-ipad.html" data-demo-title="受付iPadデモ">実画面を見る</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- P5 CUSTOMER EXPERIENCE -->
+    <section class="section" id="p5" data-page="P5">
+      <div class="container">
+        <span class="eyebrow">CUSTOMER EXPERIENCE</span>
+        <h2 class="section-title">患者様には、<br>予約しやすく、確認しやすく。</h2>
+        <p class="section-lead">患者様自身が実際に操作できる範囲だけを、分かりやすくまとめています。</p>
+        <div class="customer-steps">
+          <article class="card experience-card">
+            <span class="num">STEP 01 / RESERVE</span><h3>かんたん予約</h3>
+            <ul><li>メニュー</li><li>担当方法</li><li>症状・要望</li><li>日付・時間</li></ul>
+            <button class="btn btn-secondary demo-open" type="button" data-demo-url="https://dpromstk2000-lab.github.io/dpro-seitai-line/index.html" data-demo-title="患者予約デモ">予約画面を見る</button>
+          </article>
+          <article class="card experience-card">
+            <span class="num">STEP 02 / MEMBER</span><h3>会員ホームで確認</h3>
+            <ul><li>次の予約</li><li>来院回数</li><li>回数券残数</li><li>来院履歴</li></ul>
+            <button class="btn btn-secondary demo-open" type="button" data-demo-url="https://dpromstk2000-lab.github.io/dpro-seitai-line/member.html" data-demo-title="会員ホームデモ">会員ホームを見る</button>
+          </article>
+          <article class="card experience-card">
+            <span class="num">STEP 03 / REPEAT</span><h3>確認・変更・再予約</h3>
+            <ul><li>予約変更</li><li>キャンセル</li><li>新しい予約</li><li>前回と同じ内容で予約</li></ul>
+            <button class="btn btn-secondary demo-open" type="button" data-demo-url="https://dpromstk2000-lab.github.io/dpro-seitai-line/member.html" data-demo-title="会員ホーム・再予約デモ">実画面で確認する</button>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- P6 OWNER / STAFF EXPERIENCE -->
+    <section class="section" id="p6" data-page="P6">
+      <div class="container">
+        <span class="eyebrow">OWNER / STAFF EXPERIENCE</span>
+        <h2 class="section-title">院長・受付・施術スタッフ。<br>必要な画面を、必要な人へ。</h2>
+        <div class="status-strip" aria-label="院内進捗"><div class="status-step">予約</div><div class="status-step">来院</div><div class="status-step">施術中</div><div class="status-step">完了</div></div>
+        <div class="role-grid">
+          <article class="card role-card"><span class="role">OWNER / PC</span><h3>院長・管理PC</h3><p>本日の予約、今日やること、患者検索、来院履歴、回数券、再来院フォロー、電話・店頭予約などを確認。</p><button class="btn btn-secondary demo-open" type="button" style="margin-top:16px;width:100%" data-demo-url="https://dpromstk2000-lab.github.io/dpro-seitai-line/owner.html" data-demo-title="オーナーPCデモ">オーナーPCを見る</button></article>
+          <article class="card role-card"><span class="role">RECEPTION / IPAD</span><h3>受付iPad</h3><p>本日の予約、来院受付、患者検索、電話・店頭予約。受付で必要な操作を中心に。</p><button class="btn btn-primary demo-open" type="button" style="margin-top:16px;width:100%" data-demo-url="https://dpromstk2000-lab.github.io/dpro-seitai-line/owner-ipad.html" data-demo-title="受付iPadデモ">受付iPadを見る</button></article>
+          <article class="card role-card"><span class="role">STAFF / SMARTPHONE</span><h3>スタッフスマホ</h3><p>担当患者、施術待ち、施術中を確認。施術開始・完了など、現場の操作へ集中。</p><button class="btn btn-secondary demo-open" type="button" style="margin-top:16px;width:100%" data-demo-url="https://dpromstk2000-lab.github.io/dpro-seitai-line/staff.html" data-demo-title="スタッフスマホデモ">スタッフ画面を見る</button></article>
+        </div>
+        <div class="card" style="margin-top:16px"><strong>再来院フォローについて</strong><p class="note">フォロー対象を整理し、患者様への案内文を作成・編集・コピーしてLINEでの案内に利用できます。</p></div>
+      </div>
+    </section>
+
+    <!-- P7 BEFORE / AFTER -->
+    <section class="section" id="p7" data-page="P7">
+      <div class="container">
+        <span class="eyebrow">BEFORE / AFTER</span>
+        <h2 class="section-title">DPROを入れると、<br>毎日の流れはどう変わる？</h2>
+        <p class="section-lead">効果を保証する表現ではなく、実装されている機能によって「確認・共有・整理」の仕方がどう変わるかを示します。</p>
+        <div class="ba-grid">
+          <div class="ba-col before"><h3>BEFORE</h3><div class="ba-list"><div class="ba-item">LINE・電話・店頭の予約をそれぞれ確認</div><div class="ba-item">来院したかをスタッフ間で確認</div><div class="ba-item">施術状況を口頭で共有</div><div class="ba-item">患者履歴や回数券を必要時に確認</div><div class="ba-item">次回来院案内が担当者依存になりやすい</div></div></div>
+          <div class="ba-arrow">→</div>
+          <div class="ba-col after"><h3>AFTER</h3><div class="ba-list"><div class="ba-item">予約情報をDPROへまとめて確認</div><div class="ba-item">iPadで来院受付</div><div class="ba-item">スタッフスマホで施術状況を確認</div><div class="ba-item">患者検索から履歴・回数券を確認</div><div class="ba-item">フォロー対象を整理して次の案内へ</div></div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- P8 PRICE / VALUE -->
+    <section class="section price-section" id="p8" data-page="P8">
+      <div class="container">
+        <span class="eyebrow" style="background:rgba(255,255,255,.12);color:#fff">PRICE / VALUE</span>
+        <h2 class="section-title">ホームページ・LINE公式・DPRO。<br>バラバラではなく、まとめて運用。</h2>
+        <p class="section-lead">まず価値をまとめ、そのうえで月額をご案内します。DPRO単体が月額5,500円という料金ではありません。</p>
+        <div class="service-grid">
+          <div class="service-card"><span class="service-no">01 / WEBSITE</span><h3>ホームページ</h3><p>サービス・料金・店舗情報を伝え、相談や予約の入口を整える。</p></div>
+          <div class="service-card"><span class="service-no">02 / LINE</span><h3>LINE公式</h3><p>お客様との継続接点。案内・相談・予約導線を分かりやすく整える。</p></div>
+          <div class="service-card"><span class="service-no">03 / DPRO</span><h3>DPRO整骨院・整体システム</h3><p>予約・受付・院内進捗・患者情報・再来院フォローを業種専用画面で管理。</p></div>
+        </div>
+        <div class="plus-row">＋ まとめて運用</div>
+        <div class="price-total">
+          <div class="price-kicker">基本運用・基本保守の月額合計</div>
+          <div class="price-number">5,500円<span style="font-size:.36em;letter-spacing:0">（税込）</span></div>
+          <div class="breakdown"><span>LINE運用 3,300円</span><span>＋</span><span>HP保守 1,100円</span><span>＋</span><span>DPRO利用・保守 1,100円</span></div>
+          <p class="note" style="margin:14px auto 0;max-width:760px">DPROシステムは、LINE公式アカウント構築・運用契約店舗向けの追加サービスです。ホームページ保守1,100円とDPRO利用はLINE運用契約店舗向け料金です。初期制作費、通常の文章・写真・ページ更新、外部サービス、独自ドメイン等は内容により別途ご案内します。</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- P9 DEMO -->
+    <section class="section" id="p9" data-page="P9">
+      <div class="container">
+        <span class="eyebrow">DEMO</span>
+        <h2 class="section-title">説明だけではなく、<br>実際の画面をご確認ください。</h2>
+        <p class="section-lead">ページ読み込み時には実画面を読み込みません。見たい画面を選んだ時だけ、現在の公開デモをモーダル内へ読み込みます。</p>
+        <div class="demo-grid">
+          <article class="card demo-card featured"><div class="demo-meta"><span>CUSTOMER / RESERVE</span><h3>患者予約</h3><p>メニュー・担当・症状・日時を選んで予約。</p></div><button class="btn btn-primary demo-open" type="button" data-demo-url="https://dpromstk2000-lab.github.io/dpro-seitai-line/index.html" data-demo-title="患者予約デモ">開く</button></article>
+          <article class="card demo-card"><div class="demo-meta"><span>CUSTOMER / MEMBER</span><h3>会員ホーム</h3><p>予約確認、変更、キャンセル、履歴、回数券、再予約。</p></div><button class="btn btn-secondary demo-open" type="button" data-demo-url="https://dpromstk2000-lab.github.io/dpro-seitai-line/member.html" data-demo-title="会員ホームデモ">開く</button></article>
+          <article class="card demo-card"><div class="demo-meta"><span>OWNER / PC</span><h3>オーナーPC</h3><p>本日の予約、患者検索、履歴、回数券、フォローなど。</p></div><button class="btn btn-secondary demo-open" type="button" data-demo-url="https://dpromstk2000-lab.github.io/dpro-seitai-line/owner.html" data-demo-title="オーナーPCデモ">開く</button></article>
+          <article class="card demo-card"><div class="demo-meta"><span>RECEPTION / IPAD</span><h3>受付iPad</h3><p>来院受付、本日の予約、患者検索、電話・店頭予約。</p></div><button class="btn btn-secondary demo-open" type="button" data-demo-url="https://dpromstk2000-lab.github.io/dpro-seitai-line/owner-ipad.html" data-demo-title="受付iPadデモ">開く</button></article>
+          <article class="card demo-card"><div class="demo-meta"><span>STAFF / SMARTPHONE</span><h3>スタッフスマホ</h3><p>担当患者、施術待ち、施術中、施術開始・完了。</p></div><button class="btn btn-secondary demo-open" type="button" data-demo-url="https://dpromstk2000-lab.github.io/dpro-seitai-line/staff.html" data-demo-title="スタッフスマホデモ">開く</button></article>
+        </div>
+        <p class="small">※DEMOは営業確認用の公開画面です。本番店舗の実データではありません。</p>
+      </div>
+    </section>
+
+    <!-- P10 CONSULT / CTA -->
+    <section class="final-cta" id="p10" data-page="P10">
+      <div class="container">
+        <div class="final-box">
+          <span class="eyebrow">CONSULT / CTA</span>
+          <h2>今の院のやり方を、<br>すべて変える必要はありません。</h2>
+          <p class="section-lead">電話予約を使っている。店頭で次回予約を取っている。受付と施術スタッフで役割が違う。回数券を使っている。今の運用を確認しながら、どこをDPROでまとめられるかを一緒に整理します。</p>
+          <div class="final-actions">
+            <button class="btn btn-primary demo-open" type="button" data-demo-url="https://dpromstk2000-lab.github.io/dpro-seitai-line/index.html" data-demo-title="患者予約デモ">まずはDEMOを見る</button>
+            <a class="btn btn-line" href="https://lin.ee/YxJGXV6D" target="_blank" rel="noopener">LINE公式から相談する</a>
+          </div>
+          <div class="trust-row"><span>患者様には、予約しやすさ。</span><span>受付には、確認しやすさ。</span><span>施術スタッフには、動きやすさ。</span><span>院長には、院全体の見やすさ。</span></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <noscript><div class="container noscript">JavaScriptが無効でも、本文・料金・相談導線はご確認いただけます。実画面DEMOは、上部または最終ページのLINE相談からご案内できます。</div></noscript>
+
+  <footer><div class="container">DPRO整骨院・整体システム｜DPRO SHOP</div></footer>
+
+  <div class="modal" id="demoModal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="demoModalTitle">
+    <div class="modal-panel" role="document">
+      <div class="modal-head"><div class="modal-title" id="demoModalTitle">実画面DEMO</div><button class="modal-close" id="demoClose" type="button" aria-label="デモを閉じる">×</button></div>
+      <div class="modal-body" id="demoBody"></div>
+    </div>
+  </div>
+
+  <script>
+  (()=>{
+    'use strict';
+    const modal=document.getElementById('demoModal');
+    const body=document.getElementById('demoBody');
+    const title=document.getElementById('demoModalTitle');
+    const closeBtn=document.getElementById('demoClose');
+    let lastFocus=null;
+
+    function openDemo(url,label){
+      if(!url) return;
+      lastFocus=document.activeElement;
+      body.textContent='';
+      const frame=document.createElement('iframe');
+      frame.src=url;
+      frame.title=label||'DPRO実画面デモ';
+      frame.loading='eager';
+      frame.referrerPolicy='strict-origin-when-cross-origin';
+      frame.setAttribute('allow','clipboard-read; clipboard-write');
+      body.appendChild(frame);
+      title.textContent=label||'実画面DEMO';
+      modal.classList.add('open');
+      modal.setAttribute('aria-hidden','false');
+      document.body.classList.add('modal-open');
+      closeBtn.focus();
+    }
+    function closeDemo(){
+      modal.classList.remove('open');
+      modal.setAttribute('aria-hidden','true');
+      document.body.classList.remove('modal-open');
+      body.textContent='';
+      if(lastFocus && typeof lastFocus.focus==='function') lastFocus.focus();
+    }
+    document.querySelectorAll('.demo-open').forEach(btn=>{
+      btn.addEventListener('click',()=>openDemo(btn.dataset.demoUrl,btn.dataset.demoTitle));
+    });
+    closeBtn.addEventListener('click',closeDemo);
+    modal.addEventListener('click',e=>{ if(e.target===modal) closeDemo(); });
+    document.addEventListener('keydown',e=>{ if(e.key==='Escape' && modal.classList.contains('open')) closeDemo(); });
+  })();
+  </script>
+</body>
+</html>

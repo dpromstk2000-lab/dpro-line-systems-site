@@ -1,0 +1,306 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>DPRO美容サロンシステム｜LINE・電話・店頭の予約をひとつに</title>
+  <meta name="description" content="美容サロン向けDPROシステム。LINE予約、担当スタッフ選択、電話・店頭受付、スタッフ予約確認、PC・iPad管理を同じ予約情報につなぎます。">
+  <meta name="robots" content="index,follow">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="DPRO美容サロンシステム｜予約の入口は選べる。店舗の管理は、ひとつ。">
+  <meta property="og:description" content="LINE・電話・店頭から入る予約を同じ予約情報へ。オーナー・受付・スタッフが役割に合った画面で確認できます。">
+  <link rel="canonical" href="https://dpromstk2000-lab.github.io/dpro-line-systems-site/lp-salon.html">
+  <!-- LP_VERSION: V1.0 / MASTER_VERSION: DPRO-LP-MASTER-V1.3 -->
+  <meta name="theme-color" content="#43253d">
+  <style>
+    :root{
+      --ink:#2d2530;
+      --muted:#6e6270;
+      --line:#eadfe8;
+      --soft:#fbf7fa;
+      --soft2:#f6edf3;
+      --plum:#43253d;
+      --plum2:#6d3d62;
+      --accent:#c64988;
+      --accent2:#8557c8;
+      --white:#fff;
+      --green:#138a62;
+      --shadow:0 18px 50px rgba(52,31,49,.10);
+      --radius:24px;
+      --max:1160px;
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth;overflow-x:hidden}
+    body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Hiragino Kaku Gothic ProN","Yu Gothic",Meiryo,sans-serif;color:var(--ink);background:#fff;line-height:1.75;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+    a{color:inherit}
+    button,a{touch-action:manipulation}
+    button{font:inherit}
+    .skip{position:absolute;left:-9999px;top:auto}.skip:focus{left:16px;top:16px;z-index:9999;background:#fff;padding:12px 16px;border-radius:10px}
+    .wrap{width:min(calc(100% - 32px),var(--max));margin-inline:auto}
+    .section{padding:72px 0;position:relative}
+    .section.alt{background:var(--soft)}
+    .eyebrow{margin:0 0 10px;font-size:12px;font-weight:900;letter-spacing:.14em;color:var(--accent);text-transform:uppercase}
+    h1,h2,h3,p{margin-top:0}
+    h1{font-size:clamp(34px,8.3vw,64px);line-height:1.08;letter-spacing:-.04em;margin-bottom:18px}
+    h2{font-size:clamp(28px,6.8vw,46px);line-height:1.18;letter-spacing:-.035em;margin-bottom:16px}
+    h3{font-size:20px;line-height:1.35;margin-bottom:8px}
+    p{font-size:16px;color:var(--muted)}
+    strong.em{color:var(--accent)}
+    .lead{font-size:18px;color:#514553;max-width:700px}
+    .topbar{position:sticky;top:0;z-index:90;background:rgba(255,255,255,.92);backdrop-filter:blur(14px);border-bottom:1px solid rgba(234,223,232,.85)}
+    .topbar-inner{min-height:66px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+    .brand{display:flex;align-items:center;gap:10px;text-decoration:none;font-weight:900}
+    .brand-mark{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;background:linear-gradient(135deg,var(--plum),var(--accent));color:white;font-size:18px}
+    .brand small{display:block;color:var(--muted);font-weight:700;font-size:10px;letter-spacing:.08em}
+    .nav-cta{min-height:44px;padding:0 16px;display:inline-grid;place-items:center;border-radius:999px;background:var(--plum);color:white;text-decoration:none;font-weight:850;font-size:14px}
+    .hero{padding:58px 0 70px;background:radial-gradient(circle at 92% 12%,rgba(198,73,136,.16),transparent 34%),radial-gradient(circle at 12% 88%,rgba(133,87,200,.11),transparent 32%),linear-gradient(180deg,#fff,#fdf9fb)}
+    .hero-grid{display:grid;gap:34px;align-items:center}
+    .hero-badges{display:flex;flex-wrap:wrap;gap:8px;margin:20px 0 26px}
+    .pill{display:inline-flex;align-items:center;min-height:36px;padding:0 12px;border:1px solid var(--line);border-radius:999px;background:white;font-size:13px;font-weight:800;color:#655665}
+    .cta-row{display:flex;flex-direction:column;gap:10px;margin-top:26px}
+    .btn{min-height:50px;padding:12px 20px;border-radius:14px;border:1px solid transparent;display:inline-flex;justify-content:center;align-items:center;gap:8px;text-align:center;text-decoration:none;font-weight:900;cursor:pointer}
+    .btn.primary{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;box-shadow:0 12px 28px rgba(198,73,136,.20)}
+    .btn.secondary{background:white;border-color:var(--line);color:var(--plum)}
+    .hero-visual{border:1px solid var(--line);border-radius:30px;background:rgba(255,255,255,.8);box-shadow:var(--shadow);padding:20px;position:relative;overflow:hidden}
+    .hero-visual:before{content:"";position:absolute;inset:-70px -80px auto auto;width:210px;height:210px;border-radius:50%;background:rgba(198,73,136,.09)}
+    .connect-mini{position:relative;display:grid;gap:12px}
+    .connect-row{display:grid;grid-template-columns:1fr;gap:10px}
+    .node{border:1px solid var(--line);background:#fff;border-radius:18px;padding:16px;min-height:88px}
+    .node small{display:block;color:var(--accent);font-weight:900;font-size:11px;letter-spacing:.08em;margin-bottom:4px}
+    .node b{font-size:18px}
+    .core{background:linear-gradient(135deg,var(--plum),#6b3b62);color:#fff;border:none}
+    .core small,.core p{color:#f7dce9}
+    .arrow-down{text-align:center;font-size:24px;color:var(--accent);line-height:1}
+    .screen-access{display:grid;gap:10px;margin-top:14px}
+    .screen-link{min-height:48px;padding:12px 14px;border:1px solid rgba(255,255,255,.22);border-radius:14px;background:rgba(255,255,255,.10);color:white;text-decoration:none;font-weight:850;display:flex;align-items:center;justify-content:space-between}
+    .section-head{max-width:760px;margin-bottom:28px}
+    .pain-grid,.card-grid,.role-grid,.price-grid,.demo-grid{display:grid;gap:14px}
+    .card{border:1px solid var(--line);border-radius:20px;background:#fff;padding:20px}
+    .card .icon{width:42px;height:42px;border-radius:14px;background:var(--soft2);display:grid;place-items:center;font-weight:900;color:var(--accent);margin-bottom:14px}
+    .pain-stage{display:grid;gap:16px}
+    .work-scene{min-height:250px;border-radius:24px;padding:22px;background:linear-gradient(135deg,#4b2943,#7b456e);color:white;display:flex;flex-direction:column;justify-content:flex-end;position:relative;overflow:hidden}
+    .work-scene:before,.work-scene:after{content:"";position:absolute;border-radius:50%;background:rgba(255,255,255,.08)}
+    .work-scene:before{width:190px;height:190px;right:-50px;top:-50px}.work-scene:after{width:120px;height:120px;left:-25px;bottom:-35px}
+    .work-scene .desk{position:absolute;left:22px;right:22px;top:30px;height:100px;display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+    .work-scene .desk span{display:grid;place-items:center;border:1px solid rgba(255,255,255,.22);border-radius:18px;background:rgba(255,255,255,.08);font-weight:900;font-size:13px;text-align:center;padding:8px}
+    .work-scene h3,.work-scene p{position:relative;color:white}
+    .pain-bubbles{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .pain-bubbles .card{text-align:center;padding:16px 10px;font-weight:900}
+    .center-note{text-align:center;padding:18px;border-radius:18px;background:#fff0f6;border:1px solid #f1cee0;font-weight:900;color:#6d3d62;margin-top:12px}
+    .compare-flow{display:grid;gap:18px}
+    .compare-panel{border:1px solid var(--line);border-radius:22px;padding:20px;background:#fff}
+    .compare-panel.good{border-color:#d5eadf;background:#f7fcf9}
+    .mini-flow{display:grid;gap:10px;margin-top:14px}
+    .mini-flow div{padding:13px;border-radius:14px;background:var(--soft);font-weight:850;color:#564a57}
+    .flow-connector{display:grid;gap:18px}
+    .flow-column{display:grid;gap:10px}
+    .flow-column .node{text-align:center}
+    .flow-title{text-align:center;font-size:12px;font-weight:900;color:var(--muted);letter-spacing:.1em}
+    .core-big{text-align:center;border-radius:24px;padding:24px;background:linear-gradient(135deg,var(--plum),#734063);color:#fff;box-shadow:var(--shadow)}
+    .core-big p{color:#f6dbea;margin-bottom:0}
+    .screen-cta-list{display:grid;gap:10px;margin-top:18px}
+    .screen-cta{min-height:50px;border:1px solid var(--line);border-radius:14px;background:#fff;padding:12px 14px;display:flex;align-items:center;justify-content:space-between;gap:12px;cursor:pointer;text-align:left;text-decoration:none;color:inherit}
+    .screen-cta b{font-size:15px}.screen-cta span{color:var(--accent);font-weight:900}
+    .steps{display:grid;gap:12px;counter-reset:step}
+    .step{display:grid;grid-template-columns:44px 1fr;gap:12px;align-items:start;padding:16px;border:1px solid var(--line);border-radius:18px;background:#fff}
+    .step:before{counter-increment:step;content:counter(step,decimal-leading-zero);width:44px;height:44px;border-radius:13px;background:var(--plum);color:white;display:grid;place-items:center;font-weight:900}
+    .roles{display:grid;gap:14px}
+    .role-card{border:1px solid var(--line);border-radius:22px;padding:20px;background:#fff}
+    .role-card.featured{box-shadow:var(--shadow);border-color:#dfc8d8}
+    .role-label{display:inline-flex;align-items:center;min-height:30px;padding:0 10px;border-radius:999px;background:var(--soft2);color:var(--accent);font-size:11px;font-weight:900;letter-spacing:.08em;margin-bottom:12px}
+    .feature-list{padding-left:18px;margin:10px 0 0;color:var(--muted)}
+    .ba{display:grid;gap:12px}.ba-panel{border:1px solid var(--line);border-radius:22px;padding:20px;background:white}.ba-panel.after{background:#f7fcf9;border-color:#cde7da}.ba ul{padding-left:20px;margin-bottom:0;color:var(--muted)}
+    .big-arrow{text-align:center;font-size:32px;color:var(--accent);line-height:1}
+    .value-stack{display:grid;gap:12px}.value-item{border:1px solid var(--line);border-radius:20px;background:#fff;padding:18px;display:grid;grid-template-columns:52px 1fr;gap:14px;align-items:center}.value-icon{width:52px;height:52px;border-radius:16px;display:grid;place-items:center;background:var(--soft2);font-weight:900;color:var(--accent)}
+    .price-box{margin-top:22px;border-radius:28px;background:linear-gradient(135deg,var(--plum),#744064);color:white;padding:26px;text-align:center}.price-box p{color:#f7dcea}.price{font-size:clamp(42px,12vw,68px);line-height:1;font-weight:950;letter-spacing:-.04em;margin:6px 0}.price small{font-size:16px;font-weight:800}.price-breakdown{display:grid;gap:8px;margin-top:18px;text-align:left}.price-breakdown div{display:flex;justify-content:space-between;gap:16px;padding:10px 0;border-top:1px solid rgba(255,255,255,.16);font-size:14px}.fine{font-size:13px!important;color:var(--muted)}
+    .demo-card{border:1px solid var(--line);border-radius:22px;background:#fff;padding:18px;display:flex;flex-direction:column;gap:12px}.demo-card .device{min-height:150px;border-radius:18px;background:linear-gradient(135deg,#f6edf3,#fbf8fa);border:1px dashed #d8bfd0;display:grid;place-items:center;text-align:center;padding:18px;color:#735c6d}.demo-card .device b{display:block;color:var(--plum);font-size:20px;margin-bottom:6px}.demo-actions{display:grid;gap:8px;margin-top:auto}.demo-actions .btn{width:100%;min-height:46px}.demo-note{font-size:12px;color:var(--muted);margin:0}
+    .cta-final{border-radius:30px;background:linear-gradient(135deg,#3f243a,#71405f);padding:32px 22px;color:white;text-align:center}.cta-final h2,.cta-final p{color:white}.cta-final p{opacity:.82;max-width:650px;margin-inline:auto}.cta-final .cta-row{max-width:540px;margin-inline:auto;margin-top:24px}.cta-final .btn.secondary{background:transparent;border-color:rgba(255,255,255,.35);color:white}
+    footer{padding:32px 0 84px;border-top:1px solid var(--line);background:#fff}footer p{font-size:13px;margin-bottom:0}
+    .modal[hidden]{display:none}.modal{position:fixed;inset:0;z-index:3000;padding:10px;display:grid;place-items:center}.modal-backdrop{position:absolute;inset:0;background:rgba(20,12,18,.78);backdrop-filter:blur(8px)}.modal-dialog{position:relative;width:min(1120px,100%);height:min(820px,calc(100vh - 20px));border-radius:22px;background:#fff;overflow:hidden;display:grid;grid-template-rows:auto 1fr;box-shadow:0 35px 100px rgba(0,0,0,.38)}.modal-head{min-height:62px;padding:10px 12px 10px 18px;background:var(--plum);color:white;display:flex;align-items:center;justify-content:space-between;gap:12px}.modal-head strong{font-size:14px}.modal-actions{display:flex;gap:8px;align-items:center}.modal-actions a,.modal-close{min-height:44px;border:1px solid rgba(255,255,255,.22);border-radius:999px;background:rgba(255,255,255,.08);color:#fff;padding:0 14px;display:inline-grid;place-items:center;text-decoration:none;font-weight:850;cursor:pointer}.modal-close{width:44px;padding:0;font-size:22px}.modal-body{min-height:0;background:#fff}.modal-body iframe{display:block;width:100%;height:100%;border:0;background:#fff}.no-js{padding:12px 16px;background:#fff5ea;border:1px solid #f2dfc9;border-radius:14px;color:#725b45;margin-top:12px}
+    .mobile-fixed{position:fixed;left:10px;right:10px;bottom:10px;z-index:80;display:grid;grid-template-columns:1fr 1fr;gap:8px}.mobile-fixed a{min-height:48px;border-radius:14px;display:grid;place-items:center;text-decoration:none;font-weight:900;box-shadow:0 8px 24px rgba(38,23,35,.18)}.mobile-fixed .demo{background:#fff;border:1px solid var(--line);color:var(--plum)}.mobile-fixed .line{background:#06c755;color:#fff}
+    @media(min-width:900px){.hero h1{font-size:52px}}
+    @media(min-width:700px){
+      .wrap{width:min(calc(100% - 56px),var(--max))}.section{padding:92px 0}.cta-row{flex-direction:row}.btn{min-width:190px}.hero-grid{grid-template-columns:minmax(0,1fr) minmax(420px,.88fr);gap:48px}.connect-row{grid-template-columns:repeat(3,1fr)}.pain-stage{grid-template-columns:1.05fr .95fr}.pain-bubbles{grid-template-columns:repeat(2,1fr)}.compare-flow{grid-template-columns:1fr 1fr}.flow-connector{grid-template-columns:1fr 70px 1.2fr 70px 1fr;align-items:center}.flow-arrow{font-size:34px;color:var(--accent);text-align:center}.card-grid{grid-template-columns:repeat(2,1fr)}.roles{grid-template-columns:1.25fr .9fr .9fr}.ba{grid-template-columns:1fr 70px 1fr;align-items:center}.value-stack{grid-template-columns:repeat(3,1fr)}.value-item{grid-template-columns:1fr;text-align:center}.value-icon{margin-inline:auto}.price-breakdown{max-width:600px;margin-inline:auto;margin-top:18px}.demo-grid{grid-template-columns:repeat(2,1fr)}.mobile-fixed{display:none}.cta-final{padding:54px}.cta-final .cta-row{justify-content:center}.screen-cta-list{grid-template-columns:repeat(2,1fr)}
+    }
+    @media(min-width:1050px){.demo-grid{grid-template-columns:repeat(4,1fr)}.card-grid{grid-template-columns:repeat(4,1fr)}.pain-bubbles{grid-template-columns:repeat(4,1fr)}}
+    @media(max-width:420px){.wrap{width:min(calc(100% - 28px),var(--max))}.section{padding:62px 0}.hero{padding-top:42px}.topbar .brand small{display:none}.nav-cta{padding:0 12px;font-size:13px}.modal-actions a{display:none}.modal-head{padding-left:14px}.price-box{padding:24px 18px}.price-breakdown div{font-size:13px}}
+    @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+  </style>
+</head>
+<body>
+<a class="skip" href="#main">本文へ移動</a>
+<header class="topbar">
+  <div class="wrap topbar-inner">
+    <a class="brand" href="#p1" aria-label="DPRO美容サロンシステム トップへ"><span class="brand-mark">D</span><span>DPRO SALON<small>美容サロン予約・店舗管理</small></span></a>
+    <a class="nav-cta" href="https://lin.ee/YxJGXV6D" target="_blank" rel="noopener">LINEで相談</a>
+  </div>
+</header>
+<main id="main">
+  <section id="p1" class="hero" data-page="P1">
+    <div class="wrap hero-grid">
+      <div>
+        <p class="eyebrow">P1 / FIRST VIEW</p>
+        <h1>予約の入口は選べる。<br><strong class="em">店舗の管理は、ひとつ。</strong></h1>
+        <p class="lead">LINEからの予約も、電話・店頭で受けた予約も、同じ予約情報へ。お客様・受付・スタッフ・オーナーをつなぐ、美容サロンのための予約・店舗管理システムです。</p>
+        <div class="hero-badges"><span class="pill">LINE予約</span><span class="pill">担当スタッフ選択</span><span class="pill">電話・店頭受付</span><span class="pill">スタッフ確認</span><span class="pill">PC・iPad管理</span></div>
+        <div class="cta-row"><button class="btn primary" type="button" data-demo-url="https://dpromstk2000-lab.github.io/liff-salon-reserve/?embed_demo=1" data-demo-title="お客様用LINE予約画面">実際の画面を見る</button><a class="btn secondary" href="https://lin.ee/YxJGXV6D" target="_blank" rel="noopener">LINEで導入相談</a></div>
+      </div>
+      <div class="hero-visual" aria-label="予約入口と店舗管理の接続イメージ">
+        <div class="connect-mini">
+          <div class="connect-row"><div class="node"><small>LINE</small><b>お客様が予約</b></div><div class="node"><small>PHONE</small><b>店舗が電話受付</b></div><div class="node"><small>STORE</small><b>店舗が店頭受付</b></div></div>
+          <div class="arrow-down">↓</div>
+          <div class="node core"><small>DPRO SALON</small><b>同じ予約情報へ</b><p>担当・日時・お客様情報・備考</p><div class="screen-access"><a class="screen-link" href="https://dpro-shop.com/systems/salon#demo" target="_blank" rel="noopener"><span>PCオーナー画面</span><span>公式画面 ↗</span></a><a class="screen-link" href="https://dpro-shop.com/systems/salon#demo" target="_blank" rel="noopener"><span>現場iPad画面</span><span>公式画面 ↗</span></a></div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="p2" class="section" data-page="P2">
+    <div class="wrap">
+      <div class="section-head"><p class="eyebrow">P2 / OWNER PAIN</p><h2>予約は取れている。<br>でも、<strong class="em">確認する場所がバラバラ。</strong></h2><p class="lead">美容サロンでは、LINE・電話・店頭・スタッフ予定など、予約の入口と確認方法が分かれやすくなります。</p></div>
+      <div class="pain-stage">
+        <div class="work-scene" role="img" aria-label="美容サロンの受付業務を表す抽象イメージ"><div class="desk"><span>LINE<br>予約</span><span>電話<br>受付</span><span>店頭<br>受付</span></div><h3>受付方法が増えるほど、確認先も増えやすい。</h3><p>今ある受付方法を残したまま、店舗側の確認をどう整理するかがポイントです。</p></div>
+        <div><div class="pain-bubbles"><div class="card">LINE</div><div class="card">電話</div><div class="card">店頭</div><div class="card">スタッフ予定</div></div><div class="center-note">「どこを見れば最新？」が起きやすい状態</div></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="p3" class="section alt" data-page="P3">
+    <div class="wrap">
+      <div class="section-head"><p class="eyebrow">P3 / WHY PROBLEM</p><h2>入口だけ増えても、<br><strong class="em">店舗管理は一つにならない。</strong></h2><p>LINE予約を追加しても、電話・店頭予約が別の記録に残れば、店舗側には確認と転記が残ります。</p></div>
+      <div class="compare-flow">
+        <div class="compare-panel"><h3>入口だけ追加した場合</h3><div class="mini-flow"><div>LINE予約 → LINE側で確認</div><div>電話予約 → 紙・別記録</div><div>店頭予約 → 別メモ</div><div>スタッフ予定 → 口頭・別表</div></div><div class="center-note">受付方法ごとに確認が分かれる</div></div>
+        <div class="compare-panel good"><h3>DPROの考え方</h3><div class="mini-flow"><div>LINE予約</div><div>電話・店頭予約</div><div>↓ 同じ予約情報へ</div><div>PC・iPad・スタッフ画面で役割別に確認</div></div><div class="center-note">入口を無理に一つにせず、確認先を整理</div></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="p4" class="section" data-page="P4">
+    <div class="wrap">
+      <div class="section-head"><p class="eyebrow">P4 / CONNECTED SYSTEM</p><h2>LINE・電話・店頭から、<br><strong class="em">店舗運用までつなぐ。</strong></h2><p>受付経路が違っても、予約内容は同じ予約情報として扱い、オーナー・受付・スタッフが必要な画面で確認します。</p></div>
+      <div class="flow-connector">
+        <div class="flow-column"><div class="flow-title">ENTRY / 入口</div><div class="node"><small>CUSTOMER</small><b>LINE予約</b></div><div class="node"><small>STAFF</small><b>電話受付</b></div><div class="node"><small>STAFF</small><b>店頭受付</b></div></div>
+        <div class="flow-arrow" aria-hidden="true">→</div>
+        <div class="core-big"><p class="eyebrow" style="color:#f8dcea">DPRO SALON</p><h3 style="font-size:28px">共通の予約情報</h3><p>予約・担当スタッフ・日時・お客様情報</p></div>
+        <div class="flow-arrow" aria-hidden="true">→</div>
+        <div class="flow-column"><div class="flow-title">STORE / 店舗運用</div><div class="node"><small>OWNER</small><b>PC管理</b></div><div class="node"><small>RECEPTION</small><b>iPad確認</b></div><div class="node"><small>STAFF</small><b>担当予約確認</b></div></div>
+      </div>
+      <div class="screen-cta-list"><button class="screen-cta" type="button" data-demo-url="https://dpromstk2000-lab.github.io/liff-salon-reserve/?embed_demo=1" data-demo-title="お客様用LINE予約画面"><b>お客様用LINE予約</b><span>実画面を見る</span></button><a class="screen-cta" href="https://dpro-shop.com/systems/salon#demo" target="_blank" rel="noopener"><b>PCオーナー管理</b><span>公式画面を見る</span></a><a class="screen-cta" href="https://dpro-shop.com/systems/salon#demo" target="_blank" rel="noopener"><b>現場用iPad管理</b><span>公式画面を見る</span></a><button class="screen-cta" type="button" data-demo-url="https://dpromstk2000-lab.github.io/liff-salon-reserve/staff.html?embed_demo=1" data-demo-title="スタッフ予約確認画面"><b>スタッフ予約確認</b><span>実画面を見る</span></button></div>
+    </div>
+  </section>
+
+  <section id="p5" class="section alt" data-page="P5">
+    <div class="wrap">
+      <div class="section-head"><p class="eyebrow">P5 / CUSTOMER EXPERIENCE</p><h2>お客様は、<br><strong class="em">スマホから必要な内容を順番に。</strong></h2><p>お客様自身が予約画面から担当スタッフ・希望日・空き時間・備考などを選び、予約内容を確認して送信します。</p></div>
+      <div class="compare-flow">
+        <div class="compare-panel good"><p class="eyebrow">REAL SCREEN ACCESS</p><h3>お客様用LINE予約画面</h3><p>架空の画面イメージではなく、現在採用している実画面をそのまま確認できます。</p><button class="btn primary" type="button" data-demo-url="https://dpromstk2000-lab.github.io/liff-salon-reserve/?embed_demo=1" data-demo-title="お客様用LINE予約画面">実画面を開く</button></div>
+        <div class="steps"><div class="step"><div><h3>担当スタッフを選ぶ</h3><p>スタッフ指名、またはお任せを選択。</p></div></div><div class="step"><div><h3>希望日を選ぶ</h3><p>定休日・臨時休業を確認して希望日を選択。</p></div></div><div class="step"><div><h3>空き時間を選ぶ</h3><p>表示された空き時間から予約時刻を選択。</p></div></div><div class="step"><div><h3>備考を入力して予約</h3><p>希望や相談内容を入力し、予約内容を確認して送信。</p></div></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="p6" class="section" data-page="P6">
+    <div class="wrap">
+      <div class="section-head"><p class="eyebrow">P6 / OWNER & STAFF EXPERIENCE</p><h2>使う人ごとに、<br><strong class="em">必要な画面で確認。</strong></h2><p>店舗全体を見るオーナー、受付で使うスタッフ、施術担当者。それぞれの役割に合わせた画面を用意します。</p></div>
+      <div class="roles">
+        <article class="role-card featured"><span class="role-label">OWNER / PC</span><h3>店舗全体をまとめて管理</h3><p>今日・次営業日・今後の予約、電話・店頭予約、今日やること、LINE連絡文面をPCで確認・操作します。</p><ul class="feature-list"><li>予約一覧・予約数の確認</li><li>電話・店頭予約の追加</li><li>LINE文面の作成・コピー</li></ul><a class="btn primary" href="https://dpro-shop.com/systems/salon#demo" target="_blank" rel="noopener">PC公式画面を見る</a></article>
+        <article class="role-card"><span class="role-label">RECEPTION / iPad</span><h3>受付・現場で確認</h3><p>今日・明日・次営業日の予約を確認し、電話・店頭予約の追加やLINE文面コピーにも対応します。</p><a class="btn secondary" href="https://dpro-shop.com/systems/salon#demo" target="_blank" rel="noopener">iPad公式画面を見る</a></article>
+        <article class="role-card"><span class="role-label">STAFF / WEB</span><h3>担当予約を確認</h3><p>スタッフが次の予約、本日の予約、担当者別・日付別の予定を確認します。</p><button class="btn secondary" type="button" data-demo-url="https://dpromstk2000-lab.github.io/liff-salon-reserve/staff.html?embed_demo=1" data-demo-title="スタッフ予約確認画面">スタッフ実画面を見る</button></article>
+      </div>
+    </div>
+  </section>
+
+  <section id="p7" class="section alt" data-page="P7">
+    <div class="wrap">
+      <div class="section-head"><p class="eyebrow">P7 / BEFORE & AFTER</p><h2>予約方法を増やすのではなく、<br><strong class="em">店舗側の確認先を減らす。</strong></h2><p>今ある受付方法を残しながら、確認する予約情報をまとめる考え方です。</p></div>
+      <div class="ba">
+        <div class="ba-panel"><p class="eyebrow">BEFORE</p><h3>予約経路ごとに確認場所が分かれる</h3><ul><li>LINEの内容を別に確認</li><li>電話・店頭予約を別記録</li><li>スタッフ予定を別に共有</li><li>更新先が複数になる</li></ul></div>
+        <div class="big-arrow" aria-hidden="true">↓</div>
+        <div class="ba-panel after"><p class="eyebrow" style="color:var(--green)">AFTER</p><h3>同じ予約情報を役割別画面で確認</h3><ul><li>お客様はLINEから予約</li><li>電話・店頭予約も同じ情報へ追加</li><li>スタッフは担当予約を確認</li><li>オーナーはPC、受付はiPadで共有</li></ul></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="p8" class="section" data-page="P8">
+    <div class="wrap">
+      <div class="section-head"><p class="eyebrow">P8 / PRICE & VALUE</p><h2>ホームページ・LINE公式・DPROを、<br><strong class="em">まとめて運用。</strong></h2><p>価格を先に見るのではなく、お客様の入口から店舗運用までをまとめられる価値からご検討ください。</p></div>
+      <div class="value-stack"><div class="value-item"><div class="value-icon">WEB</div><div><h3>ホームページ</h3><p>検索・店舗情報の入口。LINE運用契約店舗向け基本保守を月額1,100円で追加できます。</p></div></div><div class="value-item"><div class="value-icon">LINE</div><div><h3>LINE公式</h3><p>お客様との相談・案内・予約入口を整え、月額運用サポートで活用を続けます。</p></div></div><div class="value-item"><div class="value-icon">D</div><div><h3>DPRO SALON</h3><p>LINE構築・運用契約店舗向け追加サービス。予約・受付・店舗管理を業務につなぎます。</p></div></div></div>
+      <div class="price-box"><p>3つの基本運用・基本保守をまとめて</p><div class="price"><small>月額合計</small><br>5,500円 <small>（税込）</small></div><div class="price-breakdown"><div><span>LINE運用サポート</span><b>3,300円</b></div><div><span>HP基本保守（LINE運用契約店舗）</span><b>1,100円</b></div><div><span>DPRO利用・基本保守</span><b>1,100円</b></div></div></div>
+      <p class="fine" style="margin-top:16px">DPROシステムは単体販売ではなく、LINE公式アカウント構築・運用契約店舗向けの追加サービスです。DPRO構築費33,000円（税込）。LINE構築費、ホームページ制作費などの初期制作費は別途です。</p>
+    </div>
+  </section>
+
+  <section id="p9" class="section alt" data-page="P9">
+    <div class="wrap">
+      <div class="section-head"><p class="eyebrow">P9 / DEMO</p><h2>説明だけではなく、<br><strong class="em">実際の画面で確認。</strong></h2><p>お客様・スタッフ画面は操作デモで、オーナーPC・iPadは公式画面案内で現在の構成を確認できます。</p></div>
+      <div class="demo-grid">
+        <article class="demo-card"><div class="device"><div><b>01 CUSTOMER</b>お客様用LINE予約</div></div><p>担当スタッフ・希望日・空き時間・備考を入力し、予約内容を確認します。</p><div class="demo-actions"><button class="btn primary" type="button" data-demo-url="https://dpromstk2000-lab.github.io/liff-salon-reserve/?embed_demo=1" data-demo-title="お客様用LINE予約画面">実画面を開く</button><a class="btn secondary" href="https://dpromstk2000-lab.github.io/liff-salon-reserve/?embed_demo=1" target="_blank" rel="noopener">別タブで開く</a></div></article>
+        <article class="demo-card"><div class="device"><div><b>02 OWNER</b>PCオーナー管理</div></div><p>予約集計、電話・店頭予約、今日やること、LINE連絡文面を確認します。</p><div class="demo-actions"><a class="btn primary" href="https://dpro-shop.com/systems/salon#demo" target="_blank" rel="noopener">公式画面を確認</a></div></article>
+        <article class="demo-card"><div class="device"><div><b>03 RECEPTION</b>現場用iPad管理</div></div><p>今日・明日・次営業日の予約を受付・現場で確認し、電話・店頭予約の追加に使います。</p><div class="demo-actions"><a class="btn primary" href="https://dpro-shop.com/systems/salon#demo" target="_blank" rel="noopener">公式画面を確認</a></div></article>
+        <article class="demo-card"><div class="device"><div><b>04 STAFF</b>スタッフ予約確認</div></div><p>スタッフが次の予約、本日の予約、担当者別・日付別の予定を確認します。</p><div class="demo-actions"><button class="btn primary" type="button" data-demo-url="https://dpromstk2000-lab.github.io/liff-salon-reserve/staff.html?embed_demo=1" data-demo-title="スタッフ予約確認画面">実画面を開く</button><a class="btn secondary" href="https://dpromstk2000-lab.github.io/liff-salon-reserve/staff.html?embed_demo=1" target="_blank" rel="noopener">別タブで開く</a></div></article>
+      </div>
+      <p class="demo-note" style="margin-top:16px">公開DEMOは操作体験用です。本番導入時は店舗ごとの運用内容を確認して構成します。</p>
+    </div>
+  </section>
+
+  <section id="p10" class="section" data-page="P10">
+    <div class="wrap">
+      <div class="cta-final"><p class="eyebrow" style="color:#f6cadf">P10 / CONSULT & CTA</p><h2>今の予約方法と比べながら、<br>実際の画面を確認しませんか。</h2><p>LINE予約を始めたい。電話予約も残したい。スタッフ確認も分かりやすくしたい。今の店舗に合う使い方から整理します。</p><div class="cta-row"><a class="btn primary" href="https://lin.ee/YxJGXV6D" target="_blank" rel="noopener">LINEで無料相談</a><button class="btn secondary" type="button" data-demo-url="https://dpromstk2000-lab.github.io/liff-salon-reserve/?embed_demo=1" data-demo-title="お客様用LINE予約画面">DEMOを確認</button></div></div>
+    </div>
+  </section>
+</main>
+<footer><div class="wrap"><p><strong>DPRO美容サロンシステム</strong><br>LINE・電話・店頭の予約を同じ予約情報につなぎ、店舗内で役割別に確認する美容サロン向けシステムです。</p></div></footer>
+
+<div class="mobile-fixed" aria-label="固定アクション"><button class="demo" type="button" data-demo-url="https://dpromstk2000-lab.github.io/liff-salon-reserve/?embed_demo=1" data-demo-title="お客様用LINE予約画面">DEMOを見る</button><a class="line" href="https://lin.ee/YxJGXV6D" target="_blank" rel="noopener">LINEで相談</a></div>
+
+<div class="modal" id="demo-modal" hidden aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="demo-modal-title">
+  <div class="modal-backdrop" data-modal-close></div>
+  <div class="modal-dialog">
+    <div class="modal-head"><strong id="demo-modal-title">DPRO SALON 実画面</strong><div class="modal-actions"><a id="demo-external" href="#" target="_blank" rel="noopener">別タブで開く</a><button class="modal-close" type="button" aria-label="閉じる" data-modal-close>×</button></div></div>
+    <div class="modal-body" id="demo-frame-holder"></div>
+  </div>
+</div>
+<noscript><div class="wrap no-js">JavaScriptが無効でも本文・料金・相談リンクは確認できます。DEMOはP9の「別タブで開く」からご覧ください。</div></noscript>
+<script>
+(() => {
+  'use strict';
+  const modal = document.getElementById('demo-modal');
+  const holder = document.getElementById('demo-frame-holder');
+  const title = document.getElementById('demo-modal-title');
+  const external = document.getElementById('demo-external');
+  let lastFocus = null;
+
+  const closeModal = () => {
+    if (modal.hidden) return;
+    holder.replaceChildren();
+    modal.hidden = true;
+    modal.setAttribute('aria-hidden','true');
+    document.body.style.overflow = '';
+    if (lastFocus && typeof lastFocus.focus === 'function') lastFocus.focus();
+  };
+
+  const openModal = (button) => {
+    const url = button.dataset.demoUrl;
+    if (!url) return;
+    lastFocus = document.activeElement;
+    title.textContent = button.dataset.demoTitle || 'DPRO SALON 実画面';
+    external.href = url;
+    const frame = document.createElement('iframe');
+    frame.src = url;
+    frame.title = title.textContent;
+    frame.loading = 'eager';
+    frame.referrerPolicy = 'strict-origin-when-cross-origin';
+    holder.replaceChildren(frame);
+    modal.hidden = false;
+    modal.setAttribute('aria-hidden','false');
+    document.body.style.overflow = 'hidden';
+    requestAnimationFrame(() => modal.querySelector('.modal-close').focus());
+  };
+
+  document.querySelectorAll('[data-demo-url]').forEach(btn => btn.addEventListener('click', () => openModal(btn)));
+  document.querySelectorAll('[data-modal-close]').forEach(btn => btn.addEventListener('click', closeModal));
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+})();
+</script>
+</body>
+</html>

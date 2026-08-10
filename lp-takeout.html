@@ -1,0 +1,476 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="DPROテイクアウト・モバイルオーダーシステム。写真付き商品選択、LINE・電話・店頭の受付、30分受取枠、厨房進行、マイページ、再注文までをひとつにつなぎます。">
+  <meta property="og:title" content="DPROテイクアウト・モバイルオーダーシステム｜注文から次の注文まで、ひとつにつなぐ">
+  <meta property="og:description" content="写真付き商品選択から、LINE・電話・店頭受付、厨房進行、マイページ、再注文まで。テイクアウト業務をひとつの流れへ。">
+  <meta property="og:type" content="website">
+  <meta name="robots" content="index,follow">
+  <title>DPROテイクアウト・モバイルオーダーシステム｜DPRO SHOP</title>
+  <link rel="canonical" href="https://dpromstk2000-lab.github.io/dpro-line-systems-site/lp-takeout.html">
+  <!-- LP_VERSION: V1.0 / MASTER_VERSION: DPRO-LP-MASTER-V1.3 -->
+  <style>
+    :root{
+      --bg:#fffaf5;
+      --paper:#ffffff;
+      --cream:#fff2e8;
+      --cream-2:#f8e4d4;
+      --ink:#2d221d;
+      --sub:#6d615b;
+      --line:#ead9cc;
+      --accent:#e85b2a;
+      --accent-dark:#b63d18;
+      --accent-soft:#fff0e8;
+      --green:#287a57;
+      --green-soft:#eaf6ef;
+      --blue:#2f6785;
+      --blue-soft:#edf6fa;
+      --gold:#a36b1f;
+      --shadow:0 16px 44px rgba(75,48,31,.10);
+      --radius:24px;
+      --radius-sm:16px;
+      --max:1120px;
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth;overflow-x:hidden}
+    body{margin:0;min-width:320px;color:var(--ink);background:linear-gradient(180deg,#fffdfb 0%,var(--bg) 45%,#fff 100%);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans JP","Yu Gothic",Meiryo,sans-serif;font-size:16px;line-height:1.75;overflow-x:hidden}
+    a{color:inherit}
+    button,input,select,textarea{font:inherit}
+    button,a{-webkit-tap-highlight-color:transparent}
+    button{cursor:pointer}
+    img,svg,iframe{max-width:100%}
+    .shell{width:min(var(--max),calc(100% - 32px));margin:0 auto}
+    .section{padding:76px 0;position:relative;overflow:hidden}
+    .section.alt{background:#fff}
+    .section.soft{background:linear-gradient(180deg,#fff8f2,#fffdfb)}
+    .eyebrow{margin:0 0 10px;color:var(--accent-dark);font-size:13px;font-weight:900;letter-spacing:.12em;text-transform:uppercase}
+    .title{margin:0;font-size:clamp(30px,5vw,52px);line-height:1.22;letter-spacing:-.035em}
+    .title.small{font-size:clamp(28px,4.2vw,44px)}
+    .lead{max-width:760px;margin:18px 0 0;color:var(--sub);font-size:clamp(17px,2vw,20px);font-weight:650;line-height:1.85}
+    .section-head{max-width:840px;margin-bottom:34px}
+    .accent{color:var(--accent-dark)}
+    .tag-row{display:flex;flex-wrap:wrap;gap:9px;margin-top:20px}
+    .tag{display:inline-flex;min-height:36px;align-items:center;padding:7px 12px;border:1px solid var(--line);border-radius:999px;background:#fff;color:#514640;font-size:13px;font-weight:800}
+    .btn-row{display:flex;flex-wrap:wrap;gap:12px;margin-top:28px}
+    .btn{display:inline-flex;min-height:50px;align-items:center;justify-content:center;gap:8px;padding:13px 20px;border:1px solid transparent;border-radius:14px;text-decoration:none;font-weight:900;line-height:1.3;transition:transform .18s ease,box-shadow .18s ease,background .18s ease}
+    .btn:hover{transform:translateY(-1px)}
+    .btn.primary{color:#fff;background:linear-gradient(135deg,var(--accent),var(--accent-dark));box-shadow:0 10px 24px rgba(232,91,42,.24)}
+    .btn.secondary{color:var(--accent-dark);background:#fff;border-color:#e9bca8}
+    .btn.line{color:#0b5c33;background:#e7f7ec;border-color:#bfe7cc}
+    .btn.full{width:100%}
+    .card{border:1px solid var(--line);border-radius:var(--radius);background:rgba(255,255,255,.98);box-shadow:var(--shadow)}
+    .card-pad{padding:24px}
+    .grid-2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
+    .grid-3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+    .grid-4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+
+    /* Header */
+    .header{position:sticky;top:0;z-index:50;border-bottom:1px solid rgba(234,217,204,.85);background:rgba(255,253,250,.92);backdrop-filter:blur(14px)}
+    .header-inner{display:flex;min-height:68px;align-items:center;justify-content:space-between;gap:14px}
+    .brand{display:flex;min-width:0;align-items:center;gap:11px;text-decoration:none}
+    .brand-mark{display:grid;width:40px;height:40px;flex:0 0 auto;place-items:center;border-radius:13px;color:#fff;background:linear-gradient(145deg,#4f3326,#2d211c);font-size:13px;font-weight:950;box-shadow:0 8px 20px rgba(45,33,28,.18)}
+    .brand-text{min-width:0}
+    .brand-text strong{display:block;font-size:15px;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .brand-text small{display:block;margin-top:2px;color:var(--sub);font-size:11px}
+    .header-cta{min-height:44px;padding:10px 14px;border-radius:12px;color:#fff;background:var(--accent);font-size:13px;font-weight:900;text-decoration:none}
+
+    /* P1 */
+    .hero{padding:54px 0 66px;background:radial-gradient(circle at 90% 0%,rgba(232,91,42,.17),transparent 31rem),linear-gradient(180deg,#fff9f4,#fffdfb)}
+    .hero-grid{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(360px,.9fr);gap:30px;align-items:center}
+    .hero-copy .title{font-size:clamp(36px,5.4vw,62px)}
+    .hero-copy .lead{max-width:680px}
+    .hero-visual{display:grid;gap:14px}
+    .real-screen-card{position:relative;overflow:hidden;padding:24px;border:1px solid #e7c8b6;border-radius:28px;background:linear-gradient(145deg,#fff,#fff5ed);box-shadow:var(--shadow)}
+    .real-screen-card.dark{color:#fff;border-color:#3f312a;background:linear-gradient(145deg,#3f2b22,#241a16)}
+    .screen-kicker{display:flex;align-items:center;justify-content:space-between;gap:12px;color:var(--accent-dark);font-size:12px;font-weight:950;letter-spacing:.08em}
+    .dark .screen-kicker{color:#ffbd9f}
+    .live-dot{display:inline-flex;align-items:center;gap:7px}
+    .live-dot::before{content:"";width:9px;height:9px;border-radius:50%;background:#2ea568;box-shadow:0 0 0 5px rgba(46,165,104,.12)}
+    .screen-card-title{margin:16px 0 6px;font-size:24px;line-height:1.35}
+    .screen-card-text{margin:0;color:var(--sub);font-size:14px}
+    .dark .screen-card-text{color:#ded2cc}
+    .screen-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px}
+    .screen-link{min-height:44px;padding:10px 13px;border:1px solid #e6bda9;border-radius:12px;color:var(--accent-dark);background:#fff;font-weight:900}
+    .dark .screen-link{color:#fff;background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.25)}
+    .hero-flow{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:22px}
+    .hero-flow span{display:grid;min-height:54px;place-items:center;padding:9px;border:1px solid var(--line);border-radius:13px;background:#fff;font-size:12px;font-weight:900;text-align:center}
+
+    /* Pain / why */
+    .pain-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+    .pain-card{padding:22px;border:1px solid var(--line);border-radius:20px;background:#fff}
+    .pain-icon{display:grid;width:44px;height:44px;place-items:center;border-radius:14px;background:var(--accent-soft);font-size:22px}
+    .pain-card h3{margin:13px 0 6px;font-size:19px}
+    .pain-card p{margin:0;color:var(--sub);font-size:14px}
+    .pain-down{display:grid;place-items:center;margin:18px 0 4px;color:var(--accent-dark);font-size:28px;font-weight:950}
+    .pain-result{padding:24px;border:1px solid #efc8b7;border-radius:22px;background:#fff0e8;text-align:center}
+    .pain-result strong{display:block;font-size:clamp(22px,3vw,30px)}
+    .pain-result span{display:block;margin-top:6px;color:#755144}
+    .scope-compare{display:grid;grid-template-columns:.8fr 1.2fr;gap:20px;align-items:stretch}
+    .scope-box{padding:26px;border:1px solid var(--line);border-radius:24px;background:#fff}
+    .scope-box.dim{background:#f7f4f1}
+    .scope-box.emphasis{border-color:#e5a486;background:linear-gradient(180deg,#fff7f1,#fff)}
+    .scope-box h3{margin:0 0 16px;font-size:23px}
+    .scope-list{display:grid;gap:10px}
+    .scope-item{display:flex;align-items:center;gap:10px;padding:12px 13px;border-radius:14px;background:#fff;border:1px solid var(--line);font-weight:850}
+    .scope-item b{display:grid;width:28px;height:28px;place-items:center;border-radius:9px;background:var(--accent-soft);color:var(--accent-dark)}
+
+    /* Connected */
+    .connected{display:grid;grid-template-columns:1fr auto 1.15fr auto 1fr;gap:14px;align-items:center}
+    .connect-group{display:grid;gap:10px}
+    .connect-card{padding:16px;border:1px solid var(--line);border-radius:18px;background:#fff;text-align:center}
+    .connect-card strong{display:block;font-size:17px}
+    .connect-card span{display:block;margin-top:4px;color:var(--sub);font-size:12px}
+    .connect-core{padding:28px 20px;border-radius:26px;color:#fff;background:linear-gradient(145deg,#4a3025,#251a16);box-shadow:var(--shadow);text-align:center}
+    .connect-core small{color:#f3b89e;font-weight:900;letter-spacing:.08em}
+    .connect-core strong{display:block;margin-top:7px;font-size:25px}
+    .connect-arrow{color:var(--accent-dark);font-size:30px;font-weight:950}
+    .connect-foot{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:18px}
+
+    /* Experiences */
+    .experience-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
+    .exp-card{display:flex;flex-direction:column;padding:25px}
+    .exp-number{color:var(--accent-dark);font-size:12px;font-weight:950;letter-spacing:.11em}
+    .exp-card h3{margin:8px 0 10px;font-size:24px}
+    .exp-card p{margin:0;color:var(--sub)}
+    .check-list{display:grid;gap:9px;margin:18px 0 0;padding:0;list-style:none}
+    .check-list li{display:flex;gap:9px;align-items:flex-start}
+    .check-list li::before{content:"✓";display:grid;width:23px;height:23px;flex:0 0 auto;place-items:center;border-radius:999px;color:var(--green);background:var(--green-soft);font-size:12px;font-weight:950;margin-top:2px}
+    .condition{margin-top:18px;padding:13px 14px;border-left:4px solid #d3912f;border-radius:10px;background:#fff8e8;color:#6f552b;font-size:13px}
+    .real-cta{margin-top:auto;padding-top:20px}
+
+    /* Before after */
+    .ba-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+    .ba-card{overflow:hidden;border:1px solid var(--line);border-radius:22px;background:#fff;box-shadow:0 10px 30px rgba(75,48,31,.06)}
+    .ba-before,.ba-after{padding:21px}
+    .ba-before{background:#f5f1ee}
+    .ba-after{background:#eff8f3}
+    .ba-label{font-size:11px;font-weight:950;letter-spacing:.12em}
+    .ba-before .ba-label{color:#7c6e66}
+    .ba-after .ba-label{color:var(--green)}
+    .ba-text{margin:7px 0 0;font-weight:850;line-height:1.55}
+    .ba-arrow{display:grid;height:40px;place-items:center;color:var(--accent-dark);font-weight:950}
+
+    /* Price */
+    .value-flow{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+    .value-card{padding:23px;border:1px solid var(--line);border-radius:20px;background:#fff;text-align:center}
+    .value-card .symbol{display:grid;width:48px;height:48px;margin:0 auto 12px;place-items:center;border-radius:15px;background:var(--accent-soft);font-size:23px}
+    .value-card strong{display:block;font-size:20px}
+    .value-card span{display:block;margin-top:6px;color:var(--sub);font-size:13px}
+    .plus-line{display:flex;align-items:center;justify-content:center;gap:10px;margin:18px 0;color:var(--accent-dark);font-size:20px;font-weight:950}
+    .price-box{padding:30px;border:1px solid #e8b59d;border-radius:26px;background:linear-gradient(145deg,#fff1e8,#fff);text-align:center;box-shadow:var(--shadow)}
+    .price-box .caption{color:#6b4d40;font-size:15px;font-weight:850}
+    .price{margin:5px 0 0;color:var(--accent-dark);font-size:clamp(42px,8vw,72px);font-weight:950;line-height:1.1;letter-spacing:-.04em}
+    .price small{font-size:.34em;letter-spacing:0}
+    .price-note{max-width:760px;margin:16px auto 0;color:var(--sub);font-size:13px}
+    .price-breakdown{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-top:16px}
+    .price-breakdown span{padding:7px 10px;border-radius:999px;background:#fff;border:1px solid var(--line);font-size:12px;font-weight:850}
+
+    /* Demo */
+    .demo-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+    .demo-card{display:flex;min-height:230px;flex-direction:column;padding:24px;border:1px solid var(--line);border-radius:22px;background:#fff;box-shadow:0 10px 30px rgba(75,48,31,.06)}
+    .demo-card.featured{border-color:#dfaa90;background:linear-gradient(180deg,#fff8f3,#fff)}
+    .demo-chip{align-self:flex-start;padding:5px 9px;border-radius:999px;background:var(--accent-soft);color:var(--accent-dark);font-size:11px;font-weight:950;letter-spacing:.08em}
+    .demo-card h3{margin:14px 0 7px;font-size:23px}
+    .demo-card p{margin:0;color:var(--sub);font-size:14px}
+    .demo-card .btn{margin-top:auto}
+    .demo-more{margin-top:18px;padding:18px;border:1px dashed #d9c6b8;border-radius:18px;background:#fffdfb}
+    .demo-more summary{cursor:pointer;font-weight:900}
+    .demo-more .grid-3{margin-top:14px}
+
+    /* CTA */
+    .final-cta{padding:44px;border:1px solid #e7b8a2;border-radius:30px;background:radial-gradient(circle at 90% 0%,rgba(232,91,42,.16),transparent 18rem),linear-gradient(145deg,#fff3eb,#fff);box-shadow:var(--shadow);text-align:center}
+    .final-cta .lead{margin-left:auto;margin-right:auto}
+    .final-cta .btn-row{justify-content:center}
+
+    /* Modal */
+    .modal{position:fixed;inset:0;z-index:1000;display:none;align-items:stretch;justify-content:center;padding:10px;background:rgba(31,22,18,.76)}
+    .modal.open{display:flex}
+    .modal-panel{display:flex;width:min(1200px,100%);height:calc(100dvh - 20px);flex-direction:column;overflow:hidden;border-radius:20px;background:#fff;box-shadow:0 24px 80px rgba(0,0,0,.35)}
+    .modal-head{display:flex;min-height:62px;align-items:center;justify-content:space-between;gap:12px;padding:10px 12px 10px 18px;border-bottom:1px solid var(--line);background:#fff}
+    .modal-title{min-width:0}
+    .modal-title strong{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .modal-title small{display:block;color:var(--sub);font-size:11px}
+    .modal-close{display:grid;width:44px;height:44px;flex:0 0 auto;place-items:center;border:1px solid var(--line);border-radius:12px;background:#fff;color:var(--ink);font-size:23px;font-weight:700}
+    .modal-body{position:relative;flex:1;min-height:0;background:#f4f0ed}
+    .modal-loading{position:absolute;inset:0;display:grid;place-items:center;padding:24px;color:var(--sub);text-align:center}
+    .modal-frame{position:absolute;inset:0;width:100%;height:100%;border:0;background:#fff}
+    body.modal-open{overflow:hidden}
+
+    footer{padding:28px 0 36px;color:var(--sub);font-size:12px;text-align:center}
+
+    @media(max-width:900px){
+      .section{padding:62px 0}
+      .hero-grid,.scope-compare{grid-template-columns:1fr}
+      .hero-visual{max-width:720px}
+      .connected{grid-template-columns:1fr;gap:10px}
+      .connect-arrow{transform:rotate(90deg);text-align:center}
+      .connect-foot{grid-template-columns:1fr}
+      .ba-grid{grid-template-columns:1fr}
+      .value-flow{grid-template-columns:1fr}
+    }
+    @media(max-width:720px){
+      .shell{width:min(100% - 24px,var(--max))}
+      .section{padding:54px 0}
+      .header-inner{min-height:64px}
+      .brand-text small{display:none}
+      .header-cta{padding:10px 12px}
+      .hero{padding:40px 0 50px}
+      .hero-grid{gap:24px}
+      .hero-copy .title{font-size:clamp(34px,10.4vw,48px)}
+      .hero-flow{grid-template-columns:1fr 1fr}
+      .grid-2,.grid-3,.grid-4,.pain-grid,.experience-grid,.demo-grid{grid-template-columns:1fr}
+      .card-pad,.real-screen-card,.exp-card,.demo-card{padding:21px}
+      .title,.title.small{font-size:clamp(28px,8.5vw,38px)}
+      .lead{font-size:17px}
+      .btn-row{display:grid;grid-template-columns:1fr}
+      .btn{width:100%;min-height:50px}
+      .final-cta{padding:28px 20px}
+      .modal{padding:0}
+      .modal-panel{height:100dvh;border-radius:0}
+      .modal-head{min-height:60px}
+      .demo-more .grid-3{grid-template-columns:1fr}
+    }
+    @media(max-width:430px){
+      .shell{width:calc(100% - 22px)}
+      .header-cta{font-size:12px}
+      .brand-text strong{font-size:14px}
+      .tag{font-size:12px}
+      .hero-flow{grid-template-columns:1fr}
+      .price{font-size:48px}
+      .price-box{padding:25px 16px}
+      .screen-card-title,.exp-card h3,.demo-card h3{font-size:21px}
+    }
+    @media(prefers-reduced-motion:reduce){
+      *,*::before,*::after{scroll-behavior:auto!important;transition:none!important}
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="shell header-inner">
+      <a class="brand" href="#p1" aria-label="DPROテイクアウト・モバイルオーダーシステム トップへ">
+        <span class="brand-mark">DPRO</span>
+        <span class="brand-text"><strong>テイクアウト・モバイルオーダー</strong><small>DPRO SHOP</small></span>
+      </a>
+      <a class="header-cta" href="https://lin.ee/YxJGXV6D" target="_blank" rel="noopener">LINEで相談</a>
+    </div>
+  </header>
+
+  <main>
+    <!-- P1 FIRST VIEW -->
+    <section class="hero" id="p1" data-page="P1">
+      <div class="shell hero-grid">
+        <div class="hero-copy">
+          <p class="eyebrow">TAKEOUT / MOBILE ORDER</p>
+          <h1 class="title">「注文を受ける」から<br><span class="accent">「次の注文」まで、</span><br>ひとつにつなぐ。</h1>
+          <p class="lead">写真付きの商品選び、LINE・電話・店頭からの注文受付、受取時間、厨房での進行、マイページ、再注文まで。テイクアウト業務を、ひとつの注文データでつなぎます。</p>
+          <div class="tag-row" aria-label="主な機能">
+            <span class="tag">写真付き商品カタログ</span><span class="tag">LINE・電話・店頭受付</span><span class="tag">30分受取枠</span><span class="tag">厨房進行</span><span class="tag">マイページ</span><span class="tag">再注文</span>
+          </div>
+          <div class="btn-row">
+            <button class="btn primary demo-open" type="button" data-demo="customer">実際のDEMOを見る</button>
+            <a class="btn secondary" href="https://lin.ee/YxJGXV6D" target="_blank" rel="noopener">導入について相談する</a>
+          </div>
+          <div class="hero-flow" aria-label="注文から再注文までの流れ"><span>商品を選ぶ</span><span>店舗で受ける</span><span>厨房で進める</span><span>また注文する</span></div>
+        </div>
+        <div class="hero-visual" aria-label="現在の実画面デモ">
+          <article class="real-screen-card">
+            <div class="screen-kicker"><span class="live-dot">REAL SCREEN</span><span>CUSTOMER</span></div>
+            <h2 class="screen-card-title">写真から選べる<br>お客様注文画面</h2>
+            <p class="screen-card-text">商品、数量、オプション、受取日・受取時間を選ぶ実際の画面をそのまま確認できます。</p>
+            <div class="screen-actions"><button class="screen-link demo-open" type="button" data-demo="customer">実画面を開く</button></div>
+          </article>
+          <article class="real-screen-card dark">
+            <div class="screen-kicker"><span class="live-dot">REAL SCREEN</span><span>KITCHEN</span></div>
+            <h2 class="screen-card-title">受付から受取待ちまで<br>厨房・レジで確認</h2>
+            <p class="screen-card-text">受付確認・調理待ち・調理中・受取待ちの流れを、厨房・レジ画面で確認できます。</p>
+            <div class="screen-actions"><button class="screen-link demo-open" type="button" data-demo="kitchen">実画面を開く</button></div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- P2 OWNER PAIN -->
+    <section class="section alt" id="p2" data-page="P2">
+      <div class="shell">
+        <div class="section-head"><p class="eyebrow">OWNER PAIN</p><h2 class="title small">テイクアウト注文は、<br><span class="accent">「受けた後」</span>が大変です。</h2><p class="lead">注文方法が増えるほど、受取時間、厨房への共有、進行確認、受け渡し確認が別々になりやすくなります。</p></div>
+        <div class="pain-grid">
+          <article class="pain-card"><div class="pain-icon">L</div><h3>LINE注文</h3><p>お客様がスマートフォンから注文。</p></article>
+          <article class="pain-card"><div class="pain-icon">☎</div><h3>電話注文</h3><p>スタッフが聞き取りながら受付。</p></article>
+          <article class="pain-card"><div class="pain-icon">店</div><h3>店頭注文</h3><p>来店したお客様をその場で受付。</p></article>
+        </div>
+        <div class="pain-down" aria-hidden="true">↓</div>
+        <div class="pain-result"><strong>入口が増えると、確認する場所も増えやすい。</strong><span>受取時間・厨房・受け渡しまで、同じ注文として追えることが重要です。</span></div>
+      </div>
+    </section>
+
+    <!-- P3 WHY PROBLEM -->
+    <section class="section soft" id="p3" data-page="P3">
+      <div class="shell">
+        <div class="section-head"><p class="eyebrow">WHY PROBLEM</p><h2 class="title small">注文受付だけをデジタル化しても、<br><span class="accent">その後の店舗業務は続きます。</span></h2></div>
+        <div class="scope-compare">
+          <article class="scope-box dim"><h3>注文を受けるだけ</h3><div class="scope-list"><div class="scope-item"><b>1</b> 商品を選ぶ</div><div class="scope-item"><b>2</b> 注文を送る</div></div></article>
+          <article class="scope-box emphasis"><h3>DPROがつなぐ範囲</h3><div class="scope-list"><div class="scope-item"><b>1</b> 商品選択・注文</div><div class="scope-item"><b>2</b> 受取時間</div><div class="scope-item"><b>3</b> 店舗受付</div><div class="scope-item"><b>4</b> 厨房進行</div><div class="scope-item"><b>5</b> 受け渡し</div><div class="scope-item"><b>6</b> 注文履歴・再注文</div></div></article>
+        </div>
+      </div>
+    </section>
+
+    <!-- P4 CONNECTED SYSTEM -->
+    <section class="section alt" id="p4" data-page="P4">
+      <div class="shell">
+        <div class="section-head"><p class="eyebrow">CONNECTED SYSTEM</p><h2 class="title small"><span class="accent">入口は選べる。</span><br>管理はひとつ。</h2><p class="lead">お客様自身のLINE注文と、店舗スタッフが登録する電話・店頭注文を、同じ注文管理と厨房の流れへつなぎます。</p></div>
+        <div class="connected" aria-label="注文入口から店舗運用までの接続図">
+          <div class="connect-group"><div class="connect-card"><strong>LINE</strong><span>お客様自身が注文</span></div><div class="connect-card"><strong>電話</strong><span>スタッフが代理登録</span></div><div class="connect-card"><strong>店頭</strong><span>スタッフが代理登録</span></div></div>
+          <div class="connect-arrow" aria-hidden="true">→</div>
+          <div class="connect-core"><small>DPRO TAKEOUT</small><strong>注文データを<br>ひとつに集約</strong></div>
+          <div class="connect-arrow" aria-hidden="true">→</div>
+          <div class="connect-group"><div class="connect-card"><strong>PC注文管理</strong><span>受付・状態を確認</span></div><div class="connect-card"><strong>厨房・レジ</strong><span>調理進行を確認</span></div><div class="connect-card"><strong>マイページ</strong><span>確認・再注文へ</span></div></div>
+        </div>
+        <div class="connect-foot"><button class="btn secondary demo-open" type="button" data-demo="reception">電話・店頭受付を見る</button><button class="btn secondary demo-open" type="button" data-demo="owner">PC注文管理を見る</button><button class="btn secondary demo-open" type="button" data-demo="kitchen">厨房・レジを見る</button></div>
+      </div>
+    </section>
+
+    <!-- P5 CUSTOMER EXPERIENCE -->
+    <section class="section soft" id="p5" data-page="P5">
+      <div class="shell">
+        <div class="section-head"><p class="eyebrow">CUSTOMER EXPERIENCE</p><h2 class="title small">お客様は、<br><span class="accent">選ぶ・確認する・また注文する。</span></h2></div>
+        <div class="experience-grid">
+          <article class="card exp-card"><span class="exp-number">01 / ORDER</span><h3>写真を見ながら商品を選ぶ</h3><p>商品、数量、オプション、受取日・受取時間をスマートフォンから選択できます。</p><ul class="check-list"><li>写真付き商品カタログ</li><li>商品検索・カテゴリー</li><li>30分単位の受取時間</li></ul><div class="real-cta"><button class="btn secondary full demo-open" type="button" data-demo="customer">お客様注文画面を見る</button></div></article>
+          <article class="card exp-card"><span class="exp-number">02 / MY PAGE</span><h3>注文状況を確認し、次回注文へ</h3><p>注文状況、履歴、条件内での受取日時変更・キャンセル、前回と同じ内容からの再注文を利用できます。</p><ul class="check-list"><li>注文状況タイムライン</li><li>注文履歴</li><li>前回と同じ内容で再注文</li></ul><div class="condition">受取日時変更・キャンセルは、注文状態や店舗設定の締切条件などを満たす場合に利用できます。再注文時は現在の価格・在庫・販売状態で再確認されます。</div><div class="real-cta"><button class="btn secondary full demo-open" type="button" data-demo="member">マイページを見る</button></div></article>
+        </div>
+      </div>
+    </section>
+
+    <!-- P6 OWNER / STAFF EXPERIENCE -->
+    <section class="section alt" id="p6" data-page="P6">
+      <div class="shell">
+        <div class="section-head"><p class="eyebrow">OWNER / STAFF EXPERIENCE</p><h2 class="title small">店舗側は、<br><span class="accent">受付後の「次の対応」が見える。</span></h2><p class="lead">すべての機能を一画面に詰め込まず、受付・注文管理・厨房進行・商品管理を役割に合わせて使い分けます。</p></div>
+        <div class="experience-grid">
+          <article class="card exp-card"><span class="exp-number">KITCHEN / REGISTER</span><h3>厨房4段階の進行管理</h3><p>受付確認、調理待ち、調理中、受取待ちの状態で注文を確認できます。受取時間を過ぎた注文も把握できます。</p><ul class="check-list"><li>受付確認</li><li>調理待ち・調理中</li><li>受取待ち・時間超過確認</li></ul><div class="real-cta"><button class="btn primary full demo-open" type="button" data-demo="kitchen">厨房・レジ実画面を見る</button></div></article>
+          <article class="card exp-card"><span class="exp-number">RECEPTION / OWNER</span><h3>電話・店頭も同じ注文へ</h3><p>名前・電話番号・注文番号から顧客を探し、過去注文を参考にしながら電話・店頭注文を登録できます。</p><ul class="check-list"><li>顧客検索・注文履歴</li><li>過去内容を注文へ再セット</li><li>商品・受取日時を登録</li></ul><div class="real-cta"><button class="btn secondary full demo-open" type="button" data-demo="reception">電話・店頭受付を見る</button></div></article>
+        </div>
+        <div class="grid-2" style="margin-top:20px"><article class="card card-pad"><h3 style="margin:0 0 8px">PC注文管理</h3><p style="margin:0;color:var(--sub)">注文の検索・状態確認・店舗側の対応をまとめて確認します。</p><div class="btn-row"><button class="btn secondary demo-open" type="button" data-demo="owner">実画面を見る</button></div></article><article class="card card-pad"><h3 style="margin:0 0 8px">商品・店舗設定</h3><p style="margin:0;color:var(--sub)">商品写真、価格、在庫、販売曜日、オプション、受付ON/OFF、受取枠、休業日などを店舗側で設定します。</p><div class="btn-row"><button class="btn secondary demo-open" type="button" data-demo="products">商品管理</button><button class="btn secondary demo-open" type="button" data-demo="settings">店舗設定</button></div></article></div>
+        <div class="condition">LINE用の案内文面は、店舗側で内容を確認・編集してコピーし、LINE公式チャットへ貼り付けて送信する運用です。個別メッセージの完全自動送信としては案内していません。</div>
+      </div>
+    </section>
+
+    <!-- P7 BEFORE / AFTER -->
+    <section class="section soft" id="p7" data-page="P7">
+      <div class="shell">
+        <div class="section-head"><p class="eyebrow">BEFORE / AFTER</p><h2 class="title small">受付方法を全部変えるのではなく、<br><span class="accent">受付後の流れを整理する。</span></h2></div>
+        <div class="ba-grid">
+          <article class="ba-card"><div class="ba-before"><span class="ba-label">BEFORE</span><p class="ba-text">LINE・電話・店頭の注文確認が分かれる</p></div><div class="ba-arrow">↓</div><div class="ba-after"><span class="ba-label">AFTER</span><p class="ba-text">同じ注文管理へ集約して確認しやすくする</p></div></article>
+          <article class="ba-card"><div class="ba-before"><span class="ba-label">BEFORE</span><p class="ba-text">受取時間と厨房進行を別々に確認する</p></div><div class="ba-arrow">↓</div><div class="ba-after"><span class="ba-label">AFTER</span><p class="ba-text">注文と厨房進行を同じ流れで確認する</p></div></article>
+          <article class="ba-card"><div class="ba-before"><span class="ba-label">BEFORE</span><p class="ba-text">次回注文はまた最初から選び直す</p></div><div class="ba-arrow">↓</div><div class="ba-after"><span class="ba-label">AFTER</span><p class="ba-text">注文履歴から再注文しやすい導線へつなぐ</p></div></article>
+        </div>
+      </div>
+    </section>
+
+    <!-- P8 PRICE / VALUE -->
+    <section class="section alt" id="p8" data-page="P8">
+      <div class="shell">
+        <div class="section-head"><p class="eyebrow">PRICE / VALUE</p><h2 class="title small">ホームページ・LINE公式・DPROを、<br><span class="accent">まとめて運用。</span></h2><p class="lead">価格だけでなく、「知ってもらう入口」「お客様との継続接点」「店舗の注文・受付業務」をまとめて運用できることを価値としてご案内します。</p></div>
+        <div class="value-flow"><article class="value-card"><div class="symbol">WEB</div><strong>ホームページ</strong><span>お店を知ってもらう入口</span></article><article class="value-card"><div class="symbol">LINE</div><strong>LINE公式</strong><span>お客様との継続接点</span></article><article class="value-card"><div class="symbol">DPRO</div><strong>DPROシステム</strong><span>注文・受付・店舗運用</span></article></div>
+        <div class="plus-line"><span>3つをまとめて基本運用・基本保守</span></div>
+        <div class="price-box"><div class="caption">ホームページ・LINE公式・DPROをまとめて運用　月額合計</div><div class="price">5,500<small>円（税込）</small></div><div class="price-breakdown"><span>LINE運用 3,300円</span><span>ホームページ保守 1,100円</span><span>DPRO利用・基本保守 1,100円</span></div><p class="price-note">DPROシステムは、DPRO SHOPのLINE公式アカウント構築・運用契約店舗向けの追加サービスです。DPROシステム単体で月額5,500円という意味ではありません。初期制作費・個別追加対応・外部サービス等は内容に応じて別途ご案内します。</p></div>
+      </div>
+    </section>
+
+    <!-- P9 DEMO -->
+    <section class="section soft" id="p9" data-page="P9">
+      <div class="shell">
+        <div class="section-head"><p class="eyebrow">DEMO</p><h2 class="title small">説明画像ではなく、<br><span class="accent">現在の実画面を確認。</span></h2><p class="lead">ボタンを押した時だけ実画面を読み込みます。ページ表示時には実画面を読み込まないため、営業LP自体は軽く保ちます。</p></div>
+        <div class="demo-grid">
+          <article class="demo-card featured"><span class="demo-chip">CUSTOMER</span><h3>お客様モバイルオーダー</h3><p>商品選択、受取日・30分単位の時間、オプションなどを確認。</p><button class="btn primary demo-open" type="button" data-demo="customer">DEMOを開く</button></article>
+          <article class="demo-card featured"><span class="demo-chip">MY PAGE</span><h3>注文確認・マイページ</h3><p>注文状況、注文履歴、条件内での日時変更・キャンセル、再注文を確認。</p><button class="btn primary demo-open" type="button" data-demo="member">DEMOを開く</button></article>
+          <article class="demo-card"><span class="demo-chip">KITCHEN</span><h3>厨房・レジ進行</h3><p>受付確認、調理待ち、調理中、受取待ちの進行を確認。</p><button class="btn secondary demo-open" type="button" data-demo="kitchen">DEMOを開く</button></article>
+          <article class="demo-card"><span class="demo-chip">RECEPTION</span><h3>電話・店頭受付</h3><p>顧客検索、過去注文確認、商品・受取時間を登録する店舗側受付。</p><button class="btn secondary demo-open" type="button" data-demo="reception">DEMOを開く</button></article>
+        </div>
+        <details class="demo-more"><summary>さらに店舗側の実画面を見る</summary><div class="grid-3"><button class="btn secondary demo-open" type="button" data-demo="owner">PC注文管理</button><button class="btn secondary demo-open" type="button" data-demo="products">商品・写真管理</button><button class="btn secondary demo-open" type="button" data-demo="settings">店舗設定</button></div></details>
+      </div>
+    </section>
+
+    <!-- P10 CONSULT / CTA -->
+    <section class="section alt" id="p10" data-page="P10">
+      <div class="shell">
+        <div class="final-cta">
+          <p class="eyebrow">CONSULT / CTA</p>
+          <h2 class="title small">あなたのお店の注文受付、<br><span class="accent">どこから整理するか一緒に確認できます。</span></h2>
+          <p class="lead">今のLINE・電話・店頭受付を、すべて一度に変える必要はありません。現在の運用を確認しながら、必要なところからご相談いただけます。</p>
+          <div class="btn-row"><button class="btn primary demo-open" type="button" data-demo="customer">実際のDEMOを見る</button><a class="btn line" href="https://lin.ee/YxJGXV6D" target="_blank" rel="noopener">LINE公式から相談する</a></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer><div class="shell">DPRO SHOP｜DPROテイクアウト・モバイルオーダーシステム</div></footer>
+
+  <div class="modal" id="demoModal" role="dialog" aria-modal="true" aria-labelledby="demoModalTitle" aria-hidden="true">
+    <div class="modal-panel" role="document">
+      <div class="modal-head"><div class="modal-title"><strong id="demoModalTitle">実画面DEMO</strong><small>閉じると実画面の読み込みを終了します</small></div><button class="modal-close" type="button" id="demoClose" aria-label="DEMOを閉じる">×</button></div>
+      <div class="modal-body" id="demoBody"><div class="modal-loading">実画面を読み込んでいます…</div></div>
+    </div>
+  </div>
+
+  <script>
+  (()=>{
+    'use strict';
+    const DEMOS={
+      customer:{title:'お客様モバイルオーダー',url:'https://dpromstk2000-lab.github.io/dpro-takeout-line-liff/index.html?preview=1&v=takeout-18-check'},
+      member:{title:'注文確認・マイページ',url:'https://dpromstk2000-lab.github.io/dpro-takeout-line-liff/member.html?preview=1&v=takeout-18-check'},
+      owner:{title:'PC注文管理',url:'https://dpromstk2000-lab.github.io/dpro-takeout-line-liff/owner.html?preview=1&v=takeout-18-check'},
+      kitchen:{title:'厨房・レジ進行',url:'https://dpromstk2000-lab.github.io/dpro-takeout-line-liff/owner-ipad.html?preview=1&v=takeout-18-check'},
+      reception:{title:'電話・店頭受付',url:'https://dpromstk2000-lab.github.io/dpro-takeout-line-liff/owner-reception.html?preview=1&v=takeout-18-check'},
+      products:{title:'商品・写真管理',url:'https://dpromstk2000-lab.github.io/dpro-takeout-line-liff/owner-products.html?preview=1&v=takeout-18-check'},
+      settings:{title:'店舗設定',url:'https://dpromstk2000-lab.github.io/dpro-takeout-line-liff/owner-settings.html?embed_demo=1&v=takeout-18-check'}
+    };
+    const modal=document.getElementById('demoModal');
+    const body=document.getElementById('demoBody');
+    const title=document.getElementById('demoModalTitle');
+    const close=document.getElementById('demoClose');
+    let lastFocus=null;
+
+    function destroyFrame(){
+      const frame=body.querySelector('iframe');
+      if(frame) frame.remove();
+      body.innerHTML='<div class="modal-loading">実画面を読み込んでいます…</div>';
+    }
+    function openDemo(key){
+      const demo=DEMOS[key];
+      if(!demo) return;
+      lastFocus=document.activeElement;
+      destroyFrame();
+      title.textContent=demo.title;
+      modal.classList.add('open');
+      modal.setAttribute('aria-hidden','false');
+      document.body.classList.add('modal-open');
+      const frame=document.createElement('iframe');
+      frame.className='modal-frame';
+      frame.title=demo.title;
+      frame.loading='eager';
+      frame.referrerPolicy='no-referrer-when-downgrade';
+      frame.src=demo.url;
+      frame.addEventListener('load',()=>{
+        const loading=body.querySelector('.modal-loading');
+        if(loading) loading.remove();
+      },{once:true});
+      body.appendChild(frame);
+      close.focus();
+    }
+    function closeDemo(){
+      modal.classList.remove('open');
+      modal.setAttribute('aria-hidden','true');
+      document.body.classList.remove('modal-open');
+      destroyFrame();
+      if(lastFocus && typeof lastFocus.focus==='function') lastFocus.focus();
+    }
+    document.querySelectorAll('.demo-open').forEach(btn=>btn.addEventListener('click',()=>openDemo(btn.dataset.demo)));
+    close.addEventListener('click',closeDemo);
+    modal.addEventListener('click',e=>{if(e.target===modal) closeDemo();});
+    document.addEventListener('keydown',e=>{if(e.key==='Escape'&&modal.classList.contains('open')) closeDemo();});
+  })();
+  </script>
+</body>
+</html>

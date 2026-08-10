@@ -1,0 +1,366 @@
+<!doctype html>
+<!--
+  DPRO SALES LP
+  SYSTEM_CODE: VET
+  LP_VERSION: V1.0
+  MASTER_VERSION: DPRO-LP-MASTER-V1.3
+  PUBLIC_FILE: lp-vet.html
+  PUBLIC_URL: https://dpromstk2000-lab.github.io/dpro-line-systems-site/lp-vet.html
+-->
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>DPRO動物病院システム｜予約・受付・診察進行をひとつにつなぐ</title>
+  <meta name="description" content="DPRO動物病院システムは、LINEペット診察券、当日順番受付、日時指定予約、QR来院受付、獣医師画面、会計待ちまでをひとつの流れにつなぐ動物病院向けシステムです。">
+  <link rel="canonical" href="https://dpromstk2000-lab.github.io/dpro-line-systems-site/lp-vet.html">
+  <meta property="og:url" content="https://dpromstk2000-lab.github.io/dpro-line-systems-site/lp-vet.html">
+  <meta name="robots" content="index,follow">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="DPRO動物病院システム｜予約・受付・診察進行をひとつにつなぐ">
+  <meta property="og:description" content="診察券だけじゃない。予約・受付・診察・会計待ち・次回来院まで、ひとつにつなぐ動物病院向けDPROシステム。">
+  <meta name="theme-color" content="#123d31">
+  <style>
+    :root{
+      --green:#123d31;
+      --green-2:#1c6a51;
+      --green-3:#2f8064;
+      --sage:#e7f2ec;
+      --mint:#f4faf7;
+      --ivory:#fbfaf6;
+      --paper:#ffffff;
+      --ink:#18312a;
+      --muted:#687a73;
+      --line:#d8e4de;
+      --gold:#b5965e;
+      --gold-soft:#fff7e7;
+      --red:#9f4040;
+      --red-soft:#fff2f1;
+      --blue:#386c86;
+      --blue-soft:#eef7fb;
+      --shadow:0 20px 56px rgba(18,61,49,.11);
+      --shadow-soft:0 10px 30px rgba(18,61,49,.07);
+      --radius:26px;
+      --radius-sm:18px;
+      --max:1160px;
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth;overflow-x:hidden}
+    body{margin:0;overflow-x:hidden;color:var(--ink);background:linear-gradient(180deg,#f7fbf8 0,#fbfaf6 26%,#f5f8f6 100%);font-family:-apple-system,BlinkMacSystemFont,"Noto Sans JP","Hiragino Sans","Yu Gothic",Meiryo,sans-serif;line-height:1.75;-webkit-font-smoothing:antialiased}
+    a{color:inherit}
+    button,a{touch-action:manipulation}
+    button,input{font:inherit}
+    img,svg,iframe{max-width:100%}
+    .skip{position:absolute;left:-9999px}.skip:focus{left:12px;top:12px;z-index:9999;background:#fff;padding:10px 14px;border-radius:10px}
+    .wrap{width:min(var(--max),calc(100% - 32px));margin:0 auto}
+    .section{padding:76px 0;position:relative}
+    .section.compact{padding:62px 0}
+    .eyebrow{display:inline-flex;align-items:center;gap:8px;margin-bottom:14px;color:var(--green-2);font-size:12px;font-weight:950;letter-spacing:.12em;text-transform:uppercase}
+    .eyebrow:before{content:"";width:28px;height:2px;background:currentColor;border-radius:99px}
+    h1,h2,h3,p{overflow-wrap:anywhere}
+    h1{font-size:clamp(36px,7vw,66px);line-height:1.08;letter-spacing:-.055em;margin:0}
+    h2{font-size:clamp(30px,5vw,48px);line-height:1.18;letter-spacing:-.045em;margin:0}
+    h3{font-size:clamp(20px,2.4vw,27px);line-height:1.35;letter-spacing:-.025em;margin:0}
+    .lead{font-size:clamp(17px,2vw,20px);line-height:1.85;color:#385149;margin:20px 0 0;font-weight:720}
+    .copy{font-size:16px;color:var(--muted);margin:14px 0 0}
+    .section-head{max-width:780px;margin-bottom:34px}
+    .badge{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:999px;background:var(--sage);color:var(--green);font-weight:900;font-size:12px}
+    .btn{min-height:48px;display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 18px;border-radius:999px;border:1px solid transparent;text-decoration:none;font-weight:950;font-size:15px;cursor:pointer;transition:.18s transform,.18s box-shadow,.18s background}
+    .btn:hover{transform:translateY(-1px)}
+    .btn.primary{background:var(--green);color:#fff;box-shadow:0 12px 28px rgba(18,61,49,.2)}
+    .btn.secondary{background:#fff;border-color:var(--line);color:var(--green)}
+    .btn.line{background:#06c755;color:#fff;box-shadow:0 12px 28px rgba(6,199,85,.2)}
+    .btn.ghost{background:rgba(255,255,255,.12);color:#fff;border-color:rgba(255,255,255,.26)}
+    .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:28px}
+
+    /* P1 */
+    .hero{padding:22px 0 58px}
+    .hero-shell{overflow:hidden;position:relative;border-radius:34px;background:radial-gradient(circle at 90% 10%,rgba(92,184,144,.32),transparent 28%),linear-gradient(135deg,#0f332a,#1c6a51 68%,#2f8064);color:#fff;box-shadow:0 28px 80px rgba(18,61,49,.2)}
+    .hero-shell:after{content:"";position:absolute;width:420px;height:420px;border-radius:50%;right:-170px;bottom:-220px;border:1px solid rgba(255,255,255,.12);box-shadow:0 0 0 46px rgba(255,255,255,.025),0 0 0 92px rgba(255,255,255,.02)}
+    .hero-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:30px;align-items:center;padding:58px 54px;position:relative;z-index:1}
+    .hero .eyebrow{color:#c5f1db}.hero .eyebrow:before{background:#c5f1db}
+    .hero .lead{color:rgba(255,255,255,.88);max-width:700px}
+    .hero-points{display:flex;gap:8px;flex-wrap:wrap;margin-top:22px}
+    .hero-points span{display:inline-flex;align-items:center;padding:7px 10px;border:1px solid rgba(255,255,255,.23);border-radius:999px;background:rgba(255,255,255,.08);font-weight:850;font-size:12px}
+    .hero-visual{display:grid;gap:12px}
+    .screen-link{display:block;text-decoration:none;background:rgba(255,255,255,.96);color:var(--ink);border-radius:23px;padding:16px;border:1px solid rgba(255,255,255,.36);box-shadow:0 20px 45px rgba(0,0,0,.16);position:relative;overflow:hidden}
+    .screen-link:first-child{transform:translateX(24px)}
+    .screen-link .screen-top{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:12px}
+    .screen-link .screen-top b{font-size:14px}.screen-link .screen-top span{font-size:11px;color:var(--green-2);font-weight:950;background:var(--sage);padding:5px 8px;border-radius:999px}
+    .screen-body{display:grid;grid-template-columns:54px 1fr;gap:11px;align-items:center}
+    .screen-icon{width:54px;height:54px;border-radius:18px;background:linear-gradient(135deg,var(--sage),#fff7e9);display:grid;place-items:center;font-size:26px}
+    .screen-copy strong{display:block;font-size:18px;line-height:1.25}.screen-copy small{display:block;color:var(--muted);font-size:12px;margin-top:3px}
+    .screen-link:focus-visible,.btn:focus-visible{outline:3px solid #86d9b6;outline-offset:3px}
+
+    /* generic */
+    .cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+    .card{background:rgba(255,255,255,.92);border:1px solid var(--line);border-radius:var(--radius);padding:24px;box-shadow:var(--shadow-soft)}
+    .card .icon{width:48px;height:48px;border-radius:16px;background:var(--sage);display:grid;place-items:center;font-size:23px;margin-bottom:16px}
+    .card p{margin:9px 0 0;color:var(--muted)}
+    .pain-grid{display:grid;grid-template-columns:.88fr 1.12fr;gap:24px;align-items:center}
+    .clinic-illustration{min-height:390px;border-radius:32px;background:linear-gradient(145deg,#eef8f2,#fff7ea);border:1px solid var(--line);box-shadow:var(--shadow);position:relative;overflow:hidden;padding:28px;display:flex;align-items:flex-end}
+    .clinic-illustration:before{content:"動物病院の受付";position:absolute;left:26px;top:24px;font-size:13px;font-weight:950;color:var(--green-2);letter-spacing:.08em}
+    .clinic-desk{width:100%;background:#fff;border:1px solid var(--line);border-radius:24px;padding:20px;box-shadow:var(--shadow-soft)}
+    .clinic-desk .row{display:flex;align-items:center;gap:12px}.avatar{width:50px;height:50px;border-radius:50%;background:var(--sage);display:grid;place-items:center;font-size:24px}.clinic-desk strong{font-size:18px}.clinic-desk p{margin:3px 0 0;color:var(--muted);font-size:13px}
+    .task-pills{display:flex;flex-wrap:wrap;gap:7px;margin-top:14px}.task-pills span{background:#f6f8f7;border:1px solid var(--line);border-radius:999px;padding:6px 9px;font-size:11px;font-weight:900;color:#496058}
+    .pain-list{display:grid;gap:10px}.pain-item{display:flex;gap:12px;align-items:flex-start;padding:16px 18px;background:#fff;border:1px solid var(--line);border-radius:18px}.pain-item b{display:block}.pain-item span{font-size:22px}.pain-item p{margin:2px 0 0;color:var(--muted);font-size:13px}
+
+    /* P3 */
+    .why-flow{display:grid;grid-template-columns:1fr auto 1fr auto 1fr;gap:12px;align-items:stretch}
+    .flow-block{background:#fff;border:1px solid var(--line);border-radius:24px;padding:22px;box-shadow:var(--shadow-soft)}
+    .flow-block b{display:block;color:var(--green);font-size:13px;margin-bottom:10px}.flow-block ul{list-style:none;margin:0;padding:0;display:grid;gap:8px}.flow-block li{padding:8px 10px;border-radius:12px;background:var(--mint);font-size:13px;font-weight:820}.flow-arrow{display:grid;place-items:center;color:var(--green-2);font-size:28px;font-weight:1000}
+    .why-note{margin-top:18px;border-radius:20px;background:var(--gold-soft);border:1px solid #ead6a6;padding:17px 20px;color:#624f29;font-weight:780}
+
+    /* P4 */
+    .connected{background:linear-gradient(180deg,#0f332a,#143f34);color:#fff}
+    .connected .eyebrow{color:#bcebd4}.connected .copy{color:rgba(255,255,255,.72)}
+    .connect-board{display:grid;grid-template-columns:1fr 70px 1.1fr 70px 1fr;gap:8px;align-items:center}
+    .connect-col{display:grid;gap:9px}.connect-col h3{font-size:14px;color:#bcebd4;letter-spacing:.08em;margin-bottom:3px}.connect-node{padding:14px 15px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.08);border-radius:16px;font-size:13px;font-weight:900}.connect-node.em{background:#fff;color:var(--green);border-color:#fff;box-shadow:0 18px 34px rgba(0,0,0,.16);padding:19px}.connect-arrow{display:grid;place-items:center;font-size:30px;color:#bcebd4}.connect-foot{margin-top:22px;display:flex;justify-content:center}.connect-foot .screen-link{max-width:620px;width:100%;transform:none;background:#fff}
+
+    /* P5 */
+    .experience-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+    .experience{background:#fff;border:1px solid var(--line);border-radius:27px;padding:20px;box-shadow:var(--shadow-soft);display:flex;flex-direction:column;min-width:0}
+    .experience .number{font-size:11px;font-weight:950;color:var(--green-2);letter-spacing:.12em}.experience h3{margin-top:8px}.experience p{color:var(--muted);font-size:14px;margin:9px 0 16px;flex:1}.experience .btn{width:100%;border-radius:14px}
+    .condition{margin-top:18px;color:#64552f;background:var(--gold-soft);border:1px solid #ead6a6;border-radius:18px;padding:14px 16px;font-size:13px;font-weight:760}
+
+    /* P6 */
+    .staff-feature{display:grid;grid-template-columns:1.25fr .75fr;gap:18px;align-items:start}
+    .big-demo{background:#fff;border:1px solid var(--line);border-radius:30px;padding:26px;box-shadow:var(--shadow);min-width:0}.big-demo .label{display:inline-flex;padding:6px 9px;background:var(--sage);color:var(--green);border-radius:999px;font-size:11px;font-weight:950}.big-demo h3{margin-top:12px}.big-demo p{color:var(--muted);margin:8px 0 18px}.big-demo .btn{width:100%;border-radius:15px}
+    .mini-demos{display:grid;gap:11px}.mini-demo{background:#fff;border:1px solid var(--line);border-radius:20px;padding:18px;box-shadow:var(--shadow-soft)}.mini-demo b{display:block}.mini-demo p{font-size:12px;color:var(--muted);margin:4px 0 12px}.mini-demo .btn{min-height:44px;font-size:13px;padding:9px 13px}
+
+    /* P7 */
+    .ba-grid{display:grid;grid-template-columns:1fr 90px 1fr;gap:12px;align-items:stretch}.ba{border-radius:28px;padding:26px;border:1px solid var(--line)}.ba.before{background:#fff8f6}.ba.after{background:#f3fbf7}.ba h3{margin-bottom:17px}.ba ul{list-style:none;margin:0;padding:0;display:grid;gap:10px}.ba li{display:flex;gap:9px;align-items:flex-start;font-size:14px}.ba li:before{content:"•";font-size:22px;line-height:1;color:var(--red)}.ba.after li:before{color:var(--green-2)}.ba-arrow{display:grid;place-items:center;font-size:42px;color:var(--green-2)}
+
+    /* P8 */
+    .price{background:linear-gradient(180deg,#fff9eb,#fbfaf6)}
+    .value-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;align-items:stretch}.value-card{background:#fff;border:1px solid #e7dec9;border-radius:24px;padding:24px;text-align:center;box-shadow:var(--shadow-soft)}.value-card .icon{margin:0 auto 12px}.value-card small{display:block;color:var(--muted);margin-top:6px}.plus-row{display:none}.total-box{margin-top:18px;border-radius:30px;background:var(--green);color:#fff;padding:28px;text-align:center;box-shadow:0 22px 48px rgba(18,61,49,.2)}.total-box small{display:block;color:#cbe8da;font-weight:850;letter-spacing:.08em}.price-num{font-size:clamp(44px,8vw,72px);line-height:1;font-weight:1000;letter-spacing:-.05em;margin-top:8px}.price-num span{font-size:.35em;letter-spacing:0}.price-breakdown{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin-top:14px}.price-breakdown span{padding:7px 10px;border-radius:999px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);font-size:12px;font-weight:850}.price-note{max-width:820px;margin:16px auto 0;text-align:center;color:#6c6044;font-size:13px}.initial-fees{margin-top:18px;display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.fee{padding:14px;border:1px solid #e6decd;border-radius:16px;background:rgba(255,255,255,.75);font-size:12px;color:#5e594d}.fee b{display:block;font-size:15px;color:var(--ink)}
+
+    /* P9 */
+    .demo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.demo-card{background:#fff;border:1px solid var(--line);border-radius:25px;padding:22px;box-shadow:var(--shadow-soft);display:flex;flex-direction:column}.demo-card .demo-type{font-size:11px;font-weight:950;color:var(--green-2);letter-spacing:.1em}.demo-card h3{margin-top:8px}.demo-card p{color:var(--muted);font-size:13px;margin:8px 0 18px;flex:1}.demo-card .btn{width:100%;border-radius:14px}.demo-sub{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}.demo-sub .demo-card{padding:18px}
+
+    /* P10 */
+    .cta-shell{border-radius:34px;background:radial-gradient(circle at 90% 10%,rgba(76,180,134,.3),transparent 24%),linear-gradient(135deg,#10382e,#1d6a51);color:#fff;padding:54px;text-align:center;box-shadow:0 25px 70px rgba(18,61,49,.19)}.cta-shell .eyebrow{color:#c1efd7}.cta-shell .eyebrow:before{background:#c1efd7}.cta-shell h2{max-width:780px;margin:0 auto}.cta-shell p{max-width:670px;margin:18px auto 0;color:rgba(255,255,255,.82);font-size:17px}.cta-shell .actions{justify-content:center}.cta-note{font-size:12px!important;color:rgba(255,255,255,.65)!important;margin-top:14px!important}
+    footer{padding:26px 0 42px;color:var(--muted);font-size:12px}.footer-inner{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}.footer-inner a{text-decoration:none;color:var(--green-2);font-weight:850}
+
+    /* modal */
+    .modal[hidden]{display:none}.modal{position:fixed;inset:0;z-index:9998;background:rgba(7,25,20,.72);display:grid;place-items:center;padding:16px}.modal-panel{width:min(1200px,100%);height:min(86vh,880px);background:#fff;border-radius:24px;overflow:hidden;display:grid;grid-template-rows:auto 1fr;box-shadow:0 30px 100px rgba(0,0,0,.36)}.modal-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 14px;border-bottom:1px solid var(--line)}.modal-title{font-size:14px;font-weight:950}.modal-actions{display:flex;gap:8px;align-items:center}.modal-direct{min-height:44px;padding:9px 13px;border-radius:999px;background:var(--sage);text-decoration:none;color:var(--green);font-size:12px;font-weight:950}.modal-close{width:44px;height:44px;border:0;border-radius:50%;background:#f0f4f2;font-size:22px;cursor:pointer;color:var(--green)}.modal-body{min-height:0;background:#eef3f0}.modal-body iframe{width:100%;height:100%;border:0;background:#fff}.modal-fallback{padding:22px;text-align:center;color:var(--muted)}body.modal-open{overflow:hidden}
+
+    @media(max-width:900px){
+      .hero-grid{grid-template-columns:1fr;padding:46px 36px}.hero-visual{grid-template-columns:1fr 1fr}.screen-link:first-child{transform:none}
+      .pain-grid,.staff-feature{grid-template-columns:1fr}.clinic-illustration{min-height:320px}
+      .why-flow{grid-template-columns:1fr}.flow-arrow{transform:rotate(90deg);min-height:28px}
+      .connect-board{grid-template-columns:1fr}.connect-arrow{transform:rotate(90deg)}
+      .experience-grid,.demo-grid,.value-grid{grid-template-columns:1fr 1fr}
+      .ba-grid{grid-template-columns:1fr}.ba-arrow{transform:rotate(90deg)}
+      .initial-fees{grid-template-columns:1fr}
+    }
+    @media(max-width:620px){
+      .wrap{width:min(100% - 22px,var(--max))}.section{padding:58px 0}.section.compact{padding:50px 0}.hero{padding-top:10px}.hero-shell{border-radius:25px}.hero-grid{padding:32px 20px;gap:24px}.hero-visual{grid-template-columns:1fr}.screen-link{padding:14px}.screen-link:first-child{transform:none}
+      .actions{display:grid;grid-template-columns:1fr}.actions .btn{width:100%}.hero-points{gap:6px}.hero-points span{font-size:11px}
+      .cards,.experience-grid,.demo-grid,.value-grid{grid-template-columns:1fr}.card{padding:20px}.clinic-illustration{min-height:290px;padding:18px}.clinic-desk{padding:16px}
+      .connect-foot .screen-link{padding:15px}.demo-sub{grid-template-columns:1fr}.big-demo{padding:20px}.mini-demo{padding:16px}
+      .total-box{padding:24px 16px}.price-breakdown{display:grid;grid-template-columns:1fr}.price-breakdown span{border-radius:12px}.cta-shell{padding:38px 18px;border-radius:26px}.footer-inner{display:grid}
+      .modal{padding:0}.modal-panel{width:100%;height:100dvh;border-radius:0}.modal-head{padding:9px 10px}.modal-title{font-size:12px}.modal-direct{font-size:11px;padding:8px 10px}
+    }
+    @media(max-width:430px){
+      h1{font-size:38px}.lead{font-size:17px}.screen-body{grid-template-columns:46px 1fr}.screen-icon{width:46px;height:46px;border-radius:15px}.screen-copy strong{font-size:16px}.price-num{font-size:52px}.clinic-illustration:before{font-size:11px}.task-pills span{font-size:10px}
+    }
+    @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.btn{transition:none}}
+  </style>
+</head>
+<body>
+<a class="skip" href="#main">本文へ移動</a>
+<main id="main">
+  <!-- P1 FIRST VIEW -->
+  <section id="p1" class="hero" aria-labelledby="p1-title">
+    <div class="wrap">
+      <div class="hero-shell">
+        <div class="hero-grid">
+          <div>
+            <div class="eyebrow">DPRO Veterinary Clinic System</div>
+            <h1 id="p1-title">診察券だけじゃない。<br>予約・受付・診察・会計待ちまで、ひとつにつなぐ。</h1>
+            <p class="lead">LINEのペット診察券を入口に、当日の順番受付、日時指定予約、来院受付、獣医師への情報共有、会計待ちまで。飼い主さんの使いやすさと、動物病院の受付業務を一緒に整えます。</p>
+            <div class="hero-points" aria-label="主要機能"><span>LINEペット診察券</span><span>当日順番受付</span><span>30分日時予約</span><span>獣医師別予約</span><span>QR来院受付</span></div>
+            <div class="actions"><a class="btn ghost" href="#p9">実画面DEMOを見る</a><a class="btn line" href="https://lin.ee/YxJGXV6D" target="_blank" rel="noopener">LINEで無料相談</a></div>
+          </div>
+          <div class="hero-visual" aria-label="現在の実画面への導線">
+            <a class="screen-link demo-open" href="https://dpromstk2000-lab.github.io/DPRO-VET-QR/member.html?clinic_code=dpro_vet_demo&demo=ready&v=step-vet-56b-admin1234" data-demo-title="ペット診察券" data-demo-url="https://dpromstk2000-lab.github.io/DPRO-VET-QR/member.html?clinic_code=dpro_vet_demo&demo=ready&v=step-vet-56b-admin1234">
+              <div class="screen-top"><b>飼い主さんのスマホ</b><span>LIVE DEMO</span></div><div class="screen-body"><div class="screen-icon">🐾</div><div class="screen-copy"><strong>ペット診察券</strong><small>複数ペット・写真・診察券QR</small></div></div>
+            </a>
+            <a class="screen-link demo-open" href="https://dpromstk2000-lab.github.io/DPRO-VET-QR/today-board.html?clinic_code=dpro_vet_demo&demo=ready&v=vet-today-board-1" data-demo-title="本日の診療統合ボード" data-demo-url="https://dpromstk2000-lab.github.io/DPRO-VET-QR/today-board.html?clinic_code=dpro_vet_demo&demo=ready&v=vet-today-board-1">
+              <div class="screen-top"><b>病院側PC</b><span>LIVE DEMO</span></div><div class="screen-body"><div class="screen-icon">🩺</div><div class="screen-copy"><strong>本日の診療統合ボード</strong><small>順番受付と日時予約を今日の動きで確認</small></div></div>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- P2 OWNER PAIN -->
+  <section id="p2" class="section" aria-labelledby="p2-title">
+    <div class="wrap">
+      <div class="section-head"><div class="eyebrow">P2 Owner Pain</div><h2 id="p2-title">受付が忙しくなるのは、患者数だけが理由ではありません。</h2><p class="copy">動物病院では、受付の入口が複数あり、さらに「どの飼い主さんの、どのペットか」まで正しく把握する必要があります。</p></div>
+      <div class="pain-grid">
+        <div class="clinic-illustration" aria-label="動物病院受付を表す抽象図解"><div class="clinic-desk"><div class="row"><div class="avatar">👩‍⚕️</div><div><strong>受付で確認することが増えやすい</strong><p>電話・来院・予約・ペット情報を一つずつ確認</p></div></div><div class="task-pills"><span>電話</span><span>順番受付</span><span>日時予約</span><span>お薬・予防</span><span>来院確認</span><span>飼い主＋ペット</span></div></div></div>
+        <div class="pain-list">
+          <div class="pain-item"><span>📞</span><div><b>電話・窓口・LINEで入口が分かれる</b><p>受付方法が増えるほど、確認先も増えやすくなります。</p></div></div>
+          <div class="pain-item"><span>🐕</span><div><b>飼い主だけではなくペット単位で確認が必要</b><p>多頭飼いでは、今回受診する子を正しく把握する必要があります。</p></div></div>
+          <div class="pain-item"><span>🩺</span><div><b>受付後も診察・会計待ちへ状態が変わる</b><p>来院前、院内受付、診察中、会計待ちをそれぞれ確認します。</p></div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- P3 WHY PROBLEM -->
+  <section id="p3" class="section compact" aria-labelledby="p3-title">
+    <div class="wrap"><div class="section-head"><div class="eyebrow">P3 Why Problem</div><h2 id="p3-title">予約だけ、診察券だけでは、受付全体はつながりません。</h2></div>
+      <div class="why-flow">
+        <div class="flow-block"><b>入口が複数</b><ul><li>LINE</li><li>電話</li><li>窓口</li><li>QR</li></ul></div><div class="flow-arrow">→</div>
+        <div class="flow-block"><b>管理対象も複数</b><ul><li>飼い主</li><li>ペット</li><li>予約</li><li>来院情報</li></ul></div><div class="flow-arrow">→</div>
+        <div class="flow-block"><b>院内でも状態が変化</b><ul><li>受付前</li><li>来院受付</li><li>診察中</li><li>会計待ち</li></ul></div>
+      </div>
+      <div class="why-note">だからDPROは、単機能を増やすのではなく、入口から院内運用まで「同じ来院の流れ」として扱います。</div>
+    </div>
+  </section>
+
+  <!-- P4 CONNECTED SYSTEM -->
+  <section id="p4" class="section connected" aria-labelledby="p4-title">
+    <div class="wrap"><div class="section-head"><div class="eyebrow">P4 Connected System</div><h2 id="p4-title">入口が違っても、院内では同じ流れへ。</h2><p class="copy">LINE・電話・窓口・QRから入った情報を、DPROの受付・予約を通して、受付PC / iPad、獣医師、会計待ちへつなぎます。</p></div>
+      <div class="connect-board" role="img" aria-label="LINE・電話・窓口・QRからDPROを通り受付・獣医師・会計待ちへつながる図">
+        <div class="connect-col"><h3>入口</h3><div class="connect-node">LINE：診察券・順番受付・日時予約</div><div class="connect-node">電話：スタッフ受付</div><div class="connect-node">窓口：スタッフ受付</div><div class="connect-node">QR：来院受付</div></div>
+        <div class="connect-arrow">→</div>
+        <div class="connect-col"><h3>DPRO</h3><div class="connect-node em">当日の順番受付<br>＋<br>日時指定予約</div></div>
+        <div class="connect-arrow">→</div>
+        <div class="connect-col"><h3>院内運用</h3><div class="connect-node">受付PC / iPad</div><div class="connect-node">獣医師画面</div><div class="connect-node">会計待ち</div></div>
+      </div>
+      <div class="connect-foot"><a class="screen-link demo-open" href="https://dpromstk2000-lab.github.io/DPRO-VET-QR/today-board.html?clinic_code=dpro_vet_demo&demo=ready&v=vet-today-board-1" data-demo-title="本日の診療統合ボード" data-demo-url="https://dpromstk2000-lab.github.io/DPRO-VET-QR/today-board.html?clinic_code=dpro_vet_demo&demo=ready&v=vet-today-board-1"><div class="screen-top"><b>実画面で確認</b><span>LIVE DEMO</span></div><div class="screen-body"><div class="screen-icon">📋</div><div class="screen-copy"><strong>順番受付も、時間予約も、今日の動きを1画面で。</strong><small>本日の診療統合ボードを開く</small></div></div></a></div>
+    </div>
+  </section>
+
+  <!-- P5 CUSTOMER EXPERIENCE -->
+  <section id="p5" class="section" aria-labelledby="p5-title"><div class="wrap"><div class="section-head"><div class="eyebrow">P5 Customer Experience</div><h2 id="p5-title">飼い主さんは、スマホから必要な操作へ。</h2><p class="copy">実際に飼い主さんが操作できる画面だけを紹介します。</p></div>
+    <div class="experience-grid">
+      <article class="experience"><div class="number">01 / MEMBER</div><h3>ペット診察券</h3><p>複数ペットを切り替え、ペットごとの診察券や写真、基本情報を確認できます。</p><a class="btn secondary demo-open" href="https://dpromstk2000-lab.github.io/DPRO-VET-QR/member.html?clinic_code=dpro_vet_demo&demo=ready&v=step-vet-56b-admin1234" data-demo-title="ペット診察券" data-demo-url="https://dpromstk2000-lab.github.io/DPRO-VET-QR/member.html?clinic_code=dpro_vet_demo&demo=ready&v=step-vet-56b-admin1234">実画面を見る</a></article>
+      <article class="experience"><div class="number">02 / TODAY</div><h3>当日の受付</h3><p>当日の順番受付、来院前問診、お薬・予防受付など、病院が有効にした受付方法を利用します。</p><a class="btn secondary demo-open" href="https://dpromstk2000-lab.github.io/DPRO-VET-QR/waiting.html?clinic_code=dpro_vet_demo&demo=ready&v=vet-appointment-1-r2" data-demo-title="当日の受付" data-demo-url="https://dpromstk2000-lab.github.io/DPRO-VET-QR/waiting.html?clinic_code=dpro_vet_demo&demo=ready&v=vet-appointment-1-r2">実画面を見る</a></article>
+      <article class="experience"><div class="number">03 / APPOINTMENT</div><h3>30分単位の日時指定予約</h3><p>病院が日時指定予約を有効にしている場合、ペット・診療内容・日付・空き時間を選択。設定に応じて担当獣医師も選べます。</p><a class="btn primary demo-open" href="https://dpromstk2000-lab.github.io/DPRO-VET-QR/appointment.html?clinic_code=dpro_vet_demo&demo=ready&v=vet-appointment-1-r2" data-demo-title="日時指定予約" data-demo-url="https://dpromstk2000-lab.github.io/DPRO-VET-QR/appointment.html?clinic_code=dpro_vet_demo&demo=ready&v=vet-appointment-1-r2">実画面を見る</a></article>
+    </div>
+    <div class="condition">日時指定予約、獣医師指名、予約変更・キャンセルなどは、病院側の設定・利用条件に応じて表示・利用されます。</div>
+  </div></section>
+
+  <!-- P6 OWNER / STAFF EXPERIENCE -->
+  <section id="p6" class="section compact" aria-labelledby="p6-title"><div class="wrap"><div class="section-head"><div class="eyebrow">P6 Owner / Staff Experience</div><h2 id="p6-title">受付・予約・診察を、それぞれ必要な画面で確認。</h2><p class="copy">すべてを一画面へ詰め込まず、役割ごとに使いやすい画面へ分けています。</p></div>
+    <div class="staff-feature">
+      <div class="big-demo"><span class="label">病院側PC</span><h3>本日の診療統合ボード</h3><p>当日の順番受付と日時指定予約を、今日の動きとしてまとめて確認。来院待ち・院内受付済み・診察中などを把握しやすくします。</p><a class="btn primary demo-open" href="https://dpromstk2000-lab.github.io/DPRO-VET-QR/today-board.html?clinic_code=dpro_vet_demo&demo=ready&v=vet-today-board-1" data-demo-title="本日の診療統合ボード" data-demo-url="https://dpromstk2000-lab.github.io/DPRO-VET-QR/today-board.html?clinic_code=dpro_vet_demo&demo=ready&v=vet-today-board-1">統合ボードを見る</a></div>
+      <div class="mini-demos">
+        <div class="mini-demo"><b>日時指定予約管理</b><p>予約一覧、電話・窓口・スタッフ受付、獣医師・予約枠、基本設定。</p><a class="btn secondary demo-open" href="https://dpromstk2000-lab.github.io/DPRO-VET-QR/appointment-admin.html?clinic_code=dpro_vet_demo&demo=ready&v=vet-appointment-1-r2" data-demo-title="日時指定予約管理" data-demo-url="https://dpromstk2000-lab.github.io/DPRO-VET-QR/appointment-admin.html?clinic_code=dpro_vet_demo&demo=ready&v=vet-appointment-1-r2">実画面</a></div>
+        <div class="mini-demo"><b>受付iPad・QR受付</b><p>受付現場で診察券QRを読み取り、来院受付へつなぎます。</p><a class="btn secondary demo-open" href="https://dpromstk2000-lab.github.io/DPRO-VET-QR/scan-ipad.html?clinic_code=dpro_vet_demo&demo=ready&v=step-vet-52-5x-camera-qr" data-demo-title="受付iPad・QR受付" data-demo-url="https://dpromstk2000-lab.github.io/DPRO-VET-QR/scan-ipad.html?clinic_code=dpro_vet_demo&demo=ready&v=step-vet-52-5x-camera-qr">実画面</a></div>
+        <div class="mini-demo"><b>獣医師画面</b><p>院内受付済み・診察中のペット情報を確認し、診察後は会計待ちへ渡します。</p><a class="btn secondary demo-open" href="https://dpromstk2000-lab.github.io/DPRO-VET-QR/doctor.html?clinic_code=dpro_vet_demo&demo=ready&v=step-vet-54" data-demo-title="獣医師画面" data-demo-url="https://dpromstk2000-lab.github.io/DPRO-VET-QR/doctor.html?clinic_code=dpro_vet_demo&demo=ready&v=step-vet-54">実画面</a></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- P7 BEFORE / AFTER -->
+  <section id="p7" class="section" aria-labelledby="p7-title"><div class="wrap"><div class="section-head"><div class="eyebrow">P7 Before / After</div><h2 id="p7-title">確認先が増える運用から、同じ来院の流れを確認できる運用へ。</h2></div>
+    <div class="ba-grid"><div class="ba before"><h3>導入前に起こりやすい状態</h3><ul><li>LINE、電話、窓口の情報をそれぞれ確認</li><li>予約と当日の受付を別々に見比べる</li><li>飼い主とペットの組み合わせをその都度確認</li><li>診察後の状態を受付へ申し送る</li></ul></div><div class="ba-arrow">→</div><div class="ba after"><h3>DPRO導入後</h3><ul><li>入口が違ってもDPROの受付・予約へ集約</li><li>本日の統合ボードで順番受付と日時予約を確認</li><li>ペット単位の情報を必要な画面で確認</li><li>診察後は会計待ちへ状態をつなぐ</li></ul></div></div>
+    <p class="copy" style="text-align:center;margin-top:18px">※業務効率や時間短縮を保証するものではありません。病院の運用に合わせて利用方法を確認します。</p>
+  </div></section>
+
+  <!-- P8 PRICE / VALUE -->
+  <section id="p8" class="section price" aria-labelledby="p8-title"><div class="wrap"><div class="section-head"><div class="eyebrow">P8 Price / Value</div><h2 id="p8-title">ホームページ・LINE公式・DPROを、まとめて運用。</h2><p class="copy">価格だけではなく、「お客様の入口」「情報を伝える場所」「院内の受付・予約」を一つの運用として整えます。</p></div>
+    <div class="value-grid">
+      <div class="value-card"><div class="icon">🌐</div><h3>ホームページ</h3><small>店舗情報・サービスを伝える</small></div>
+      <div class="value-card"><div class="icon">💬</div><h3>LINE公式</h3><small>相談・案内・継続接点</small></div>
+      <div class="value-card"><div class="icon">🩺</div><h3>DPRO動物病院システム</h3><small>予約・受付・院内運用</small></div>
+    </div>
+    <div class="total-box"><small>ホームページ・LINE公式・DPROをまとめて運用</small><div style="margin-top:8px;font-size:13px;font-weight:950;letter-spacing:.08em;color:#d7eee3">月額合計</div><div class="price-num">5,500円<span> / 月（税込）</span></div><div class="price-breakdown"><span>LINE運用 3,300円</span><span>HP基本保守 1,100円</span><span>DPRO利用・基本保守 1,100円</span></div></div>
+    <p class="price-note">DPROシステムは、LINE公式アカウント構築・運用をご契約いただいた店舗向けの追加サービスです。DPRO単体での提供は現在行っていません。HP基本保守1,100円もLINE運用契約店舗向け料金です。</p>
+    <div class="initial-fees"><div class="fee"><b>LINE公式アカウント構築 77,000円</b>初期設定・導線・リッチメニュー等</div><div class="fee"><b>ホームページ制作 33,000円〜</b>制作内容・プランにより異なります</div><div class="fee"><b>DPROシステム構築 33,000円</b>LINE構築・運用契約店舗限定</div></div>
+  </div></section>
+
+  <!-- P9 DEMO -->
+  <section id="p9" class="section" aria-labelledby="p9-title"><div class="wrap"><div class="section-head"><div class="eyebrow">P9 Demo</div><h2 id="p9-title">説明だけではなく、現在の実画面で確認できます。</h2><p class="copy">DEMOは架空データを使用した営業確認用です。ボタンを押した時だけ実画面を読み込みます。</p></div>
+    <div class="demo-grid">
+      <article class="demo-card"><div class="demo-type">CUSTOMER / MOBILE</div><h3>飼い主さんの画面</h3><p>ペット診察券と日時指定予約を、スマートフォンで確認。</p><a class="btn primary demo-open" href="https://dpromstk2000-lab.github.io/DPRO-VET-QR/member.html?clinic_code=dpro_vet_demo&demo=ready&v=step-vet-56b-admin1234" data-demo-title="ペット診察券" data-demo-url="https://dpromstk2000-lab.github.io/DPRO-VET-QR/member.html?clinic_code=dpro_vet_demo&demo=ready&v=step-vet-56b-admin1234">診察券DEMO</a></article>
+      <article class="demo-card"><div class="demo-type">RECEPTION / PC</div><h3>受付・本日の画面</h3><p>当日の順番受付と日時指定予約をまとめて確認。</p><a class="btn primary demo-open" href="https://dpromstk2000-lab.github.io/DPRO-VET-QR/today-board.html?clinic_code=dpro_vet_demo&demo=ready&v=vet-today-board-1" data-demo-title="本日の診療統合ボード" data-demo-url="https://dpromstk2000-lab.github.io/DPRO-VET-QR/today-board.html?clinic_code=dpro_vet_demo&demo=ready&v=vet-today-board-1">統合ボードDEMO</a></article>
+      <article class="demo-card"><div class="demo-type">DOCTOR / TABLET</div><h3>獣医師の画面</h3><p>院内受付済み・診察中の子を確認し、会計待ちへつなぐ画面。</p><a class="btn primary demo-open" href="https://dpromstk2000-lab.github.io/DPRO-VET-QR/doctor.html?clinic_code=dpro_vet_demo&demo=ready&v=step-vet-54" data-demo-title="獣医師画面" data-demo-url="https://dpromstk2000-lab.github.io/DPRO-VET-QR/doctor.html?clinic_code=dpro_vet_demo&demo=ready&v=step-vet-54">獣医師DEMO</a></article>
+    </div>
+    <div class="demo-sub">
+      <article class="demo-card"><div class="demo-type">APPOINTMENT</div><h3>日時指定予約</h3><p>30分単位の空き枠、診療内容、担当獣医師などを確認。</p><a class="btn secondary demo-open" href="https://dpromstk2000-lab.github.io/DPRO-VET-QR/appointment.html?clinic_code=dpro_vet_demo&demo=ready&v=vet-appointment-1-r2" data-demo-title="日時指定予約" data-demo-url="https://dpromstk2000-lab.github.io/DPRO-VET-QR/appointment.html?clinic_code=dpro_vet_demo&demo=ready&v=vet-appointment-1-r2">予約DEMO</a></article>
+      <article class="demo-card"><div class="demo-type">IPAD / QR</div><h3>受付iPad・QR</h3><p>診察券QRを受付現場で読み取る画面。</p><a class="btn secondary demo-open" href="https://dpromstk2000-lab.github.io/DPRO-VET-QR/scan-ipad.html?clinic_code=dpro_vet_demo&demo=ready&v=step-vet-52-5x-camera-qr" data-demo-title="受付iPad・QR受付" data-demo-url="https://dpromstk2000-lab.github.io/DPRO-VET-QR/scan-ipad.html?clinic_code=dpro_vet_demo&demo=ready&v=step-vet-52-5x-camera-qr">iPad DEMO</a></article>
+    </div>
+  </div></section>
+
+  <!-- P10 CONSULT / CTA -->
+  <section id="p10" class="section compact" aria-labelledby="p10-title"><div class="wrap"><div class="cta-shell"><div class="eyebrow">P10 Consult / CTA</div><h2 id="p10-title">まずは、あなたの病院でどこまでつなげるか確認しませんか。</h2><p>現在の受付方法やLINE運用を確認し、必要な機能と使い方を整理します。相談後に必ず契約する必要はありません。</p><div class="actions"><a class="btn line" href="https://lin.ee/YxJGXV6D" target="_blank" rel="noopener">LINEで無料相談</a><a class="btn ghost" href="#p9">実画面DEMOを確認</a></div><p class="cta-note">友だち追加後、「動物病院デモ希望」と送ってください。</p></div></div></section>
+</main>
+
+<footer><div class="wrap footer-inner"><span>© DPRO SHOP / DPRO動物病院システム</span><span><a href="https://dpro-shop.com/pricing" target="_blank" rel="noopener">料金の詳細</a> ・ <a href="https://dpro-shop.com" target="_blank" rel="noopener">DPRO SHOP</a></span></div></footer>
+
+<div id="demoModal" class="modal" hidden aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="demoModalTitle">
+  <div class="modal-panel" role="document">
+    <div class="modal-head"><div id="demoModalTitle" class="modal-title">実画面DEMO</div><div class="modal-actions"><a id="demoDirect" class="modal-direct" href="#" target="_blank" rel="noopener">別タブで開く</a><button id="demoClose" class="modal-close" type="button" aria-label="DEMOを閉じる">×</button></div></div>
+    <div id="demoBody" class="modal-body"><div class="modal-fallback">実画面を読み込みます。</div></div>
+  </div>
+</div>
+
+<script>
+(() => {
+  'use strict';
+  const modal = document.getElementById('demoModal');
+  const body = document.getElementById('demoBody');
+  const title = document.getElementById('demoModalTitle');
+  const direct = document.getElementById('demoDirect');
+  const closeBtn = document.getElementById('demoClose');
+  let lastFocus = null;
+
+  function closeModal(){
+    if (!modal || modal.hidden) return;
+    modal.hidden = true;
+    modal.setAttribute('aria-hidden','true');
+    document.body.classList.remove('modal-open');
+    body.replaceChildren();
+    const msg = document.createElement('div');
+    msg.className = 'modal-fallback';
+    msg.textContent = '実画面を読み込みます。';
+    body.appendChild(msg);
+    if (lastFocus && typeof lastFocus.focus === 'function') lastFocus.focus();
+  }
+
+  function openModal(link){
+    const url = link.dataset.demoUrl || link.href;
+    const label = link.dataset.demoTitle || '実画面DEMO';
+    if (!url) return;
+    lastFocus = link;
+    title.textContent = label + '｜実画面DEMO';
+    direct.href = url;
+    body.replaceChildren();
+    const iframe = document.createElement('iframe');
+    iframe.title = label + ' 実画面DEMO';
+    iframe.loading = 'eager';
+    iframe.referrerPolicy = 'no-referrer-when-downgrade';
+    iframe.src = url;
+    body.appendChild(iframe);
+    modal.hidden = false;
+    modal.setAttribute('aria-hidden','false');
+    document.body.classList.add('modal-open');
+    closeBtn.focus();
+  }
+
+  document.addEventListener('click', (event) => {
+    const link = event.target.closest('.demo-open');
+    if (link) {
+      if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+      event.preventDefault();
+      openModal(link);
+      return;
+    }
+    if (event.target === modal) closeModal();
+  });
+  closeBtn?.addEventListener('click', closeModal);
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') closeModal();
+  });
+})();
+</script>
+</body>
+</html>
