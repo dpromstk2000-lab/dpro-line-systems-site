@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="DPRO LINE SYSTEMS 業種別営業LP一覧。各業種の営業LPを確認し、URLをコピーできます。">
+<title>業種別LP一覧｜DPRO LINE SYSTEMS</title>
+
+<style>
+*{
+  box-sizing:border-box;
+}
+
+html{
+  scroll-behavior:smooth;
+}
+
+body{
+  margin:0;
+  font-family:
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    "Noto Sans JP",
+    "Hiragino Kaku Gothic ProN",
+    "Yu Gothic",
+    sans-serif;
+  background:#f5f7f6;
+  color:#101817;
+}
+
+a{
+  color:inherit;
+}
+
+.header{
+  background:#0b1513;
+  color:#fff;
+  padding:18px 22px;
+  position:sticky;
+  top:0;
+  z-index:100;
+  box-shadow:0 4px 18px rgba(0,0,0,.12);
+}
+
+.header-inner{
+  max-width:1200px;
+  margin:auto;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:20px;
+}
+
+.brand{
+  text-decoration:none;
+  display:flex;
+  align-items:center;
+  gap:11px;
+}
+
+.brand-mark{
+  width:38px;
+  height:38px;
+  border-radius:11px;
+  display:grid;
+  place-items:center;
+  font-size:22px;
+  font-weight:900;
+  background:#19a974;
+  color:#fff;
+}
+
+.brand-copy strong{
+  display:block;
+  font-size:15px;
+  letter-spacing:.04em;
+}
+
+.brand-copy small{
+  display:block;
+  margin-top:2px;
+  color:#aab8b5;
+  font-size:10px;
+  letter-spacing:.12em;
+}
+
+.header-nav{
+  display:flex;
+  gap:10px;
+}
+
+.header-nav a{
+  text-decoration:none;
+  font-size:13px;
+  padding:9px 13px;
+  border:1px solid rgba(255,255,255,.18);
+  border-radius:999px;
+}
+
+.hero{
+  background:
+    radial-gradient(circle at 85% 15%, rgba(25,169,116,.16), transparent 34%),
+    linear-gradient(180deg,#0b1513 0%,#14231f 100%);
+  color:#fff;
+  padding:76px 22px 82px;
+}
+
+.hero-inner{
+  max-width:1100px;
+  margin:auto;
+}
+
+.eyebrow{
+  margin:0 0 12px;
+  color:#50d6a4;
+  font-size:12px;
+  font-weight:800;
+  letter-spacing:.18em;
+}
+
+.hero h1{
+  margin:0;
+  max-width:800px;
+  font-size:clamp(36px,6vw,70px);
+  line-height:1.08;
+  letter-spacing:-.035em;
+}
+
+.hero-lead{
+  max-width:710px;
+  margin:24px 0 0;
+  color:#d1dcda;
+  font-size:17px;
+  line-height:1.9;
+}
+
+.summary{
+  max-width:1100px;
+  margin:-34px auto 0;
+  padding:0 22px;
+  position:relative;
+  z-index:2;
+}
+
+.summary-inner{
+  background:#fff;
+  border-radius:22px;
+  padding:23px 26px;
+  box-shadow:0 12px 40px rgba(10,30,24,.10);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:20px;
+}
+
+.summary-count strong{
+  font-size:34px;
+  color:#0d8c62;
+}
+
+.summary-count span{
+  margin-left:7px;
+  font-size:14px;
+  color:#60706c;
+}
+
+.summary-note{
+  font-size:13px;
+  color:#677672;
+  text-align:right;
+}
+
+.controls{
+  max-width:1100px;
+  margin:40px auto 0;
+  padding:0 22px;
+}
+
+.search-box{
+  position:relative;
+}
+
+.search-box input{
+  width:100%;
+  height:56px;
+  border:1px solid #d2ddda;
+  background:#fff;
+  border-radius:15px;
+  padding:0 18px 0 46px;
+  font-size:16px;
+  outline:none;
+  transition:.2s;
+}
+
+.search-box input:focus{
+  border-color:#14a475;
+  box-shadow:0 0 0 4px rgba(20,164,117,.10);
+}
+
+.search-icon{
+  position:absolute;
+  left:18px;
+  top:50%;
+  transform:translateY(-50%);
+  color:#78908a;
+}
+
+.filters{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin-top:15px;
+}
+
+.filter-btn{
+  border:1px solid #d2ddda;
+  background:#fff;
+  color:#30413d;
+  border-radius:999px;
+  padding:9px 14px;
+  font-size:13px;
+  cursor:pointer;
+}
+
+.filter-btn:hover,
+.filter-btn.active{
+  background:#103c31;
+  border-color:#103c31;
+  color:#fff;
+}
+
+.main{
+  max-width:1100px;
+  margin:30px auto 80px;
+  padding:0 22px;
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:16px;
+}
+
+.card{
+  background:#fff;
+  border:1px solid #dfe7e5;
+  border-radius:19px;
+  padding:21px;
+  box-shadow:0 5px 18px rgba(12,38,31,.045);
+  display:flex;
+  flex-direction:column;
+  min-height:220px;
+}
+
+.card-top{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+}
+
+.code{
+  font-size:11px;
+  letter-spacing:.1em;
+  font-weight:800;
+  color:#16865f;
+}
+
+.status{
+  font-size:11px;
+  background:#e9f8f2;
+  color:#107a57;
+  padding:5px 9px;
+  border-radius:999px;
+  font-weight:700;
+}
+
+.card h2{
+  margin:23px 0 8px;
+  font-size:22px;
+  line-height:1.35;
+}
+
+.category{
+  margin:0;
+  color:#73827e;
+  font-size:12px;
+}
+
+.actions{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+  margin-top:auto;
+  padding-top:24px;
+}
+
+.btn{
+  border:0;
+  border-radius:11px;
+  min-height:44px;
+  padding:9px 10px;
+  font-size:13px;
+  font-weight:800;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  text-decoration:none;
+}
+
+.copy-btn{
+  background:#e9f5f1;
+  color:#0b684b;
+}
+
+.view-btn{
+  background:#102e27;
+  color:#fff;
+}
+
+.copy-btn:hover{
+  background:#d9eee7;
+}
+
+.view-btn:hover{
+  background:#174638;
+}
+
+.copy-btn.copied{
+  background:#13a574;
+  color:#fff;
+}
+
+.no-result{
+  display:none;
+  background:#fff;
+  border-radius:16px;
+  padding:40px 20px;
+  text-align:center;
+  color:#687a75;
+}
+
+.footer{
+  background:#0b1513;
+  color:#b7c4c1;
+  padding:35px 22px;
+  text-align:center;
+  font-size:12px;
+}
+
+.footer a{
+  color:#fff;
+  text-decoration:none;
+}
+
+@media(max-width:900px){
+  .grid{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+  }
+}
+
+@media(max-width:620px){
+  .header-inner{
+    align-items:flex-start;
+  }
+
+  .header-nav{
+    display:none;
+  }
+
+  .hero{
+    padding-top:55px;
+  }
+
+  .summary-inner{
+    align-items:flex-start;
+    flex-direction:column;
+  }
+
+  .summary-note{
+    text-align:left;
+  }
+
+  .grid{
+    grid-template-columns:1fr;
+  }
+
+  .card{
+    min-height:205px;
+  }
+
+  .actions{
+    grid-template-columns:1fr 1fr;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header class="header">
+  <div class="header-inner">
+    <a class="brand" href="index.html">
+      <span class="brand-mark">D</span>
+      <span class="brand-copy">
+        <strong>DPRO LINE SYSTEMS</strong>
+        <small>OFFICIAL PRODUCT SITE</small>
+      </span>
+    </a>
+
+    <nav class="header-nav">
+      <a href="index.html">トップ</a>
+      <a href="systems.html">システム一覧</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="hero-inner">
+    <p class="eyebrow">DPRO BUSINESS LP LIBRARY</p>
+    <h1>業種別LPを、<br>すぐに確認。</h1>
+    <p class="hero-lead">
+      業種に合わせたDPROの営業LPをご覧いただけます。
+      「LPを見る」で内容を確認、「URLをコピー」でページのアドレスをすぐに共有できます。
+    </p>
+  </div>
+</section>
+
+<section class="summary">
+  <div class="summary-inner">
+    <div class="summary-count">
+      <strong id="visibleCount">30</strong>
+      <span>公開中LP</span>
+    </div>
+    <div class="summary-note">
+      現在公開済みの営業LPを掲載しています。<br>
+      新しい業種LPは完成後、順次追加します。
+    </div>
+  </div>
+</section>
+
+<section class="controls">
+  <div class="search-box">
+    <span class="search-icon">⌕</span>
+    <input
+      id="searchInput"
+      type="search"
+      placeholder="業種名・SYSTEM CODEで検索"
+      aria-label="営業LPを検索">
+  </div>
+
+  <div class="filters">
+    <button class="filter-btn active" data-filter="all">すべて</button>
+    <button class="filter-btn" data-filter="美容・健康">美容・健康</button>
+    <button class="filter-btn" data-filter="医療・ペット">医療・ペット</button>
+    <button class="filter-btn" data-filter="飲食">飲食</button>
+    <button class="filter-btn" data-filter="介護・福祉">介護・福祉</button>
+    <button class="filter-btn" data-filter="住まい">住まい</button>
+    <button class="filter-btn" data-filter="教育">教育</button>
+    <button class="filter-btn" data-filter="士業">士業</button>
+    <button class="filter-btn" data-filter="生活サービス">生活サービス</button>
+  </div>
+</section>
+
+<main class="main">
+
+<div class="grid" id="lpGrid">
+
+  <article class="card" data-name="美容室 HAIR" data-category="美容・健康">
+    <div class="card-top"><span class="code">HAIR</span><span class="status">公開中</span></div>
+    <h2>美容室</h2><p class="category">美容・健康</p>
+    <div class="actions"><button class="btn copy-btn" data-url="lp-hair.html">URLをコピー</button><a class="btn view-btn" href="lp-hair.html" target="_blank">LPを見る</a></div>
+  </article>
+
+  <article class="card" data-name="ネイルサロン NAIL" data-category="美容・健康">
+    <div class="card-top"><span class="code">NAIL</span><span class="status">公開中</span></div>
+    <h2>ネイルサロン</h2><p class="category">美容・健康</p>
+    <div class="actions"><button class="btn copy-btn" data-url="lp-nail.html">URLをコピー</button><a class="btn view-btn" href="lp-nail.html" target="_blank">LPを見る</a></div>
+  </article>
+
+  <article class="card" data-name="エステ ESTHE" data-category="美容・健康">
+    <div class="card-top"><span class="code">ESTHE</span><span class="status">公開中</span></div>
+    <h2>エステ</h2><p class="category">美容・健康</p>
+    <div class="actions"><button class="btn copy-btn" data-url="lp-esthe.html">URLをコピー</button><a class="btn view-btn" href="lp-esthe.html" target="_blank">LPを見る</a></div>
+  </article>
+
+  <article class="card" data-name="整体 整骨院 SEITAI" data-category="美容・健康">
+    <div class="card-top"><span class="code">SEITAI</span><span class="status">公開中</span></div>
+    <h2>整体・整骨院</h2><p class="category">美容・健康</p>
+    <div class="actions"><button class="btn copy-btn" data-url="lp-seitai.html">URLをコピー</button><a class="btn view-btn" href="lp-seitai.html" target="_blank">LPを見る</a></div>
+  </article>
+
+  <article class="card" data-name="歯科 DENTAL" data-category="医療・ペット">
+    <div class="card-top"><span class="code">DENTAL</span><span class="status">公開中</span></div>
+    <h2>歯科</h2><p class="category">医療・ペット</p>
+    <div class="actions"><button class="btn copy-btn" data-url="lp-dental.html">URLをコピー</button><a class="btn view-btn" href="lp-dental.html" target="_blank">LPを見る</a></div>
+  </article>
+
+  <article class="card" data-name="動物病院 VET" data-category="医療・ペット">
+    <div class="card-top"><span class="code">VET</span><span class="status">公開中</span></div>
+    <h2>動物病院</h2><p class="category">医療・ペット</p>
+    <div class="actions"><button class="btn copy-btn" data-url="lp-vet.html">URLをコピー</button><a class="btn view-btn" href="lp-vet.html" target="_blank">LPを見る</a></div>
+  </article>
+
+  <article class="card" data-name="クリーニング CLEANING" data-category="生活サービス">
+    <div class="card-top"><span class="code">CLEANING</span><span class="status">公開中</span></div>
+    <h2>クリーニング</h2><p class="category">生活サービス</p>
+    <div class="actions"><button class="btn copy-btn" data-url="lp-cleaning.html">URLをコピー</button><a class="btn view-btn" href="lp-cleaning.html" target="_blank">LPを見る</a></div>
+  </article>
+
+  <article class="card" data-name="修理受付 REPAIR" data-category="生活サービス">
+    <div class="card-top"><span class="code">REPAIR</span><span class="status">公開中</span></div>
+    <h2>修理受付</h2><p class="category">生活サービス</p>
+    <div class="actions"><button class="btn copy-btn" data-url="lp-repair.html">URLをコピー</button><a class="btn view-btn" href="lp-repair.html" target="_blank">LPを見る</a></div>
+  </article>
+
+  <article class="card" data-name="テイクアウト TAKEOUT" data-category="飲食">
+    <div class="card-top"><span class="code">TAKEOUT</span><span class="status">公開中</span></div>
+    <h2>テイクアウト</h2><p class="category">飲食</p>
+    <div class="actions"><button class="btn copy-btn" data-url="lp-takeout.html">URLをコピー</button><a class="btn view-btn" href="lp-takeout.html" target="_blank">LPを見る</a></div>
+  </article>
+
+  <article class="card" data-name="美容サロン SALON" data-category="美容・健康">
+    <div class="card-top"><span class="code">SALON</span><span class="status">公開中</span></div>
+    <h2>美容サロン</h2><p class="category">美容・健康</p>
+    <div class="actions"><button class="btn copy-btn" data-url="lp-salon.html">URLをコピー</button><a class="btn view-btn" href="lp-salon.html" target="_blank">LPを見る</a></div>
+  </article>
+
+  <article class="card" data-name="ベーカリー BAKERY" data-category="飲食">
+    <div class="card-top"><span class="code">BAKERY</span><span class="status">公開中</span></div>
+    <h2>ベーカリー</h2><p class="category">飲食</p>
+    <div class="actions"><button class="btn copy-btn" data-url="lp-bakery.html">URLをコピー</button><a class="btn view-btn" href="lp-bakery.html" target="_blank">LPを見る</a></div>
+  </article>
+
+  <article class="card" data-name="ケーキ 洋菓子 CAKE" data-category="飲食">
+    <div class="card-top"><span class="code">CAKE</span><span class="status">公開中</span></div>
+    <h2>ケーキ・洋菓子</h2><p class="category">飲食</p>
+    <div class="actions"><button class="btn copy-btn" data-url="lp-cake.html">URLをコピー</button><a class="btn view-btn" href="lp-cake.html" target="_blank">LPを見る</a></div>
+  </article>
+
+  <article class="card" data-name="まつげ アイサロン EYE" data-category="美容・健康">
+    <div class="card-top"><span class="code">EYE</span><span class="status">公開中</span></div>
+    <h2>まつげ・アイサロン</h2><p class="category">美容・健康</p>
+    <div class="actions"><button class="btn copy-btn" data-url="lp-eye.html">URLをコピー</button><a class="btn view-btn" href="lp-eye.html" target="_blank">LPを見る</a></div>
+  </article>
+
+  <article class="card" data-name="ヨガ YOGA" data-category="美容・健康">
+    <div class="card-top"><span class="code">YOGA</span><span class="status">公開中</span></div>
+    <h2>ヨガ</h2><p class="category">美容・健康</p>
+    <div class="actions"><button class="btn copy-btn" data-url="lp-yoga.html">URLをコピー</button><a class="btn view-btn" href="lp-yoga.html" target="_blank">LPを見る</a></div>
+  </article>
+
+  <article class="card" data-name="パーソナルジム GYM" data-category="美容・健康">
+    <div class="card-top"><span class="code">GYM</span><span class="status">公開中</span></div>
+    <h2>パーソナルジム</h2><p class="category">美容・健康</p>
+    <div class="actions"><button class="btn copy-btn" data-url="lp-gym.html">URLをコピー</button><a class="btn view-btn" href="lp-gym.html" target="_blank">LPを見る</a></div>
+  </article>
+
+  <article class="card" data-name="不動産 ESTATE" data-category="住まい">
+    <div class="card-top"><span class="code">ESTATE</span><span class="status">公開中</span></div>
+    <h2>不動産・賃貸</h2><p class="category">住まい</p>
+    <div class="actions"><button class="btn copy-btn" data-url="lp-estate.html">URLをコピー</button><a class="btn view-btn" href="lp-estate.html" target="_blank">LPを見る</a></div>
+  </article>
+
+  <article class="card" data-name="買取 BUYBACK" data-category="生活サービス">
+    <div class="card-top"><span class="code">BUYBACK</span><span class="status">公開中</span></div>
+    <h2>買取・査定</h2><p class="category">生活サービス</p>
+    <div class="actions"><button class="btn copy-btn" data-url="lp-buyback.html">URLをコピー</button><a class="btn view-btn" href="lp-buyback.html" target="_blank">LPを見る</a></div>
+  </article>
+
+  <article class="card" data-name="写真館 PHOTO" data-category="生活サービス">
+    <div class="card-top"><span class="code">PHOTO</span><span class="status">公開中</span></div>
+    <h2>写真館</h2><p class="category">生活サービス</p>
+    <div class="actions"><button class="btn copy-btn" data-url="lp-photo.html">URLをコピー</button><a class="btn view-btn" href="lp-photo.html" target="_blank">LPを見る</a></div>
+  </article>
+
+  <article class="card" data-name="リフォーム REFORM" data-category="住まい">
+    <div class="card-top"><span class="code">REFORM</span><span class="status">公開中</span></div>
+    <h2>リフォーム・工務店</h2><p class="category">住まい</p>
+    <div class="actions"><button class="btn copy-btn" data-url="lp-reform.html">URLをコピー</button><a class="btn view-btn" href="lp-reform.html" target="_blank">LPを見る</a></div>
+  </article>
+
+  <article class="card" data-name="税理士 TAX" data-category="士業">
+    <div class="card-top"><span class="code">TAX</span><span class="status">公開中</span></div>
+    <h2>税理士・会計</h2><p class="category">士業</p>
+    <div class="actions"><button class="btn copy-btn" data-url="lp-tax.html">URLをコピー</button><a class="btn view-btn" href="lp-tax.html" target="_blank">LPを見る</a></div>
+  </article>
+
+  <article class="card" data-name="学習塾 SCHOOL" data-category="教育">
+    <div class="card-top"><span class="code">SCHOOL</span><span class="status">公開中</span></div>
+    <h2>学習塾</h2><p class="category">教育</p>
+    <div class="actions"><button class="btn copy-btn" data-url="lp-school.html">URLをコピー</button><a class="btn view-btn" href="lp-school.html" target="_blank">LPを見る</a></div>
+  </article>
+
+  <article class="card" data-name="葬儀 FUNERAL" data-category="生活サービス">
+    <div class="card-top"><span class="code">FUNERAL</span><span class="status">公開中</span></div>
+    <h2>葬儀・法要</h2><p class="category">生活サービス</p>
+    <div class="actions"><button class="btn copy-btn" data-url="lp-funeral.html">URLをコピー</button><a class="btn view-btn" href="lp-funeral.html" target="_blank">LPを見る</a></div>
+  </article>
+
+  <article class="card" data-name="宿泊 STAY" data-category="生活サービス">
+    <div class="card-top"><span class="code">STAY</span><span class="status">公開中</span></div>
+    <h2>宿泊施設</h2><p class="category">生活サービス</p>
+    <div class="actions"><button class="btn copy-btn" data-url="lp-stay.html">URLをコピー</button><a class="btn view-btn" href="lp-stay.html" target="_blank">LPを見る</a></div>
+  </article>
+
+  <article class="card" data-name="中古車 CAR" data-category="生活サービス">
+    <div class="card-top"><span class="code">CAR</span><span class="status">公開中</span></div>
+    <h2>中古車買取・販売</h2><p class="category">生活サービス</p>
+    <div class="actions"><button class="btn copy-btn" data-url="lp-car.html">URLをコピー</button><a class="btn view-btn" href="lp-car.html" target="_blank">LPを見る</a></div>
+  </article>
+
+  <article class="card" data-name="デイサービス DAYCARE" data-category="介護・福祉">
+    <div class="card-top"><span class="code">DAYCARE</span><span class="status">公開中</span></div>
+    <h2>デイサービス</h2><p class="category">介護・福祉</p>
+    <div class="actions"><button class="btn copy-btn" data-url="lp-daycare.html">URLをコピー</button><a class="btn view-btn" href="lp-daycare.html" target="_blank">LPを見る</a></div>
+  </article>
+
+  <article class="card" data-name="介護タクシー CARETAXI" data-category="介護・福祉">
+    <div class="card-top"><span class="code">CARETAXI</span><span class="status">公開中</span></div>
+    <h2>介護タクシー</h2><p class="category">介護・福祉</p>
+    <div class="actions"><button class="btn copy-btn" data-url="lp-caretaxi.html">URLをコピー</button><a class="btn view-btn" href="lp-caretaxi.html" target="_blank">LPを見る</a></div>
+  </article>
+
+  <article class="card" data-name="高齢者配食 HAISHOKU" data-category="介護・福祉">
+    <div class="card-top"><span class="code">HAISHOKU</span><span class="status">公開中</span></div>
+    <h2>高齢者配食</h2><p class="category">介護・福祉</p>
+    <div class="actions"><button class="btn copy-btn" data-url="lp-haishoku.html">URLをコピー</button><a class="btn view-btn" href="lp-haishoku.html" target="_blank">LPを見る</a></div>
+  </article>
+
+  <article class="card" data-name="家事代行 HOUSEKEEP" data-category="生活サービス">
+    <div class="card-top"><span class="code">HOUSEKEEP</span><span class="status">公開中</span></div>
+    <h2>家事代行</h2><p class="category">生活サービス</p>
+    <div class="actions"><button class="btn copy-btn" data-url="lp-housekeep.html">URLをコピー</button><a class="btn view-btn" href="lp-housekeep.html" target="_blank">LPを見る</a></div>
+  </article>
+
+  <article class="card" data-name="不用品回収 DISPOSAL" data-category="生活サービス">
+    <div class="card-top"><span class="code">DISPOSAL</span><span class="status">公開中</span></div>
+    <h2>不用品回収</h2><p class="category">生活サービス</p>
+    <div class="actions"><button class="btn copy-btn" data-url="lp-disposal.html">URLをコピー</button><a class="btn view-btn" href="lp-disposal.html" target="_blank">LPを見る</a></div>
+  </article>
+
+  <article class="card" data-name="行政書士 GYOSEI" data-category="士業">
+    <div class="card-top"><span class="code">GYOSEI</span><span class="status">公開中</span></div>
+    <h2>行政書士</h2><p class="category">士業</p>
+    <div class="actions"><button class="btn copy-btn" data-url="lp-gyosei.html">URLをコピー</button><a class="btn view-btn" href="lp-gyosei.html" target="_blank">LPを見る</a></div>
+  </article>
+
+</div>
+
+<div class="no-result" id="noResult">
+  該当する営業LPが見つかりませんでした。
+</div>
+
+</main>
+
+<footer class="footer">
+  <p>DPRO LINE SYSTEMS</p>
+  <p><a href="index.html">トップへ戻る</a>　｜　<a href="systems.html">システム一覧を見る</a></p>
+  <p>© DPRO SHOP</p>
+</footer>
+
+<script>
+const cards = [...document.querySelectorAll(".card")];
+const searchInput = document.getElementById("searchInput");
+const filterButtons = [...document.querySelectorAll(".filter-btn")];
+const count = document.getElementById("visibleCount");
+const noResult = document.getElementById("noResult");
+
+let selectedCategory = "all";
+
+function updateList(){
+  const keyword = searchInput.value.trim().toLowerCase();
+  let visible = 0;
+
+  cards.forEach(card => {
+    const name = card.dataset.name.toLowerCase();
+    const category = card.dataset.category;
+
+    const searchOK = !keyword || name.includes(keyword);
+    const categoryOK =
+      selectedCategory === "all" ||
+      category === selectedCategory;
+
+    const show = searchOK && categoryOK;
+    card.style.display = show ? "" : "none";
+
+    if(show) visible++;
+  });
+
+  count.textContent = visible;
+  noResult.style.display = visible === 0 ? "block" : "none";
+}
+
+searchInput.addEventListener("input", updateList);
+
+filterButtons.forEach(button => {
+  button.addEventListener("click", () => {
+    filterButtons.forEach(b => b.classList.remove("active"));
+    button.classList.add("active");
+    selectedCategory = button.dataset.filter;
+    updateList();
+  });
+});
+
+document.querySelectorAll(".copy-btn").forEach(button => {
+  button.addEventListener("click", async () => {
+    const url = new URL(button.dataset.url, window.location.href).href;
+
+    try{
+      await navigator.clipboard.writeText(url);
+
+      const original = button.textContent;
+      button.textContent = "コピーしました ✓";
+      button.classList.add("copied");
+
+      setTimeout(() => {
+        button.textContent = original;
+        button.classList.remove("copied");
+      }, 1600);
+
+    }catch(error){
+      window.prompt("このURLをコピーしてください", url);
+    }
+  });
+});
+</script>
+
+</body>
+</html>
