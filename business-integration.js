@@ -1,6 +1,32 @@
 (() => {
   "use strict";
 
+  const addLpLibraryLinks = () => {
+    const nav = document.querySelector(".global-nav");
+    if (nav && !nav.querySelector("[data-lp-library-link]")) {
+      const link = document.createElement("a");
+      link.href = "lp.html";
+      link.textContent = "業種別LP";
+      link.setAttribute("data-lp-library-link", "");
+
+      const cta = nav.querySelector(".nav-cta");
+      nav.insertBefore(link, cta || null);
+    }
+
+    const footerNav = document.querySelector(".site-footer nav");
+    if (footerNav && !footerNav.querySelector("[data-lp-library-link]")) {
+      const link = document.createElement("a");
+      link.href = "lp.html";
+      link.textContent = "業種別LP";
+      link.setAttribute("data-lp-library-link", "");
+
+      const contact = footerNav.querySelector('a[href="#contact"]');
+      footerNav.insertBefore(link, contact || null);
+    }
+  };
+
+  addLpLibraryLinks();
+
   const formatDate = (value) => {
     if (!value) return "日付未定";
     const date = new Date(`${value}T00:00:00`);
