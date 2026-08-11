@@ -1,0 +1,459 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>DPROまつげ・眉サロンシステム｜LINE予約からカルテ・施術写真・次回来店まで</title>
+<meta name="description" content="まつげ・眉サロン向け。LINE予約、電話・Instagram・店頭予約、専用カルテ、施術前後写真、次回来店管理をひとつの流れへ。実際のDPROデモ画面も確認できます。">
+<meta name="robots" content="index,follow">
+<meta property="og:type" content="website">
+<meta property="og:title" content="DPROまつげ・眉サロンシステム｜LINE予約からカルテ・施術写真・次回来店まで">
+<meta property="og:description" content="LINE予約からカルテ・施術写真・次回来店まで、アイサロン業務をひとつの流れへ。">
+<meta property="og:url" content="https://dpromstk2000-lab.github.io/dpro-line-systems-site/lp-eye.html">
+<link rel="canonical" href="https://dpromstk2000-lab.github.io/dpro-line-systems-site/lp-eye.html">
+<style>
+:root{
+  --bg:#fffaf8;--surface:#fff;--soft:#fff1f4;--soft2:#f8f3ef;--ink:#30272a;--muted:#6f6367;
+  --line:#eadde1;--rose:#c94d73;--rose2:#9f3656;--green:#18794e;--green2:#0f5d3a;
+  --gold:#9c6b29;--shadow:0 18px 50px rgba(88,43,59,.10);--radius:24px;--max:1180px
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:linear-gradient(180deg,#fff 0,#fffaf8 34%,#fff 100%);color:var(--ink);font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans JP",sans-serif;line-height:1.75;font-size:16px;overflow-x:hidden}
+a{color:inherit}
+img{display:block;max-width:100%}
+button,input{font:inherit}
+.container{width:min(var(--max),calc(100% - 32px));margin:auto}
+.section{padding:76px 0}
+.section.soft{background:var(--soft2)}
+.section.pink{background:linear-gradient(180deg,#fff7f9,#fff)}
+.kicker{display:inline-flex;align-items:center;gap:.45rem;font-size:.78rem;font-weight:900;letter-spacing:.09em;color:var(--rose2);text-transform:uppercase}
+.kicker::before{content:"";width:26px;height:3px;border-radius:99px;background:var(--rose)}
+h1,h2,h3,p{margin-top:0}
+h1{font-size:clamp(2.25rem,5vw,4.5rem);line-height:1.13;letter-spacing:-.035em;margin-bottom:20px}
+h2{font-size:clamp(1.75rem,3.5vw,3rem);line-height:1.28;letter-spacing:-.025em;margin-bottom:14px}
+h3{font-size:1.15rem;line-height:1.45;margin-bottom:8px}
+.lead{font-size:clamp(1.05rem,1.6vw,1.28rem);color:var(--muted)}
+.muted{color:var(--muted)}
+.center{text-align:center}
+.btnrow{display:flex;flex-wrap:wrap;gap:12px;margin-top:24px}
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:50px;padding:12px 20px;border-radius:14px;text-decoration:none;font-weight:900;border:2px solid transparent;transition:.18s ease;cursor:pointer}
+.btn:hover{transform:translateY(-1px)}
+.btn.primary{background:var(--green);color:#fff;box-shadow:0 10px 28px rgba(24,121,78,.18)}
+.btn.primary:hover{background:var(--green2)}
+.btn.secondary{background:#fff;border-color:var(--rose);color:var(--rose2)}
+.btn.ghost{background:#fff;border-color:var(--line);color:var(--ink)}
+.btn.full{width:100%}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:22px}
+.chip{padding:7px 11px;border:1px solid var(--line);border-radius:999px;background:#fff;font-size:.86rem;font-weight:800}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px}
+.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+.grid4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+.hero{padding:46px 0 56px;background:radial-gradient(circle at 14% 5%,#fff0f4,transparent 34rem),#fff}
+.hero-grid{display:grid;grid-template-columns:minmax(0,1.03fr) minmax(360px,.97fr);gap:46px;align-items:center}
+.brand{font-size:.92rem;font-weight:950;letter-spacing:.09em;color:var(--rose2);margin-bottom:14px}
+.hero-copy .lead{max-width:660px}
+.hero-photo{min-height:520px;overflow:hidden;border-radius:30px;box-shadow:0 24px 60px rgba(72,41,50,.16);background:#f3e9e5}
+.hero-photo img{width:100%;height:100%;min-height:520px;object-fit:cover;object-position:50% 45%}
+.trust{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-top:26px}
+.trust div{padding:13px;border-radius:16px;background:#fff;border:1px solid var(--line);font-size:.9rem;font-weight:800}
+.pain-card{padding:20px;min-height:168px}
+.icon{width:44px;height:44px;display:grid;place-items:center;border-radius:14px;background:var(--soft);color:var(--rose2);font-weight:950;margin-bottom:14px}
+.flow{display:grid;grid-template-columns:1fr auto 1fr auto 1fr;gap:14px;align-items:stretch;margin-top:28px}
+.flow-col{padding:22px}
+.flow-col strong{display:block;color:var(--rose2);margin-bottom:12px}
+.flow-item{padding:11px 13px;background:#fff;border:1px solid var(--line);border-radius:12px;margin-top:9px;font-weight:800}
+.arrow{display:grid;place-items:center;font-size:2rem;color:var(--rose);font-weight:950}
+.core{background:linear-gradient(145deg,var(--rose),var(--rose2));color:#fff;border:none;display:flex;flex-direction:column;justify-content:center;text-align:center}
+.core .big{font-size:1.5rem;font-weight:950}
+.steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;margin-top:26px}
+.step-card{padding:22px}
+.step-no{display:inline-grid;place-items:center;width:38px;height:38px;border-radius:999px;background:var(--rose);color:#fff;font-weight:950;margin-bottom:12px}
+.demo-card{padding:20px;display:flex;flex-direction:column;gap:12px}
+.demo-window{border:1px solid var(--line);border-radius:18px;overflow:hidden;background:linear-gradient(180deg,#fff,#fff7f9);min-height:210px;display:grid;place-items:center;text-align:center;padding:24px}
+.demo-window .screen-mark{font-size:2.8rem;margin-bottom:7px}
+.demo-window small{display:block;color:var(--muted);margin-top:5px}
+.demo-button{appearance:none;border:none;background:var(--rose);color:#fff;border-radius:12px;min-height:48px;padding:11px 15px;font-weight:900;cursor:pointer}
+.demo-button.alt{background:#fff;color:var(--rose2);border:2px solid var(--rose)}
+.ops{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:28px}
+.ops .card{padding:24px}
+.statusline{display:flex;flex-wrap:wrap;gap:8px;margin:15px 0}
+.statusline span{padding:6px 9px;border-radius:999px;background:var(--soft);font-size:.78rem;font-weight:800}
+.ba{display:grid;grid-template-columns:1fr auto 1fr;gap:18px;align-items:stretch;margin-top:26px}
+.ba-col{padding:24px}
+.ba-col.before{background:#fff}
+.ba-col.after{background:#fff8fa;border-color:#e8c8d2}
+.ba-list{display:grid;gap:10px;margin-top:16px}
+.ba-item{padding:11px 13px;border-radius:12px;background:#fff;border:1px solid var(--line)}
+.price-hero{padding:30px;text-align:center;background:linear-gradient(140deg,#fff,#fff3f6)}
+.bundle{display:grid;grid-template-columns:1fr auto 1fr auto 1fr;gap:10px;align-items:center;margin:24px auto 14px;max-width:900px}
+.bundle-card{padding:18px;border-radius:18px;background:#fff;border:1px solid var(--line);font-weight:950}
+.plus{font-size:1.6rem;font-weight:950;color:var(--rose)}
+.total-label{font-weight:900;color:var(--muted);margin-top:18px}
+.total{font-size:clamp(3rem,7vw,5.6rem);line-height:1;color:var(--rose2);font-weight:950;letter-spacing:-.05em;margin:6px 0}
+.total small{font-size:1rem;letter-spacing:0;color:var(--ink)}
+.breakdown{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:24px}
+.price-card{padding:20px;text-align:left}
+.price-card .amount{font-size:1.6rem;font-weight:950;color:var(--rose2)}
+.note{font-size:.82rem;color:var(--muted)}
+.demo-feature{display:grid;grid-template-columns:1.08fr .92fr;gap:28px;align-items:center}
+.demo-feature .screen-stack{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.screen-tile{min-height:180px;border:1px solid var(--line);border-radius:18px;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:16px;box-shadow:var(--shadow)}
+.screen-tile b{display:block;margin-top:7px}
+.screen-tile small{color:var(--muted)}
+.cta-wrap{display:grid;grid-template-columns:1.2fr .8fr;overflow:hidden}
+.cta-copy{padding:42px}
+.cta-photo{min-height:440px;background:#f1e8e4}
+.cta-photo img{width:100%;height:100%;min-height:440px;object-fit:cover;object-position:center}
+.checklist{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin:20px 0}
+.checkitem{padding:10px 12px;background:#fff;border:1px solid var(--line);border-radius:12px;font-weight:800}
+.footer{padding:34px 0;text-align:center;color:var(--muted);font-size:.85rem}
+.modal{position:fixed;inset:0;display:none;z-index:9999;background:rgba(24,18,20,.72);padding:18px}
+.modal.open{display:grid;place-items:center}
+.modal-dialog{width:min(1200px,100%);height:min(86vh,880px);background:#fff;border-radius:20px;overflow:hidden;box-shadow:0 30px 90px rgba(0,0,0,.35);display:grid;grid-template-rows:auto 1fr}
+.modal-head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 14px;border-bottom:1px solid var(--line)}
+.modal-head strong{font-size:.95rem}
+.modal-actions{display:flex;gap:8px}
+.modal-actions a,.modal-actions button{min-height:44px;border-radius:10px;padding:8px 12px;border:1px solid var(--line);background:#fff;font-weight:850;text-decoration:none;cursor:pointer}
+.modal-body{min-height:0;background:#f5f3f3}
+.modal-body iframe{width:100%;height:100%;border:0;background:#fff}
+.skip{position:absolute;left:-9999px}
+.skip:focus{left:12px;top:12px;z-index:10000;background:#fff;padding:10px;border-radius:10px}
+@media(max-width:900px){
+  .hero-grid,.demo-feature,.cta-wrap{grid-template-columns:1fr}
+  .hero-photo{min-height:360px}
+  .hero-photo img{min-height:360px}
+  .trust,.grid4{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .grid3,.steps,.breakdown{grid-template-columns:1fr}
+  .flow{grid-template-columns:1fr;}
+  .arrow{transform:rotate(90deg);min-height:20px}
+  .ops,.ba{grid-template-columns:1fr}
+  .ba>.arrow{transform:rotate(90deg)}
+  .bundle{grid-template-columns:1fr}
+  .plus{line-height:1}
+  .demo-feature .screen-stack{grid-template-columns:1fr}
+}
+@media(max-width:640px){
+  body{font-size:16px}
+  .container{width:min(100% - 24px,var(--max))}
+  .section{padding:58px 0}
+  .hero{padding:28px 0 40px}
+  .hero-grid{gap:24px}
+  h1{font-size:clamp(2.05rem,10vw,3rem)}
+  h2{font-size:clamp(1.65rem,7.5vw,2.25rem)}
+  .btnrow{display:grid;grid-template-columns:1fr}
+  .btn{width:100%;min-height:52px}
+  .hero-photo{min-height:320px;border-radius:22px}
+  .hero-photo img{min-height:320px;object-position:50% 45%}
+  .trust{grid-template-columns:1fr 1fr;gap:8px}
+  .trust div{font-size:.82rem;padding:10px}
+  .grid2,.grid4{grid-template-columns:1fr}
+  .pain-card{min-height:0}
+  .flow-col,.ba-col,.price-hero,.cta-copy{padding:20px}
+  .steps{gap:12px}
+  .ops{gap:14px}
+  .checklist{grid-template-columns:1fr}
+  .cta-photo{min-height:280px;order:2}
+  .cta-photo img{min-height:280px}
+  .modal{padding:0}
+  .modal-dialog{height:100vh;border-radius:0}
+  .modal-head{align-items:flex-start}
+  .modal-actions{flex-direction:column}
+}
+@media(max-width:430px){
+  .trust{grid-template-columns:1fr}
+  .screen-tile{min-height:145px}
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">本文へ移動</a>
+
+<header class="hero" id="p1">
+  <div class="container hero-grid">
+    <div class="hero-copy">
+      <div class="brand">DPRO まつげ・眉サロンシステム</div>
+      <span class="kicker">P1 FIRST VIEW</span>
+      <h1>LINE予約からカルテ・施術写真・次回来店まで、ひとつにつながる。</h1>
+      <p class="lead">LINEからの予約はもちろん、電話・Instagram・店頭で受けた予約も同じ管理へ。予約したお客様の情報を、まつげ・眉専用カルテ、施術写真、来店履歴、次回来店の管理までつなげます。</p>
+      <div class="btnrow">
+        <button class="btn secondary js-demo" data-demo="https://dpromstk2000-lab.github.io/dpro-eye-salon-line/index.html?demo=1" data-title="お客様用予約画面">実際の予約画面を見てみる</button>
+        <a class="btn primary" href="https://lin.ee/YxJGXV6D" target="_blank" rel="noopener">LINEで導入相談する</a>
+      </div>
+      <div class="chips">
+        <span class="chip">LINEからかんたん予約</span>
+        <span class="chip">電話・Instagram・店頭予約も同じ管理へ</span>
+        <span class="chip">まつげ・眉専用カルテ＋施術前後写真</span>
+        <span class="chip">前回と同じ内容で再予約</span>
+      </div>
+    </div>
+    <figure class="hero-photo" aria-label="まつげ施術中のサロン風景">
+      <img src="data:image/webp;base64,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" alt="まつげ・眉サロンでお客様に丁寧にまつげ施術を行うアイリスト" fetchpriority="high" decoding="async">
+    </figure>
+  </div>
+</header>
+
+<main id="main">
+<section class="section soft" id="p2">
+  <div class="container">
+    <span class="kicker">P2 OWNER PAIN</span>
+    <h2>予約は入っている。でも、お客様の情報はバラバラになっていませんか？</h2>
+    <p class="lead">アイサロンでは、予約だけを管理しても店舗業務はなかなか一つになりません。</p>
+    <div class="grid4" style="margin-top:26px">
+      <article class="card pain-card"><div class="icon">予</div><h3>予約の入口が複数</h3><p>LINEのほか、電話・Instagram・店頭で予約を受けることがあります。</p></article>
+      <article class="card pain-card"><div class="icon">カ</div><h3>カルテが別管理</h3><p>予約情報と、前回の施術内容・デザイン記録が離れていると確認先が増えます。</p></article>
+      <article class="card pain-card"><div class="icon">写</div><h3>施術写真を追いにくい</h3><p>施術前後写真が顧客情報と別の場所にあると、履歴をたどる手間が残ります。</p></article>
+      <article class="card pain-card"><div class="icon">次</div><h3>次回来店を記憶に頼りやすい</h3><p>次回の目安や予約状況が見えにくいと、担当者の記憶やメモに頼りやすくなります。</p></article>
+    </div>
+    <div class="card" style="margin-top:16px;padding:20px;text-align:center;font-weight:900">お客様一人の情報を見るために、いくつもの場所を確認。</div>
+  </div>
+</section>
+
+<section class="section pink" id="p3">
+  <div class="container">
+    <span class="kicker">P3 WHY PROBLEM</span>
+    <h2>「予約システム」だけでは、サロン業務すべてはつながりません。</h2>
+    <p class="lead">問題は予約方法の数ではなく、予約後の情報が別々に残ることです。</p>
+    <div class="flow">
+      <div class="card flow-col">
+        <strong>情報が別々</strong>
+        <div class="flow-item">予約情報</div><div class="flow-item">カルテ</div><div class="flow-item">施術写真</div><div class="flow-item">次回来店</div>
+      </div>
+      <div class="arrow">→</div>
+      <div class="card flow-col" style="display:grid;place-items:center;text-align:center"><div><strong>確認</strong><p>お客様一人を見るために<br>複数の場所を確認</p></div></div>
+      <div class="arrow">→</div>
+      <div class="card flow-col" style="display:grid;place-items:center;text-align:center"><div><strong>人が照合</strong><p>誰が・前回何をして・次はいつかを<br>人がつなぎ合わせる</p></div></div>
+    </div>
+    <p class="center" style="font-weight:950;margin-top:24px">だから、予約 → 顧客情報 → 施術 → カルテ → 写真 → 次回来店までを一つの流れとして扱います。</p>
+  </div>
+</section>
+
+<section class="section" id="p4">
+  <div class="container">
+    <span class="kicker">P4 CONNECTED SYSTEM</span>
+    <h2>入口は選べる。管理はひとつ。</h2>
+    <p class="lead">お客様自身はLINEから予約。電話・Instagram・店頭で受けた予約は店舗側から代理入力し、同じ予約・顧客管理へ集約します。</p>
+    <div class="flow">
+      <div class="card flow-col">
+        <strong>入口</strong>
+        <div class="flow-item">LINEからお客様予約</div>
+        <div class="flow-item">電話予約 <small class="muted">／店舗で代理入力</small></div>
+        <div class="flow-item">Instagram経由 <small class="muted">／店舗で代理入力</small></div>
+        <div class="flow-item">店頭予約 <small class="muted">／店舗で代理入力</small></div>
+      </div>
+      <div class="arrow">→</div>
+      <div class="card flow-col core"><div class="big">DPRO</div><div>予約・顧客管理</div></div>
+      <div class="arrow">→</div>
+      <div class="card flow-col">
+        <strong>店舗運用</strong>
+        <div class="flow-item">オーナーPC</div>
+        <div class="flow-item">店舗iPadで施術進行</div>
+        <div class="flow-item">まつげ・眉専用カルテ</div>
+        <div class="flow-item">施術前後写真</div>
+        <div class="flow-item">次回来店・再来店フォロー管理</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section soft" id="p5">
+  <div class="container">
+    <span class="kicker">P5 CUSTOMER EXPERIENCE</span>
+    <h2>お客様は、LINEから予約して、次回も迷わず使える。</h2>
+    <p class="lead">初回予約から予約確認・変更、次回の再予約まで、お客様側の操作もシンプルに。</p>
+    <div class="steps">
+      <article class="card step-card"><span class="step-no">1</span><h3>メニューを選ぶ</h3><p>LINEからメニューを選択。複数メニューにも対応します。</p><button class="demo-button js-demo" data-demo="https://dpromstk2000-lab.github.io/dpro-eye-salon-line/index.html?demo=1" data-title="お客様予約｜メニュー選択">実画面を開く</button></article>
+      <article class="card step-card"><span class="step-no">2</span><h3>担当・日時を選ぶ</h3><p>担当者は指名または「おまかせ」。空いている日時から予約します。</p><button class="demo-button js-demo" data-demo="https://dpromstk2000-lab.github.io/dpro-eye-salon-line/index.html?demo=1" data-title="お客様予約｜担当・日時選択">予約画面を開く</button></article>
+      <article class="card step-card"><span class="step-no">3</span><h3>確認・変更・再予約</h3><p>次回予約や来店履歴を確認し、空き状況を見ながら日時変更。キャンセルは店舗への申請方式です。</p><button class="demo-button js-demo" data-demo="https://dpromstk2000-lab.github.io/dpro-eye-salon-line/member.html?demo=1" data-title="予約確認・変更">会員画面を開く</button></article>
+    </div>
+    <div class="card" style="margin-top:18px;padding:18px">
+      <strong>2回目以降も使いやすく。</strong>
+      <p style="margin-bottom:0">LINEに紐付いた登録情報を利用でき、前回と同じメニュー・担当者での予約も選択できます。施術前の確認事項や要望も予約時に入力できます。</p>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="p6">
+  <div class="container">
+    <span class="kicker">P6 OWNER / STAFF EXPERIENCE</span>
+    <h2>予約を見るだけでなく、今日の施術から次回来店まで管理。</h2>
+    <p class="lead">オーナーPCと店舗iPadを、実際の店舗業務に合わせて使い分けられます。</p>
+    <div class="ops">
+      <article class="card">
+        <h3>オーナーPC</h3>
+        <p>今日の予約、電話・Instagram・店頭予約の登録、顧客検索、来店履歴、専用カルテ、再来店対象を確認。</p>
+        <div class="statusline"><span>今日の予約</span><span>代理予約</span><span>顧客検索</span><span>再来店フォロー</span></div>
+        <button class="demo-button js-demo" data-demo="https://dpromstk2000-lab.github.io/dpro-eye-salon-line/owner.html?demo=1" data-title="オーナーPC管理">オーナー実画面を開く</button>
+      </article>
+      <article class="card">
+        <h3>店舗iPad</h3>
+        <p>来店 → カウンセリング → 施術 → 仕上げ → 会計待ち → 完了と進行。専用カルテや施術前後写真も登録できます。</p>
+        <div class="statusline"><span>施術進行</span><span>専用カルテ</span><span>施術写真</span><span>履歴</span></div>
+        <button class="demo-button js-demo" data-demo="https://dpromstk2000-lab.github.io/dpro-eye-salon-line/owner-ipad.html?demo=1" data-title="店舗iPad">店舗iPad実画面を開く</button>
+      </article>
+    </div>
+    <div class="card" style="margin-top:18px;padding:20px">
+      <h3>アイサロン専用の記録</h3>
+      <p style="margin-bottom:0">ロッド、カール・仕上がり、まつげ・眉デザイン、左右差・骨格・毛流れ、薬剤・放置時間、仕上がり状態、ホームケア、次回の改善点や来店目安などを記録。次回予約済みのお客様を通常フォロー対象から除外し、フォロー用文面の作成・コピーも支援します。</p>
+    </div>
+  </div>
+</section>
+
+<section class="section pink" id="p7">
+  <div class="container">
+    <span class="kicker">P7 BEFORE / AFTER</span>
+    <h2>バラバラだった店舗業務を、一つの流れへ。</h2>
+    <p class="lead">導入前と導入後で、情報の持ち方を整理できます。</p>
+    <div class="ba">
+      <div class="card ba-col before">
+        <h3>BEFORE</h3>
+        <div class="ba-list">
+          <div class="ba-item">LINE予約は予約システム</div><div class="ba-item">電話・Instagram・店頭は別対応</div>
+          <div class="ba-item">カルテは別管理</div><div class="ba-item">施術写真は別の場所</div><div class="ba-item">次回来店は記憶やメモ</div>
+        </div>
+      </div>
+      <div class="arrow">→</div>
+      <div class="card ba-col after">
+        <h3>AFTER</h3>
+        <div class="ba-list">
+          <div class="ba-item">LINE・電話・Instagram・店頭の予約を同じ管理へ</div>
+          <div class="ba-item">予約から顧客情報を確認</div><div class="ba-item">店舗iPadで施術進行</div>
+          <div class="ba-item">専用カルテと写真を顧客履歴へ</div><div class="ba-item">次回来店目安と対象を確認</div>
+        </div>
+      </div>
+    </div>
+    <p class="note center" style="margin-top:18px">※店舗の運用方法や利用状況により、実際の業務変化は異なります。</p>
+  </div>
+</section>
+
+<section class="section soft" id="p8">
+  <div class="container">
+    <span class="kicker">P8 PRICE / VALUE</span>
+    <h2>ホームページ・LINE公式・DPROを、まとめて運用。</h2>
+    <p class="lead">予約システムだけではなく、お客様との入口から店舗運用までまとめて整える考え方です。</p>
+    <div class="card price-hero">
+      <div class="bundle">
+        <div class="bundle-card">ホームページ</div><div class="plus">＋</div>
+        <div class="bundle-card">LINE公式</div><div class="plus">＋</div>
+        <div class="bundle-card">DPRO</div>
+      </div>
+      <div style="font-weight:950">3つをまとめて店舗運用</div>
+      <div class="total-label">月額合計</div>
+      <div class="total">5,500円 <small>（税込）</small></div>
+      <div class="breakdown">
+        <article class="card price-card"><h3>LINE運用</h3><div class="amount">3,300円/月</div><div>（税込）</div></article>
+        <article class="card price-card"><h3>ホームページ公開・基本保守</h3><div class="amount">1,100円/月</div><div>（税込）</div><p class="note">※LINE運用契約店舗の場合</p></article>
+        <article class="card price-card"><h3>DPRO利用・基本保守</h3><div class="amount">1,100円/月</div><div>（税込）</div><p class="note">※LINE構築・運用契約店舗限定</p></article>
+      </div>
+      <p class="note" style="margin-top:16px"><strong>DPRO単体が月額5,500円ではありません。</strong></p>
+      <div class="btnrow" style="justify-content:center"><a class="btn primary" href="https://lin.ee/YxJGXV6D" target="_blank" rel="noopener">料金・導入内容をLINEで相談する</a></div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="p9">
+  <div class="container demo-feature">
+    <div>
+      <span class="kicker">P9 DEMO</span>
+      <h2>説明だけではなく、実際に動くDPRO画面を確認できます。</h2>
+      <p class="lead">営業用のイメージ画面ではありません。予約する側・店舗で使う側の現在の実画面を、その場で開いて確認できます。</p>
+      <div class="btnrow">
+        <button class="btn secondary js-demo" data-demo="https://dpromstk2000-lab.github.io/dpro-eye-salon-line/index.html?demo=1" data-title="お客様用LINE予約">お客様予約を体験</button>
+        <button class="btn secondary js-demo" data-demo="https://dpromstk2000-lab.github.io/dpro-eye-salon-line/owner.html?demo=1" data-title="オーナーPC管理">オーナー画面を見る</button>
+        <button class="btn secondary js-demo" data-demo="https://dpromstk2000-lab.github.io/dpro-eye-salon-line/owner-ipad.html?demo=1" data-title="店舗iPad">店舗iPadを見る</button>
+      </div>
+      <div class="btnrow">
+        <button class="btn ghost js-demo" data-demo="https://dpromstk2000-lab.github.io/dpro-eye-salon-line/member.html?demo=1" data-title="予約確認・変更">予約確認・変更</button>
+        <button class="btn ghost js-demo" data-demo="https://dpromstk2000-lab.github.io/dpro-eye-salon-line/migration.html?demo=1" data-title="既存システム移行">既存システム移行</button>
+      </div>
+    </div>
+    <div class="screen-stack" aria-label="確認できるDPRO実画面">
+      <div class="screen-tile"><div style="font-size:2.2rem">▣</div><b>お客様予約</b><small>メニュー・担当・日時</small></div>
+      <div class="screen-tile"><div style="font-size:2.2rem">▤</div><b>オーナーPC</b><small>予約・顧客・再来店</small></div>
+      <div class="screen-tile"><div style="font-size:2.2rem">▥</div><b>店舗iPad</b><small>施術進行・カルテ・写真</small></div>
+    </div>
+  </div>
+</section>
+
+<section class="section pink" id="p10">
+  <div class="container card cta-wrap">
+    <div class="cta-copy">
+      <span class="kicker">P10 CONSULT / CTA</span>
+      <h2>今の予約・カルテ運用を、そのまま聞かせてください。</h2>
+      <p class="lead">DPROを入れることからではなく、今のお店で何が分かれているかを一緒に確認するところから。</p>
+      <div class="checklist">
+        <div class="checkitem">現在の予約方法</div><div class="checkitem">カルテ・写真の管理</div>
+        <div class="checkitem">次回来店の運用</div><div class="checkitem">既存システムからの移行</div>
+      </div>
+      <p>まずは実際のDEMOを見ながら、<strong>「今の運用なら、どこをDPROにつなげられるか」</strong>をご相談ください。</p>
+      <div class="btnrow">
+        <a class="btn primary" href="https://lin.ee/YxJGXV6D" target="_blank" rel="noopener">まずはLINEで相談する</a>
+        <button class="btn secondary js-demo" data-demo="https://dpromstk2000-lab.github.io/dpro-eye-salon-line/index.html?demo=1" data-title="DPRO予約DEMO">DPROの実画面を体験する</button>
+      </div>
+    </div>
+    <figure class="cta-photo">
+      <img src="data:image/webp;base64,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" alt="まつげ施術後に仕上がりや次回のケアについて相談するお客様とアイリスト" loading="lazy" decoding="async">
+    </figure>
+  </div>
+</section>
+</main>
+
+<footer class="footer"><div class="container">DPRO まつげ・眉サロンシステム</div></footer>
+
+<div class="modal" id="demoModal" aria-hidden="true">
+  <div class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="demoTitle">
+    <div class="modal-head">
+      <strong id="demoTitle">DPRO実画面</strong>
+      <div class="modal-actions">
+        <a id="demoExternal" href="#" target="_blank" rel="noopener">新しいタブで開く</a>
+        <button type="button" id="demoClose">閉じる</button>
+      </div>
+    </div>
+    <div class="modal-body" id="demoBody"></div>
+  </div>
+</div>
+
+<script>
+(()=>{
+  const modal=document.getElementById('demoModal');
+  const body=document.getElementById('demoBody');
+  const title=document.getElementById('demoTitle');
+  const external=document.getElementById('demoExternal');
+  const close=document.getElementById('demoClose');
+  let last=null;
+
+  function openDemo(btn){
+    const url=btn.dataset.demo;
+    const label=btn.dataset.title||'DPRO実画面';
+    if(!url) return;
+    last=btn;
+    title.textContent=label;
+    external.href=url;
+    body.textContent='';
+    const iframe=document.createElement('iframe');
+    iframe.src=url;
+    iframe.title=label;
+    iframe.loading='eager';
+    iframe.referrerPolicy='no-referrer-when-downgrade';
+    body.appendChild(iframe);
+    modal.classList.add('open');
+    modal.setAttribute('aria-hidden','false');
+    document.body.style.overflow='hidden';
+    close.focus();
+  }
+  function closeDemo(){
+    modal.classList.remove('open');
+    modal.setAttribute('aria-hidden','true');
+    body.textContent='';
+    document.body.style.overflow='';
+    if(last) last.focus();
+  }
+  document.querySelectorAll('.js-demo').forEach(btn=>btn.addEventListener('click',()=>openDemo(btn)));
+  close.addEventListener('click',closeDemo);
+  modal.addEventListener('click',e=>{if(e.target===modal) closeDemo()});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&modal.classList.contains('open')) closeDemo()});
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+
+<html lang="ja">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1,viewport-fit=cover" name="viewport"/>
+<title>DPROベーカリーシステム｜写真から取り置き、準備・受け渡しまで</title>
+<meta content="写真付きパンカタログから取り置き、店舗での準備、QR来店確認・受け渡しまで。DPROベーカリーシステムの実画面DEMOと料金をご案内します。" name="description"/>
+<meta content="DPROベーカリーシステム｜写真から取り置き、準備・受け渡しまで" property="og:title"/>
+<meta content="パンを写真で見せて、そのまま取り置きへ。店頭の準備・受け渡しまでつながる、ベーカリー向けDPRO。" property="og:description"/>
+<meta content="index,follow" name="robots"/>
+<link href="https://dpromstk2000-lab.github.io/dpro-line-systems-site/lp-bakery.html" rel="canonical"/>
+<style>
+:root{--ink:#261b15;--muted:#6f625a;--paper:#fffdf8;--cream:#fff7ea;--cream2:#ffedd2;--bread:#a44f18;--bread2:#d9772a;--green:#177245;--green2:#0f5d38;--line:#ead8c5;--card:#fff;--dark:#2b211b;--shadow:0 18px 60px rgba(79,45,24,.12);--radius:26px;--max:1180px}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;overflow-x:hidden}
+body{margin:0;color:var(--ink);background:var(--paper);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans JP","Hiragino Kaku Gothic ProN",Meiryo,sans-serif;line-height:1.75;overflow-x:hidden}
+a{color:inherit}button,a{-webkit-tap-highlight-color:transparent}
+img{display:block;max-width:100%;height:auto}
+.wrap{width:min(calc(100% - 32px),var(--max));margin-inline:auto}
+.section{padding:72px 0;position:relative}
+.section.alt{background:var(--cream)}
+.eyebrow{margin:0 0 8px;color:var(--bread);font-size:12px;letter-spacing:.14em;font-weight:900}
+.page-no{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:900;color:var(--bread);margin-bottom:8px}
+.page-no b{display:grid;place-items:center;width:34px;height:34px;border-radius:10px;background:var(--dark);color:#fff}
+h1,h2,h3,p{overflow-wrap:anywhere}
+h1{font-size:clamp(36px,7.8vw,64px);line-height:1.1;letter-spacing:-.05em;margin:10px 0 16px}
+h2{font-size:clamp(30px,6.3vw,48px);line-height:1.18;letter-spacing:-.04em;margin:10px 0 16px}
+h3{font-size:20px;line-height:1.35;margin:0 0 8px}
+.lead{font-size:clamp(17px,4.5vw,21px);font-weight:750;color:#4f4038;margin:0 0 16px}
+.body-copy{font-size:16px;color:#4f4038;margin:0}
+.btn-row{display:flex;flex-wrap:wrap;gap:12px;margin-top:24px}
+.btn{min-height:50px;border-radius:999px;padding:12px 22px;font-size:16px;font-weight:900;border:1px solid transparent;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;background:none}
+.btn.primary{background:var(--green);color:#fff;box-shadow:0 14px 30px rgba(23,114,69,.2)}
+.btn.primary:hover{background:var(--green2)}
+.btn.secondary{background:#fff;color:var(--bread);border-color:#e6b98e}
+.btn.dark{background:var(--dark);color:#fff}
+.btn:focus-visible{outline:4px solid rgba(23,114,69,.25);outline-offset:3px}
+.site-header{position:sticky;top:0;z-index:20;background:rgba(255,253,248,.92);backdrop-filter:blur(14px);border-bottom:1px solid rgba(234,216,197,.82)}
+.header-inner{height:64px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.brand{text-decoration:none;font-weight:950;letter-spacing:-.02em;white-space:nowrap}.brand small{display:block;font-size:10px;color:var(--bread);letter-spacing:.12em}
+.header-cta{font-size:14px;padding:9px 14px;min-height:44px}
+.hero{padding:36px 0 64px;background:radial-gradient(circle at 10% 5%,#fff2d7 0,transparent 34%),linear-gradient(180deg,#fffdf8,#fff8ed)}
+.hero-grid{display:grid;gap:26px;align-items:center}
+.hero-copy{order:1}.hero-photo-wrap{order:2;position:relative}
+.hero-photo{width:100%;aspect-ratio:4/3;object-fit:cover;object-position:center;border-radius:32px;box-shadow:var(--shadow);border:1px solid #ead5bd}
+.hero-photo-wrap:after{content:"";position:absolute;inset:auto 14px 14px auto;width:34%;height:12%;border-radius:999px;background:rgba(255,255,255,.72);filter:blur(18px);pointer-events:none}
+.trust-strip{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:24px}
+.trust-chip{border:1px solid var(--line);background:#fff;border-radius:16px;padding:11px 12px;font-size:13px;font-weight:900;text-align:center}
+.problem-grid{display:grid;gap:12px;margin-top:28px}
+.problem-card{background:#fff;border:1px solid var(--line);border-radius:22px;padding:20px;box-shadow:0 10px 35px rgba(79,45,24,.06)}
+.problem-card .icon{display:grid;place-items:center;width:42px;height:42px;border-radius:14px;background:var(--cream2);font-size:20px;margin-bottom:12px}
+.problem-card p{margin:0;color:var(--muted)}
+.logic-flow{display:grid;gap:10px;margin-top:26px}
+.logic-step{display:flex;gap:14px;align-items:center;background:#fff;border:1px solid var(--line);border-radius:18px;padding:16px}
+.logic-step b{flex:0 0 46px;height:46px;border-radius:50%;display:grid;place-items:center;background:var(--dark);color:#fff;font-size:18px}
+.logic-step strong{display:block;font-size:17px}
+.logic-step small{display:block;color:var(--muted);margin-top:2px}
+.logic-arrow{text-align:center;color:var(--bread);font-weight:950;font-size:22px;line-height:1}
+.flow-shell{margin-top:30px;background:#fff;border:1px solid var(--line);border-radius:30px;padding:18px;box-shadow:var(--shadow)}
+.flow-lanes{display:grid;gap:14px}
+.lane{border-radius:22px;padding:18px}
+.lane.customer{background:#fff7e6;border:1px solid #f1d5ad}.lane.system{background:#f1f8f4;border:1px solid #cfe7d8}.lane.store{background:#fff0e9;border:1px solid #efc5b0}
+.lane-label{font-size:12px;font-weight:950;letter-spacing:.1em;color:var(--muted);margin-bottom:10px}
+.step-pills{display:flex;flex-wrap:wrap;gap:8px}
+.pill{background:#fff;border:1px solid rgba(0,0,0,.08);border-radius:999px;padding:9px 12px;font-size:13px;font-weight:900}
+.flow-note{margin:16px 4px 0;color:var(--muted);font-size:13px}
+.experience-grid{display:grid;gap:14px;margin-top:28px}
+.ex-card{background:#fff;border:1px solid var(--line);border-radius:24px;padding:20px}
+.ex-no{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:var(--bread);color:#fff;font-weight:950;margin-bottom:12px}
+.real-label{font-size:11px;letter-spacing:.12em;font-weight:950;color:var(--green);margin-bottom:6px}
+.screen-action{width:100%;margin-top:14px}
+.role-grid{display:grid;gap:16px;margin-top:28px}
+.role-card{background:#fff;border:1px solid var(--line);border-radius:24px;padding:22px}
+.role-card ul{margin:12px 0 0;padding-left:20px;color:#4f4038}
+.status-flow{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}.status-flow span{font-size:12px;font-weight:900;background:var(--cream);border:1px solid var(--line);padding:7px 10px;border-radius:999px}
+.compare{display:grid;gap:16px;margin-top:28px}
+.compare-card{border-radius:26px;padding:22px;border:1px solid var(--line);background:#fff}
+.compare-card.after{background:#f2f8f4;border-color:#c7e3d0}
+.compare-title{font-size:19px;font-weight:950;margin-bottom:14px}
+.compare ol{margin:0;padding-left:22px;color:#4f4038}.compare li+li{margin-top:7px}
+.price-section{background:linear-gradient(135deg,#2d221c,#4a2d1c 55%,#713d1e);color:#fff}
+.price-section .page-no,.price-section .eyebrow{color:#ffd49a}.price-section .lead,.price-section .body-copy{color:#f8e9dc}
+.bundle{display:grid;grid-template-columns:1fr;gap:10px;margin:26px 0 18px}
+.bundle-card{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);border-radius:20px;padding:17px;text-align:center;font-weight:950}
+.bundle-plus{display:grid;place-items:center;font-size:24px;font-weight:950}
+.price-main{background:#fff;color:var(--ink);border-radius:30px;padding:24px;text-align:center;box-shadow:0 24px 70px rgba(0,0,0,.18);margin-top:16px}
+.price-main small{display:block;color:var(--muted);font-weight:850}.price-main strong{display:block;color:#b6421d;font-size:clamp(48px,14vw,82px);line-height:1.05;letter-spacing:-.05em;margin:8px 0}.price-main span{font-weight:950}
+.price-breakdown{display:grid;gap:12px;margin-top:18px}
+.price-item{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);border-radius:20px;padding:18px}.price-item strong{display:block;font-size:18px}.price-item b{display:block;font-size:24px;margin:5px 0}.price-item small{color:#f1dcca}
+.demo-grid{display:grid;gap:14px;margin-top:28px}
+.demo-card{background:#fff;border:1px solid var(--line);border-radius:24px;padding:20px;box-shadow:0 12px 35px rgba(79,45,24,.06)}
+.demo-card strong{font-size:19px;display:block}.demo-card p{color:var(--muted);margin:5px 0 0}
+.demo-stage{margin-top:18px;border:1px dashed #c8b09c;border-radius:26px;background:#fffaf4;min-height:210px;display:grid;place-items:center;padding:22px;text-align:center;overflow:hidden}
+.demo-stage.is-live{padding:0;min-height:640px;background:#fff}
+.demo-stage iframe{width:100%;height:640px;border:0;background:#fff}
+.demo-stage .stage-copy strong{display:block;font-size:22px}.demo-stage .stage-copy p{margin:7px 0 0;color:var(--muted)}
+.consult{background:linear-gradient(180deg,#fffdf8,#fff2df)}
+.consult-grid{display:grid;gap:24px;align-items:center}
+.consult-card{background:#fff;border:1px solid var(--line);border-radius:30px;padding:24px;box-shadow:var(--shadow)}
+.consult-photo{width:100%;aspect-ratio:4/3;object-fit:cover;object-position:center;border-radius:28px;border:1px solid var(--line);box-shadow:var(--shadow)}
+.micro{font-size:12px;color:var(--muted);margin-top:10px}
+.footer{padding:30px 0 42px;background:#241a15;color:#f7ede6;font-size:13px}.footer-inner{display:flex;gap:16px;flex-wrap:wrap;justify-content:space-between;align-items:center}
+.modal{position:fixed;inset:0;z-index:100;background:rgba(28,20,16,.76);display:none;align-items:center;justify-content:center;padding:14px}
+.modal.open{display:flex}
+.modal-panel{width:min(1180px,100%);height:min(88vh,900px);background:#fff;border-radius:22px;overflow:hidden;display:grid;grid-template-rows:auto 1fr;box-shadow:0 30px 120px rgba(0,0,0,.42)}
+.modal-head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 14px;border-bottom:1px solid #eee;background:#fff}
+.modal-head strong{font-size:14px}.modal-close{min-width:44px;min-height:44px;border:0;background:#f2ece6;border-radius:50%;font-size:22px;cursor:pointer}
+.modal-body{min-height:0}.modal-body iframe{width:100%;height:100%;border:0}
+@media(min-width:600px){.problem-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.experience-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.price-breakdown{grid-template-columns:repeat(3,minmax(0,1fr))}.bundle{grid-template-columns:1fr auto 1fr auto 1fr;align-items:center}}
+@media(min-width:768px){.section{padding:94px 0}.hero{padding:56px 0 82px}.hero-grid{grid-template-columns:minmax(0,1.12fr) minmax(300px,.88fr);gap:46px}.hero-photo-wrap{order:2}.hero-copy{order:1}.trust-strip{grid-template-columns:repeat(4,minmax(0,1fr))}.flow-lanes{grid-template-columns:1fr .8fr 1.1fr;align-items:stretch}.role-grid{grid-template-columns:1fr 1fr}.compare{grid-template-columns:1fr 1fr}.consult-grid{grid-template-columns:minmax(0,1.35fr) minmax(260px,.65fr)}.consult-card{padding:34px}}
+@media(min-width:1024px){.problem-grid{grid-template-columns:repeat(5,minmax(0,1fr))}.problem-card{padding:22px 18px}.demo-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:430px){.wrap{width:min(calc(100% - 24px),var(--max))}.section{padding:62px 0}.btn{width:100%}.header-cta{width:auto;font-size:13px;padding-inline:12px}.hero-photo{max-height:330px}.price-main{padding:20px 14px}.demo-stage.is-live{min-height:540px}.demo-stage iframe{height:540px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+<header class="site-header"><div class="wrap header-inner"><a class="brand" href="#p1">DPRO ベーカリーシステム<small>BAKERY SYSTEM</small></a><a class="btn primary header-cta" href="https://lin.ee/YxJGXV6D" rel="noopener" target="_blank">LINEで相談</a></div></header>
+<main>
+<section class="hero" data-page="P1" id="p1"><div class="wrap hero-grid"><div class="hero-copy"><div class="page-no"><b>P1</b> FIRST VIEW</div><p class="eyebrow">DPRO BAKERY SYSTEM</p><h1>パンを写真で見せて、そのまま取り置きへ。<br/>店頭の準備・受け渡しまでつながる、DPROベーカリーシステム。</h1><p class="lead">写真付きの商品カタログから、お客様の取り置き、スタッフの準備、QRでの受け渡し確認まで。</p><p class="body-copy">パン屋さんの毎日の流れに合わせて、必要な業務をつなぎます。</p><div class="btn-row"><a class="btn primary" href="#p9">実際のベーカリーDEMOを見る</a></div><div class="trust-strip"><div class="trust-chip">写真付きカタログ</div><div class="trust-chip">取り置き</div><div class="trust-chip">店舗で準備</div><div class="trust-chip">QR受け渡し</div></div></div><div class="hero-photo-wrap"><img alt="ベーカリーのカウンターでスタッフがお客様へパンの紙袋を手渡している様子" class="hero-photo" data-industry-photo="P1" decoding="async" fetchpriority="high" height="750" loading="eager" src="https://images.pexels.com/photos/7447285/pexels-photo-7447285.jpeg?auto=compress&amp;dpr=1&amp;h=750&amp;w=1260" width="1260"/></div></div></section>
+<section class="section alt" data-page="P2" id="p2"><div class="wrap"><div class="page-no"><b>P2</b> OWNER PAIN</div><h2>パンは毎日変わる。<br/>だから、取り置き対応も意外と大変です。</h2><p class="lead">商品を作るだけではなく、「見せる・受ける・準備する・渡す」までがパン屋さんの日常です。</p><div class="problem-grid"><article class="problem-card"><div class="icon">◎</div><h3>商品紹介</h3><p>SNSで紹介しても、投稿は流れていきます。</p></article><article class="problem-card"><div class="icon">✓</div><h3>取り置き確認</h3><p>商品・数量・受け取り時間を確認します。</p></article><article class="problem-card"><div class="icon">×</div><h3>売り切れ対応</h3><p>販売状態や受付上限は日々変わります。</p></article><article class="problem-card"><div class="icon">↔</div><h3>店内共有</h3><p>予約と準備状況をスタッフで確認します。</p></article><article class="problem-card"><div class="icon">★</div><h3>常連対応</h3><p>「前回と同じ」「いつものパン」の注文もあります。</p></article></div><p class="body-copy" style="margin-top:22px">一つひとつは小さな作業でも、毎日積み重なると店舗の負担になりやすい業務です。</p></div></section>
+<section class="section" data-page="P3" id="p3"><div class="wrap"><div class="page-no"><b>P3</b> WHY PROBLEM</div><h2>商品紹介だけ。予約だけ。店頭管理だけ。<br/>それぞれ別では、現場の手間は残ります。</h2><p class="lead">パン屋さんの業務は、商品を見てもらった後から受け渡すまで続いています。</p><div class="logic-flow"><div class="logic-step"><b>1</b><div><strong>商品を見てもらう</strong><small>写真・価格・説明・販売状態を案内</small></div></div><div class="logic-arrow">↓ 確認</div><div class="logic-step"><b>2</b><div><strong>取り置きを受ける</strong><small>商品・数量・受け取り日時を確認</small></div></div><div class="logic-arrow">↓ 確認</div><div class="logic-step"><b>3</b><div><strong>店舗で準備する</strong><small>受付・準備中・準備完了を確認</small></div></div><div class="logic-arrow">↓ 確認</div><div class="logic-step"><b>4</b><div><strong>店頭で受け渡す</strong><small>来店時に予約と商品を確認</small></div></div></div><p class="lead" style="margin-top:26px">必要なのは、単独の機能を増やすことではありません。<br/><strong>「商品を見てもらうところ」から「店頭で渡すところ」まで、流れとしてつなぐこと。</strong></p></div></section>
+<section class="section alt" data-page="P4" id="p4"><div class="wrap"><div class="page-no"><b>P4</b> CONNECTED SYSTEM</div><h2>写真で選ぶ。取り置く。準備する。受け渡す。</h2><p class="lead">お客様がパンを選ぶところから、店舗スタッフが商品を渡すところまでつながります。</p><div class="flow-shell"><div class="flow-lanes"><div class="lane customer"><div class="lane-label">CUSTOMER</div><div class="step-pills"><span class="pill">写真付きカタログ</span><span class="pill">商品を選択</span><span class="pill">受取日・時間・数量</span></div></div><div class="lane system"><div class="lane-label">DPRO</div><div class="step-pills"><span class="pill">選んだ商品を取り置きへ</span><span class="pill">店舗対応へつなぐ</span></div></div><div class="lane store"><div class="lane-label">STORE</div><div class="step-pills"><span class="pill">受付</span><span class="pill">準備中</span><span class="pill">準備完了</span><span class="pill">QR来店確認</span><span class="pill">商品確認・受け渡し</span></div></div></div><p class="flow-note">ホームページやLINE公式などから公開カタログへ案内し、カタログで選んだ商品を取り置きへつなげ、作成された取り置きを店舗側で対応します。</p></div><div class="btn-row"><button class="btn secondary js-demo" data-src="https://dpromstk2000-lab.github.io/bakery-line-system/catalog.html?shop_code=bakery_demo&amp;catalog_api=https%3A%2F%2Fdpro-bakery-catalog-api.dpromstk2000.workers.dev&amp;api=https%3A%2F%2Fdpro-bakery-wallet-api.dpromstk2000.workers.dev&amp;v=32" data-title="写真付きパンカタログ" type="button">写真付きカタログの実画面を見る</button></div></div></section>
+<section class="section" data-page="P5" id="p5"><div class="wrap"><div class="page-no"><b>P5</b> CUSTOMER EXPERIENCE</div><h2>お客様は、欲しいパンを見てから取り置きできます。</h2><p class="lead">「何がありますか？」から始めるのではなく、写真・価格・説明を見ながら選べます。</p><div class="experience-grid"><article class="ex-card"><div class="ex-no">1</div><div class="real-label">REAL DEMO</div><h3>写真からパンを選ぶ</h3><p class="body-copy">商品写真・商品名・価格・説明・カテゴリー・アレルギー情報・おすすめ・新商品・売り切れ状況などを確認できます。</p><button class="btn secondary screen-action js-demo" data-src="https://dpromstk2000-lab.github.io/bakery-line-system/catalog.html?shop_code=bakery_demo&amp;catalog_api=https%3A%2F%2Fdpro-bakery-catalog-api.dpromstk2000.workers.dev&amp;api=https%3A%2F%2Fdpro-bakery-wallet-api.dpromstk2000.workers.dev&amp;v=32" data-title="写真付きパンカタログ" type="button">実画面を表示</button></article><article class="ex-card"><div class="ex-no">2</div><div class="real-label">REAL DEMO</div><h3>受け取り日時と数量を決める</h3><p class="body-copy">取り置き可能な商品を選び、受け取り日・時間・数量を指定。定休日・臨時休業・締切も店舗設定に合わせて反映されます。</p><button class="btn secondary screen-action js-demo" data-src="https://dpromstk2000-lab.github.io/bakery-line-system/wallet.html?shop_code=bakery_demo&amp;api=https%3A%2F%2Fdpro-bakery-wallet-api.dpromstk2000.workers.dev&amp;catalog_api=https%3A%2F%2Fdpro-bakery-catalog-api.dpromstk2000.workers.dev&amp;v=32" data-title="会員証・取り置き画面" type="button">実画面を表示</button></article><article class="ex-card"><div class="ex-no">3</div><div class="real-label">REAL DEMO</div><h3>QR会員証で店頭確認</h3><p class="body-copy">会員のお客様はQR会員証を利用でき、「前回と同じ内容」「よく買うパン」から取り置きへ進めます。</p><button class="btn secondary screen-action js-demo" data-src="https://dpromstk2000-lab.github.io/bakery-line-system/wallet.html?shop_code=bakery_demo&amp;api=https%3A%2F%2Fdpro-bakery-wallet-api.dpromstk2000.workers.dev&amp;catalog_api=https%3A%2F%2Fdpro-bakery-catalog-api.dpromstk2000.workers.dev&amp;v=32" data-title="QR会員証・いつものパン" type="button">実画面を表示</button></article></div></div></section>
+<section class="section alt" data-page="P6" id="p6"><div class="wrap"><div class="page-no"><b>P6</b> OWNER / STAFF EXPERIENCE</div><h2>オーナーは今日の状況を確認。<br/>スタッフは「作る・渡す」に集中。</h2><p class="lead">役割に合わせて、必要な情報を見やすく分けています。</p><div class="role-grid"><article class="role-card"><div class="real-label">OWNER / PC</div><h3>今日の状況と受付条件を確認・設定</h3><ul><li>未確認の取り置き・準備中・受け渡し待ち</li><li>商品ごとの取り置き受付ON/OFF・1日の受付上限</li><li>定休日・臨時休業・受け取り可能時間・当日締切</li><li>ECOレスキュー用の案内文を作成・コピー</li></ul><button class="btn secondary screen-action js-demo" data-src="https://dpromstk2000-lab.github.io/bakery-line-system/owner.html?shop_code=bakery_demo&amp;api=https%3A%2F%2Fdpro-bakery-wallet-api.dpromstk2000.workers.dev&amp;catalog_api=https%3A%2F%2Fdpro-bakery-catalog-api.dpromstk2000.workers.dev&amp;v=32" data-title="ベーカリー オーナー管理画面" type="button">オーナー実画面を表示</button></article><article class="role-card"><div class="real-label">STAFF / IPAD・SMARTPHONE</div><h3>現場は準備と受け渡しへ集中</h3><p class="body-copy">スタッフ画面は日常の取り置き対応に必要な操作へ絞り、来店時はQRで当日の予約を確認。商品を確認して受け渡し完了へ進めます。</p><div class="status-flow"><span>受付済み</span><span>準備中</span><span>準備完了</span><span>受け渡し済み</span></div><button class="btn secondary screen-action js-demo" data-src="https://dpromstk2000-lab.github.io/bakery-line-system/staff.html?shop_code=bakery_demo&amp;api=https%3A%2F%2Fdpro-bakery-wallet-api.dpromstk2000.workers.dev&amp;catalog_api=https%3A%2F%2Fdpro-bakery-catalog-api.dpromstk2000.workers.dev&amp;v=40" data-title="ベーカリー スタッフ画面" type="button">スタッフ実画面を表示</button></article></div><p class="micro">複数の店舗端末を使う場合も、状態の変化を確認しながら運用できます。</p></div></section>
+<section class="section" data-page="P7" id="p7"><div class="wrap"><div class="page-no"><b>P7</b> BEFORE / AFTER</div><h2>取り置き対応を、<br/>「その都度確認」から「流れを見て対応」へ。</h2><p class="lead">DPRO導入後の店舗運用イメージです。</p><div class="compare"><article class="compare-card"><div class="compare-title">導入前</div><ol><li>SNSなどで商品を紹介</li><li>お客様から商品について確認</li><li>取り置き内容を確認</li><li>店内で予約内容を共有</li><li>商品ができたか確認</li><li>来店時に取り置きを確認して受け渡し</li></ol></article><article class="compare-card after"><div class="compare-title">DPRO導入後</div><ol><li>写真付きカタログで商品を案内</li><li>お客様が商品を選んで取り置き</li><li>店舗画面に取り置き内容を表示</li><li>スタッフが準備状況を更新</li><li>来店時にQRで予約を確認</li><li>商品を確認して受け渡し完了</li></ol></article></div><p class="micro">※業務時間・売上などの効果を保証するものではありません。</p></div></section>
+<section class="section price-section" data-page="P8" id="p8"><div class="wrap"><div class="page-no"><b>P8</b> PRICE / VALUE</div><h2>ホームページも。LINE公式も。店舗システムも。<br/>まとめて運用しやすく。</h2><p class="lead">お客様への情報発信から、店舗で使うDPROまで、バラバラに増やしすぎない運用へ。</p><div class="bundle"><div class="bundle-card">ホームページ</div><div class="bundle-plus">＋</div><div class="bundle-card">LINE公式</div><div class="bundle-plus">＋</div><div class="bundle-card">DPRO</div></div><div class="price-main"><small>ホームページ・LINE公式・DPROをまとめて運用</small><strong>5,500円</strong><span>月額合計（税込）</span></div><div class="price-breakdown"><article class="price-item"><strong>LINE運用</strong><b>3,300円/月（税込）</b></article><article class="price-item"><strong>ホームページ公開・基本保守</strong><b>1,100円/月（税込）</b><small>※LINE運用契約店舗の場合</small></article><article class="price-item"><strong>DPRO利用・基本保守</strong><b>1,100円/月（税込）</b><small>※LINE構築・運用契約店舗限定</small></article></div><p class="micro" style="color:#f4ddcc">DPRO単体の料金が5,500円という意味ではありません。ホームページ・LINE公式・DPROを合わせて運用する場合の月額合計です。</p><div class="btn-row"><a class="btn primary" href="https://lin.ee/YxJGXV6D" rel="noopener" target="_blank">料金・導入内容をLINEで相談する</a></div></div></section>
+<section class="section alt" data-page="P9" id="p9"><div class="wrap"><div class="page-no"><b>P9</b> DEMO</div><h2>説明だけではなく、<br/>実際に動くDPRO画面を確認できます。</h2><p class="lead">導入前に「お客様にはどう見えるのか」「店舗ではどう使うのか」を実画面で確認できます。</p><div class="demo-grid"><article class="demo-card"><div class="real-label">CUSTOMER</div><strong>写真付きパンカタログ</strong><p>写真・価格・説明・売り切れ状況などを確認。</p><button class="btn secondary screen-action js-stage" data-src="https://dpromstk2000-lab.github.io/bakery-line-system/catalog.html?shop_code=bakery_demo&amp;catalog_api=https%3A%2F%2Fdpro-bakery-catalog-api.dpromstk2000.workers.dev&amp;api=https%3A%2F%2Fdpro-bakery-wallet-api.dpromstk2000.workers.dev&amp;v=32" data-title="写真付きパンカタログ" type="button">この実画面を表示</button></article><article class="demo-card"><div class="real-label">OWNER</div><strong>オーナー管理画面</strong><p>今日の取り置き、準備状況、商品受付条件、営業日などを確認。</p><button class="btn secondary screen-action js-stage" data-src="https://dpromstk2000-lab.github.io/bakery-line-system/owner.html?shop_code=bakery_demo&amp;api=https%3A%2F%2Fdpro-bakery-wallet-api.dpromstk2000.workers.dev&amp;catalog_api=https%3A%2F%2Fdpro-bakery-catalog-api.dpromstk2000.workers.dev&amp;v=32" data-title="オーナー管理画面" type="button">この実画面を表示</button></article><article class="demo-card"><div class="real-label">STAFF</div><strong>スタッフ・iPad画面</strong><p>「作る・袋詰め・渡す」の現場運用とQR確認を体験。</p><button class="btn secondary screen-action js-stage" data-src="https://dpromstk2000-lab.github.io/bakery-line-system/staff.html?shop_code=bakery_demo&amp;api=https%3A%2F%2Fdpro-bakery-wallet-api.dpromstk2000.workers.dev&amp;catalog_api=https%3A%2F%2Fdpro-bakery-catalog-api.dpromstk2000.workers.dev&amp;v=40" data-title="スタッフ画面" type="button">この実画面を表示</button></article></div><div class="demo-stage" id="demo-stage"><div class="stage-copy"><strong>実画面をその場で表示</strong><p>上のボタンを押すと、現在のDPROベーカリーDEMOを読み込みます。</p></div></div><div class="btn-row"><a class="btn dark" href="https://dpromstk2000-lab.github.io/bakery-line-system/catalog.html?shop_code=bakery_demo&amp;catalog_api=https%3A%2F%2Fdpro-bakery-catalog-api.dpromstk2000.workers.dev&amp;api=https%3A%2F%2Fdpro-bakery-wallet-api.dpromstk2000.workers.dev&amp;v=32" rel="noopener" target="_blank">写真付きカタログを別タブで開く</a><a class="btn primary" href="https://lin.ee/YxJGXV6D" rel="noopener" target="_blank">DEMOを見ながら相談する</a></div></div></section>
+<section class="section consult" data-page="P10" id="p10"><div class="wrap consult-grid"><div class="consult-card"><div class="page-no"><b>P10</b> CONSULT / CTA</div><h2>「うちのパン屋なら、どう使える？」<br/>そこからご相談ください。</h2><p class="lead">店舗の規模や商品数、現在の取り置き方法に合わせて、必要な使い方を一緒に確認できます。</p><p class="body-copy">「写真付きカタログだけでも便利そう」「取り置き対応を整理したい」「常連さんがもっと注文しやすくしたい」「スタッフでも迷わず使えるようにしたい」。そんなところからご相談ください。</p><p class="body-copy" style="margin-top:12px">まずは実際のDEMOを見ながら、<strong>お客様がどう使うのか。店舗ではどう管理するのか。</strong>一緒に確認していただけます。</p><div class="btn-row"><a class="btn primary" href="https://lin.ee/YxJGXV6D" rel="noopener" target="_blank">LINEでDPROベーカリーを相談する</a><a class="btn secondary" href="#p9">実画面DEMOを見る</a></div><p class="micro">相談だけでも大丈夫です。現在の店舗運用を伺いながら、使い方を確認します。</p></div><div><img alt="ベーカリーのカウンターでスタッフがお客様へ焼きたてのパンを手渡しながら笑顔で応対している様子" class="consult-photo" data-industry-photo="P10" decoding="async" height="750" loading="lazy" src="https://images.pexels.com/photos/6205541/pexels-photo-6205541.jpeg?auto=compress&amp;dpr=1&amp;h=750&amp;w=1260" width="1260"/></div></div></section>
+</main>
+<footer class="footer"><div class="wrap footer-inner"><strong>DPRO ベーカリーシステム</strong><span>写真で選ぶ → 取り置く → 準備する → 渡す</span></div></footer>
+<div aria-hidden="true" class="modal" id="demo-modal"><div aria-labelledby="demo-modal-title" aria-modal="true" class="modal-panel" role="dialog"><div class="modal-head"><strong id="demo-modal-title">DPRO 実画面</strong><button aria-label="閉じる" class="modal-close" type="button">×</button></div><div class="modal-body" id="modal-body"></div></div></div>
+<script>
+(()=>{
+  const modal=document.getElementById('demo-modal');
+  const modalBody=document.getElementById('modal-body');
+  const modalTitle=document.getElementById('demo-modal-title');
+  const closeBtn=modal.querySelector('.modal-close');
+  const makeFrame=(src,title)=>{const f=document.createElement('iframe');f.src=src;f.title=title;f.loading='lazy';f.referrerPolicy='strict-origin-when-cross-origin';return f;};
+  document.querySelectorAll('.js-demo').forEach(btn=>btn.addEventListener('click',()=>{modalTitle.textContent=btn.dataset.title;modalBody.replaceChildren(makeFrame(btn.dataset.src,btn.dataset.title));modal.classList.add('open');modal.setAttribute('aria-hidden','false');document.body.style.overflow='hidden';closeBtn.focus();}));
+  document.querySelectorAll('.js-stage').forEach(btn=>btn.addEventListener('click',()=>{const stage=document.getElementById('demo-stage');stage.classList.add('is-live');stage.replaceChildren(makeFrame(btn.dataset.src,btn.dataset.title));}));
+  const close=()=>{modal.classList.remove('open');modal.setAttribute('aria-hidden','true');modalBody.replaceChildren();document.body.style.overflow='';};
+  closeBtn.addEventListener('click',close);modal.addEventListener('click',e=>{if(e.target===modal)close();});document.addEventListener('keydown',e=>{if(e.key==='Escape'&&modal.classList.contains('open'))close();});
+})();
+</script>
+</body>
+</html>
