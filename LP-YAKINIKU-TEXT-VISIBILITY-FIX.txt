@@ -1,0 +1,10 @@
+SYSTEM_CODE: YAKINIKU
+TARGET_HTML: lp-yakiniku.html
+ISSUE: P10 pricing rows had white background while inheriting white text from .section.dark.
+FIX:
+- Added color: var(--ink) to .price-row
+- Added explicit color: var(--ink) to .price-row span and .price-row strong
+PRICE_CONTENT_CHANGED: NO
+PHOTO_CHANGED: NO
+OTHER_LP_CONTENT_CHANGED: NO
+FINAL_RESULT: PASS
