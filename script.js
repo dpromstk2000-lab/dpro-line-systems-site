@@ -16,7 +16,17 @@
     "welfare-equipment.html": "../lp-welfare.html",
     "yakiniku.html": "../lp-yakiniku.html",
     "houkago-dayservice.html": "../lp-houkago.html",
-    "gakudo.html": "../lp-gakudo.html"
+    "gakudo.html": "../lp-gakudo.html",
+    "pet-salon.html": "../lp-pet-salon.html",
+    "btype.html": "../lp-btype.html",
+    "car-service.html": "../lp-car-service.html",
+    "green-rental.html": "../lp-green-rental.html",
+    "homecare.html": "../lp-homecare.html",
+    "izakaya.html": "../lp-izakaya.html",
+    "sharoushi.html": "../lp-sharoushi.html",
+    "sodan.html": "../lp-sodan.html",
+    "welfare-shuttle.html": "../lp-welfare-shuttle.html",
+    "salesnavi.html": "../lp-salesnavi.html"
   };
 
   const currentScriptUrl =
