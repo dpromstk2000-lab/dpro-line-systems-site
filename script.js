@@ -6,6 +6,18 @@
     "https://raw.githack.com/dpromstk2000-lab/dpro-line-systems-site/2749bb15742634b675895aa685dc0c51ddcac777/script.js"
   ];
   const officialSite = "https://dpro-shop.com/";
+  const salesLpMap = {
+    "shiho.html": "../lp-shiho.html",
+    "chosashi.html": "../lp-chosashi.html",
+    "cosmetics.html": "../lp-cosmetics.html",
+    "flower-shop.html": "../lp-flower.html",
+    "home-nursing.html": "../lp-homenursing.html",
+    "careplan.html": "../lp-careplan.html",
+    "welfare-equipment.html": "../lp-welfare.html",
+    "yakiniku.html": "../lp-yakiniku.html",
+    "houkago-dayservice.html": "../lp-houkago.html",
+    "gakudo.html": "../lp-gakudo.html"
+  };
 
   const currentScriptUrl =
     document.currentScript && document.currentScript.src
@@ -87,6 +99,35 @@
     });
   };
 
+  const injectSalesLpBridge = () => {
+    const page = window.location.pathname.split("/").filter(Boolean).pop() || "";
+    const href = salesLpMap[page];
+    if (!href) return;
+
+    if (!document.getElementById("dpro-sales-lp-style")) {
+      const st = document.createElement("style");
+      st.id = "dpro-sales-lp-style";
+      st.textContent = `.dpro-sales-lp-button{border-color:#a8ff2a!important;background:#a8ff2a!important;color:#0b0b0d!important;font-weight:950!important;box-shadow:0 10px 28px rgba(168,255,42,.18)!important}.dpro-sales-lp-button:hover{transform:translateY(-1px);filter:brightness(.96)}@media(max-width:680px){.dpro-sales-lp-button{width:100%!important;text-align:center!important}}`;
+      document.head.appendChild(st);
+    }
+
+    const addButton = (container, label) => {
+      if (!container || container.querySelector("[data-sales-lp-link]")) return;
+      const a = document.createElement("a");
+      a.href = href;
+      a.className = "button dpro-sales-lp-button";
+      a.dataset.salesLpLink = "";
+      a.textContent = label;
+      container.appendChild(a);
+    };
+
+    addButton(
+      document.querySelector(".product-hero .hero-actions, .product-hero-copy .hero-actions, .hero-actions"),
+      "導入・料金を詳しく見る"
+    );
+    addButton(document.querySelector(".contact-actions"), "導入・料金を見る");
+  };
+
   const run = async () => {
     installFavicon();
 
@@ -109,6 +150,7 @@
     }
 
     injectOfficialSite();
+    injectSalesLpBridge();
   };
 
   if (document.readyState === "loading") {
