@@ -44,18 +44,20 @@ a{color:inherit}
 .status{font-size:11px;background:#e9f8f2;color:#107a57;padding:5px 9px;border-radius:999px;font-weight:700}
 .card h2{margin:23px 0 8px;font-size:22px;line-height:1.35}
 .category{margin:0;color:#73827e;font-size:12px}
-.actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:auto;padding-top:24px}
+.actions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:auto;padding-top:24px}
 .btn{border:0;border-radius:11px;min-height:44px;padding:9px 10px;font-size:13px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;text-align:center;text-decoration:none}
 .copy-btn{background:#e9f5f1;color:#0b684b}
 .view-btn{background:#102e27;color:#fff}
+.flyer-btn{background:#effaf6;color:#087653;border:1px solid #b8dfd1}
 .copy-btn:hover{background:#d9eee7}
 .view-btn:hover{background:#174638}
+.flyer-btn:hover{background:#dff4ec}
 .copy-btn.copied{background:#13a574;color:#fff}
 .no-result{display:none;background:#fff;border-radius:16px;padding:40px 20px;text-align:center;color:#687a75}
 .footer{background:#0b1513;color:#b7c4c1;padding:35px 22px;text-align:center;font-size:12px}
 .footer a{color:#fff;text-decoration:none}
 @media(max-width:900px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media(max-width:620px){.header-inner{align-items:flex-start}.header-nav{display:none}.hero{padding-top:55px}.summary-inner{align-items:flex-start;flex-direction:column}.summary-note{text-align:left}.grid{grid-template-columns:1fr}.card{min-height:205px}.actions{grid-template-columns:1fr 1fr}}
+@media(max-width:620px){.header-inner{align-items:flex-start}.header-nav{display:none}.hero{padding-top:55px}.summary-inner{align-items:flex-start;flex-direction:column}.summary-note{text-align:left}.grid{grid-template-columns:1fr}.card{min-height:205px}.actions{grid-template-columns:repeat(3,minmax(0,1fr))}.btn{font-size:13px;padding:9px 8px}}
 </style>
 </head>
 <body>
@@ -68,7 +70,6 @@ a{color:inherit}
     <nav class="header-nav"><a href="index.html">トップ</a><a href="systems.html">システム一覧</a></nav>
   </div>
 </header>
-
 <section class="hero">
   <div class="hero-inner">
     <p class="eyebrow">DPRO BUSINESS LP LIBRARY</p>
@@ -76,14 +77,12 @@ a{color:inherit}
     <p class="hero-lead">業種に合わせたDPROの営業LPをご覧いただけます。「LPを見る」で内容を確認、「URLをコピー」でページのアドレスをすぐに共有できます。</p>
   </div>
 </section>
-
 <section class="summary">
   <div class="summary-inner">
     <div class="summary-count"><strong id="visibleCount">50</strong><span>公開中LP</span></div>
     <div class="summary-note">現在公開済みの営業LPを掲載しています。<br>新しい業種LPは完成後、順次追加します。</div>
   </div>
 </section>
-
 <section class="controls">
   <div class="search-box"><span class="search-icon">⌕</span><input id="searchInput" type="search" placeholder="業種名・SYSTEM CODEで検索" aria-label="営業LPを検索"></div>
   <div class="filters">
@@ -98,269 +97,266 @@ a{color:inherit}
     <button class="filter-btn" data-filter="生活サービス">生活サービス</button>
   </div>
 </section>
-
 <main class="main">
 <div class="grid" id="lpGrid">
   <article class="card" data-name="美容室 HAIR" data-category="美容・健康">
     <div class="card-top"><span class="code">HAIR</span><span class="status">公開中</span></div>
     <h2>美容室</h2><p class="category">美容・健康</p>
-    <div class="actions"><button class="btn copy-btn" data-url="lp-hair.html">URLをコピー</button><a class="btn view-btn" href="lp-hair.html" target="_blank" rel="noopener">LPを見る</a></div>
+    <div class="actions"><button class="btn copy-btn" data-url="lp-hair.html">URLをコピー</button><a class="btn view-btn" href="lp-hair.html" target="_blank" rel="noopener">LPを見る</a><a class="btn flyer-btn" href="flyer-hair.html" target="_blank" rel="noopener">A4チラシ</a></div>
   </article>
   <article class="card" data-name="ネイルサロン NAIL" data-category="美容・健康">
     <div class="card-top"><span class="code">NAIL</span><span class="status">公開中</span></div>
     <h2>ネイルサロン</h2><p class="category">美容・健康</p>
-    <div class="actions"><button class="btn copy-btn" data-url="lp-nail.html">URLをコピー</button><a class="btn view-btn" href="lp-nail.html" target="_blank" rel="noopener">LPを見る</a></div>
+    <div class="actions"><button class="btn copy-btn" data-url="lp-nail.html">URLをコピー</button><a class="btn view-btn" href="lp-nail.html" target="_blank" rel="noopener">LPを見る</a><a class="btn flyer-btn" href="flyer-nail.html" target="_blank" rel="noopener">A4チラシ</a></div>
   </article>
   <article class="card" data-name="エステ ESTHE" data-category="美容・健康">
     <div class="card-top"><span class="code">ESTHE</span><span class="status">公開中</span></div>
     <h2>エステ</h2><p class="category">美容・健康</p>
-    <div class="actions"><button class="btn copy-btn" data-url="lp-esthe.html">URLをコピー</button><a class="btn view-btn" href="lp-esthe.html" target="_blank" rel="noopener">LPを見る</a></div>
+    <div class="actions"><button class="btn copy-btn" data-url="lp-esthe.html">URLをコピー</button><a class="btn view-btn" href="lp-esthe.html" target="_blank" rel="noopener">LPを見る</a><a class="btn flyer-btn" href="flyer-esthe.html" target="_blank" rel="noopener">A4チラシ</a></div>
   </article>
   <article class="card" data-name="整体・整骨院 SEITAI" data-category="美容・健康">
     <div class="card-top"><span class="code">SEITAI</span><span class="status">公開中</span></div>
     <h2>整体・整骨院</h2><p class="category">美容・健康</p>
-    <div class="actions"><button class="btn copy-btn" data-url="lp-seitai.html">URLをコピー</button><a class="btn view-btn" href="lp-seitai.html" target="_blank" rel="noopener">LPを見る</a></div>
+    <div class="actions"><button class="btn copy-btn" data-url="lp-seitai.html">URLをコピー</button><a class="btn view-btn" href="lp-seitai.html" target="_blank" rel="noopener">LPを見る</a><a class="btn flyer-btn" href="flyer-seitai.html" target="_blank" rel="noopener">A4チラシ</a></div>
   </article>
   <article class="card" data-name="歯科 DENTAL" data-category="医療・ペット">
     <div class="card-top"><span class="code">DENTAL</span><span class="status">公開中</span></div>
     <h2>歯科</h2><p class="category">医療・ペット</p>
-    <div class="actions"><button class="btn copy-btn" data-url="lp-dental.html">URLをコピー</button><a class="btn view-btn" href="lp-dental.html" target="_blank" rel="noopener">LPを見る</a></div>
+    <div class="actions"><button class="btn copy-btn" data-url="lp-dental.html">URLをコピー</button><a class="btn view-btn" href="lp-dental.html" target="_blank" rel="noopener">LPを見る</a><a class="btn flyer-btn" href="flyer-dental.html" target="_blank" rel="noopener">A4チラシ</a></div>
   </article>
   <article class="card" data-name="動物病院 VET" data-category="医療・ペット">
     <div class="card-top"><span class="code">VET</span><span class="status">公開中</span></div>
     <h2>動物病院</h2><p class="category">医療・ペット</p>
-    <div class="actions"><button class="btn copy-btn" data-url="lp-vet.html">URLをコピー</button><a class="btn view-btn" href="lp-vet.html" target="_blank" rel="noopener">LPを見る</a></div>
+    <div class="actions"><button class="btn copy-btn" data-url="lp-vet.html">URLをコピー</button><a class="btn view-btn" href="lp-vet.html" target="_blank" rel="noopener">LPを見る</a><a class="btn flyer-btn" href="flyer-vet.html" target="_blank" rel="noopener">A4チラシ</a></div>
   </article>
   <article class="card" data-name="クリーニング CLEANING" data-category="生活サービス">
     <div class="card-top"><span class="code">CLEANING</span><span class="status">公開中</span></div>
     <h2>クリーニング</h2><p class="category">生活サービス</p>
-    <div class="actions"><button class="btn copy-btn" data-url="lp-cleaning.html">URLをコピー</button><a class="btn view-btn" href="lp-cleaning.html" target="_blank" rel="noopener">LPを見る</a></div>
+    <div class="actions"><button class="btn copy-btn" data-url="lp-cleaning.html">URLをコピー</button><a class="btn view-btn" href="lp-cleaning.html" target="_blank" rel="noopener">LPを見る</a><a class="btn flyer-btn" href="flyer-cleaning.html" target="_blank" rel="noopener">A4チラシ</a></div>
   </article>
   <article class="card" data-name="修理受付 REPAIR" data-category="生活サービス">
     <div class="card-top"><span class="code">REPAIR</span><span class="status">公開中</span></div>
     <h2>修理受付</h2><p class="category">生活サービス</p>
-    <div class="actions"><button class="btn copy-btn" data-url="lp-repair.html">URLをコピー</button><a class="btn view-btn" href="lp-repair.html" target="_blank" rel="noopener">LPを見る</a></div>
+    <div class="actions"><button class="btn copy-btn" data-url="lp-repair.html">URLをコピー</button><a class="btn view-btn" href="lp-repair.html" target="_blank" rel="noopener">LPを見る</a><a class="btn flyer-btn" href="flyer-repair.html" target="_blank" rel="noopener">A4チラシ</a></div>
   </article>
   <article class="card" data-name="テイクアウト TAKEOUT" data-category="飲食">
     <div class="card-top"><span class="code">TAKEOUT</span><span class="status">公開中</span></div>
     <h2>テイクアウト</h2><p class="category">飲食</p>
-    <div class="actions"><button class="btn copy-btn" data-url="lp-takeout.html">URLをコピー</button><a class="btn view-btn" href="lp-takeout.html" target="_blank" rel="noopener">LPを見る</a></div>
+    <div class="actions"><button class="btn copy-btn" data-url="lp-takeout.html">URLをコピー</button><a class="btn view-btn" href="lp-takeout.html" target="_blank" rel="noopener">LPを見る</a><a class="btn flyer-btn" href="flyer-takeout.html" target="_blank" rel="noopener">A4チラシ</a></div>
   </article>
   <article class="card" data-name="美容サロン SALON" data-category="美容・健康">
     <div class="card-top"><span class="code">SALON</span><span class="status">公開中</span></div>
     <h2>美容サロン</h2><p class="category">美容・健康</p>
-    <div class="actions"><button class="btn copy-btn" data-url="lp-salon.html">URLをコピー</button><a class="btn view-btn" href="lp-salon.html" target="_blank" rel="noopener">LPを見る</a></div>
+    <div class="actions"><button class="btn copy-btn" data-url="lp-salon.html">URLをコピー</button><a class="btn view-btn" href="lp-salon.html" target="_blank" rel="noopener">LPを見る</a><a class="btn flyer-btn" href="flyer-salon.html" target="_blank" rel="noopener">A4チラシ</a></div>
   </article>
   <article class="card" data-name="ベーカリー BAKERY" data-category="飲食">
     <div class="card-top"><span class="code">BAKERY</span><span class="status">公開中</span></div>
     <h2>ベーカリー</h2><p class="category">飲食</p>
-    <div class="actions"><button class="btn copy-btn" data-url="lp-bakery.html">URLをコピー</button><a class="btn view-btn" href="lp-bakery.html" target="_blank" rel="noopener">LPを見る</a></div>
+    <div class="actions"><button class="btn copy-btn" data-url="lp-bakery.html">URLをコピー</button><a class="btn view-btn" href="lp-bakery.html" target="_blank" rel="noopener">LPを見る</a><a class="btn flyer-btn" href="flyer-bakery.html" target="_blank" rel="noopener">A4チラシ</a></div>
   </article>
   <article class="card" data-name="ケーキ・洋菓子 CAKE" data-category="飲食">
     <div class="card-top"><span class="code">CAKE</span><span class="status">公開中</span></div>
     <h2>ケーキ・洋菓子</h2><p class="category">飲食</p>
-    <div class="actions"><button class="btn copy-btn" data-url="lp-cake.html">URLをコピー</button><a class="btn view-btn" href="lp-cake.html" target="_blank" rel="noopener">LPを見る</a></div>
+    <div class="actions"><button class="btn copy-btn" data-url="lp-cake.html">URLをコピー</button><a class="btn view-btn" href="lp-cake.html" target="_blank" rel="noopener">LPを見る</a><a class="btn flyer-btn" href="flyer-cake.html" target="_blank" rel="noopener">A4チラシ</a></div>
   </article>
   <article class="card" data-name="まつげ・アイサロン EYE" data-category="美容・健康">
     <div class="card-top"><span class="code">EYE</span><span class="status">公開中</span></div>
     <h2>まつげ・アイサロン</h2><p class="category">美容・健康</p>
-    <div class="actions"><button class="btn copy-btn" data-url="lp-eye.html">URLをコピー</button><a class="btn view-btn" href="lp-eye.html" target="_blank" rel="noopener">LPを見る</a></div>
+    <div class="actions"><button class="btn copy-btn" data-url="lp-eye.html">URLをコピー</button><a class="btn view-btn" href="lp-eye.html" target="_blank" rel="noopener">LPを見る</a><a class="btn flyer-btn" href="flyer-eye.html" target="_blank" rel="noopener">A4チラシ</a></div>
   </article>
   <article class="card" data-name="ヨガ YOGA" data-category="美容・健康">
     <div class="card-top"><span class="code">YOGA</span><span class="status">公開中</span></div>
     <h2>ヨガ</h2><p class="category">美容・健康</p>
-    <div class="actions"><button class="btn copy-btn" data-url="lp-yoga.html">URLをコピー</button><a class="btn view-btn" href="lp-yoga.html" target="_blank" rel="noopener">LPを見る</a></div>
+    <div class="actions"><button class="btn copy-btn" data-url="lp-yoga.html">URLをコピー</button><a class="btn view-btn" href="lp-yoga.html" target="_blank" rel="noopener">LPを見る</a><a class="btn flyer-btn" href="flyer-yoga.html" target="_blank" rel="noopener">A4チラシ</a></div>
   </article>
   <article class="card" data-name="パーソナルジム GYM" data-category="美容・健康">
     <div class="card-top"><span class="code">GYM</span><span class="status">公開中</span></div>
     <h2>パーソナルジム</h2><p class="category">美容・健康</p>
-    <div class="actions"><button class="btn copy-btn" data-url="lp-gym.html">URLをコピー</button><a class="btn view-btn" href="lp-gym.html" target="_blank" rel="noopener">LPを見る</a></div>
+    <div class="actions"><button class="btn copy-btn" data-url="lp-gym.html">URLをコピー</button><a class="btn view-btn" href="lp-gym.html" target="_blank" rel="noopener">LPを見る</a><a class="btn flyer-btn" href="flyer-gym.html" target="_blank" rel="noopener">A4チラシ</a></div>
   </article>
   <article class="card" data-name="不動産・賃貸 ESTATE" data-category="住まい">
     <div class="card-top"><span class="code">ESTATE</span><span class="status">公開中</span></div>
     <h2>不動産・賃貸</h2><p class="category">住まい</p>
-    <div class="actions"><button class="btn copy-btn" data-url="lp-estate.html">URLをコピー</button><a class="btn view-btn" href="lp-estate.html" target="_blank" rel="noopener">LPを見る</a></div>
+    <div class="actions"><button class="btn copy-btn" data-url="lp-estate.html">URLをコピー</button><a class="btn view-btn" href="lp-estate.html" target="_blank" rel="noopener">LPを見る</a><a class="btn flyer-btn" href="flyer-estate.html" target="_blank" rel="noopener">A4チラシ</a></div>
   </article>
   <article class="card" data-name="買取・査定 BUYBACK" data-category="生活サービス">
     <div class="card-top"><span class="code">BUYBACK</span><span class="status">公開中</span></div>
     <h2>買取・査定</h2><p class="category">生活サービス</p>
-    <div class="actions"><button class="btn copy-btn" data-url="lp-buyback.html">URLをコピー</button><a class="btn view-btn" href="lp-buyback.html" target="_blank" rel="noopener">LPを見る</a></div>
+    <div class="actions"><button class="btn copy-btn" data-url="lp-buyback.html">URLをコピー</button><a class="btn view-btn" href="lp-buyback.html" target="_blank" rel="noopener">LPを見る</a><a class="btn flyer-btn" href="flyer-buyback.html" target="_blank" rel="noopener">A4チラシ</a></div>
   </article>
   <article class="card" data-name="写真館 PHOTO" data-category="生活サービス">
     <div class="card-top"><span class="code">PHOTO</span><span class="status">公開中</span></div>
     <h2>写真館</h2><p class="category">生活サービス</p>
-    <div class="actions"><button class="btn copy-btn" data-url="lp-photo.html">URLをコピー</button><a class="btn view-btn" href="lp-photo.html" target="_blank" rel="noopener">LPを見る</a></div>
+    <div class="actions"><button class="btn copy-btn" data-url="lp-photo.html">URLをコピー</button><a class="btn view-btn" href="lp-photo.html" target="_blank" rel="noopener">LPを見る</a><a class="btn flyer-btn" href="flyer-photo.html" target="_blank" rel="noopener">A4チラシ</a></div>
   </article>
   <article class="card" data-name="リフォーム・工務店 REFORM" data-category="住まい">
     <div class="card-top"><span class="code">REFORM</span><span class="status">公開中</span></div>
     <h2>リフォーム・工務店</h2><p class="category">住まい</p>
-    <div class="actions"><button class="btn copy-btn" data-url="lp-reform.html">URLをコピー</button><a class="btn view-btn" href="lp-reform.html" target="_blank" rel="noopener">LPを見る</a></div>
+    <div class="actions"><button class="btn copy-btn" data-url="lp-reform.html">URLをコピー</button><a class="btn view-btn" href="lp-reform.html" target="_blank" rel="noopener">LPを見る</a><a class="btn flyer-btn" href="flyer-reform.html" target="_blank" rel="noopener">A4チラシ</a></div>
   </article>
   <article class="card" data-name="税理士・会計 TAX" data-category="士業">
     <div class="card-top"><span class="code">TAX</span><span class="status">公開中</span></div>
     <h2>税理士・会計</h2><p class="category">士業</p>
-    <div class="actions"><button class="btn copy-btn" data-url="lp-tax.html">URLをコピー</button><a class="btn view-btn" href="lp-tax.html" target="_blank" rel="noopener">LPを見る</a></div>
+    <div class="actions"><button class="btn copy-btn" data-url="lp-tax.html">URLをコピー</button><a class="btn view-btn" href="lp-tax.html" target="_blank" rel="noopener">LPを見る</a><a class="btn flyer-btn" href="flyer-tax.html" target="_blank" rel="noopener">A4チラシ</a></div>
   </article>
   <article class="card" data-name="学習塾 SCHOOL" data-category="教育">
     <div class="card-top"><span class="code">SCHOOL</span><span class="status">公開中</span></div>
     <h2>学習塾</h2><p class="category">教育</p>
-    <div class="actions"><button class="btn copy-btn" data-url="lp-school.html">URLをコピー</button><a class="btn view-btn" href="lp-school.html" target="_blank" rel="noopener">LPを見る</a></div>
+    <div class="actions"><button class="btn copy-btn" data-url="lp-school.html">URLをコピー</button><a class="btn view-btn" href="lp-school.html" target="_blank" rel="noopener">LPを見る</a><a class="btn flyer-btn" href="flyer-school.html" target="_blank" rel="noopener">A4チラシ</a></div>
   </article>
   <article class="card" data-name="葬儀・法要 FUNERAL" data-category="生活サービス">
     <div class="card-top"><span class="code">FUNERAL</span><span class="status">公開中</span></div>
     <h2>葬儀・法要</h2><p class="category">生活サービス</p>
-    <div class="actions"><button class="btn copy-btn" data-url="lp-funeral.html">URLをコピー</button><a class="btn view-btn" href="lp-funeral.html" target="_blank" rel="noopener">LPを見る</a></div>
+    <div class="actions"><button class="btn copy-btn" data-url="lp-funeral.html">URLをコピー</button><a class="btn view-btn" href="lp-funeral.html" target="_blank" rel="noopener">LPを見る</a><a class="btn flyer-btn" href="flyer-funeral.html" target="_blank" rel="noopener">A4チラシ</a></div>
   </article>
   <article class="card" data-name="宿泊施設 STAY" data-category="生活サービス">
     <div class="card-top"><span class="code">STAY</span><span class="status">公開中</span></div>
     <h2>宿泊施設</h2><p class="category">生活サービス</p>
-    <div class="actions"><button class="btn copy-btn" data-url="lp-stay.html">URLをコピー</button><a class="btn view-btn" href="lp-stay.html" target="_blank" rel="noopener">LPを見る</a></div>
+    <div class="actions"><button class="btn copy-btn" data-url="lp-stay.html">URLをコピー</button><a class="btn view-btn" href="lp-stay.html" target="_blank" rel="noopener">LPを見る</a><a class="btn flyer-btn" href="flyer-stay.html" target="_blank" rel="noopener">A4チラシ</a></div>
   </article>
   <article class="card" data-name="中古車買取・販売 CAR" data-category="生活サービス">
     <div class="card-top"><span class="code">CAR</span><span class="status">公開中</span></div>
     <h2>中古車買取・販売</h2><p class="category">生活サービス</p>
-    <div class="actions"><button class="btn copy-btn" data-url="lp-car.html">URLをコピー</button><a class="btn view-btn" href="lp-car.html" target="_blank" rel="noopener">LPを見る</a></div>
+    <div class="actions"><button class="btn copy-btn" data-url="lp-car.html">URLをコピー</button><a class="btn view-btn" href="lp-car.html" target="_blank" rel="noopener">LPを見る</a><a class="btn flyer-btn" href="flyer-car.html" target="_blank" rel="noopener">A4チラシ</a></div>
   </article>
   <article class="card" data-name="デイサービス DAYCARE" data-category="介護・福祉">
     <div class="card-top"><span class="code">DAYCARE</span><span class="status">公開中</span></div>
     <h2>デイサービス</h2><p class="category">介護・福祉</p>
-    <div class="actions"><button class="btn copy-btn" data-url="lp-daycare.html">URLをコピー</button><a class="btn view-btn" href="lp-daycare.html" target="_blank" rel="noopener">LPを見る</a></div>
+    <div class="actions"><button class="btn copy-btn" data-url="lp-daycare.html">URLをコピー</button><a class="btn view-btn" href="lp-daycare.html" target="_blank" rel="noopener">LPを見る</a><a class="btn flyer-btn" href="flyer-daycare.html" target="_blank" rel="noopener">A4チラシ</a></div>
   </article>
   <article class="card" data-name="介護タクシー CARETAXI" data-category="介護・福祉">
     <div class="card-top"><span class="code">CARETAXI</span><span class="status">公開中</span></div>
     <h2>介護タクシー</h2><p class="category">介護・福祉</p>
-    <div class="actions"><button class="btn copy-btn" data-url="lp-caretaxi.html">URLをコピー</button><a class="btn view-btn" href="lp-caretaxi.html" target="_blank" rel="noopener">LPを見る</a></div>
+    <div class="actions"><button class="btn copy-btn" data-url="lp-caretaxi.html">URLをコピー</button><a class="btn view-btn" href="lp-caretaxi.html" target="_blank" rel="noopener">LPを見る</a><a class="btn flyer-btn" href="flyer-caretaxi.html" target="_blank" rel="noopener">A4チラシ</a></div>
   </article>
   <article class="card" data-name="高齢者配食 HAISHOKU" data-category="介護・福祉">
     <div class="card-top"><span class="code">HAISHOKU</span><span class="status">公開中</span></div>
     <h2>高齢者配食</h2><p class="category">介護・福祉</p>
-    <div class="actions"><button class="btn copy-btn" data-url="lp-haishoku.html">URLをコピー</button><a class="btn view-btn" href="lp-haishoku.html" target="_blank" rel="noopener">LPを見る</a></div>
+    <div class="actions"><button class="btn copy-btn" data-url="lp-haishoku.html">URLをコピー</button><a class="btn view-btn" href="lp-haishoku.html" target="_blank" rel="noopener">LPを見る</a><a class="btn flyer-btn" href="flyer-haishoku.html" target="_blank" rel="noopener">A4チラシ</a></div>
   </article>
   <article class="card" data-name="家事代行 HOUSEKEEP" data-category="生活サービス">
     <div class="card-top"><span class="code">HOUSEKEEP</span><span class="status">公開中</span></div>
     <h2>家事代行</h2><p class="category">生活サービス</p>
-    <div class="actions"><button class="btn copy-btn" data-url="lp-housekeep.html">URLをコピー</button><a class="btn view-btn" href="lp-housekeep.html" target="_blank" rel="noopener">LPを見る</a></div>
+    <div class="actions"><button class="btn copy-btn" data-url="lp-housekeep.html">URLをコピー</button><a class="btn view-btn" href="lp-housekeep.html" target="_blank" rel="noopener">LPを見る</a><a class="btn flyer-btn" href="flyer-housekeep.html" target="_blank" rel="noopener">A4チラシ</a></div>
   </article>
   <article class="card" data-name="不用品回収 DISPOSAL" data-category="生活サービス">
     <div class="card-top"><span class="code">DISPOSAL</span><span class="status">公開中</span></div>
     <h2>不用品回収</h2><p class="category">生活サービス</p>
-    <div class="actions"><button class="btn copy-btn" data-url="lp-disposal.html">URLをコピー</button><a class="btn view-btn" href="lp-disposal.html" target="_blank" rel="noopener">LPを見る</a></div>
+    <div class="actions"><button class="btn copy-btn" data-url="lp-disposal.html">URLをコピー</button><a class="btn view-btn" href="lp-disposal.html" target="_blank" rel="noopener">LPを見る</a><a class="btn flyer-btn" href="flyer-disposal.html" target="_blank" rel="noopener">A4チラシ</a></div>
   </article>
   <article class="card" data-name="行政書士 GYOSEI" data-category="士業">
     <div class="card-top"><span class="code">GYOSEI</span><span class="status">公開中</span></div>
     <h2>行政書士</h2><p class="category">士業</p>
-    <div class="actions"><button class="btn copy-btn" data-url="lp-gyosei.html">URLをコピー</button><a class="btn view-btn" href="lp-gyosei.html" target="_blank" rel="noopener">LPを見る</a></div>
+    <div class="actions"><button class="btn copy-btn" data-url="lp-gyosei.html">URLをコピー</button><a class="btn view-btn" href="lp-gyosei.html" target="_blank" rel="noopener">LPを見る</a><a class="btn flyer-btn" href="flyer-gyosei.html" target="_blank" rel="noopener">A4チラシ</a></div>
   </article>
   <article class="card" data-name="司法書士・相続登記 SHIHO" data-category="士業">
     <div class="card-top"><span class="code">SHIHO</span><span class="status">公開中</span></div>
     <h2>司法書士・相続登記</h2><p class="category">士業</p>
-    <div class="actions"><button class="btn copy-btn" data-url="lp-shiho.html">URLをコピー</button><a class="btn view-btn" href="lp-shiho.html" target="_blank" rel="noopener">LPを見る</a></div>
+    <div class="actions"><button class="btn copy-btn" data-url="lp-shiho.html">URLをコピー</button><a class="btn view-btn" href="lp-shiho.html" target="_blank" rel="noopener">LPを見る</a><a class="btn flyer-btn" href="flyer-shiho.html" target="_blank" rel="noopener">A4チラシ</a></div>
   </article>
   <article class="card" data-name="土地家屋調査士 CHOSASHI" data-category="士業">
     <div class="card-top"><span class="code">CHOSASHI</span><span class="status">公開中</span></div>
     <h2>土地家屋調査士</h2><p class="category">士業</p>
-    <div class="actions"><button class="btn copy-btn" data-url="lp-chosashi.html">URLをコピー</button><a class="btn view-btn" href="lp-chosashi.html" target="_blank" rel="noopener">LPを見る</a></div>
+    <div class="actions"><button class="btn copy-btn" data-url="lp-chosashi.html">URLをコピー</button><a class="btn view-btn" href="lp-chosashi.html" target="_blank" rel="noopener">LPを見る</a><a class="btn flyer-btn" href="flyer-chosashi.html" target="_blank" rel="noopener">A4チラシ</a></div>
   </article>
   <article class="card" data-name="化粧品・コスメ販売 COSMETICS" data-category="美容・健康">
     <div class="card-top"><span class="code">COSMETICS</span><span class="status">公開中</span></div>
     <h2>化粧品・コスメ販売</h2><p class="category">美容・健康</p>
-    <div class="actions"><button class="btn copy-btn" data-url="lp-cosmetics.html">URLをコピー</button><a class="btn view-btn" href="lp-cosmetics.html" target="_blank" rel="noopener">LPを見る</a></div>
+    <div class="actions"><button class="btn copy-btn" data-url="lp-cosmetics.html">URLをコピー</button><a class="btn view-btn" href="lp-cosmetics.html" target="_blank" rel="noopener">LPを見る</a><a class="btn flyer-btn" href="flyer-cosmetics.html" target="_blank" rel="noopener">A4チラシ</a></div>
   </article>
   <article class="card" data-name="花屋・フラワーショップ FLOWER" data-category="生活サービス">
     <div class="card-top"><span class="code">FLOWER</span><span class="status">公開中</span></div>
     <h2>花屋・フラワーショップ</h2><p class="category">生活サービス</p>
-    <div class="actions"><button class="btn copy-btn" data-url="lp-flower.html">URLをコピー</button><a class="btn view-btn" href="lp-flower.html" target="_blank" rel="noopener">LPを見る</a></div>
+    <div class="actions"><button class="btn copy-btn" data-url="lp-flower.html">URLをコピー</button><a class="btn view-btn" href="lp-flower.html" target="_blank" rel="noopener">LPを見る</a><a class="btn flyer-btn" href="flyer-flower.html" target="_blank" rel="noopener">A4チラシ</a></div>
   </article>
   <article class="card" data-name="訪問看護 HOMENURSING" data-category="介護・福祉">
     <div class="card-top"><span class="code">HOMENURSING</span><span class="status">公開中</span></div>
     <h2>訪問看護</h2><p class="category">介護・福祉</p>
-    <div class="actions"><button class="btn copy-btn" data-url="lp-homenursing.html">URLをコピー</button><a class="btn view-btn" href="lp-homenursing.html" target="_blank" rel="noopener">LPを見る</a></div>
+    <div class="actions"><button class="btn copy-btn" data-url="lp-homenursing.html">URLをコピー</button><a class="btn view-btn" href="lp-homenursing.html" target="_blank" rel="noopener">LPを見る</a><a class="btn flyer-btn" href="flyer-homenursing.html" target="_blank" rel="noopener">A4チラシ</a></div>
   </article>
   <article class="card" data-name="居宅介護支援・ケアマネ CAREPLAN" data-category="介護・福祉">
     <div class="card-top"><span class="code">CAREPLAN</span><span class="status">公開中</span></div>
     <h2>居宅介護支援・ケアマネ</h2><p class="category">介護・福祉</p>
-    <div class="actions"><button class="btn copy-btn" data-url="lp-careplan.html">URLをコピー</button><a class="btn view-btn" href="lp-careplan.html" target="_blank" rel="noopener">LPを見る</a></div>
+    <div class="actions"><button class="btn copy-btn" data-url="lp-careplan.html">URLをコピー</button><a class="btn view-btn" href="lp-careplan.html" target="_blank" rel="noopener">LPを見る</a><a class="btn flyer-btn" href="flyer-careplan.html" target="_blank" rel="noopener">A4チラシ</a></div>
   </article>
   <article class="card" data-name="福祉用具レンタル・販売 WELFARE" data-category="介護・福祉">
     <div class="card-top"><span class="code">WELFARE</span><span class="status">公開中</span></div>
     <h2>福祉用具レンタル・販売</h2><p class="category">介護・福祉</p>
-    <div class="actions"><button class="btn copy-btn" data-url="lp-welfare.html">URLをコピー</button><a class="btn view-btn" href="lp-welfare.html" target="_blank" rel="noopener">LPを見る</a></div>
+    <div class="actions"><button class="btn copy-btn" data-url="lp-welfare.html">URLをコピー</button><a class="btn view-btn" href="lp-welfare.html" target="_blank" rel="noopener">LPを見る</a><a class="btn flyer-btn" href="flyer-welfare.html" target="_blank" rel="noopener">A4チラシ</a></div>
   </article>
   <article class="card" data-name="焼肉店 YAKINIKU" data-category="飲食">
     <div class="card-top"><span class="code">YAKINIKU</span><span class="status">公開中</span></div>
     <h2>焼肉店</h2><p class="category">飲食</p>
-    <div class="actions"><button class="btn copy-btn" data-url="lp-yakiniku.html">URLをコピー</button><a class="btn view-btn" href="lp-yakiniku.html" target="_blank" rel="noopener">LPを見る</a></div>
+    <div class="actions"><button class="btn copy-btn" data-url="lp-yakiniku.html">URLをコピー</button><a class="btn view-btn" href="lp-yakiniku.html" target="_blank" rel="noopener">LPを見る</a><a class="btn flyer-btn" href="flyer-yakiniku.html" target="_blank" rel="noopener">A4チラシ</a></div>
   </article>
   <article class="card" data-name="放課後等デイサービス HOUKAGO" data-category="介護・福祉">
     <div class="card-top"><span class="code">HOUKAGO</span><span class="status">公開中</span></div>
     <h2>放課後等デイサービス</h2><p class="category">介護・福祉</p>
-    <div class="actions"><button class="btn copy-btn" data-url="lp-houkago.html">URLをコピー</button><a class="btn view-btn" href="lp-houkago.html" target="_blank" rel="noopener">LPを見る</a></div>
+    <div class="actions"><button class="btn copy-btn" data-url="lp-houkago.html">URLをコピー</button><a class="btn view-btn" href="lp-houkago.html" target="_blank" rel="noopener">LPを見る</a><a class="btn flyer-btn" href="flyer-houkago.html" target="_blank" rel="noopener">A4チラシ</a></div>
   </article>
   <article class="card" data-name="学童保育・放課後児童クラブ GAKUDO" data-category="教育">
     <div class="card-top"><span class="code">GAKUDO</span><span class="status">公開中</span></div>
     <h2>学童保育・放課後児童クラブ</h2><p class="category">教育</p>
-    <div class="actions"><button class="btn copy-btn" data-url="lp-gakudo.html">URLをコピー</button><a class="btn view-btn" href="lp-gakudo.html" target="_blank" rel="noopener">LPを見る</a></div>
+    <div class="actions"><button class="btn copy-btn" data-url="lp-gakudo.html">URLをコピー</button><a class="btn view-btn" href="lp-gakudo.html" target="_blank" rel="noopener">LPを見る</a><a class="btn flyer-btn" href="flyer-gakudo.html" target="_blank" rel="noopener">A4チラシ</a></div>
   </article>
   <article class="card" data-name="ペットサロン PETSALON" data-category="医療・ペット">
     <div class="card-top"><span class="code">PETSALON</span><span class="status">公開中</span></div>
     <h2>ペットサロン</h2><p class="category">医療・ペット</p>
-    <div class="actions" style="grid-template-columns:repeat(3,minmax(0,1fr))"><button class="btn copy-btn" data-url="lp-pet-salon.html">URLをコピー</button><a class="btn view-btn" href="lp-pet-salon.html" target="_blank" rel="noopener">LPを見る</a><a class="btn" href="flyer-pet-salon.html" target="_blank" rel="noopener" style="background:#effaf6;color:#087653;border:1px solid #b8dfd1">A4チラシ</a></div>
+    <div class="actions"><button class="btn copy-btn" data-url="lp-pet-salon.html">URLをコピー</button><a class="btn view-btn" href="lp-pet-salon.html" target="_blank" rel="noopener">LPを見る</a><a class="btn flyer-btn" href="flyer-pet-salon.html" target="_blank" rel="noopener">A4チラシ</a></div>
   </article>
   <article class="card" data-name="就労継続支援B型 BTYPE" data-category="介護・福祉">
     <div class="card-top"><span class="code">BTYPE</span><span class="status">公開中</span></div>
     <h2>就労継続支援B型</h2><p class="category">介護・福祉</p>
-    <div class="actions"><button class="btn copy-btn" data-url="lp-btype.html">URLをコピー</button><a class="btn view-btn" href="lp-btype.html" target="_blank" rel="noopener">LPを見る</a></div>
+    <div class="actions"><button class="btn copy-btn" data-url="lp-btype.html">URLをコピー</button><a class="btn view-btn" href="lp-btype.html" target="_blank" rel="noopener">LPを見る</a><a class="btn flyer-btn" href="flyer-btype.html" target="_blank" rel="noopener">A4チラシ</a></div>
   </article>
   <article class="card" data-name="車検・整備工場 KSH" data-category="生活サービス">
     <div class="card-top"><span class="code">KSH</span><span class="status">公開中</span></div>
     <h2>車検・整備工場</h2><p class="category">生活サービス</p>
-    <div class="actions"><button class="btn copy-btn" data-url="lp-car-service.html">URLをコピー</button><a class="btn view-btn" href="lp-car-service.html" target="_blank" rel="noopener">LPを見る</a></div>
+    <div class="actions"><button class="btn copy-btn" data-url="lp-car-service.html">URLをコピー</button><a class="btn view-btn" href="lp-car-service.html" target="_blank" rel="noopener">LPを見る</a><a class="btn flyer-btn" href="flyer-car-service.html" target="_blank" rel="noopener">A4チラシ</a></div>
   </article>
   <article class="card" data-name="観葉植物レンタル・グリーンレンタル GREEN" data-category="生活サービス">
     <div class="card-top"><span class="code">GREEN</span><span class="status">公開中</span></div>
     <h2>観葉植物レンタル・グリーンレンタル</h2><p class="category">生活サービス</p>
-    <div class="actions"><button class="btn copy-btn" data-url="lp-green-rental.html">URLをコピー</button><a class="btn view-btn" href="lp-green-rental.html" target="_blank" rel="noopener">LPを見る</a></div>
+    <div class="actions"><button class="btn copy-btn" data-url="lp-green-rental.html">URLをコピー</button><a class="btn view-btn" href="lp-green-rental.html" target="_blank" rel="noopener">LPを見る</a><a class="btn flyer-btn" href="flyer-green-rental.html" target="_blank" rel="noopener">A4チラシ</a></div>
   </article>
   <article class="card" data-name="訪問介護 HOMECARE" data-category="介護・福祉">
     <div class="card-top"><span class="code">HOMECARE</span><span class="status">公開中</span></div>
     <h2>訪問介護</h2><p class="category">介護・福祉</p>
-    <div class="actions"><button class="btn copy-btn" data-url="lp-homecare.html">URLをコピー</button><a class="btn view-btn" href="lp-homecare.html" target="_blank" rel="noopener">LPを見る</a></div>
+    <div class="actions"><button class="btn copy-btn" data-url="lp-homecare.html">URLをコピー</button><a class="btn view-btn" href="lp-homecare.html" target="_blank" rel="noopener">LPを見る</a><a class="btn flyer-btn" href="flyer-homecare.html" target="_blank" rel="noopener">A4チラシ</a></div>
   </article>
   <article class="card" data-name="居酒屋 IZAKAYA" data-category="飲食">
     <div class="card-top"><span class="code">IZAKAYA</span><span class="status">公開中</span></div>
     <h2>居酒屋</h2><p class="category">飲食</p>
-    <div class="actions"><button class="btn copy-btn" data-url="lp-izakaya.html">URLをコピー</button><a class="btn view-btn" href="lp-izakaya.html" target="_blank" rel="noopener">LPを見る</a></div>
+    <div class="actions"><button class="btn copy-btn" data-url="lp-izakaya.html">URLをコピー</button><a class="btn view-btn" href="lp-izakaya.html" target="_blank" rel="noopener">LPを見る</a><a class="btn flyer-btn" href="flyer-izakaya.html" target="_blank" rel="noopener">A4チラシ</a></div>
   </article>
   <article class="card" data-name="社労士・顧問先対応 CONSULT" data-category="士業">
     <div class="card-top"><span class="code">CONSULT</span><span class="status">公開中</span></div>
     <h2>社労士・顧問先対応</h2><p class="category">士業</p>
-    <div class="actions"><button class="btn copy-btn" data-url="lp-sharoushi.html">URLをコピー</button><a class="btn view-btn" href="lp-sharoushi.html" target="_blank" rel="noopener">LPを見る</a></div>
+    <div class="actions"><button class="btn copy-btn" data-url="lp-sharoushi.html">URLをコピー</button><a class="btn view-btn" href="lp-sharoushi.html" target="_blank" rel="noopener">LPを見る</a><a class="btn flyer-btn" href="flyer-sharoushi.html" target="_blank" rel="noopener">A4チラシ</a></div>
   </article>
   <article class="card" data-name="相談支援事業所 SODAN" data-category="介護・福祉">
     <div class="card-top"><span class="code">SODAN</span><span class="status">公開中</span></div>
     <h2>相談支援事業所</h2><p class="category">介護・福祉</p>
-    <div class="actions"><button class="btn copy-btn" data-url="lp-sodan.html">URLをコピー</button><a class="btn view-btn" href="lp-sodan.html" target="_blank" rel="noopener">LPを見る</a></div>
+    <div class="actions"><button class="btn copy-btn" data-url="lp-sodan.html">URLをコピー</button><a class="btn view-btn" href="lp-sodan.html" target="_blank" rel="noopener">LPを見る</a><a class="btn flyer-btn" href="flyer-sodan.html" target="_blank" rel="noopener">A4チラシ</a></div>
   </article>
   <article class="card" data-name="福祉施設送迎 SHUTTLE" data-category="介護・福祉">
     <div class="card-top"><span class="code">SHUTTLE</span><span class="status">公開中</span></div>
     <h2>福祉施設送迎</h2><p class="category">介護・福祉</p>
-    <div class="actions"><button class="btn copy-btn" data-url="lp-welfare-shuttle.html">URLをコピー</button><a class="btn view-btn" href="lp-welfare-shuttle.html" target="_blank" rel="noopener">LPを見る</a></div>
+    <div class="actions"><button class="btn copy-btn" data-url="lp-welfare-shuttle.html">URLをコピー</button><a class="btn view-btn" href="lp-welfare-shuttle.html" target="_blank" rel="noopener">LPを見る</a><a class="btn flyer-btn" href="flyer-welfare-shuttle.html" target="_blank" rel="noopener">A4チラシ</a></div>
   </article>
   <article class="card" data-name="営業支援・外回り営業 SALESNAVI" data-category="士業">
     <div class="card-top"><span class="code">SALESNAVI</span><span class="status">公開中</span></div>
     <h2>営業支援・外回り営業</h2><p class="category">士業</p>
-    <div class="actions"><button class="btn copy-btn" data-url="lp-salesnavi.html">URLをコピー</button><a class="btn view-btn" href="lp-salesnavi.html" target="_blank" rel="noopener">LPを見る</a></div>
+    <div class="actions"><button class="btn copy-btn" data-url="lp-salesnavi.html">URLをコピー</button><a class="btn view-btn" href="lp-salesnavi.html" target="_blank" rel="noopener">LPを見る</a><a class="btn flyer-btn" href="flyer-salesnavi.html" target="_blank" rel="noopener">A4チラシ</a></div>
   </article>
 </div>
 <div class="no-result" id="noResult">該当する営業LPが見つかりませんでした。</div>
 </main>
-
 <footer class="footer">
   <p>DPRO LINE SYSTEMS</p>
   <p><a href="index.html">トップへ戻る</a>　｜　<a href="systems.html">システム一覧を見る</a></p>
   <p>© DPRO SHOP</p>
 </footer>
-
 <script>
 const cards=[...document.querySelectorAll(".card")];
 const searchInput=document.getElementById("searchInput");
@@ -368,7 +364,6 @@ const filterButtons=[...document.querySelectorAll(".filter-btn")];
 const count=document.getElementById("visibleCount");
 const noResult=document.getElementById("noResult");
 let selectedCategory="all";
-
 function updateList(){
   const keyword=searchInput.value.trim().toLowerCase();
   let visible=0;
