@@ -470,3 +470,60 @@
     run();
   }
 })();
+
+
+/* DPRO PRODUCT SITE V3.2 — BRAND FAVICON */
+(function () {
+  "use strict";
+
+  const doc = typeof document !== "undefined" ? document : null;
+  if (!doc) return;
+
+  function ensureFaviconLinks() {
+    const script = Array.from(doc.scripts || []).find((node) => /dpro-v3\.js(?:\?|#|$)/.test(node.src || ""));
+    const baseUrl = script ? new URL('.', script.src) : new URL('./', location.href);
+    const hrefSvg = new URL('favicon.svg', baseUrl).href;
+    const hrefPng = new URL('favicon-32x32.png', baseUrl).href;
+    const hrefApple = new URL('apple-touch-icon.png', baseUrl).href;
+    const hrefIco = new URL('favicon.ico', baseUrl).href;
+
+    function upsert(selector, tagName, attrs) {
+      let node = doc.head.querySelector(selector);
+      if (!node) {
+        node = doc.createElement(tagName);
+        doc.head.appendChild(node);
+      }
+      Object.entries(attrs).forEach(([key, value]) => node.setAttribute(key, value));
+      return node;
+    }
+
+    upsert('link[rel="icon"][type="image/svg+xml"]', 'link', {
+      rel: 'icon',
+      type: 'image/svg+xml',
+      href: hrefSvg
+    });
+
+    upsert('link[rel="icon"][sizes="32x32"]', 'link', {
+      rel: 'icon',
+      type: 'image/png',
+      sizes: '32x32',
+      href: hrefPng
+    });
+
+    upsert('link[rel="shortcut icon"]', 'link', {
+      rel: 'shortcut icon',
+      href: hrefIco
+    });
+
+    upsert('link[rel="apple-touch-icon"]', 'link', {
+      rel: 'apple-touch-icon',
+      href: hrefApple
+    });
+  }
+
+  if (doc.readyState === 'loading') {
+    doc.addEventListener('DOMContentLoaded', ensureFaviconLinks, { once: true });
+  } else {
+    ensureFaviconLinks();
+  }
+})();

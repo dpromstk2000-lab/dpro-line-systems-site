@@ -1,6 +1,14 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <defs><linearGradient id="r" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#d83b67"/><stop offset="1" stop-color="#871735"/></linearGradient></defs>
-  <rect width="64" height="64" rx="14" fill="url(#r)"/>
-  <rect x="4" y="4" width="56" height="56" rx="11" fill="none" stroke="#ff91b3" stroke-opacity=".32"/>
-  <text x="32" y="42" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="30" font-weight="800" fill="#fff">D</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="DPRO favicon">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#a51743"/>
+      <stop offset="100%" stop-color="#dc3c67"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="160%">
+      <feDropShadow dx="0" dy="6" stdDeviation="6" flood-color="#000000" flood-opacity="0.18"/>
+    </filter>
+  </defs>
+  <rect x="24" y="24" width="464" height="464" rx="110" fill="url(#g)"/>
+  <ellipse cx="170" cy="118" rx="150" ry="82" fill="#ffffff" opacity="0.14"/>
+  <text x="256" y="322" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-weight="700" font-size="250" fill="#ffffff" filter="url(#shadow)">D</text>
 </svg>
