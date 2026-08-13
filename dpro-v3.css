@@ -44,6 +44,49 @@
 *, *::before, *::after { box-sizing: border-box; }
 html { -webkit-text-size-adjust: 100%; overflow-x: hidden; }
 body { margin: 0; min-width: 0; overflow-x: hidden; color: var(--dpro-warm-gray-900); background: var(--dpro-white); }
+
+/* Japanese typography: prevent orphaned characters and awkward phrase splits. */
+:lang(ja) {
+  word-break: normal;
+  line-break: strict;
+  overflow-wrap: normal;
+}
+@supports (word-break: auto-phrase) {
+  :lang(ja) { word-break: auto-phrase; }
+}
+
+:where(
+  .core-hero h1,
+  .core-heading h2,
+  .core-cta h2,
+  .core-browser__body h2,
+  .core-card h3,
+  .ps-hero h1,
+  .ps-section-heading h2,
+  .ps-preview-card h2,
+  .ps-card-copy h3,
+  .ps-function h3,
+  .ps-flow-step h3,
+  .ps-live-copy h3,
+  .ps-final h2
+) {
+  text-wrap: balance;
+}
+
+/* Desktop-authored <br> tags should not force unnatural breaks on narrower layouts. */
+@media (max-width: 900px) {
+  :where(
+    .core-hero h1,
+    .core-heading h2,
+    .core-cta h2,
+    .ps-hero h1,
+    .ps-section-heading h2,
+    .ps-final h2
+  ) br {
+    display: none;
+  }
+}
+
 img, video, svg, iframe { max-width: 100%; }
 img, video { height: auto; }
 a, button, input, select, textarea { font: inherit; }
