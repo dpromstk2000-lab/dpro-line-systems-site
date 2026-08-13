@@ -527,3 +527,61 @@
     ensureFaviconLinks();
   }
 })();
+
+
+/* DPRO PRODUCT SITE V3.3 — HOME CONNECTION MOTION */
+(function () {
+  "use strict";
+  const doc = typeof document !== "undefined" ? document : null;
+  if (!doc) return;
+
+  function qs(selector, root) { return (root || doc).querySelector(selector); }
+  function qsa(selector, root) { return Array.from((root || doc).querySelectorAll(selector)); }
+
+  function initHomeConnectionMotion() {
+    const home = doc.body;
+    if (!home) return;
+    const isHome = home.classList.contains('core-home') || !!qs('.core-home') || (!!qs('.core-path') && !!qs('.hero, .core-hero'));
+    if (!isHome) return;
+
+    const pathSection = qsa('.core-section').find((section) => {
+      const heading = qs('.core-heading h2', section);
+      return heading && /お客様の入口は自由/.test(heading.textContent || '');
+    }) || qs('.core-path')?.closest('.core-section');
+    if (!pathSection || qs('.dpro-home-connection', pathSection)) return;
+
+    const mount = doc.createElement('div');
+    mount.className = 'dpro-home-connection';
+    mount.innerHTML = [
+      '<div class="dpro-home-connection__wrap" aria-hidden="true">',
+      '  <div class="dpro-home-connection__visual">',
+      '    <div class="dpro-home-connection__glow"></div>',
+      '    <div class="dpro-home-connection__orbit dpro-home-connection__orbit--outer"></div>',
+      '    <div class="dpro-home-connection__orbit dpro-home-connection__orbit--inner"></div>',
+      '    <div class="dpro-home-connection__spinner">',
+      '      <span class="dpro-home-connection__node dpro-home-connection__node--line">LINE</span>',
+      '    </div>',
+      '    <div class="dpro-home-connection__spinner dpro-home-connection__spinner--reverse">',
+      '      <span class="dpro-home-connection__node dpro-home-connection__node--web">WEB</span>',
+      '    </div>',
+      '    <span class="dpro-home-connection__trail dpro-home-connection__trail--one"></span>',
+      '    <span class="dpro-home-connection__trail dpro-home-connection__trail--two"></span>',
+      '    <div class="dpro-home-connection__center">',
+      '      <div><small>ONE MANAGEMENT HUB</small><strong>DPRO<br>SYSTEM</strong></div>',
+      '    </div>',
+      '  </div>',
+      '  <p class="dpro-home-connection__caption">LINE・ホームページ・DPRO SYSTEM がつながるイメージを、やさしい動きで表現しています。</p>',
+      '</div>'
+    ].join('');
+
+    const path = qs('.core-path', pathSection);
+    if (path) path.before(mount);
+    else pathSection.appendChild(mount);
+  }
+
+  if (doc.readyState === 'loading') {
+    doc.addEventListener('DOMContentLoaded', initHomeConnectionMotion, { once: true });
+  } else {
+    initHomeConnectionMotion();
+  }
+})();
