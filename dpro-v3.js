@@ -529,7 +529,7 @@
 })();
 
 
-/* DPRO PRODUCT SITE V3.3 — HOME CONNECTION MOTION */
+/* DPRO PRODUCT SITE V3.4 — HOME CONNECTION VISUAL (refined) */
 (function () {
   "use strict";
   const doc = typeof document !== "undefined" ? document : null;
@@ -538,50 +538,48 @@
   function qs(selector, root) { return (root || doc).querySelector(selector); }
   function qsa(selector, root) { return Array.from((root || doc).querySelectorAll(selector)); }
 
-  function initHomeConnectionMotion() {
-    const home = doc.body;
-    if (!home) return;
-    const isHome = home.classList.contains('core-home') || !!qs('.core-home') || (!!qs('.core-path') && !!qs('.hero, .core-hero'));
+  function initHomeConnectionVisual() {
+    const body = doc.body;
+    if (!body) return;
+    const isHome = body.classList.contains('core-home') || !!qs('.core-home') || (!!qs('.core-path') && !!qs('.core-hero'));
     if (!isHome) return;
 
-    const pathSection = qsa('.core-section').find((section) => {
-      const heading = qs('.core-heading h2', section);
+    const section = qsa('.core-section').find((node) => {
+      const heading = qs('.core-heading h2', node);
       return heading && /お客様の入口は自由/.test(heading.textContent || '');
     }) || qs('.core-path')?.closest('.core-section');
-    if (!pathSection || qs('.dpro-home-connection', pathSection)) return;
+    if (!section || qs('.dpro-home-connection', section)) return;
 
     const mount = doc.createElement('div');
     mount.className = 'dpro-home-connection';
     mount.innerHTML = [
-      '<div class="dpro-home-connection__wrap" aria-hidden="true">',
-      '  <div class="dpro-home-connection__visual">',
-      '    <div class="dpro-home-connection__glow"></div>',
-      '    <div class="dpro-home-connection__orbit dpro-home-connection__orbit--outer"></div>',
-      '    <div class="dpro-home-connection__orbit dpro-home-connection__orbit--inner"></div>',
-      '    <div class="dpro-home-connection__spinner">',
-      '      <span class="dpro-home-connection__node dpro-home-connection__node--line">LINE</span>',
-      '    </div>',
-      '    <div class="dpro-home-connection__spinner dpro-home-connection__spinner--reverse">',
-      '      <span class="dpro-home-connection__node dpro-home-connection__node--web">WEB</span>',
-      '    </div>',
-      '    <span class="dpro-home-connection__trail dpro-home-connection__trail--one"></span>',
-      '    <span class="dpro-home-connection__trail dpro-home-connection__trail--two"></span>',
-      '    <div class="dpro-home-connection__center">',
-      '      <div><small>ONE MANAGEMENT HUB</small><strong>DPRO<br>SYSTEM</strong></div>',
-      '    </div>',
+      '<div class="dpro-home-network">',
+      '  <div class="dpro-home-network__stage" aria-hidden="true">',
+      '    <div class="dpro-home-network__halo"></div>',
+      '    <div class="dpro-home-network__ring dpro-home-network__ring--outer"></div>',
+      '    <div class="dpro-home-network__ring dpro-home-network__ring--inner"></div>',
+      '    <span class="dpro-home-network__beam dpro-home-network__beam--line"></span>',
+      '    <span class="dpro-home-network__beam dpro-home-network__beam--hp"></span>',
+      '    <span class="dpro-home-network__beam dpro-home-network__beam--reserve"></span>',
+      '    <span class="dpro-home-network__orbit-dot dpro-home-network__orbit-dot--a"></span>',
+      '    <span class="dpro-home-network__orbit-dot dpro-home-network__orbit-dot--b"></span>',
+      '    <div class="dpro-home-network__hub"><div><small>ONE<br>MANAGEMENT<br>HUB</small><strong>DPRO<br>SYSTEM</strong></div></div>',
+      '    <div class="dpro-home-network__chip dpro-home-network__chip--line">LINE</div>',
+      '    <div class="dpro-home-network__chip dpro-home-network__chip--hp">HP</div>',
+      '    <div class="dpro-home-network__chip dpro-home-network__chip--reserve">予約・相談</div>',
       '  </div>',
-      '  <p class="dpro-home-connection__caption">LINE・ホームページ・DPRO SYSTEM がつながるイメージを、やさしい動きで表現しています。</p>',
+      '  <p class="dpro-home-network__caption">LINE・ホームページ・予約導線が、DPRO SYSTEM へつながるイメージです。</p>',
       '</div>'
     ].join('');
 
-    const path = qs('.core-path', pathSection);
+    const path = qs('.core-path', section);
     if (path) path.before(mount);
-    else pathSection.appendChild(mount);
+    else section.appendChild(mount);
   }
 
   if (doc.readyState === 'loading') {
-    doc.addEventListener('DOMContentLoaded', initHomeConnectionMotion, { once: true });
+    doc.addEventListener('DOMContentLoaded', initHomeConnectionVisual, { once: true });
   } else {
-    initHomeConnectionMotion();
+    initHomeConnectionVisual();
   }
 })();
