@@ -2,45 +2,142 @@
 <html lang="ja">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="業種別のDPROシステム。LINE・業務システム・ホームページを、ひとつの運営へ。">
-<meta name="theme-color" content="#0f3d2e">
-<title>DPRO LINE SYSTEMS｜あなたの業種に、もう完成した仕組みがあります。</title>
-<link rel="stylesheet" href="dpro-v3.css">
-<style>
-:root{--core-ink:#18312a;--core-soft:#f4f8f6;--core-border:#dbe7e1;--core-dark:#0f3d2e;--core-accent:#16845b;--core-line:#06c755}
-body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Hiragino Kaku Gothic ProN","Yu Gothic",Meiryo,sans-serif;line-height:1.75}
-a{color:inherit}.core-header{position:sticky;top:0;z-index:40;background:rgba(255,255,255,.96);border-bottom:1px solid var(--core-border);backdrop-filter:blur(12px)}
-.core-header__inner{width:min(calc(100% - 2rem),1120px);min-height:68px;margin:auto;display:flex;align-items:center;gap:22px}.core-brand{display:flex;align-items:center;gap:10px;text-decoration:none;font-weight:900;color:var(--core-dark);white-space:nowrap}.core-brand__mark{display:grid;place-items:center;width:36px;height:36px;border-radius:10px;background:var(--core-dark);color:white}.core-brand small{display:block;font-size:10px;letter-spacing:.12em;color:#66736e}.core-nav{margin-left:auto;display:flex;align-items:center;gap:18px;font-size:14px;font-weight:700}.core-nav a{text-decoration:none}.core-toggle{display:none;margin-left:auto;width:44px;height:44px;border:1px solid var(--core-border);background:white;border-radius:10px;font-size:20px}.core-hero{padding:80px 0 64px;background:linear-gradient(145deg,#f7fbf9 0%,#edf7f2 52%,#fff 100%)}.core-hero__grid{width:min(calc(100% - 2rem),1120px);margin:auto;display:grid;grid-template-columns:1.08fr .92fr;gap:54px;align-items:center}.core-kicker{margin:0 0 12px;color:var(--core-accent);font-weight:900;font-size:12px;letter-spacing:.14em}.core-hero h1{margin:0;color:var(--core-dark);font-size:clamp(2.3rem,5vw,4.65rem);line-height:1.08;letter-spacing:-.035em}.core-hero__lead{max-width:740px;margin:24px 0 0;font-size:clamp(1rem,1.4vw,1.15rem);color:#42534d}.core-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:28px}.core-proof{display:flex;flex-wrap:wrap;gap:8px;margin-top:24px}.core-proof span{padding:7px 10px;border:1px solid var(--core-border);border-radius:999px;background:white;font-size:12px;font-weight:800}.core-visual{border:1px solid var(--core-border);border-radius:26px;background:white;padding:18px;box-shadow:0 24px 70px rgba(15,61,46,.13)}.core-browser{border:1px solid #d9e2de;border-radius:18px;overflow:hidden;background:#fbfdfc}.core-browser__bar{display:flex;gap:6px;align-items:center;padding:10px 12px;background:#edf3f0}.core-browser__bar i{width:8px;height:8px;border-radius:50%;background:#aab8b2}.core-browser__body{padding:18px}.core-stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.core-stat{padding:14px;border-radius:14px;background:#f0f7f3}.core-stat small{display:block;font-size:11px;color:#607069}.core-stat strong{font-size:24px;color:var(--core-dark)}.core-task{margin-top:12px;display:grid;gap:8px}.core-task div{display:flex;justify-content:space-between;gap:10px;padding:11px 12px;border:1px solid var(--core-border);border-radius:12px;font-size:12px}.core-task b{color:var(--core-accent)}.core-section{padding:74px 0}.core-section--soft{background:var(--core-soft)}.core-section--dark{background:var(--core-dark);color:white}.core-heading{max-width:780px;margin:0 auto 34px;text-align:center}.core-heading h2{margin:4px 0 10px;color:var(--core-dark);font-size:clamp(1.8rem,3.3vw,3rem);line-height:1.24;letter-spacing:-.025em}.core-section--dark .core-heading h2{color:white}.core-heading p:last-child{margin:0;color:#607069}.core-section--dark .core-heading p:last-child{color:#d3e3dc}.core-role-grid,.core-category-grid,.core-price-grid,.core-feature-grid{width:min(calc(100% - 2rem),1120px);margin:auto;display:grid;grid-template-columns:repeat(3,1fr);gap:16px}.core-category-grid{grid-template-columns:repeat(4,1fr)}.core-card{min-width:0;border:1px solid var(--core-border);border-radius:18px;background:white;padding:22px;box-shadow:0 8px 24px rgba(15,61,46,.055)}.core-card h3{margin:8px 0 8px;color:var(--core-dark);font-size:20px;line-height:1.35}.core-card p{margin:0;color:#5d6d67}.core-card ul{padding-left:1.2em;margin:14px 0 0}.core-card li+li{margin-top:5px}.core-card__num{display:inline-block;color:var(--core-accent);font-weight:900;font-size:12px;letter-spacing:.12em}.core-card--accent{background:var(--core-dark);color:white;border-color:var(--core-dark)}.core-card--accent h3,.core-card--accent .core-card__num{color:white}.core-card--accent p{color:#d8e6e0}.core-link-card{text-decoration:none;transition:transform .18s ease,box-shadow .18s ease}.core-link-card:hover{transform:translateY(-2px);box-shadow:0 14px 30px rgba(15,61,46,.1)}.core-path{width:min(calc(100% - 2rem),1120px);margin:auto;display:grid;grid-template-columns:1fr 60px 1fr 60px 1fr;align-items:center}.core-path__arrow{text-align:center;color:var(--core-accent);font-weight:900}.core-price-card strong{display:block;margin:9px 0 6px;font-size:clamp(1.8rem,3vw,2.5rem);line-height:1;color:var(--core-dark)}.core-price-card small{font-weight:800;color:#566760}.core-note{width:min(calc(100% - 2rem),1120px);margin:18px auto 0;font-size:12px;color:#6d7974}.core-demo-wrap{width:min(calc(100% - 2rem),920px);margin:auto}.core-demo-meta{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:0 0 12px;font-size:13px;color:#607069}.core-cta{width:min(calc(100% - 2rem),960px);margin:auto;text-align:center}.core-cta h2{margin:0;font-size:clamp(2rem,4vw,3.7rem);line-height:1.15}.core-footer{padding:34px 0 90px;border-top:1px solid var(--core-border);background:#fff}.core-footer__inner{width:min(calc(100% - 2rem),1120px);margin:auto;display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap}.core-footer nav{display:flex;gap:14px;flex-wrap:wrap;font-size:13px}.core-footer a{text-decoration:none}.core-muted{color:#607069}.core-table{width:min(calc(100% - 2rem),1120px);margin:auto;border-collapse:collapse;background:white;border:1px solid var(--core-border);border-radius:18px;overflow:hidden}.core-table th,.core-table td{text-align:left;padding:15px;border-bottom:1px solid var(--core-border);vertical-align:top}.core-table th{width:24%;color:var(--core-dark);background:#f5faf7}.core-table tr:last-child th,.core-table tr:last-child td{border-bottom:0}.core-pills{display:flex;flex-wrap:wrap;gap:7px}.core-pill{display:inline-flex;padding:5px 9px;border-radius:999px;background:#edf7f2;color:#0f6e4a;font-size:12px;font-weight:800}.core-sticky-label{font-size:12px;white-space:nowrap}.core-sticky-label b{display:block;font-size:13px}
-@media(max-width:900px){.core-hero__grid{grid-template-columns:1fr}.core-category-grid{grid-template-columns:repeat(2,1fr)}.core-role-grid,.core-price-grid,.core-feature-grid{grid-template-columns:1fr 1fr}.core-path{grid-template-columns:1fr}.core-path__arrow{transform:rotate(90deg);padding:8px}.core-nav{gap:12px;font-size:12px}}
-@media(max-width:700px){body{padding-bottom:74px}.core-header__inner{width:min(calc(100% - 1.25rem),1120px)}.core-toggle{display:block}.core-nav{position:absolute;top:68px;left:0;right:0;display:grid;gap:0;background:white;border-bottom:1px solid var(--core-border);padding:8px 12px 14px}.core-toggle[aria-expanded="false"] + .core-nav{display:none}.core-nav a{min-height:44px;display:flex;align-items:center;padding:0 10px}.core-hero{padding:48px 0 44px}.core-hero__grid{width:min(calc(100% - 1.25rem),1120px);gap:28px}.core-hero h1{font-size:clamp(2.1rem,11vw,3.2rem)}.core-actions .dpro-button{width:100%}.core-section{padding:54px 0}.core-role-grid,.core-category-grid,.core-price-grid,.core-feature-grid{width:min(calc(100% - 1.25rem),1120px);grid-template-columns:1fr}.core-heading{padding:0 .625rem;margin-bottom:26px}.core-path,.core-table,.core-note,.core-demo-wrap{width:min(calc(100% - 1.25rem),1120px)}.core-table,.core-table tbody,.core-table tr,.core-table th,.core-table td{display:block;width:100%}.core-table th{border-bottom:0;padding-bottom:5px}.core-table td{padding-top:5px}.core-footer{padding-bottom:96px}.core-sticky-label{font-size:10px}.core-sticky-label b{font-size:12px}}
-</style>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="DPRO LINE SYSTEMS PRODUCT SITE。50の業種専用システムを、製品ページ・スマホ・PC・iPad・LIVE DEMOで実際に確認できます。詳しい機能・料金・導入条件は青のDPRO SHOP OFFICIAL SITEへ。">
+<meta name="theme-color" content="#a51743">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="DPRO LINE SYSTEMS">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:title" content="DPRO LINE SYSTEMS｜50の完成システムを実際に触る PRODUCT SITE">
+<meta property="og:description" content="あなたの業種に、もう完成した仕組みがあります。50のDPROシステムを探して、実際の画面・LIVE DEMOを確認できます。">
+<meta property="og:url" content="https://dpromstk2000-lab.github.io/dpro-line-systems-site/">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="canonical" href="https://dpromstk2000-lab.github.io/dpro-line-systems-site/">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="apple-touch-icon.png" sizes="180x180">
+<title>DPRO LINE SYSTEMS｜50の完成システムを実際に触る PRODUCT SITE</title>
+<link rel="stylesheet" href="dpro-v3.css?v=3.5">
+<link rel="stylesheet" href="product-v3.6.css?v=3.6">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","@id":"https://dpromstk2000-lab.github.io/dpro-line-systems-site/#website","name":"DPRO LINE SYSTEMS","url":"https://dpromstk2000-lab.github.io/dpro-line-systems-site/","inLanguage":"ja"},{"@type":"CollectionPage","@id":"https://dpromstk2000-lab.github.io/dpro-line-systems-site/#webpage","url":"https://dpromstk2000-lab.github.io/dpro-line-systems-site/","name":"DPRO LINE SYSTEMS｜50の完成システムを実際に触る PRODUCT SITE","description":"50の業種専用DPROシステムを探し、製品ページとLIVE DEMOで実際に確認するPRODUCT SITE。","isPartOf":{"@id":"https://dpromstk2000-lab.github.io/dpro-line-systems-site/#website"},"inLanguage":"ja","dateModified":"2026-08-14"}]}</script>
 </head>
-<body class="core-page core-home"><header class="core-header" id="top"><div class="core-header__inner">
-<a class="core-brand" href="index.html" aria-label="DPRO LINE SYSTEMS トップ"><span class="core-brand__mark">D</span><span>DPRO LINE SYSTEMS<small>OFFICIAL PRODUCT SITE</small></span></a>
-<button class="core-toggle dpro-nav-toggle" type="button" aria-label="メニュー" aria-expanded="false" data-dpro-nav-toggle="#core-nav">☰</button>
-<nav class="core-nav" id="core-nav" aria-label="メインナビゲーション"><a href="index.html" aria-current="page">トップ</a><a href="systems.html">業種から探す</a><a href="dpro-system.html">DPROシステム</a><a href="line.html">LINE公式</a><a href="website.html">ホームページ</a><a href="https://dpro-shop.com/" target="_blank" rel="noopener">DPRO SHOP ↗</a></nav>
-</div></header>
-<main>
-<section class="core-hero"><div class="core-hero__grid"><div data-dpro-reveal>
-<p class="core-kicker">DPRO LINE SYSTEMS / OFFICIAL PRODUCT SITE</p>
-<h1>あなたの業種に、<br>もう完成した仕組みがあります。</h1>
-<p class="core-hero__lead"><span data-dpro-system-count>—</span>業種のDPROシステム。LINE・業務システム・ホームページを、ひとつの運営へ。</p>
-<div class="core-actions"><a class="dpro-button dpro-button--primary" href="systems.html#catalog">業種から探す</a><a class="dpro-button dpro-button--demo" href="#live-demo">実際の画面を触る</a><a class="dpro-button dpro-button--secondary" href="#price-guide">料金を見る</a></div>
-<div class="core-proof"><span>LINE × SYSTEM × WEB</span><span>入口は自由。管理は、ひとつ。</span><span><b data-dpro-system-count>—</b> システム</span></div>
-</div><div class="core-visual" data-dpro-reveal aria-label="DPRO管理画面イメージ"><div class="core-browser"><div class="core-browser__bar"><i></i><i></i><i></i><strong>ONE MANAGEMENT HUB</strong></div><div class="core-browser__body"><div class="core-stat-grid"><div class="core-stat"><small>本日の受付</small><strong>12</strong></div><div class="core-stat"><small>対応中</small><strong>5</strong></div><div class="core-stat"><small>完了</small><strong>7</strong></div></div><div class="core-task"><div><span>10:00 予約・受付</span><b>確認済</b></div><div><span>11:30 お客様対応</span><b>対応中</b></div><div><span>14:00 次回案内</span><b>予定</b></div></div></div></div></div></div><div id="hero-end"></div></section>
-<section class="core-section"><div class="core-heading" data-dpro-reveal><p class="core-kicker">THREE ENTRY POINTS, ONE OPERATION</p><h2>お客様の入口は自由。<br>店舗の管理は、ひとつ。</h2><p>検索・LINE・予約から入った情報を、業種専用のDPROシステムを中心に扱う考え方です。</p></div><div class="core-path">
-<a class="core-card core-link-card" href="line.html"><span class="core-card__num">CUSTOMER ENTRY</span><h3>LINE公式</h3><p>相談・予約・会員画面へ進む、お客様の日常的な入口。</p></a><div class="core-path__arrow">→</div><a class="core-card core-card--accent core-link-card" href="dpro-system.html"><span class="core-card__num">ONE MANAGEMENT HUB</span><h3>DPRO SYSTEM</h3><p>予約・顧客・案件・進捗を、業種に合わせてまとめる運営の中心。</p></a><div class="core-path__arrow">→</div><a class="core-card core-link-card" href="website.html"><span class="core-card__num">SEARCH ENTRY</span><h3>WEB</h3><p>検索・情報確認・予約導線につなぐ、新規顧客の入口。</p></a></div></section>
-<section class="core-section core-section--soft" id="finder"><div class="core-heading" data-dpro-reveal><p class="core-kicker">FIND YOUR BUSINESS</p><h2>まず、あなたの業種から。</h2><p>完成済み製品の一覧へ進み、機能・LP・チラシ・実画面を確認できます。</p></div><div class="core-category-grid">
-<a class="core-card core-link-card" href="systems.html#catalog"><span class="core-card__num">01</span><h3>美容・健康</h3><p>美容室、エステ、整体、ジム、ヨガなど</p></a><a class="core-card core-link-card" href="systems.html#catalog"><span class="core-card__num">02</span><h3>医療・ペット</h3><p>歯科、動物病院、ペットサロンなど</p></a><a class="core-card core-link-card" href="systems.html#catalog"><span class="core-card__num">03</span><h3>飲食・小売</h3><p>パン、ケーキ、花、居酒屋、テイクアウトなど</p></a><a class="core-card core-link-card" href="systems.html#catalog"><span class="core-card__num">04</span><h3>買取・リユース</h3><p>総合買取、中古車買取・販売など</p></a><a class="core-card core-link-card" href="systems.html#catalog"><span class="core-card__num">05</span><h3>住まい・建築</h3><p>不動産、リフォームなど</p></a><a class="core-card core-link-card" href="systems.html#catalog"><span class="core-card__num">06</span><h3>教育・生活サービス</h3><p>教育、福祉、介護、宿泊、車両サービスなど</p></a><a class="core-card core-link-card" href="systems.html#catalog"><span class="core-card__num">07</span><h3>士業・企業支援</h3><p>行政書士、司法書士、社労士、税理士、営業支援など</p></a><a class="core-card core-card--accent core-link-card" href="systems.html#catalog"><span class="core-card__num">ALL</span><h3><span data-dpro-system-count>—</span>システムを見る</h3><p>業種検索・製品一覧へ進む</p></a></div></section>
-<section class="core-section" id="live-demo"><div class="core-heading" data-dpro-reveal><p class="core-kicker">REAL SCREEN / ON DEMAND</p><h2>説明だけでなく、実際の画面を。</h2><p>重いiframeは最初から読み込みません。確認したい時だけ、正式デモを読み込みます。</p></div><div class="core-demo-wrap"><div class="core-demo-meta"><span>代表デモ：ペットサロン</span><span>クリック時のみ読み込み</span></div><div class="dpro-live-preview" id="demo-shell"><div class="dpro-live-preview__placeholder"><div><strong>LINE予約・会員画面の実デモ</strong><p class="dpro-muted">初期表示では通信を行いません。</p><button class="dpro-button dpro-button--demo" type="button" data-dpro-live-load="#demo-shell" data-core-demo-code="PETSALON">実画面を開く</button></div></div></div></div></section>
-<section class="core-section core-section--soft"><div class="core-heading"><p class="core-kicker">FOR OWNERS</p><h2>店舗オーナーの「困った」を、運営の流れから整える。</h2></div><div class="core-feature-grid"><article class="core-card"><span class="core-card__num">01</span><h3>電話・紙・個別連絡が多い</h3><p>予約や相談の入口を整理し、対応先を分かりやすくします。</p></article><article class="core-card"><span class="core-card__num">02</span><h3>情報がスタッフごとに分かれる</h3><p>業種に合う管理画面へ情報をまとめ、確認漏れを減らします。</p></article><article class="core-card"><span class="core-card__num">03</span><h3>ホームページが更新されない</h3><p>検索・情報・予約の入口として、日常運用とつながる設計を選べます。</p></article></div></section>
-<section class="core-section" id="price-guide"><div class="core-heading"><p class="core-kicker">PRICE GUIDE</p><h2>料金を、先に見てから選べます。</h2><p>現行の標準料金を入口別に整理しています。追加機能や個別開発は内容により別途見積りです。</p></div><div class="core-price-grid"><article class="core-card core-price-card"><small>DPROシステム</small><strong>33,000円〜</strong><p>完成済み製品を土台にした初期設定・導入。</p><a class="dpro-button dpro-button--secondary" href="dpro-system.html#price">詳細を見る</a></article><article class="core-card core-price-card"><small>LINE公式アカウント構築</small><strong>77,000円</strong><p>基本設定・導線・リッチメニュー等の標準構築。</p><a class="dpro-button dpro-button--secondary" href="line.html#price">詳細を見る</a></article><article class="core-card core-price-card"><small>ホームページ</small><strong>33,000円〜</strong><p>かんたんHPからビジネス連携型まで4プラン。</p><a class="dpro-button dpro-button--secondary" href="website.html#plans">4プランを見る</a></article></div><table class="core-table" style="margin-top:16px" aria-label="DPRO統合運用の月額料金"><tbody><tr><th>3サービス統合運用</th><td><strong>月額合計 5,500円（税込）</strong><div class="core-pills" style="margin-top:10px"><span class="core-pill">LINE公式運用 3,300円</span><span class="core-pill">ホームページ運用 1,100円</span><span class="core-pill">DPROシステム運用 1,100円</span></div></td></tr></tbody></table></section>
-<section class="core-section core-section--dark"><div class="core-cta"><p class="core-kicker">START FROM YOUR BUSINESS</p><h2>あなたの業種に近い完成品から、確認できます。</h2><p>業種一覧で探すか、LINEで現在困っている業務をお知らせください。</p><div class="core-actions" style="justify-content:center"><a class="dpro-button dpro-button--line" href="https://lin.ee/YxJGXV6D" target="_blank" rel="noopener">LINEで相談する</a><a class="dpro-button dpro-button--secondary" href="systems.html#catalog">業種から探す</a></div></div></section>
-</main><footer class="core-footer"><div class="core-footer__inner"><div><strong>DPRO LINE SYSTEMS</strong><div class="core-muted">LINE × SYSTEM × WEB</div></div><nav aria-label="フッター"><a href="systems.html">製品一覧</a><a href="dpro-system.html">DPROシステム</a><a href="line.html">LINE公式</a><a href="website.html">ホームページ</a><a href="https://dpro-shop.com/" target="_blank" rel="noopener">DPRO SHOP</a></nav><small>© 2026 DPRO SHOP</small></div></footer><nav class="dpro-sticky-mobile-cta" data-dpro-sticky-cta="#hero-end" hidden aria-label="スマホ固定メニュー">
-<a class="dpro-button dpro-button--line core-sticky-label" href="https://lin.ee/YxJGXV6D" target="_blank" rel="noopener"><span><b>LINE相談</b>CONTACT</span></a>
-<a class="dpro-button dpro-button--demo core-sticky-label" href="#live-demo"><span><b>DEMO</b>実画面</span></a>
-<a class="dpro-button dpro-button--secondary core-sticky-label" href="#price-guide"><span><b>料金</b>PRICE</span></a>
-</nav><script src="systems-data.js"></script><script src="dpro-v3.js"></script><script>
-(function(){var b=document.querySelector('[data-core-demo-code]');if(!b||!window.DPROSystemsData)return;var x=window.DPROSystemsData.getByCode(b.getAttribute('data-core-demo-code'));if(x&&x.demoUrl){b.dataset.src=x.demoUrl;b.dataset.title=x.name+' 実画面デモ';}})();
-</script></body></html>
+<body class="product-v36 product-v36-home">
+<a class="p36-skip" href="#main">本文へ移動</a>
+<header class="p36-header" id="top">
+  <div class="p36-header__inner">
+    <a class="p36-brand" href="index.html" aria-label="DPRO LINE SYSTEMS PRODUCT SITE トップへ"><span class="p36-brand__mark">D</span><span><strong>DPRO LINE SYSTEMS</strong><small>RED / PRODUCT SITE</small></span></a>
+    <button class="p36-menu" type="button" aria-expanded="false" aria-controls="p36-nav" aria-label="メニューを開く"><i></i><i></i><i></i></button>
+    <nav class="p36-nav" id="p36-nav" aria-label="メインナビゲーション">
+      <a href="index.html" aria-current="page">PRODUCT TOP</a>
+      <a href="systems.html">50 SYSTEMS</a>
+      <a href="#live-demo">LIVE DEMO</a>
+      <a class="p36-nav__proposal" href="proposal.html">業種別提案</a>
+      <a href="dpro-system.html">DPROとは</a>
+      <a class="p36-nav__demo" href="systems.html#catalog">実際に触る</a>
+      <a class="p36-nav__official" href="https://dpro-shop.com/" target="_blank" rel="noopener">BLUE / OFFICIAL SITE ↗</a>
+    </nav>
+  </div>
+</header>
+<main id="main">
+  <section class="p36-hero">
+    <div class="p36-shell p36-hero__grid">
+      <div>
+        <span class="p36-site-chip">DPRO LINE SYSTEMS / PRODUCT SITE</span>
+        <p class="p36-kicker">FIND · TOUCH · COMPARE</p>
+        <h1>あなたの業種に、<em>もう完成した仕組みがあります。</em></h1>
+        <p class="p36-lead"><strong><span data-p36-count>50</span>の業種専用DPROシステム。</strong>ここは「説明を読む」だけの場所ではなく、製品を探し、実際の画面を確認し、LIVE DEMOで操作するためのPRODUCT SITEです。</p>
+        <div class="p36-actions">
+          <a class="p36-btn p36-btn--product" href="systems.html#catalog">50システムから探す</a>
+          <a class="p36-btn p36-btn--demo" href="#live-demo">実際の画面を触る</a>
+          <a class="p36-btn p36-btn--proposal" href="proposal.html">業種別提案を開く</a>
+          <a class="p36-btn p36-btn--official" href="https://dpro-shop.com/" target="_blank" rel="noopener">機能・料金・導入相談は青OFFICIAL ↗</a>
+        </div>
+        <div class="p36-proof"><span><b>50</b> COMPLETED SYSTEMS</span><span>スマホ・PC・iPad</span><span>LIVE DEMO</span><span>RED / PRODUCT SITE</span></div>
+      </div>
+      <div class="p36-stage" aria-label="DPRO管理画面イメージ">
+        <div class="p36-stage__bar"><span>LIVE PRODUCT / ONE MANAGEMENT HUB</span><span>PRODUCT SITE</span></div>
+        <div class="p36-stage__screen">
+          <div class="p36-stage__stats"><article><small>本日の受付</small><strong>12</strong></article><article><small>対応中</small><strong>5</strong></article><article><small>完了</small><strong>7</strong></article></div>
+          <div class="p36-stage__list"><span>10:00 予約・受付 <b>確認済</b></span><span>11:30 お客様対応 <b>対応中</b></span><span>14:00 次回案内 <b>予定</b></span><span>LINE / WEB受付 <b>DPROへ集約</b></span></div>
+        </div>
+        <div class="p36-stage__badge">RED = 実際に触る PRODUCT SITE</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="p36-role" aria-label="OFFICIAL SITEとPRODUCT SITEの役割">
+    <div class="p36-shell p36-role__grid">
+      <article class="p36-role-card p36-role-card--official"><small>BLUE / OFFICIAL SITE</small><strong>詳しく理解する</strong><span>サービス・機能・料金・導入条件・相談</span></article>
+      <div class="p36-role__arrow">→</div>
+      <article class="p36-role-card p36-role-card--product"><small>RED / PRODUCT SITE</small><strong>実際に触る</strong><span>50製品・実画面・スマホ・PC・iPad・LIVE DEMO</span></article>
+      <div class="p36-role__arrow">→</div>
+      <article class="p36-role-card p36-role-card--official"><small>BLUE / OFFICIAL SITE</small><strong>導入を相談する</strong><span>料金・提供条件・店舗ごとの導入範囲を確認</span></article>
+    </div>
+  </section>
+
+  <section class="p36-section">
+    <div class="p36-shell">
+      <header class="p36-section__head p36-section__head--center"><p class="p36-eyebrow">ONE OPERATION CORE</p><h2>LINE予約でも、WEB予約でも。<br>DPROへ集約。</h2><p>お客様の入口は自由。店舗では、予約・顧客・案件・進捗などを業種専用DPROへまとめて扱う考え方です。PRODUCT SITEでは、その実際の画面と操作感を確認できます。</p></header>
+      <div class="p36-flow">
+        <article class="p36-flow-card"><b>LINE ENTRY</b><strong>LINE予約・相談</strong><p>お客様の日常的な入口。会員画面や問い合わせにもつながります。</p></article>
+        <div class="p36-flow__arrow">→</div>
+        <article class="p36-flow-card p36-flow-card--core"><b>ONE MANAGEMENT HUB</b><strong>DPRO SYSTEM</strong><p>予約・受付・顧客・案件・進捗を、業種に合わせて管理。</p></article>
+        <div class="p36-flow__arrow">←</div>
+        <article class="p36-flow-card"><b>WEB ENTRY</b><strong>WEB予約・問い合わせ</strong><p>検索・情報確認から予約・問い合わせへ。連携内容は構成により異なります。</p></article>
+      </div>
+    </div>
+  </section>
+
+  <section class="p36-section p36-section--soft" id="business">
+    <div class="p36-shell">
+      <header class="p36-section__head"><p class="p36-eyebrow">FIND YOUR BUSINESS</p><h2>まず、あなたの業種から。</h2><p>正式な50システムデータから、カテゴリ別に製品を探せます。</p></header>
+      <div class="p36-category-grid">
+        <a class="p36-category" href="systems.html?category=beauty_health#catalog"><small>01 / BEAUTY & HEALTH</small><strong>美容・健康</strong><span>美容室、サロン、エステ、整体、ジム、ヨガなど</span><b><span data-p36-category-count="beauty_health">—</span>製品を見る →</b></a>
+        <a class="p36-category" href="systems.html?category=medical_pet#catalog"><small>02 / MEDICAL & PET</small><strong>医療・ペット</strong><span>歯科、動物病院、ペットサロンなど</span><b><span data-p36-category-count="medical_pet">—</span>製品を見る →</b></a>
+        <a class="p36-category" href="systems.html?category=food_retail#catalog"><small>03 / FOOD & RETAIL</small><strong>飲食・小売</strong><span>パン、ケーキ、花、居酒屋、テイクアウト、焼肉など</span><b><span data-p36-category-count="food_retail">—</span>製品を見る →</b></a>
+        <a class="p36-category" href="systems.html?category=buyback_reuse#catalog"><small>04 / BUYBACK</small><strong>買取・リユース</strong><span>総合買取、中古車買取・販売など</span><b><span data-p36-category-count="buyback_reuse">—</span>製品を見る →</b></a>
+        <a class="p36-category" href="systems.html?category=home_building#catalog"><small>05 / HOME & BUILDING</small><strong>住まい・建築</strong><span>不動産、リフォームなど</span><b><span data-p36-category-count="home_building">—</span>製品を見る →</b></a>
+        <a class="p36-category" href="systems.html?category=education_life#catalog"><small>06 / EDUCATION & LIFE</small><strong>教育・生活サービス</strong><span>教育、福祉、介護、生活、宿泊、車両サービスなど</span><b><span data-p36-category-count="education_life">—</span>製品を見る →</b></a>
+        <a class="p36-category" href="systems.html?category=professional_business#catalog"><small>07 / PROFESSIONAL</small><strong>士業・企業支援</strong><span>行政書士、司法書士、社労士、税理士、調査士、営業支援など</span><b><span data-p36-category-count="professional_business">—</span>製品を見る →</b></a>
+        <a class="p36-category" href="systems.html#catalog"><small>ALL / PRODUCT CATALOG</small><strong><span data-p36-count>50</span>システム</strong><span>検索・カテゴリ・DPRO FINDERから、自分に近い製品を探す。</span><b>全製品を見る →</b></a>
+      </div>
+    </div>
+  </section>
+
+
+  <section class="p36-section p36-section--proposal" id="proposal-entry">
+    <div class="p36-shell p36-proposal-entry">
+      <div>
+        <p class="p36-eyebrow">SHOW · SEND · LEAVE BEHIND</p>
+        <h2>業種ごとの提案を、<br>その場ですぐ開く。</h2>
+        <p>各業種の提案ページ、URLコピー、A4チラシ、LIVE DEMOへまとめて進めます。DPRO SALESNAVIからも、営業先に合う業種別提案を1タップで開ける入口です。</p>
+      </div>
+      <div class="p36-proposal-entry__actions">
+        <a class="p36-btn p36-btn--proposal" href="proposal.html">業種別提案を開く</a>
+        <a class="p36-btn p36-btn--product" href="systems.html#catalog">50 SYSTEMSから選ぶ</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="p36-section p36-section--dark" id="live-demo">
+    <div class="p36-shell">
+      <header class="p36-section__head"><p class="p36-eyebrow">REAL SCREEN / LIVE DEMO</p><h2>説明だけでなく、<br>実際のシステムを。</h2><p>代表的な完成製品から、製品ページとLIVE DEMOへ直接進めます。</p></header>
+      <div class="p36-demo-grid" data-p36-featured><article class="p36-demo-card"><small>LOADING</small><h3>製品データを読み込み中</h3></article></div>
+      <div class="p36-actions" style="justify-content:center;margin-top:28px"><a class="p36-btn p36-btn--product" href="systems.html#catalog">50システムをすべて見る</a></div>
+    </div>
+  </section>
+
+  <section class="p36-section">
+    <div class="p36-shell p36-official-handoff">
+      <div><small>BLUE / DPRO SHOP OFFICIAL SITE</small><h2>詳しい機能・料金・導入条件は、青の公式サイトへ。</h2><p>PRODUCT SITEは「探す・触る・比較する」場所。導入内容や料金、LINE構築・運用、ホームページ、契約条件を詳しく確認するときはDPRO SHOP OFFICIAL SITEへ戻れます。</p></div>
+      <a class="p36-btn p36-btn--official" href="https://dpro-shop.com/" target="_blank" rel="noopener">OFFICIAL SITEで詳しく見る ↗</a>
+    </div>
+  </section>
+</main>
+<footer class="p36-footer"><div class="p36-shell p36-footer__grid"><div><a class="p36-brand" href="index.html"><span class="p36-brand__mark">D</span><span><strong>DPRO LINE SYSTEMS</strong><small>RED / PRODUCT SITE</small></span></a><p>50の完成システムを、探す・触る・比較する。</p></div><nav aria-label="フッターナビ"><a href="systems.html">50 SYSTEMS</a><a href="#live-demo">LIVE DEMO</a><a href="proposal.html">業種別提案</a><a href="dpro-system.html">DPROとは</a><a class="is-official" href="https://dpro-shop.com/" target="_blank" rel="noopener">BLUE / OFFICIAL SITE ↗</a></nav></div></footer>
+<nav class="p36-mobile-cta" aria-label="スマホ固定メニュー"><a class="is-product" href="systems.html">50 SYSTEMS</a><a class="is-proposal" href="proposal.html">業種別提案</a><a class="is-official" href="https://dpro-shop.com/" target="_blank" rel="noopener">BLUE OFFICIAL ↗</a></nav>
+<script src="systems-data.js?v=20260813"></script>
+<script src="dpro-v3.js?v=3.5"></script>
+<script src="product-v3.6.js?v=3.6"></script>
+</body>
+</html>
