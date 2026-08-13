@@ -174,3 +174,13 @@ button, [role="button"], a.dpro-button { min-height: 44px; }
   *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; }
   .dpro-reveal-ready [data-dpro-reveal] { opacity: 1; transform: none; }
 }
+
+/* SITE IDENTITY LOCK — PRODUCT / SYSTEM SITE = RED / 2026-08-13 */
+:root{--dpro-system-red:#c22c5d;--dpro-system-red-dark:#871735;--dpro-official-blue:#2f80ed}
+:where(.core-header,.catalog-header,.ps-header,.site-header){box-shadow:inset 0 -2px 0 rgba(194,44,93,.34)}
+:where(.core-brand__mark,.brand-mark,[class*="brand__mark"],[class*="brand-mark"]){background:linear-gradient(145deg,var(--dpro-system-red),var(--dpro-system-red-dark))!important;color:#fff!important;border-color:rgba(255,125,166,.35)!important;box-shadow:0 10px 26px rgba(194,44,93,.22)!important}
+.core-brand small{color:var(--dpro-system-red)!important;font-weight:900!important}
+.catalog-header .brand{position:relative;padding-right:74px}
+.catalog-header .brand::after{content:"PRODUCT SITE";position:absolute;right:0;top:50%;transform:translateY(-50%);padding:4px 7px;border:1px solid rgba(194,44,93,.24);border-radius:999px;background:rgba(194,44,93,.06);color:var(--dpro-system-red);font-size:8px;font-weight:900;letter-spacing:.08em}
+:where(.core-nav,.header-nav,.ps-nav) a[href^="https://dpro-shop.com"]{padding:.5rem .72rem;border:1px solid rgba(47,128,237,.26);border-radius:999px;color:var(--dpro-official-blue)!important;background:rgba(47,128,237,.045)}
+@media(max-width:700px){.catalog-header .brand{padding-right:0}.catalog-header .brand::after{display:none}}
