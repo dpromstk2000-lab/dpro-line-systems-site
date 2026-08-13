@@ -583,3 +583,84 @@
     initHomeConnectionVisual();
   }
 })();
+/* DPRO PRODUCT SITE V3.5 — RELEVANT COMPARISON LP ROUTING */
+(function () {
+  "use strict";
+  const doc = typeof document !== "undefined" ? document : null;
+  if (!doc) return;
+
+  const routes = {
+    VET: {
+      eyebrow: "動物病院向けサービス比較",
+      title: "他の動物病院向けLINE・受付システムと比較する",
+      copy: "受付・LINE・診察進行・多頭対応まで、DPRO VETとソトマチの違いを整理しています。",
+      href: "../compare-sotomachi-vet.html",
+      cta: "ソトマチとの比較を見る"
+    },
+    HAIR: {
+      eyebrow: "LINE予約システム比較",
+      title: "LINE予約システムを比較中の方へ",
+      copy: "予約だけでなく、LINE公式・ホームページ・店舗業務まで含めてDPROとリピッテ BEAUTYを比較できます。",
+      href: "../compare-repitte.html",
+      cta: "リピッテとの比較を見る"
+    },
+    NAIL: {
+      eyebrow: "LINE予約システム比較",
+      title: "LINE予約システムを比較中の方へ",
+      copy: "予約だけでなく、LINE公式・ホームページ・サロン業務まで含めてDPROとリピッテ BEAUTYを比較できます。",
+      href: "../compare-repitte.html",
+      cta: "リピッテとの比較を見る"
+    },
+    ESTHE: {
+      eyebrow: "LINE予約システム比較",
+      title: "LINE予約システムを比較中の方へ",
+      copy: "予約だけでなく、LINE公式・ホームページ・顧客管理まで含めてDPROとリピッテ BEAUTYを比較できます。",
+      href: "../compare-repitte.html",
+      cta: "リピッテとの比較を見る"
+    },
+    EYE: {
+      eyebrow: "LINE予約システム比較",
+      title: "まつげ・眉サロンで予約システムを比較中の方へ",
+      copy: "LINE予約だけでなく、まつげ・眉専用カルテ、再来店導線、ホームページ運用まで含めて比較できます。",
+      href: "../compare-repitte.html",
+      cta: "リピッテとの比較を見る"
+    }
+  };
+
+  function initComparisonEntry() {
+    const code = String(doc.documentElement?.dataset?.systemCode || "").trim().toUpperCase();
+    const route = routes[code];
+    if (!route || doc.querySelector(".dpro-compare-entry")) return;
+
+    const price = doc.getElementById("price");
+    const mountTarget = price || doc.querySelector(".ps-final") || doc.querySelector("footer");
+    if (!mountTarget) return;
+
+    const section = doc.createElement("section");
+    section.className = "dpro-section dpro-compare-entry";
+    section.setAttribute("aria-label", "他サービスとの比較");
+    section.innerHTML = [
+      '<div class="dpro-container">',
+      '  <div class="dpro-compare-entry__card">',
+      '    <div class="dpro-compare-entry__copy">',
+      '      <p class="dpro-compare-entry__eyebrow">' + route.eyebrow + '</p>',
+      '      <h2>' + route.title + '</h2>',
+      '      <p>' + route.copy + '</p>',
+      '    </div>',
+      '    <div class="dpro-compare-entry__action">',
+      '      <a class="dpro-button dpro-button--secondary dpro-compare-entry__button" href="' + route.href + '">' + route.cta + ' <span aria-hidden="true">→</span></a>',
+      '      <small>2026年8月13日時点の公式公開情報を基準に比較</small>',
+      '    </div>',
+      '  </div>',
+      '</div>'
+    ].join("");
+
+    mountTarget.before(section);
+  }
+
+  if (doc.readyState === "loading") {
+    doc.addEventListener("DOMContentLoaded", initComparisonEntry, { once: true });
+  } else {
+    initComparisonEntry();
+  }
+})();

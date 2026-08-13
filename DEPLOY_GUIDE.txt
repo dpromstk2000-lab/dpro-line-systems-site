@@ -1,0 +1,50 @@
+DPRO 比較LP 導線追加パッケージ V3.5
+DATE: 2026-08-13
+
+UPLOAD_TARGET:
+GitHub repository root
+dpromstk2000-lab/dpro-line-systems-site / main
+
+FILES:
+- dpro-v3.js
+- dpro-v3.js.txt
+- dpro-v3.css
+- dpro-v3.css.txt
+- compare-repitte.html
+- compare-repitte.html.txt
+- compare-sotomachi-vet.html
+- compare-sotomachi-vet.html.txt
+
+ROUTING:
+VET / systems/pet-care.html
+  -> compare-sotomachi-vet.html
+
+HAIR / systems/hair-salon.html
+NAIL / systems/nail.html
+ESTHE / systems/esthe.html
+EYE / systems/eye-salon.html（まつげ・眉）
+  -> compare-repitte.html
+
+PLACEMENT:
+各SYSTEM詳細ページの料金セクション直前へ、比較案内カードを自動挿入。
+既存HTML個別編集なし。
+共通 dpro-v3.js + dpro-v3.css で制御。
+
+NOTE:
+- 比較LP本体は静的HTML。
+- 比較導線カードのみ共通JSで挿入。
+- EYEは「まつげ・眉サロン」両方を対象。
+- 人医療ページにはソトマチ比較を出さない。
+- その他の業種には比較カードを出さない。
+
+CHECK_URLS:
+https://dpromstk2000-lab.github.io/dpro-line-systems-site/systems/pet-care.html
+https://dpromstk2000-lab.github.io/dpro-line-systems-site/systems/hair-salon.html
+https://dpromstk2000-lab.github.io/dpro-line-systems-site/systems/nail.html
+https://dpromstk2000-lab.github.io/dpro-line-systems-site/systems/esthe.html
+https://dpromstk2000-lab.github.io/dpro-line-systems-site/systems/eye-salon.html
+https://dpromstk2000-lab.github.io/dpro-line-systems-site/compare-sotomachi-vet.html
+https://dpromstk2000-lab.github.io/dpro-line-systems-site/compare-repitte.html
+
+COMMIT_MESSAGE:
+Add relevant comparison LP routes for VET and salon systems
