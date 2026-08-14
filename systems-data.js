@@ -50,7 +50,7 @@
     "demoUrl": "https://dpromstk2000-lab.github.io/dpro-hair-salon-line/demo-guide.html",
     "status": "AVAILABLE",
     "verificationStatus": "VERIFIED",
-    "tagline": "LINE予約・再予約から今日の美容室までを、一つの流れにつなぐ。",
+    "tagline": "LINE予約・来店受付から施術カルテ・再来店フォローまでを、一つの流れにつなぐ。",
     "summary": "美容室向けに、LINE予約・再予約、写真付きメニュー、QR来店受付などの業務をまとめる業種特化型システム。",
     "targets": [
       "美容室"
@@ -134,7 +134,7 @@
     "demoUrl": "https://dpromstk2000-lab.github.io/dpro-seitai-line/index.html",
     "status": "AVAILABLE",
     "verificationStatus": "VERIFIED",
-    "tagline": "会員ホームから公開前監査までを、一つの流れにつなぐ。",
+    "tagline": "LINE予約・来院受付から施術履歴・再来院フォローまでを、一つの流れにつなぐ。",
     "summary": "整骨院・整体向けに、会員ホーム、4段階の来院進捗、患者履歴などの業務をまとめる業種特化型システム。",
     "targets": [
       "整骨院・整体"
@@ -162,8 +162,8 @@
     "demoUrl": "https://dpromstk2000-lab.github.io/DEGITAL-QR/hybrid.html?t=demo-dental-patient-001",
     "status": "AVAILABLE",
     "verificationStatus": "VERIFIED",
-    "tagline": "デジタル・家族診察券から医院PC・受付iPadまでを、一つの流れにつなぐ。",
-    "summary": "歯科医院向けに、デジタル・家族診察券、30分単位の診療予約、変更・取消希望などの業務をまとめる業種特化型システム。",
+    "tagline": "家族で使えるデジタル診察券から予約・受付管理までを、一つの流れにつなぐ。",
+    "summary": "歯科医院向けに、家族で使えるデジタル診察券、30分単位の診療予約、変更・取消希望などの業務をまとめる業種特化型システム。",
     "targets": [
       "歯科医院"
     ],
@@ -275,7 +275,7 @@
     "demoUrl": "https://dpromstk2000-lab.github.io/dpro-takeout-line-liff/index.html?preview=1&v=takeout-18-check",
     "status": "AVAILABLE",
     "verificationStatus": "VERIFIED",
-    "tagline": "写真付きモバイルオーダーから商品・写真・営業設定までを、一つの流れにつなぐ。",
+    "tagline": "写真付きモバイルオーダーから商品・受取枠・営業時間管理までを、一つの流れにつなぐ。",
     "summary": "テイクアウト向けに、写真付きモバイルオーダー、LINE・電話・店頭受付、調理ポイント・受取枠などの業務をまとめる業種特化型システム。",
     "targets": [
       "テイクアウト"
@@ -303,7 +303,7 @@
     "demoUrl": "https://dpromstk2000-lab.github.io/liff-salon-reserve/?embed_demo=1",
     "status": "AVAILABLE",
     "verificationStatus": "VERIFIED",
-    "tagline": "予約を1か所に集約からiPadの施術一覧までを、一つの流れにつなぐ。",
+    "tagline": "LINE・電話・店頭予約からPC・iPadでの店舗管理までを、一つの流れにつなぐ。",
     "summary": "美容サロン向けに、予約を1か所に集約、顧客カルテ、回数券などの業務をまとめる業種特化型システム。",
     "targets": [
       "美容サロン"
@@ -360,7 +360,7 @@
     "status": "AVAILABLE",
     "verificationStatus": "VERIFIED",
     "tagline": "写真付き公開カタログからオーナーPC商品管理までを、一つの流れにつなぐ。",
-    "summary": "ケーキ・洋菓子店向けに、写真付き公開カタログ、販売方法4区分、商品共有URLなどの業務をまとめる業種特化型システム。",
+    "summary": "ケーキ・洋菓子店向けに、写真付き公開カタログ、商品ごとの受付方法、商品共有URLなどの業務をまとめる業種特化型システム。",
     "targets": [
       "ケーキ・洋菓子店"
     ],
@@ -387,7 +387,7 @@
     "demoUrl": "https://dpromstk2000-lab.github.io/dpro-eye-salon-line/index.html?demo=1",
     "status": "AVAILABLE",
     "verificationStatus": "VERIFIED",
-    "tagline": "LINE予約・前回と同じ内容から安全な既存システム移行までを、一つの流れにつなぐ。",
+    "tagline": "LINE予約・前回と同じ内容での再予約から施術カルテ・再来店フォローまでを、一つの流れにつなぐ。",
     "summary": "まつげ・眉サロン向けに、LINE予約・前回と同じ内容、電話・店頭・Instagram受付、まつげ・眉専用カルテなどの業務をまとめる業種特化型システム。",
     "targets": [
       "まつげ・眉サロン"
@@ -471,7 +471,7 @@
     "demoUrl": "https://dpromstk2000-lab.github.io/dpro-estate-line-liff/",
     "status": "AVAILABLE",
     "verificationStatus": "VERIFIED",
-    "tagline": "希望条件・物件候補から再相談・内見後追客までを、一つの流れにつなぐ。",
+    "tagline": "希望条件・物件候補から再相談・内見後フォローまでを、一つの流れにつなぐ。",
     "summary": "不動産・賃貸内見向けに、希望条件・物件候補、物件詳細・内見予約、今日やることなどの業務をまとめる業種特化型システム。",
     "targets": [
       "不動産・賃貸内見"
@@ -481,7 +481,7 @@
       "顧客カルテ・希望条件",
       "物件管理",
       "案件進捗",
-      "追客・再相談",
+      "再相談・フォロー",
       "条件に合う物件提案"
     ],
     "previewAsset": "flyer-estate.html",
@@ -499,7 +499,7 @@
     "demoUrl": "https://dpromstk2000-lab.github.io/dpro-buyback-line/index.html?demo=1&v=buyback-10",
     "status": "AVAILABLE",
     "verificationStatus": "VERIFIED",
-    "tagline": "複数商品を一括受付からPC・スタッフ・店頭iPadまでを、一つの流れにつなぐ。",
+    "tagline": "写真査定・複数商品の受付からPC・iPadでの査定管理までを、一つの流れにつなぐ。",
     "summary": "総合買取・査定向けに、複数商品を一括受付、カテゴリー別入力、非公開の商品写真などの業務をまとめる業種特化型システム。",
     "targets": [
       "総合買取・査定"
@@ -555,7 +555,7 @@
     "demoUrl": "https://dpromstk2000-lab.github.io/dpro-reform-line-liff/owner.html?demo=1&v=reform-10",
     "status": "AVAILABLE",
     "verificationStatus": "VERIFIED",
-    "tagline": "相談・電話・LINE受付からお客様LINE CRMまでを、一つの流れにつなぐ。",
+    "tagline": "写真付き相談・現地調査から見積・工事進捗・お客様共有までを、一つの流れにつなぐ。",
     "summary": "リフォーム・工事管理向けに、相談・電話・LINE受付、現地調査管理、見積・契約管理などの業務をまとめる業種特化型システム。",
     "targets": [
       "リフォーム・工事管理"
@@ -612,8 +612,8 @@
     "demoUrl": "https://dpromstk2000-lab.github.io/dpro-school-line/owner.html?v=school-next-10",
     "status": "AVAILABLE",
     "verificationStatus": "VERIFIED",
-    "tagline": "LINE受付を1か所へから次回案内・フォローまでを、一つの流れにつなぐ。",
-    "summary": "学習塾向けに、LINE受付を1か所へ、今日やること、進捗を保護者までなどの業務をまとめる業種特化型システム。",
+    "tagline": "体験・欠席・振替のLINE受付から授業進捗・保護者連絡までを、一つの流れにつなぐ。",
+    "summary": "学習塾向けに、体験・欠席・振替受付、授業予定、進捗確認、保護者連絡などをまとめる業種特化型システム。",
     "targets": [
       "学習塾"
     ],
@@ -696,7 +696,7 @@
     "demoUrl": "https://dpromstk2000-lab.github.io/dpro-used-car-line-liff/?demo=1",
     "status": "AVAILABLE",
     "verificationStatus": "VERIFIED",
-    "tagline": "査定・買取・在庫化から経営分析・CSV移行・本番準備までを、一つの流れにつなぐ。",
+    "tagline": "査定・買取・在庫管理から商談・販売・納車後フォローまでを、一つの流れにつなぐ。",
     "summary": "中古車買取・販売向けに、査定・買取・在庫化、公開在庫・商談・販売契約、納車・アフター管理などの業務をまとめる業種特化型システム。",
     "targets": [
       "中古車買取・販売"
@@ -780,7 +780,7 @@
     "demoUrl": "https://dpromstk2000-lab.github.io/dpro-senior-meal-delivery-line/owner.html?demo=1",
     "status": "AVAILABLE",
     "verificationStatus": "VERIFIED",
-    "tagline": "家族LINEから申込から配達スタッフ画面までを、一つの流れにつなぐ。",
+    "tagline": "家族からのLINE申込から厨房・配達スタッフの管理までを、一つの流れにつなぐ。",
     "summary": "高齢者向け配食向けに、家族LINEから申込、家族マイページ、お届け先は最大5件などの業務をまとめる業種特化型システム。",
     "targets": [
       "高齢者向け配食"
@@ -892,7 +892,7 @@
     "demoUrl": "https://dpromstk2000-lab.github.io/dpro-shiho-inheritance-line-liff/index.html?demo=1&v=SHIHO-12-R1",
     "status": "AVAILABLE",
     "verificationStatus": "VERIFIED",
-    "tagline": "相談を分岐から進捗・期限を管理までを、一つの流れにつなぐ。",
+    "tagline": "相談受付から面談・必要書類・進捗・期限管理までを、一つの流れにつなぐ。",
     "summary": "司法書士向けに、相談を分岐、面談日程を整理、必要書類を安全に案内などの業務をまとめる業種特化型システム。",
     "targets": [
       "司法書士"
@@ -920,7 +920,7 @@
     "demoUrl": "https://dpromstk2000-lab.github.io/dpro-chosashi-line-liff/index.html?demo=1&v=chosashi-8-r3-final",
     "status": "AVAILABLE",
     "verificationStatus": "VERIFIED",
-    "tagline": "相談内容別受付から営業前system-checkまでを、一つの流れにつなぐ。",
+    "tagline": "相談受付から現地調査・書類・案件進捗までを、一つの流れにつなぐ。",
     "summary": "土地家屋調査士向けに、相談内容別受付、依頼者・物件登録、お客様マイページなどの業務をまとめる業種特化型システム。",
     "targets": [
       "土地家屋調査士"
@@ -1032,7 +1032,7 @@
     "demoUrl": "https://dpromstk2000-lab.github.io/dpro-careplan-line/owner.html?v=CAREPLAN-10",
     "status": "AVAILABLE",
     "verificationStatus": "VERIFIED",
-    "tagline": "新規相談・利用者台帳から期限通知・一括検査までを、一つの流れにつなぐ。",
+    "tagline": "新規相談・利用者台帳からケアプラン・モニタリング・期限管理までを、一つの流れにつなぐ。",
     "summary": "居宅介護支援・ケアマネ向けに、新規相談・利用者台帳、認定・ケアプラン期限、モニタリング・担当者会議などの業務をまとめる業種特化型システム。",
     "targets": [
       "居宅介護支援・ケアマネ"
@@ -1060,7 +1060,7 @@
     "demoUrl": "https://dpromstk2000-lab.github.io/dpro-welfare-equipment-line/member.html?demo=1&auto=1&office_code=dpro_welfare_equipment_demo&v=WELFARE-EQUIP-10-R1",
     "status": "AVAILABLE",
     "verificationStatus": "VERIFIED",
-    "tagline": "相談・紹介・利用者管理から請求・権限・system-checkまでを、一つの流れにつなぐ。",
+    "tagline": "相談・利用者管理から契約・配送・モニタリング・請求までを、一つの流れにつなぐ。",
     "summary": "福祉用具貸与・販売向けに、相談・紹介・利用者管理、商品・在庫・用具個体、アセスメント・選定・計画などの業務をまとめる業種特化型システム。",
     "targets": [
       "福祉用具貸与・販売"
@@ -1088,7 +1088,7 @@
     "demoUrl": "https://dpromstk2000-lab.github.io/dpro-yakiniku-line-liff/index.html?demo=1",
     "status": "AVAILABLE",
     "verificationStatus": "VERIFIED",
-    "tagline": "日時予約・予約変更から店舗設定・分析・営業前検査までを、一つの流れにつなぐ。",
+    "tagline": "日時予約・順番受付から着席・会計・卓回転までを、一つの流れにつなぐ。",
     "summary": "焼肉店向けに、日時予約・予約変更、当日順番受付・呼び出し、電話・店頭・既存顧客受付などの業務をまとめる業種特化型システム。",
     "targets": [
       "焼肉店"
@@ -1201,7 +1201,7 @@
     "demoUrl": "https://dpromstk2000-lab.github.io/dpro-btype-line-liff/",
     "status": "AVAILABLE",
     "verificationStatus": "VERIFIED",
-    "tagline": "利用相談・見学・体験から営業前system-checkまでを、一つの流れにつなぐ。",
+    "tagline": "利用相談・見学・体験から出欠・支援記録・個別支援計画までを、一つの流れにつなぐ。",
     "summary": "就労継続支援B型向けに、利用相談・見学・体験、利用者・家族ポータル、受付・出欠・送迎iPadなどの業務をまとめる業種特化型システム。",
     "targets": [
       "就労継続支援B型"
@@ -1229,7 +1229,7 @@
     "demoUrl": "https://dpromstk2000-lab.github.io/line-shaken-liff/index-product-demo.html?v=step-ksh-next-10",
     "status": "AVAILABLE",
     "verificationStatus": "VERIFIED",
-    "tagline": "受付経路を統合から次回整備フォローまでを、一つの流れにつなぐ。",
+    "tagline": "LINE・電話・店頭受付から整備進捗・履歴・次回フォローまでを、一つの流れにつなぐ。",
     "summary": "車検・整備工場向けに、受付経路を統合、車両単位の入庫管理、整備進捗タイムラインなどの業務をまとめる業種特化型システム。",
     "targets": [
       "車検・整備工場"
@@ -1285,7 +1285,7 @@
     "demoUrl": "https://dpromstk2000-lab.github.io/dpro-homecare-family-line/",
     "status": "AVAILABLE",
     "verificationStatus": "VERIFIED",
-    "tagline": "本人・家族LINE連携から事業所設定・system-checkまでを、一つの流れにつなぐ。",
+    "tagline": "本人・家族LINE連携から訪問予定・スタッフ記録・家族報告までを、一つの流れにつなぐ。",
     "summary": "訪問介護・家族連絡向けに、本人・家族LINE連携、訪問予定・定期予定、スタッフ訪問記録などの業務をまとめる業種特化型システム。",
     "targets": [
       "訪問介護・家族連絡"
@@ -1341,7 +1341,7 @@
     "demoUrl": "https://dpromstk2000-lab.github.io/dpro-consult-line/index.html?company_code=SR-COMPANY-001&phone=090-9999-1111&v=consult-15",
     "status": "AVAILABLE",
     "verificationStatus": "VERIFIED",
-    "tagline": "相談を分岐から進捗・期限を管理までを、一つの流れにつなぐ。",
+    "tagline": "相談受付から顧問先対応・手続進捗・期限管理までを、一つの流れにつなぐ。",
     "summary": "社会保険労務士向けに、相談を分岐、面談日程を整理、必要書類を安全に案内などの業務をまとめる業種特化型システム。",
     "targets": [
       "社会保険労務士"
@@ -1369,7 +1369,7 @@
     "demoUrl": "https://dpromstk2000-lab.github.io/dpro-sodan-line/",
     "status": "AVAILABLE",
     "verificationStatus": "VERIFIED",
-    "tagline": "初回相談・面談希望から一括system-checkまでを、一つの流れにつなぐ。",
+    "tagline": "初回相談・面談から計画・モニタリング・書類管理までを、一つの流れにつなぐ。",
     "summary": "相談支援事業所向けに、初回相談・面談希望、本人・家族ポータル、事業所PC管理などの業務をまとめる業種特化型システム。",
     "targets": [
       "相談支援事業所"
@@ -1425,8 +1425,8 @@
     "demoUrl": "https://dpro-salesnavi-demo.pages.dev",
     "status": "AVAILABLE",
     "verificationStatus": "VERIFIED",
-    "tagline": "全国約586万件から検索から分析とCSVまでを、一つの流れにつなぐ。",
-    "summary": "営業ナビ・訪問営業管理向けに、全国約586万件から検索、今日の営業先へ追加、地図・ナビ連携などの業務をまとめる業種特化型システム。",
+    "tagline": "営業先の検索から訪問ルート・営業結果・再訪管理までを、一つの流れにつなぐ。",
+    "summary": "営業ナビ・訪問営業管理向けに、営業先検索、今日の営業先への追加、地図・ナビ連携、訪問結果・再訪管理などの業務をまとめる営業支援システム。",
     "targets": [
       "営業ナビ・訪問営業管理"
     ],

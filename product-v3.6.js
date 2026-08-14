@@ -1,4 +1,4 @@
-/* DPRO LINE SYSTEMS PRODUCT SITE V3.6 — ROLE ALIGNMENT / STAGE 1 */
+/* DPRO LINE SYSTEMS PRODUCT SITE V3.6 — COPY & ROLE CLEANUP / STAGE 2 */
 (() => {
   'use strict';
   const DATA = () => window.DPROSystemsData || { systems: [], categories: {} };
@@ -215,7 +215,7 @@
     const sourceText = document.querySelector('[data-p36-proposal-source-text]');
     if (source === 'salesnavi' && sourceBar) {
       sourceBar.hidden = false;
-      if (sourceText) sourceText.textContent = requestedName ? `「${requestedName}」に近い業種別提案を表示します。` : '営業先に合う業種別提案を表示します。';
+      if (sourceText) sourceText.textContent = requestedName ? `「${requestedName}」に合う業種別提案を表示しています。` : '営業先に合う業種別提案を表示しています。';
     }
 
     grid.innerHTML = systems.map(s => `
