@@ -1,4 +1,4 @@
-name: PRODUCT common customer copy brushup V1.0
+name: PRODUCT common customer copy brushup V1.1
 
 on:
   workflow_dispatch:
@@ -266,6 +266,7 @@ jobs:
               ("青OFFICIAL", "DPRO SHOP"),
               ("OFFICIAL SITEで詳しく見る ↗", "DPRO SHOPで詳しく見る ↗"),
               ("OFFICIAL SYSTEM GUIDE ↗", "DPRO SHOPで詳しく見る ↗"),
+              ("ONE MANAGEMENT HUB", "DPRO SYSTEM"),
               ("PRODUCT TOP", "トップ"),
               ("50 SYSTEMS", "システム一覧"),
               ("50 COMPLETED SYSTEMS", "50 業種別システム"),
@@ -431,7 +432,7 @@ jobs:
           print("PROTECTED: systems-data.js")
           print("PROTECTED: systems/pet-care.html")
           print("PROTECTED: product-v3.6.js")
-          print("COMMON CUSTOMER COPY VALIDATION PASS")
+          print("COMMON CUSTOMER COPY VALIDATION PASS V1.1")
           PY
 
       - name: Static QA
@@ -482,5 +483,5 @@ jobs:
             exit 0
           fi
 
-          git commit -m "Brush up PRODUCT common pages for customers"
+          git commit -m "Brush up PRODUCT common pages for customers V1.1"
           git push origin HEAD:main
