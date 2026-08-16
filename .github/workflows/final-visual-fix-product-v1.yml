@@ -1,0 +1,226 @@
+name: PRODUCT final visual fix V1.0
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/final-visual-fix-product-v1.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout PRODUCT
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Apply mobile layout fixes and retire stale root pages
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import textwrap
+
+          proposal_css = Path("product-v3.6.css")
+          common_css = Path("dpro-v3.css")
+
+          if not proposal_css.exists() or not common_css.exists():
+              raise SystemExit("Required PRODUCT CSS not found")
+
+          marker_proposal = "/* FINAL VISUAL QA FIX V1.0 / PROPOSAL */"
+          marker_common = "/* FINAL VISUAL QA FIX V1.0 / SYSTEM PAGES */"
+
+          proposal_fix = r"""
+          /* FINAL VISUAL QA FIX V1.0 / PROPOSAL */
+          @media(max-width:700px){
+            .p36-proposal-hero__grid,
+            .p36-proposal-grid{
+              grid-template-columns:minmax(0,1fr)!important;
+            }
+            .p36-proposal-card,
+            .p36-proposal-card__actions,
+            .p36-proposal-card__foot{
+              min-width:0!important;
+              max-width:100%!important;
+            }
+            .p36-proposal-card__actions{
+              grid-template-columns:1fr!important;
+            }
+            .p36-proposal-card__actions .is-primary{
+              grid-column:auto!important;
+            }
+            .p36-proposal-card__actions a,
+            .p36-proposal-card__actions button{
+              width:100%!important;
+              min-width:0!important;
+              max-width:100%!important;
+              white-space:normal!important;
+              overflow-wrap:anywhere;
+              text-align:center;
+            }
+            .p36-proposal-card__foot{
+              display:flex!important;
+              flex-wrap:wrap!important;
+            }
+          }
+          """
+
+          common_fix = r"""
+          /* FINAL VISUAL QA FIX V1.0 / SYSTEM PAGES */
+          .ps-hero__grid > *,
+          .ps-actions,
+          .ps-actions > *{
+            min-width:0;
+            max-width:100%;
+          }
+          h3{
+            text-wrap:pretty;
+          }
+          @media(max-width:640px){
+            .ps-actions{
+              min-width:0!important;
+              max-width:100%!important;
+            }
+            .ps-actions .dpro-button{
+              width:100%!important;
+              min-width:0!important;
+              max-width:100%!important;
+              white-space:normal!important;
+              overflow-wrap:anywhere;
+              text-align:center;
+              box-sizing:border-box;
+            }
+            .ps-pills,
+            .ps-pill{
+              min-width:0;
+              max-width:100%;
+            }
+          }
+          """
+
+          p = proposal_css.read_text(encoding="utf-8")
+          if marker_proposal not in p:
+              proposal_css.write_text(
+                  p.rstrip() + "\n\n" + textwrap.dedent(proposal_fix).strip() + "\n",
+                  encoding="utf-8",
+              )
+
+          c = common_css.read_text(encoding="utf-8")
+          if marker_common not in c:
+              common_css.write_text(
+                  c.rstrip() + "\n\n" + textwrap.dedent(common_fix).strip() + "\n",
+                  encoding="utf-8",
+              )
+
+          stale_roots = [
+              "car-service.html","dental.html","estate.html","esthe.html",
+              "izakaya.html","nail.html","osteopathic.html","pet-salon.html",
+              "salon.html","school.html","takeout.html","yoga.html",
+          ]
+
+          template = """
+          <!doctype html>
+          <html lang="ja">
+          <head>
+            <meta charset="utf-8">
+            <meta name="viewport" content="width=device-width,initial-scale=1">
+            <meta name="robots" content="noindex,follow">
+            <link rel="canonical" href="__CANONICAL__">
+            <meta http-equiv="refresh" content="0;url=__DEST__">
+            <title>DPRO LINE SYSTEMS｜製品ページへ移動</title>
+          </head>
+          <body>
+            <p><a href="__DEST__">製品ページへ移動</a></p>
+            <script>
+              location.replace('__DEST__' + location.search + location.hash);
+            </script>
+          </body>
+          </html>
+          """
+
+          for root_name in stale_roots:
+              formal = Path("systems") / root_name
+              if not formal.exists():
+                  raise SystemExit(f"Formal destination missing: {formal}")
+              dest = f"systems/{root_name}"
+              canonical = f"https://dpromstk2000-lab.github.io/dpro-line-systems-site/{dest}"
+              redirect = (
+                  textwrap.dedent(template).lstrip()
+                  .replace("__CANONICAL__", canonical)
+                  .replace("__DEST__", dest)
+              )
+              Path(root_name).write_text(redirect, encoding="utf-8")
+
+          print("PRODUCT visual fixes prepared")
+          print("Stale root redirects:", len(stale_roots))
+          PY
+
+      - name: Static safety QA
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          p = Path("product-v3.6.css").read_text(encoding="utf-8")
+          d = Path("dpro-v3.css").read_text(encoding="utf-8")
+          assert "FINAL VISUAL QA FIX V1.0 / PROPOSAL" in p
+          assert "FINAL VISUAL QA FIX V1.0 / SYSTEM PAGES" in d
+          assert ".p36-proposal-grid" in p
+          assert ".ps-actions .dpro-button" in d
+
+          roots = [
+              "car-service.html","dental.html","estate.html","esthe.html",
+              "izakaya.html","nail.html","osteopathic.html","pet-salon.html",
+              "salon.html","school.html","takeout.html","yoga.html",
+          ]
+          for root in roots:
+              s = Path(root).read_text(encoding="utf-8")
+              assert 'name="robots" content="noindex,follow"' in s
+              assert f"systems/{root}" in s
+              assert Path("systems", root).exists()
+
+          print("PRODUCT STATIC QA PASS")
+          PY
+
+      - name: Commit PRODUCT fixes and remove one-shot workflow
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git rm -f .github/workflows/final-visual-fix-product-v1.yml
+          git add product-v3.6.css dpro-v3.css
+          git add car-service.html dental.html estate.html esthe.html izakaya.html nail.html osteopathic.html pet-salon.html salon.html school.html takeout.html yoga.html
+
+          git diff --cached --name-only
+          git commit -m "Fix PRODUCT final mobile visual QA issues"
+          git push origin HEAD:main
+
+      - name: Wait for PRODUCT Pages deployment
+        shell: bash
+        run: |
+          set -e
+          CSS_URL="https://dpromstk2000-lab.github.io/dpro-line-systems-site/product-v3.6.css?qa=${GITHUB_SHA}-${GITHUB_RUN_ID}"
+          ROOT_URL="https://dpromstk2000-lab.github.io/dpro-line-systems-site/car-service.html?qa=${GITHUB_SHA}-${GITHUB_RUN_ID}"
+
+          for i in $(seq 1 60); do
+            css="$(curl -fsSL "$CSS_URL" 2>/dev/null || true)"
+            root="$(curl -fsSL "$ROOT_URL" 2>/dev/null || true)"
+            if printf '%s' "$css" | grep -q "FINAL VISUAL QA FIX V1.0 / PROPOSAL" \
+              && printf '%s' "$root" | grep -q "systems/car-service.html"; then
+              echo "PRODUCT Pages deployment confirmed"
+              exit 0
+            fi
+            echo "Waiting for PRODUCT Pages... ${i}/60"
+            sleep 5
+          done
+
+          echo "PRODUCT source was committed, but Pages propagation was not confirmed in time."
+          exit 1
