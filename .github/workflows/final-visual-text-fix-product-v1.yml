@@ -1,0 +1,78 @@
+name: PRODUCT final heading wrap fix V1.0
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/final-visual-text-fix-product-v1.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout PRODUCT
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Balance flagged customer-facing headings
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          targets = [
+              Path('compare-repitte.html'),
+              Path('flyer-houkago.html'),
+              Path('lp-cake.html'),
+              Path('lp-dental.html'),
+              Path('lp-houkago.html'),
+              Path('lp-pet-salon.html'),
+              Path('lp-sharoushi.html'),
+          ]
+          marker = 'id="dpro-final-heading-balance"'
+          style = '<style id="dpro-final-heading-balance">h1,h2,h3{text-wrap:balance}</style>'
+
+          for path in targets:
+              if not path.exists():
+                  raise SystemExit(f'Missing target: {path}')
+              html = path.read_text(encoding='utf-8')
+              if marker not in html:
+                  idx = html.lower().find('</head>')
+                  if idx < 0:
+                      raise SystemExit(f'No head close: {path}')
+                  html = html[:idx] + style + '\n' + html[idx:]
+                  path.write_text(html, encoding='utf-8')
+
+          print('PRODUCT heading balance applied:', len(targets))
+          PY
+
+      - name: Static QA
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          targets = [
+              'compare-repitte.html','flyer-houkago.html','lp-cake.html',
+              'lp-dental.html','lp-houkago.html','lp-pet-salon.html','lp-sharoushi.html'
+          ]
+          for name in targets:
+              html = Path(name).read_text(encoding='utf-8')
+              assert 'dpro-final-heading-balance' in html
+              assert 'text-wrap:balance' in html
+          print('PRODUCT HEADING QA PASS')
+          PY
+
+      - name: Commit and remove one-shot workflow
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git rm -f .github/workflows/final-visual-text-fix-product-v1.yml
+          git add compare-repitte.html flyer-houkago.html lp-cake.html lp-dental.html lp-houkago.html lp-pet-salon.html lp-sharoushi.html
+          git commit -m "Balance PRODUCT final customer headings"
+          git push origin HEAD:main
