@@ -1,4 +1,4 @@
-name: PRODUCT customer copy brushup V1
+name: PRODUCT customer copy brushup V1.1
 
 on:
   workflow_dispatch:
@@ -19,7 +19,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Rewrite public product copy
+      - name: Rewrite all registered product pages
         shell: bash
         run: |
           python - <<'PY'
@@ -27,11 +27,205 @@ jobs:
           import re
           from collections import Counter
 
-          SYSTEMS = Path("systems")
-          EXCLUDE = {
-              "pet-care.html",
-              "member.html", "owner.html", "owner-ipad.html", "staff.html"
-          }
+          DATA = Path("systems-data.js")
+          WORKFLOW = Path(".github/workflows/product-customer-copy-brushup-v1.yml")
+          PET = Path("systems/pet-care.html")
+
+          if not DATA.exists():
+              raise SystemExit("systems-data.js not found")
+
+          data = DATA.read_text(encoding="utf-8")
+          registered = re.findall(r'"systemPage"\s*:\s*"([^"]+\.html)"', data)
+          registered = list(dict.fromkeys(registered))
+
+          print("REGISTERED SYSTEM PAGES:", len(registered))
+          if len(registered) != 50:
+              raise SystemExit(f"Expected exactly 50 registered system pages, found {len(registered)}")
+
+          paths = [Path(p) for p in registered]
+          missing = [str(p) for p in paths if not p.exists()]
+          if missing:
+              raise SystemExit("Missing registered product pages:\n" + "\n".join(missing))
+
+          def urls(html: str):
+              return Counter(re.findall(r'https?://[^"\'<>\s]+', html))
+
+          def function_names(html: str):
+              return Counter(re.findall(r'data-function-name=["\']([^"\']+)["\']', html))
+
+          def prices(html: str):
+              return Counter(re.findall(r'(?:\d{1,3}(?:,\d{3})+|\d+)円', html))
+
+          def stash_nonvisible(html: str):
+              saved = []
+              pattern = re.compile(
+                  r'<!--.*?-->|<script\b.*?</script>|<style\b.*?</style>',
+                  re.S | re.I
+              )
+              def repl(m):
+                  key = f"___DPRO_STASH_{len(saved)}___"
+                  saved.append(m.group(0))
+                  return key
+              return pattern.sub(repl, html), saved
+
+          def restore_nonvisible(html: str, saved):
+              for i, value in enumerate(saved):
+                  html = html.replace(f"___DPRO_STASH_{i}___", value)
+              return html
+
+          def clean_customer_text(value: str) -> str:
+              # Longer / specific phrases first.
+              exact = [
+                  (
+                      "START PACKAGEとsystems-data.jsでVERIFIEDになっている正式DEMOだけを表示します。初期表示では読み込みません。",
+                      "実際のデモ画面で、操作の流れをご確認いただけます。"
+                  ),
+                  (
+                      "START PACKAGEで固定された正式DEMOを必要時だけ読み込めます。",
+                      "このページのLIVE DEMOから、実際の画面と操作感をご確認いただけます。"
+                  ),
+                  (
+                      "「LIVE画面を読み込む」を押した時だけ、確認済みの正式DEMOを表示します。初期iframeは0本です。",
+                      "実際のデモ画面で、操作の流れをご確認いただけます。"
+                  ),
+                  (
+                      "「LIVE画面を読み込む」を押した時だけ、CENTRAL確認済みの正式DEMO URLを表示します。",
+                      "実際のデモ画面で、操作の流れをご確認いただけます。"
+                  ),
+                  (
+                      "いいえ。初期表示のiframeは0本で、操作を試す時だけ読み込む構成です。",
+                      "このページのLIVE DEMOから、実際の画面を開いて操作感をご確認いただけます。"
+                  ),
+                  (
+                      "ここではsystems-data.jsのVERIFIED固定マッピングをそのまま使用しています。",
+                      ""
+                  ),
+                  (
+                      "下記6項目はDPRO V3 FOUNDATIONのVERIFIED固定マッピングと一致させています。",
+                      "この業種で使う主な6機能を、実際の運用に沿って分かりやすくご紹介します。"
+                  ),
+                  (
+                      "DPRO V3 FOUNDATIONのVERIFIED固定マッピングと一致させています。",
+                      "実際の運用に沿って、主な機能を分かりやすくご紹介します。"
+                  ),
+                  (
+                      "以下はCENTRAL LOCKEDの正式6機能です。推測の機能は追加していません。",
+                      "この業種で使う主な6機能をご紹介します。"
+                  ),
+                  (
+                      "推測の機能は追加していません。",
+                      ""
+                  ),
+                  (
+                      "必要時だけ正式DEMO画面を読み込みます。",
+                      "ボタンを押すと、実際のデモ画面を操作できます。"
+                  ),
+                  (
+                      "必要時だけ正式DEMOを読み込みます。",
+                      "ボタンを押すと、実際のデモ画面を操作できます。"
+                  ),
+                  (
+                      "ページを開いた時にDEMO画面は自動読込されますか？",
+                      "実際の画面はどこから確認できますか？"
+                  ),
+                  (
+                      "営業LPやA4資料も確認できますか？",
+                      "詳しい資料も確認できますか？"
+                  ),
+                  (
+                      "はい。ページ下部の関連資料から営業LP、A4 HTML、A4 PDFへ移動できます。",
+                      "はい。ページ下部から、詳しい紹介ページやA4チラシ、PDF資料をご確認いただけます。"
+                  ),
+                  (
+                      "このページのVERIFIED LIVE DEMOで、実際の画面と操作感を確認します。",
+                      "このページのLIVE DEMOで、実際の画面と操作感をご確認いただけます。"
+                  ),
+              ]
+              for a, b in exact:
+                  value = value.replace(a, b)
+
+              # Common customer-facing vocabulary.
+              rules = [
+                  (r"CENTRAL確認済みの", ""),
+                  (r"CENTRAL LOCKEDの", ""),
+                  (r"確認済みの正式LIVE DEMO", "LIVE DEMO"),
+                  (r"確認済みの正式DEMO", "実際のデモ画面"),
+                  (r"確認済みLIVE DEMO", "LIVE DEMO"),
+                  (r"VERIFIED LIVE DEMO", "LIVE DEMO"),
+                  (r"VERIFIED DEMO", "LIVE DEMO"),
+                  (r"正式LIVE DEMO", "LIVE DEMO"),
+                  (r"正式DEMO URL", "デモ画面"),
+                  (r"正式DEMO画面", "デモ画面"),
+                  (r"正式DEMO", "デモ画面"),
+                  (r"正式な(\d+)機能", r"主な\1機能"),
+                  (r"(\d+)つの正式機能", r"\1つの主な機能"),
+                  (r"正式(\d+)機能", r"主な\1機能"),
+                  (r"正式機能", "主な機能"),
+                  (r"営業LPを見る", "詳しい紹介を見る"),
+                  (r"営業LP", "詳しい紹介ページ"),
+                  (r"A4 HTML", "A4チラシ"),
+                  (r"A4 PDF", "PDF資料"),
+                  (r"LIVE画面を読み込む", "実画面を開く"),
+                  (r"正式ページ", "製品ページ"),
+                  (r"正式実装", "対応内容"),
+                  (r"導入仕様", "導入内容"),
+                  (r"MOBILE FIRST", "スマホ対応"),
+              ]
+              for pat, rep in rules:
+                  value = re.sub(pat, rep, value)
+
+              # Repetitive generated function descriptions.
+              value = re.sub(
+                  r"「([^」]+)」に関する情報を、必要な時に確認しやすい形でまとめます。",
+                  r"\1を、必要な時にすぐ確認できるよう整理します。",
+                  value
+              )
+              value = re.sub(
+                  r"「([^」]+)」を業種専用の運用として扱い、予約・受付の確認先をまとめます。",
+                  r"\1をDPROでまとめて確認し、予約・受付をスムーズに進められます。",
+                  value
+              )
+              value = re.sub(
+                  r"「([^」]+)」をDPROの業種専用システム内で扱い、確認先をまとめます。",
+                  r"\1をDPROでまとめて確認し、必要な対応へつなげられます。",
+                  value
+              )
+              value = re.sub(
+                  r"「([^」]+)」を現場の確認項目として扱い、状況を追いやすくします。",
+                  r"\1の状況を確認しやすくし、次の対応を判断しやすくします。",
+                  value
+              )
+
+              value = re.sub(r"\s+([。、])", r"\1", value)
+              value = re.sub(r"。{2,}", "。", value)
+              return value
+
+          def rewrite_visible_text(html: str) -> str:
+              work, saved = stash_nonvisible(html)
+
+              # Only text between tags. Attribute values / URLs / data contracts stay untouched.
+              def repl(m):
+                  return ">" + clean_customer_text(m.group(1)) + "<"
+
+              work = re.sub(r">([^<>]+)<", repl, work)
+
+              # Remove an escaped internal marker that could otherwise render to customers.
+              work = re.sub(
+                  r"\s*&lt;!--\s*DPRO_V3_CANONICAL:.*?--&gt;\s*",
+                  "\n",
+                  work,
+                  flags=re.S
+              )
+
+              # Common LIVE heading: remove a forced break only when it splits the DEMO title.
+              work = re.sub(
+                  r'(<div class="ps-live-copy">.*?<h3>.*?)<br\s*/?>(.*?(?:LIVE DEMO|デモ画面).*?</h3>)',
+                  r"\1 \2",
+                  work,
+                  flags=re.S
+              )
+
+              return restore_nonvisible(work, saved)
 
           def visible_text(html: str) -> str:
               s = re.sub(r"<!--.*?-->", " ", html, flags=re.S)
@@ -41,297 +235,142 @@ jobs:
               s = s.replace("&lt;", "<").replace("&gt;", ">").replace("&amp;", "&")
               return re.sub(r"\s+", " ", s).strip()
 
-          def urls(html: str):
-              return Counter(re.findall(r'https?://[^"\'<>\s]+', html))
+          # Internal vocabulary that must not be visible to customers after the pass.
+          banned_visible = [
+              "CENTRAL LOCKED",
+              "CENTRAL確認済み",
+              "DPRO V3 FOUNDATION",
+              "VERIFIED固定マッピング",
+              "systems-data.jsのVERIFIED",
+              "START PACKAGE",
+              "初期iframe",
+              "MOBILE FIRST",
+              "390px",
+              "推測の機能",
+              "DPRO_V3_CANONICAL:",
+          ]
 
-          def functions(html: str):
-              return Counter(re.findall(r'data-function-name=["\']([^"\']+)["\']', html))
-
-          def prices(html: str):
-              return Counter(re.findall(r"(?:\d{1,3}(?:,\d{3})+|\d+)円", html))
-
-          def exact_replacements(s: str) -> str:
-              replacements = {
-                  "「LIVE画面を読み込む」を押した時だけ、確認済みの正式DEMOを表示します。初期iframeは0本です。":
-                      "実際のデモ画面で、操作の流れをご確認いただけます。",
-                  "START PACKAGEとsystems-data.jsでVERIFIEDになっている正式DEMOだけを表示します。初期表示では読み込みません。":
-                      "実際のデモ画面で、操作の流れをご確認いただけます。",
-                  "必要時だけ正式DEMOを読み込みます。":
-                      "ボタンを押すと、実際のデモ画面を操作できます。",
-                  "LIVE画面を読み込む": "実画面を開く",
-                  "ページを開いた時にDEMO画面は自動読込されますか？":
-                      "実際の画面はどこから確認できますか？",
-                  "いいえ。初期表示のiframeは0本で、操作を試す時だけ読み込む構成です。":
-                      "このページのLIVE DEMOから、実際の画面を開いて操作感をご確認いただけます。",
-                  "営業LPやA4資料も確認できますか？": "詳しい資料も確認できますか？",
-                  "はい。ページ下部の関連資料から営業LP、A4 HTML、A4 PDFへ移動できます。":
-                      "はい。ページ下部から、詳しい紹介ページやA4チラシ、PDF資料をご確認いただけます。",
-                  "営業LPを見る": "詳しい紹介を見る",
-                  "よくある確認事項。": "よくある質問。",
-                  "正式DEMOを確認": "実画面を確認",
-                  "このページのVERIFIED LIVE DEMOで、実際の画面と操作感を確認します。":
-                      "このページのLIVE DEMOで、実際の画面と操作感をご確認いただけます。",
-                  "ここではsystems-data.jsのVERIFIED固定マッピングをそのまま使用しています。": "",
-              }
-              for a, b in replacements.items():
-                  s = s.replace(a, b)
-              return s
-
-          def clean_faq_feature(match):
-              count = match.group(1)
-              answer = match.group(2)
-              answer = re.sub(r"\s*ここでは.*?使用しています。\s*$", "", answer)
-              return f"<summary>主な{count}機能は何ですか？</summary><p>{answer}</p>"
-
-          def regex_replacements(s: str) -> str:
-              # Customer-facing wording; URLs, prices and formal function names stay untouched.
-              s = re.sub(
-                  r"下記\s*(\d+)項目はDPRO V3 FOUNDATIONのVERIFIED固定マッピングと一致させています。",
-                  r"この業種で使う主な\1機能を、実際の運用に沿って分かりやすくご紹介します。",
-                  s,
-              )
-              s = re.sub(
-                  r"DPRO V3 FOUNDATIONのVERIFIED固定マッピングと一致させています。",
-                  "実際の運用に沿って、主な機能を分かりやすくご紹介します。",
-                  s,
-              )
-              s = re.sub(r"正式な(\d+)機能", r"主な\1機能", s)
-              s = re.sub(r"(\d+)つの正式機能", r"\1つの主な機能", s)
-              s = re.sub(r"正式(\d+)機能", r"主な\1機能", s)
-              s = s.replace("正式機能", "主な機能")
-
-              s = s.replace("01 / VERIFIED DEMO", "01 / LIVE DEMO")
-              s = re.sub(r"([A-Z0-9 &+._/-]+) VERIFIED LIVE", r"\1 LIVE DEMO", s)
-              s = s.replace("VERIFIED LIVE DEMO", "LIVE DEMO")
-              s = s.replace("確認済みの正式LIVE DEMO", "実際のLIVE DEMO")
-              s = s.replace("確認済みの正式DEMO", "実際のデモ画面")
-              s = s.replace("確認済みLIVE DEMO", "LIVE DEMO")
-              s = s.replace("正式LIVE DEMO", "LIVE DEMO")
-              s = s.replace("正式DEMO", "デモ画面")
-
-              # Remove the forced break only in the common LIVE DEMO heading.
-              s = re.sub(
-                  r'(<div class="ps-live-copy"><span class="ps-live-role">.*?</span><h3>.*?)<br\s*/?>(.*?LIVE DEMO</h3>)',
-                  r"\1 \2",
-                  s,
-                  flags=re.S,
-              )
-
-              # Improve generated, repetitive function descriptions.
-              s = re.sub(
-                  r"「([^」]+)」に関する情報を、必要な時に確認しやすい形でまとめます。",
-                  r"\1を、必要な時にすぐ確認できるよう整理します。",
-                  s,
-              )
-              s = re.sub(
-                  r"「([^」]+)」を業種専用の運用として扱い、予約・受付の確認先をまとめます。",
-                  r"\1をDPROでまとめて確認し、予約・受付をスムーズに進められます。",
-                  s,
-              )
-              s = re.sub(
-                  r"「([^」]+)」をDPROの業種専用システム内で扱い、確認先をまとめます。",
-                  r"\1をDPROでまとめて確認し、必要な対応へつなげられます。",
-                  s,
-              )
-              s = re.sub(
-                  r"「([^」]+)」を現場の確認項目として扱い、状況を追いやすくします。",
-                  r"\1の状況を確認しやすくし、次の対応を判断しやすくします。",
-                  s,
-              )
-
-              # Operating-flow copy: preserve the feature names, improve the explanation.
-              s = re.sub(
-                  r'(<article class="ps-flow-step"><span>STEP 01</span><h3>.*?</h3><p>)(.*?)(?:を確認します。)(</p>)',
-                  r"\1\2から受付・確認を始めます。\3",
-                  s,
-                  flags=re.S,
-              )
-              s = re.sub(
-                  r'(<article class="ps-flow-step"><span>STEP 02</span><h3>.*?</h3><p>)(.*?)(?:を確認します。)(</p>)',
-                  r"\1\2など、対応に必要な情報を確認します。\3",
-                  s,
-                  flags=re.S,
-              )
-              s = re.sub(
-                  r'(<article class="ps-flow-step"><span>STEP 03</span><h3>.*?</h3><p>)(.*?)(?:を確認します。)(</p>)',
-                  r"\1\2を見ながら、現場の対応を進めます。\3",
-                  s,
-                  flags=re.S,
-              )
-              s = re.sub(
-                  r'(<article class="ps-flow-step"><span>STEP 04</span><h3>.*?</h3><p>)(.*?)(?:を確認します。)(</p>)',
-                  r"\1\2まで、一つの流れで管理します。\3",
-                  s,
-                  flags=re.S,
-              )
-
-              s = re.sub(
-                  r"<summary>主な(\d+)機能は何ですか？</summary><p>(.*?)\s*</p>",
-                  clean_faq_feature,
-                  s,
-                  flags=re.S,
-              )
-              s = re.sub(
-                  r'(<div class="ps-section-heading"><p class="ps-kicker">FAQ</p><h2[^>]*>よくある質問。</h2><p>)(.*?)(</p></div>)',
-                  lambda m: (
-                      m.group(1)
-                      + re.sub(
-                          r".*?向けの対象、.*?月額料金について確認できます。",
-                          "対象業種、主な機能、デモ、資料、料金についてご案内します。",
-                          m.group(2),
-                      )
-                      + m.group(3)
-                  ),
-                  s,
-                  flags=re.S,
-              )
-
-              # Remove the escaped internal marker that could appear as visible text.
-              s = re.sub(r"\s*&lt;!--\s*DPRO_V3_CANONICAL:.*?--&gt;\s*", "\n", s, flags=re.S)
-
-              # Meta descriptions and remaining public wording.
-              s = s.replace("営業LP、A4資料", "詳しい紹介ページ、A4資料")
-              s = s.replace("営業LP", "詳しい紹介ページ")
-              s = s.replace("VERIFIED固定マッピング", "機能構成")
-              s = s.replace("START PACKAGE", "デモ構成")
-              s = re.sub(r"。\s*。</p>", "。</p>", s)
-              return s
-
-          def transform(s: str) -> str:
-              s = exact_replacements(s)
-              s = regex_replacements(s)
-              return s
-
-          targets = []
-          changed_html = []
-          changed_mirrors = []
+          changed = []
+          unchanged = []
           failures = []
+          pet_seen = False
 
-          for path in sorted(SYSTEMS.glob("*.html")):
-              if path.name in EXCLUDE:
-                  continue
-
+          for path in paths:
               before = path.read_text(encoding="utf-8")
 
-              # Only the common customer product template; skip utility/proxy pages.
-              if 'class="ps-hero"' not in before or "data-system-code=" not in before:
+              if path == PET:
+                  pet_seen = True
+                  print("PROTECTED:", path)
                   continue
 
-              targets.append(path)
               before_urls = urls(before)
-              before_functions = functions(before)
+              before_functions = function_names(before)
               before_prices = prices(before)
 
-              after = transform(before)
+              after = rewrite_visible_text(before)
 
               # Contract guards.
               if urls(after) != before_urls:
                   failures.append(f"{path}: URL set changed")
-              if functions(after) != before_functions:
+              if function_names(after) != before_functions:
                   failures.append(f"{path}: data-function-name changed")
               if prices(after) != before_prices:
                   failures.append(f"{path}: price strings changed")
 
-              banned = [
-                  "DPRO V3 FOUNDATION",
-                  "VERIFIED固定マッピング",
-                  "初期iframe",
-                  "CENTRAL LOCKED",
-                  "MOBILE FIRST",
-                  "390px",
-                  "systems-data.jsのVERIFIED",
-                  "START PACKAGEとsystems-data.js",
-                  "確認済みの正式DEMO",
-                  "確認済みの正式LIVE DEMO",
-              ]
               vt = visible_text(after)
-              remain = [x for x in banned if x in vt]
+              remain = [term for term in banned_visible if term in vt]
               if remain:
-                  failures.append(f"{path}: public internal wording remains: {remain}")
+                  failures.append(f"{path}: internal wording remains visible: {remain}")
 
               if after != before:
-                  marker = "<!-- DPRO CUSTOMER COPY BRUSHUP V1.0 / 2026-08-16 -->"
+                  marker = "<!-- DPRO CUSTOMER COPY BRUSHUP V1.1 / 2026-08-16 -->"
                   if marker not in after:
                       after = after.replace("</head>", marker + "\n</head>", 1)
                   path.write_text(after, encoding="utf-8")
-                  changed_html.append(path)
+                  changed.append(path)
+              else:
+                  unchanged.append(path)
 
-              # Keep the .html.txt mirror aligned so a future recovery does not restore old copy.
+              # Keep recovery mirror aligned when present.
               mirror = Path(str(path) + ".txt")
               if mirror.exists():
                   m_before = mirror.read_text(encoding="utf-8")
-                  m_after = transform(m_before)
+                  m_after = rewrite_visible_text(m_before)
                   if m_after != m_before:
-                      marker = "<!-- DPRO CUSTOMER COPY BRUSHUP V1.0 / 2026-08-16 -->"
+                      marker = "<!-- DPRO CUSTOMER COPY BRUSHUP V1.1 / 2026-08-16 -->"
                       if marker not in m_after:
                           m_after = m_after.replace("</head>", marker + "\n</head>", 1)
                       mirror.write_text(m_after, encoding="utf-8")
-                      changed_mirrors.append(mirror)
 
-          print(f"TARGET PRODUCT PAGES: {len(targets)}")
-          print(f"CHANGED HTML PAGES: {len(changed_html)}")
-          print(f"CHANGED TXT MIRRORS: {len(changed_mirrors)}")
+          if not pet_seen:
+              failures.append("PET CARE registered page was not found/protected")
 
-          for p in changed_html:
-              print("  CHANGED", p)
-
-          if len(targets) < 40:
-              failures.append(f"Expected at least 40 common product pages, found {len(targets)}")
-          if len(changed_html) < 35:
-              failures.append(f"Expected broad copy cleanup, only {len(changed_html)} pages changed")
+          print("REGISTERED:", len(paths))
+          print("PROTECTED PET CARE:", 1 if pet_seen else 0)
+          print("REVIEWED OTHER PRODUCTS:", len(paths) - (1 if pet_seen else 0))
+          print("CHANGED:", len(changed))
+          print("ALREADY CLEAN / UNCHANGED:", len(unchanged))
 
           if failures:
               print("\nVALIDATION FAIL")
-              for f in failures:
-                  print(" -", f)
+              for failure in failures:
+                  print(" -", failure)
               raise SystemExit(1)
 
-          Path("/tmp/product-copy-changed.txt").write_text(
-              "\n".join(str(p) for p in changed_html), encoding="utf-8"
+          Path("/tmp/dpro-product-pages.txt").write_text(
+              "\n".join(str(p) for p in paths), encoding="utf-8"
           )
-          print("\nVALIDATION PASS")
+          print("\nCUSTOMER COPY VALIDATION PASS")
           PY
 
-      - name: Static QA
+      - name: Cross-page static QA
         shell: bash
         run: |
           python - <<'PY'
           from pathlib import Path
+          import re
 
-          changed = [
-              Path(x)
-              for x in Path("/tmp/product-copy-changed.txt").read_text(encoding="utf-8").splitlines()
+          paths = [
+              Path(x) for x in
+              Path("/tmp/dpro-product-pages.txt").read_text(encoding="utf-8").splitlines()
               if x
           ]
-          assert changed, "No changed pages"
 
-          for p in changed:
+          assert len(paths) == 50, f"Expected 50 product pages, got {len(paths)}"
+
+          for p in paths:
               s = p.read_text(encoding="utf-8")
-              assert '<script src="../systems-data.js"></script>' in s, f"{p}: systems-data.js import missing"
-              assert '<script src="../dpro-v3.js"></script>' in s, f"{p}: dpro-v3.js import missing"
-              assert "data-function-name=" in s, f"{p}: function contract missing"
-              assert "5,500円" in s, f"{p}: monthly price missing"
-              assert "&lt;!-- DPRO_V3_CANONICAL:" not in s, f"{p}: escaped internal marker still visible"
+              assert "<html" in s.lower(), f"{p}: HTML root missing"
+              assert "</html>" in s.lower(), f"{p}: HTML closing missing"
 
-          print("STATIC QA PASS:", len(changed), "pages")
+              if p.name != "pet-care.html":
+                  # Main customer product pages should retain common dependencies where present.
+                  if "dpro-v3.js" not in s:
+                      raise AssertionError(f"{p}: dpro-v3.js reference missing")
+                  if "systems-data.js" not in s:
+                      raise AssertionError(f"{p}: systems-data.js reference missing")
+
+          print("CROSS-PAGE STATIC QA PASS: 50 / 50")
           PY
 
-      - name: Commit one-shot result and remove workflow
+      - name: Commit successful brushup and remove one-shot workflow
         shell: bash
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-          # This is a one-shot workflow. Remove it after a successful QA.
+          # Remove the one-shot workflow only after both QA stages pass.
           git rm -f .github/workflows/product-customer-copy-brushup-v1.yml
 
           git add systems/*.html
           git add systems/*.html.txt 2>/dev/null || true
+
+          git status --short
 
           if git diff --cached --quiet; then
             echo "No changes to commit"
             exit 0
           fi
 
-          git commit -m "Brush up all PRODUCT customer-facing product copy"
+          git commit -m "Brush up PRODUCT customer-facing copy across all 50 products"
           git push origin HEAD:main
