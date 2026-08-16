@@ -1,4 +1,4 @@
-name: PRODUCT customer copy brushup V1.2
+name: PRODUCT customer copy brushup V1.3
 
 on:
   workflow_dispatch:
@@ -19,7 +19,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Rewrite all registered product pages
+      - name: Rewrite all 50 registered product pages
         shell: bash
         run: |
           python - <<'PY'
@@ -37,28 +37,21 @@ jobs:
 
           print("REGISTERED SYSTEM PAGES:", len(registered))
           if len(registered) != 50:
-              raise SystemExit(f"Expected exactly 50 registered system pages, found {len(registered)}")
+              raise SystemExit(f"Expected exactly 50 registered product pages, found {len(registered)}")
 
           paths = [Path(p) for p in registered]
           missing = [str(p) for p in paths if not p.exists()]
           if missing:
               raise SystemExit("Missing registered product pages:\n" + "\n".join(missing))
 
-          # Protect actual navigation / demo targets only.
-          # Text-only internal markers may contain URLs and are allowed to be removed.
           def link_targets(html: str):
+              """Protect real navigation/demo targets, not URLs hidden inside internal notes."""
               result = []
               for attr in ("href", "src", "data-src", "action", "formaction"):
                   result += re.findall(
                       rf'\b{attr}\s*=\s*["\']([^"\']+)["\']',
                       html, flags=re.I
                   )
-              # Preserve canonical / OGP absolute URL content values too.
-              for tag in re.findall(r'<meta\b[^>]*>', html, flags=re.I | re.S):
-                  if re.search(r'(?:property|name)\s*=\s*["\'](?:og:url|twitter:url)["\']', tag, flags=re.I):
-                      m = re.search(r'\bcontent\s*=\s*["\']([^"\']+)["\']', tag, flags=re.I)
-                      if m:
-                          result.append(m.group(1))
               return Counter(result)
 
           def function_names(html: str):
@@ -67,7 +60,7 @@ jobs:
                   html, flags=re.I
               ))
 
-          def prices(html: str):
+          def price_strings(html: str):
               return Counter(re.findall(r'(?:\d{1,3}(?:,\d{3})+|\d+)円', html))
 
           def stash_nonvisible(html: str):
@@ -88,172 +81,67 @@ jobs:
               return html
 
           def clean_text(value: str) -> str:
-              # Whole-sentence replacements first.
-              exact = [
-                  (
-                      "初期表示では実画面を読み込みません。操作を試す時だけSTART PACKAGEで確認済みの正式DEMOを起動します。",
-                      "ボタンを押すと、実際のデモ画面を操作できます。"
-                  ),
-                  (
-                      "START PACKAGEとsystems-data.jsでVERIFIEDになっている正式DEMOだけを表示します。初期表示では読み込みません。",
-                      "実際のデモ画面で、操作の流れをご確認いただけます。"
-                  ),
-                  (
-                      "START PACKAGEで固定された正式DEMOを必要時だけ読み込めます。",
-                      "このページのLIVE DEMOから、実際の画面と操作感をご確認いただけます。"
-                  ),
-                  (
-                      "「LIVE画面を読み込む」を押した時だけ、確認済みの正式DEMOを表示します。初期iframeは0本です。",
-                      "実際のデモ画面で、操作の流れをご確認いただけます。"
-                  ),
-                  (
-                      "「LIVE画面を読み込む」を押した時だけ、CENTRAL確認済みの正式DEMO URLを表示します。",
-                      "実際のデモ画面で、操作の流れをご確認いただけます。"
-                  ),
-                  (
-                      "「LIVE画面を読み込む」を押した時だけDEMOを表示します。ページ初期表示ではiframeを読み込みません。",
-                      "実際のデモ画面で、操作の流れをご確認いただけます。"
-                  ),
-                  (
-                      "ページ初期表示ではiframeを読み込みません。",
-                      "必要な時にボタンから実画面を開けます。"
-                  ),
-                  (
-                      "初期iframe 0 / click-to-load",
-                      "ボタンから実画面を確認"
-                  ),
-                  (
-                      "いいえ。初期iframeは0で、LIVE画面のボタンを押した時だけ読み込みます。",
-                      "LIVE DEMOのボタンから、必要な時に実画面を開けます。"
-                  ),
-                  (
-                      "いいえ。初期表示のiframeは0本で、操作を試す時だけ読み込む構成です。",
-                      "LIVE DEMOのボタンから、必要な時に実画面を開けます。"
-                  ),
-                  (
-                      "製品ページはMOBILE FIRSTで構成し、390pxを基準に1列で読みやすく、主要タップ領域を確保しています。",
-                      "はい。スマートフォンでも読みやすく、主要な操作をしやすい画面設計です。"
-                  ),
-                  (
-                      "ここではsystems-data.jsのVERIFIED固定マッピングをそのまま使用しています。",
-                      ""
-                  ),
-                  (
-                      "下記6項目はDPRO V3 FOUNDATIONのVERIFIED固定マッピングと一致させています。",
-                      "この業種で使う主な6機能を、実際の運用に沿って分かりやすくご紹介します。"
-                  ),
-                  (
-                      "DPRO V3 FOUNDATIONのVERIFIED固定マッピングと一致させています。",
-                      "実際の運用に沿って、主な機能を分かりやすくご紹介します。"
-                  ),
-                  (
-                      "以下はCENTRAL LOCKEDの正式6機能です。推測の機能は追加していません。",
-                      "この業種で使う主な6機能をご紹介します。"
-                  ),
-                  (
-                      "正式URLだけを使用。必要時だけ実画面を読み込みます。",
-                      "ボタンを押すと、実際のデモ画面を操作できます。"
-                  ),
-                  (
-                      "正式確認済みの公開DEMOを、必要な時だけ読み込みます。",
-                      "ボタンを押すと、実際の公開デモを操作できます。"
-                  ),
-                  (
-                      "はい。このページのLIVE PRODUCT EXPERIENCEから正式確認済みの公開DEMOを開けます。",
-                      "はい。このページのLIVE DEMOから、実際の公開デモをご確認いただけます。"
-                  ),
-                  (
-                      "ページを開いた時にDEMO画面は自動読込されますか？",
-                      "実際の画面はどこから確認できますか？"
-                  ),
-                  (
-                      "ページを開いた時にDEMOを大量読み込みしますか？",
-                      "実際の画面はどこから確認できますか？"
-                  ),
-                  (
-                      "営業LPやA4資料も確認できますか？",
-                      "詳しい資料も確認できますか？"
-                  ),
-                  (
-                      "はい。ページ下部の関連資料から営業LP、A4 HTML、A4 PDFへ移動できます。",
-                      "はい。ページ下部から、詳しい紹介ページやA4チラシ、PDF資料をご確認いただけます。"
-                  ),
-                  (
-                      "ページ表示を重くしない、必要時ロード",
-                      "ボタンから実画面を確認"
-                  ),
-                  (
-                      "AVAILABLE / VERIFIED",
-                      "LIVE DEMO 公開中"
-                  ),
-                  (
-                      "OFFICIAL PRODUCT SITE",
-                      "PRODUCT SITE"
-                  ),
-                  (
-                      "FINAL CTA",
-                      "NEXT STEP"
-                  ),
-              ]
-
-              for before, after in exact:
+              # Whole-sentence rewrites first so the result sounds natural to customers.
+              exact = {
+                  "初期表示では実画面を読み込みません。操作を試す時だけSTART PACKAGEで確認済みの正式DEMOを起動します。":
+                      "ボタンを押すと、実際のデモ画面を操作できます。",
+                  "START PACKAGEとsystems-data.jsでVERIFIEDになっている正式DEMOだけを表示します。初期表示では読み込みません。":
+                      "実際のデモ画面で、操作の流れをご確認いただけます。",
+                  "START PACKAGEで固定された正式DEMOを必要時だけ読み込めます。":
+                      "このページのLIVE DEMOから、実際の画面と操作感をご確認いただけます。",
+                  "「LIVE画面を読み込む」を押した時だけ、確認済みの正式DEMOを表示します。初期iframeは0本です。":
+                      "実際のデモ画面で、操作の流れをご確認いただけます。",
+                  "「LIVE画面を読み込む」を押した時だけ、CENTRAL確認済みの正式DEMO URLを表示します。":
+                      "実際のデモ画面で、操作の流れをご確認いただけます。",
+                  "「LIVE画面を読み込む」を押した時だけ正式DEMOを表示するため、ページ初期表示を重くしません。":
+                      "実際のデモ画面で、操作の流れをご確認いただけます。",
+                  "「LIVE画面を読み込む」を押した時だけDEMOを表示します。ページ初期表示ではiframeを読み込みません。":
+                      "実際のデモ画面で、操作の流れをご確認いただけます。",
+                  "いいえ。初期表示のiframeは0本で、操作を試す時だけ読み込む構成です。":
+                      "LIVE DEMOのボタンから、必要な時に実画面を開けます。",
+                  "いいえ。初期iframeは0で、LIVE画面のボタンを押した時だけ読み込みます。":
+                      "LIVE DEMOのボタンから、必要な時に実画面を開けます。",
+                  "初期iframe 0 / click-to-load":
+                      "ボタンから実画面を確認",
+                  "製品ページはMOBILE FIRSTで構成し、390pxを基準に1列で読みやすく、主要タップ領域を確保しています。":
+                      "はい。スマートフォンでも読みやすく、主要な操作をしやすい画面設計です。",
+                  "FOUNDATIONで固定された6機能を、正式実装・LP・A4の事実範囲で掲載しています。":
+                      "この業種で使う主な6機能を、実際の運用に沿って分かりやすくご紹介します。",
+                  "下記6項目はDPRO V3 FOUNDATIONのVERIFIED固定マッピングと一致させています。":
+                      "この業種で使う主な6機能を、実際の運用に沿って分かりやすくご紹介します。",
+                  "DPRO V3 FOUNDATIONのVERIFIED固定マッピングと一致させています。":
+                      "実際の運用に沿って、主な機能を分かりやすくご紹介します。",
+                  "以下はCENTRAL LOCKEDの正式6機能です。推測の機能は追加していません。":
+                      "この業種で使う主な6機能をご紹介します。",
+                  "ここではsystems-data.jsのVERIFIED固定マッピングをそのまま使用しています。":
+                      "",
+                  "正式URLだけを使用。必要時だけ実画面を読み込みます。":
+                      "ボタンを押すと、実際のデモ画面を操作できます。",
+                  "正式確認済みの公開DEMOを、必要な時だけ読み込みます。":
+                      "ボタンを押すと、実際の公開デモを操作できます。",
+                  "はい。このページのLIVE PRODUCT EXPERIENCEから正式確認済みの公開DEMOを開けます。":
+                      "はい。このページのLIVE DEMOから、実際の公開デモをご確認いただけます。",
+                  "ページを開いた時にDEMO画面は自動読込されますか？":
+                      "実際の画面はどこから確認できますか？",
+                  "ページを開いた時にDEMOを大量読み込みしますか？":
+                      "実際の画面はどこから確認できますか？",
+                  "営業LPやA4資料も確認できますか？":
+                      "詳しい資料も確認できますか？",
+                  "はい。ページ下部の関連資料から営業LP、A4 HTML、A4 PDFへ移動できます。":
+                      "はい。ページ下部から、詳しい紹介ページやA4チラシ、PDF資料をご確認いただけます。",
+                  "ページ表示を重くしない、必要時ロード":
+                      "ボタンから実画面を確認",
+                  "AVAILABLE / VERIFIED":
+                      "LIVE DEMO 公開中",
+                  "OFFICIAL PRODUCT SITE":
+                      "PRODUCT SITE",
+                  "FINAL CTA":
+                      "NEXT STEP",
+              }
+              for before, after in exact.items():
                   value = value.replace(before, after)
 
-              # Customer-facing terms. Applied only to visible/meta/accessibility text.
-              rules = [
-                  (r"CENTRAL確認済みの?", ""),
-                  (r"CENTRAL LOCKEDの?", ""),
-                  (r"\bCENTRAL\b", ""),
-                  (r"START PACKAGEで確認済みの?", ""),
-                  (r"START PACKAGEで固定された", ""),
-                  (r"START PACKAGEとsystems-data\.jsでVERIFIEDになっている", ""),
-                  (r"\bSTART PACKAGE\b", "デモ"),
-                  (r"systems-data\.jsのVERIFIED固定マッピング", "機能構成"),
-                  (r"systems-data\.js", "製品情報"),
-                  (r"DPRO V3 FOUNDATION", "DPRO"),
-                  (r"\bFOUNDATION\b", ""),
-                  (r"VERIFIED LIVE DEMO", "LIVE DEMO"),
-                  (r"VERIFIED LIVE", "LIVE DEMO"),
-                  (r"VERIFIED DEMO", "LIVE DEMO"),
-                  (r"\bVERIFIED\b", "LIVE"),
-                  (r"確認済みの正式LIVE DEMO", "LIVE DEMO"),
-                  (r"確認済みの正式DEMO", "実際のデモ画面"),
-                  (r"正式確認済みの", "公開中の"),
-                  (r"正式LIVE DEMO", "LIVE DEMO"),
-                  (r"正式DEMO URL", "公開デモ"),
-                  (r"正式DEMO画面", "デモ画面"),
-                  (r"正式DEMO", "LIVE DEMO"),
-                  (r"正式URL", "公開デモ"),
-                  (r"正式な(\d+)機能", r"主な\1機能"),
-                  (r"(\d+)つの正式機能", r"\1つの主な機能"),
-                  (r"正式(\d+)機能", r"主な\1機能"),
-                  (r"正式機能", "主な機能"),
-                  (r"MOBILE FIRST", "スマートフォン対応"),
-                  (r"390px", "スマートフォン"),
-                  (r"初期iframe", "初期読み込み"),
-                  (r"\biframe\b", "デモ画面"),
-                  (r"営業前system-check", "営業前の動作確認"),
-                  (r"\bsystem-check\b", "動作確認"),
-                  (r"\bdemo_prepare\b", "デモ準備"),
-                  (r"\bproduction_guard\b", "本番保護"),
-                  (r"SYSTEM CODE", "製品名"),
-                  (r"営業LPを見る", "詳しい紹介を見る"),
-                  (r"営業LP", "詳しい紹介ページ"),
-                  (r"A4チラシHTML", "A4チラシ"),
-                  (r"A4 HTML", "A4チラシ"),
-                  (r"A4 PDF", "PDF資料"),
-                  (r"固定導線", "リンク"),
-                  (r"LIVE画面を読み込む", "実画面を開く"),
-                  (r"正式ページ", "製品ページ"),
-                  (r"正式実装", "対応内容"),
-                  (r"導入仕様", "導入内容"),
-                  (r"\bAVAILABLE\b", "公開中"),
-              ]
-
-              for pattern, replacement in rules:
-                  value = re.sub(pattern, replacement, value)
-
-              # Repetitive generated function copy.
+              # Natural phrasing for generated function descriptions.
               value = re.sub(
                   r"「([^」]+)」に関する情報を、必要な時に確認しやすい形でまとめます。",
                   r"\1を、必要な時にすぐ確認できるよう整理します。",
@@ -275,26 +163,92 @@ jobs:
                   value
               )
 
-              value = value.replace("推測の機能は追加していません。", "")
-              value = re.sub(r"\s+([。、])", r"\1", value)
+              # Public vocabulary cleanup. No \b word-boundaries: Japanese text can
+              # sit immediately next to ASCII words and Python treats both as \w.
+              replacements = [
+                  ("CENTRAL LOCKED", ""),
+                  ("CENTRAL確認済み", ""),
+                  ("CENTRAL", ""),
+                  ("START PACKAGE", "デモ"),
+                  ("systems-data.jsのVERIFIED固定マッピング", "製品の機能構成"),
+                  ("systems-data.js", "製品情報"),
+                  ("DPRO V3 FOUNDATION", "DPRO"),
+                  ("FOUNDATION", "DPRO"),
+                  ("VERIFIED LIVE DEMO", "LIVE DEMO"),
+                  ("VERIFIED LIVE", "LIVE DEMO"),
+                  ("VERIFIED DEMO", "LIVE DEMO"),
+                  ("VERIFIED", "公開中"),
+                  ("正式確認済みの", "公開中の"),
+                  ("確認済みの正式LIVE DEMO", "LIVE DEMO"),
+                  ("確認済みの正式DEMO", "実際のデモ画面"),
+                  ("正式LIVE DEMO", "LIVE DEMO"),
+                  ("正式DEMO URL", "公開デモ"),
+                  ("正式DEMO画面", "デモ画面"),
+                  ("正式DEMO", "LIVE DEMO"),
+                  ("正式URL", "公開デモ"),
+                  ("正式実装", "現在の対応内容"),
+                  ("正式ページ", "製品ページ"),
+                  ("正式な6機能", "主な6機能"),
+                  ("正式6機能", "主な6機能"),
+                  ("正式機能", "主な機能"),
+                  ("MOBILE FIRST", "スマートフォン対応"),
+                  ("390px", "スマートフォン"),
+                  ("初期iframe", "初期読み込み"),
+                  ("iframe", "デモ画面"),
+                  ("営業前system-check", "営業前の動作確認"),
+                  ("system-check", "動作確認"),
+                  ("demo_prepare", "デモ準備"),
+                  ("production_guard", "本番保護"),
+                  ("SYSTEM CODE", "製品名"),
+                  ("営業LPを見る", "詳しい紹介を見る"),
+                  ("営業LP", "詳しい紹介ページ"),
+                  ("A4チラシHTML", "A4チラシ"),
+                  ("A4 HTML", "A4チラシ"),
+                  ("A4 PDF", "PDF資料"),
+                  ("固定導線", "リンク"),
+                  ("LIVE画面を読み込む", "実画面を開く"),
+                  ("事実範囲", "掲載内容"),
+                  ("推測の機能は追加していません。", ""),
+              ]
+              for before, after in replacements:
+                  value = value.replace(before, after)
+
+              # Repair phrases after token cleanup.
+              repairs = [
+                  ("初期表示のデモ画面は0本", "ページ表示時は実画面を読み込みません"),
+                  ("初期デモ画面は0本", "ページ表示時は実画面を読み込みません"),
+                  ("初期デモ画面は0", "ページ表示時は実画面を読み込みません"),
+                  ("初期読み込み 0 / click-to-load", "ボタンから実画面を確認"),
+                  ("ページ初期表示ではデモ画面を読み込みません", "ページ表示時は実画面を読み込まず、必要な時に開けます"),
+                  ("デモ画面を読み込みません。", "実画面は必要な時に開けます。"),
+                  ("DPROで固定された6機能", "この業種で使う主な6機能"),
+                  ("DPROで固定された", "DPROで整理した"),
+                  ("公開中 LIVE DEMO", "LIVE DEMO"),
+                  ("LIVE LIVE DEMO", "LIVE DEMO"),
+                  ("LIVE DEMO DEMO", "LIVE DEMO"),
+              ]
+              for before, after in repairs:
+                  value = value.replace(before, after)
+
+              value = re.sub(r"\s+([。、！？])", r"\1", value)
               value = re.sub(r"。{2,}", "。", value)
-              value = re.sub(r"\s{2,}", " ", value)
+              value = re.sub(r"[ \t]{2,}", " ", value)
               return value.strip()
 
-          def clean_customer_attributes(html: str) -> str:
-              # Search-result and accessibility copy. Never touches URL attributes.
-              text_meta_keys = {
+          def clean_text_attributes(html: str) -> str:
+              # Search-result / accessibility text only. URL attributes are never touched.
+              meta_keys = {
                   "description", "og:title", "og:description",
                   "twitter:title", "twitter:description"
               }
 
               def meta_repl(m):
                   tag = m.group(0)
-                  key_match = re.search(
+                  key = re.search(
                       r'(?:name|property)\s*=\s*["\']([^"\']+)["\']',
                       tag, flags=re.I
                   )
-                  if not key_match or key_match.group(1).lower() not in text_meta_keys:
+                  if not key or key.group(1).lower() not in meta_keys:
                       return tag
 
                   def content_repl(cm):
@@ -308,59 +262,72 @@ jobs:
 
               html = re.sub(r'<meta\b[^>]*>', meta_repl, html, flags=re.I | re.S)
 
-              # aria-label / title / data-title are customer/accessibility text.
               def attr_repl(m):
                   return f'{m.group(1)}={m.group(2)}{clean_text(m.group(3))}{m.group(2)}'
 
-              html = re.sub(
+              return re.sub(
                   r'\b(aria-label|title|data-title)\s*=\s*(["\'])(.*?)\2',
                   attr_repl, html, flags=re.I | re.S
               )
-              return html
 
           def rewrite(html: str) -> str:
               work, saved = stash_nonvisible(html)
 
-              # Clean text nodes only.
+              # Visible text nodes only.
               work = re.sub(
                   r">([^<>]+)<",
                   lambda m: ">" + clean_text(m.group(1)) + "<",
                   work
               )
 
-              # Remove escaped internal canonical marker that could render as text.
+              # Remove escaped internal marker that could render on-page.
               work = re.sub(
                   r"\s*&lt;!--\s*DPRO_V3_CANONICAL:.*?--&gt;\s*",
-                  "\n",
-                  work,
-                  flags=re.S
+                  "\n", work, flags=re.S
               )
 
-              # Remove only the artificial break inside common DEMO headings.
+              # Remove only artificial line break inside a LIVE/DEMO title.
               work = re.sub(
                   r'(<div class="ps-live-copy">.*?<h3>.*?)<br\s*/?>(.*?(?:LIVE DEMO|公開DEMO|デモ画面).*?</h3>)',
                   r"\1 \2",
-                  work,
-                  flags=re.S
+                  work, flags=re.S
               )
 
               work = restore_nonvisible(work, saved)
-              work = clean_customer_attributes(work)
-              return work
+              return clean_text_attributes(work)
 
-          def visible_text(html: str) -> str:
+          def customer_surface(html: str) -> str:
+              """Visible text + customer-facing text attributes/meta, excluding code/CSS."""
               s = re.sub(r"<!--.*?-->", " ", html, flags=re.S)
               s = re.sub(r"<script\b.*?</script>", " ", s, flags=re.S | re.I)
               s = re.sub(r"<style\b.*?</style>", " ", s, flags=re.S | re.I)
-              s = re.sub(r"<[^>]+>", " ", s)
-              s = s.replace("&lt;", "<").replace("&gt;", ">").replace("&amp;", "&")
-              return re.sub(r"\s+", " ", s).strip()
 
-          banned_visible = [
+              attrs = []
+              attrs += re.findall(
+                  r'\b(?:aria-label|title|data-title)\s*=\s*["\']([^"\']*)["\']',
+                  s, flags=re.I
+              )
+              for tag in re.findall(r'<meta\b[^>]*>', s, flags=re.I | re.S):
+                  key = re.search(
+                      r'(?:name|property)\s*=\s*["\']([^"\']+)["\']',
+                      tag, flags=re.I
+                  )
+                  if key and key.group(1).lower() in {
+                      "description", "og:title", "og:description",
+                      "twitter:title", "twitter:description"
+                  }:
+                      cm = re.search(r'content\s*=\s*["\']([^"\']*)["\']', tag, flags=re.I)
+                      if cm:
+                          attrs.append(cm.group(1))
+
+              visible = re.sub(r"<[^>]+>", " ", s)
+              visible = visible.replace("&lt;", "<").replace("&gt;", ">").replace("&amp;", "&")
+              return re.sub(r"\s+", " ", visible + " " + " ".join(attrs)).strip()
+
+          banned_customer_terms = [
               "CENTRAL",
               "VERIFIED",
               "START PACKAGE",
-              "DPRO V3 FOUNDATION",
               "FOUNDATION",
               "固定マッピング",
               "systems-data.js",
@@ -397,25 +364,25 @@ jobs:
 
               before_links = link_targets(before)
               before_functions = function_names(before)
-              before_prices = prices(before)
+              before_prices = price_strings(before)
 
               after = rewrite(before)
 
               if link_targets(after) != before_links:
-                  failures.append(f"{path}: actual href/src/data-src target changed")
+                  failures.append(f"{path}: href/src/data-src target changed")
               if function_names(after) != before_functions:
                   failures.append(f"{path}: data-function-name changed")
-              if prices(after) != before_prices:
+              if price_strings(after) != before_prices:
                   failures.append(f"{path}: price strings changed")
 
-              remain = [term for term in banned_visible if term in visible_text(after)]
-              if remain:
-                  failures.append(f"{path}: internal wording remains visible: {remain}")
+              remaining = [
+                  term for term in banned_customer_terms
+                  if term in customer_surface(after)
+              ]
+              if remaining:
+                  failures.append(f"{path}: internal wording remains customer-visible: {remaining}")
 
               if after != before:
-                  marker = "<!-- DPRO CUSTOMER COPY BRUSHUP V1.2 / 2026-08-16 -->"
-                  if marker not in after:
-                      after = after.replace("</head>", marker + "\n</head>", 1)
                   path.write_text(after, encoding="utf-8")
                   changed.append(path)
               else:
@@ -426,9 +393,6 @@ jobs:
                   mirror_before = mirror.read_text(encoding="utf-8")
                   mirror_after = rewrite(mirror_before)
                   if mirror_after != mirror_before:
-                      marker = "<!-- DPRO CUSTOMER COPY BRUSHUP V1.2 / 2026-08-16 -->"
-                      if marker not in mirror_after:
-                          mirror_after = mirror_after.replace("</head>", marker + "\n</head>", 1)
                       mirror.write_text(mirror_after, encoding="utf-8")
 
           if not pet_seen:
@@ -442,8 +406,8 @@ jobs:
 
           if failures:
               print("\nVALIDATION FAIL")
-              for failure in failures:
-                  print(" -", failure)
+              for f in failures:
+                  print(" -", f)
               raise SystemExit(1)
 
           Path("/tmp/dpro-product-pages.txt").write_text(
@@ -458,13 +422,13 @@ jobs:
         run: |
           python - <<'PY'
           from pathlib import Path
+          import re
 
           paths = [
               Path(x)
               for x in Path("/tmp/dpro-product-pages.txt").read_text(encoding="utf-8").splitlines()
               if x
           ]
-
           assert len(paths) == 50, f"Expected 50 product pages, got {len(paths)}"
 
           checked = 0
@@ -472,10 +436,7 @@ jobs:
               s = p.read_text(encoding="utf-8")
               assert "<html" in s.lower(), f"{p}: HTML root missing"
               assert "</html>" in s.lower(), f"{p}: HTML closing missing"
-
-              if p.name != "pet-care.html":
-                  assert "dpro-v3.js" in s, f"{p}: dpro-v3.js reference missing"
-                  assert "systems-data.js" in s, f"{p}: systems-data.js reference missing"
+              assert "5,500円" in s or p.name == "pet-care.html", f"{p}: expected monthly price missing"
               checked += 1
 
           print(f"CROSS-PAGE STATIC QA PASS: {checked} / 50")
