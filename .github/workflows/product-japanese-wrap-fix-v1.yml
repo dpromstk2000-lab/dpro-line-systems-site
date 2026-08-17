@@ -1,4 +1,4 @@
-name: PRODUCT Japanese mobile wrap fix V1.0R3
+name: PRODUCT Japanese mobile wrap fix V1.0R4
 
 on:
   push:
@@ -172,38 +172,23 @@ jobs:
         run: |
           set -euo pipefail
           cat > japanese-wrap-v1.css <<'CSS'
-          /* DPRO PRODUCT JAPANESE MOBILE WRAP V1.0 */
+          /* DPRO PRODUCT JAPANESE MOBILE WRAP V1.0R4 */
           @media (max-width:760px){
             .dpro-jp-wrap-target{
               line-break:strict!important;
               word-break:normal!important;
-              overflow-wrap:normal!important;
-              text-wrap:balance;
+              overflow-wrap:break-word!important;
               min-width:0!important;
               max-width:100%!important
             }
-            .dpro-jp-segment{display:inline;white-space:nowrap!important}
-            .dpro-jp-segment--relax{
-              white-space:normal!important;
-              word-break:normal!important;
-              overflow-wrap:anywhere!important
-            }
-            html.dpro-jp-wrap-safe .dpro-jp-segment:not(.dpro-jp-segment--hard){
-              white-space:normal!important;
-              word-break:normal!important;
-              overflow-wrap:normal!important
-            }
-            html.dpro-jp-wrap-safe-all .dpro-jp-segment{
-              white-space:normal!important;
-              word-break:normal!important;
-              overflow-wrap:anywhere!important
+            .dpro-jp-keep{
+              display:inline!important;
+              white-space:nowrap!important
             }
             @supports (word-break:auto-phrase){
-              .dpro-jp-wrap-target{word-break:auto-phrase!important}
-              .dpro-jp-segment--relax,
-              html.dpro-jp-wrap-safe .dpro-jp-segment:not(.dpro-jp-segment--hard),
-              html.dpro-jp-wrap-safe-all .dpro-jp-segment{
-                word-break:auto-phrase!important
+              .dpro-jp-wrap-target{
+                word-break:auto-phrase!important;
+                overflow-wrap:normal!important
               }
             }
           }
@@ -212,105 +197,145 @@ jobs:
           cat > japanese-wrap-v1.js <<'JS'
           (()=>{
             'use strict';
+
             const TARGETS='h1,h2,h3,h4,button,a.btn,a.dpro-button,a[class*="btn"],[class*="cta"] a';
             const JP=/[ぁ-んァ-ヶ一-龠々ー]/;
-            const HARD=['ホームページ','LINE公式','受付システム','システム','診察券QR','取り置き','受け渡し','カルテ','マグネット','メニュー','フォロー','ひとつ','つなぐ','じゃない','できます','できる','ありません','から','まで','ので','ため','ます','です'].sort((a,b)=>b.length-a.length);
-            const ATTACH=new Set(['は','が','を','に','へ','と','で','の','も','や','か','ね','よ','から','まで','より','だけ','など','ので','ため','ます','です','だ','だった','ない']);
-            const CLOSE=/^[、。，．！？!?）」』】）》〉〕］）)％%：:；;]+$/;
-            const OPEN=/^[（(「『【《〈〔［]+$/;
-            const seg=typeof Intl!=='undefined'&&Intl.Segmenter?new Intl.Segmenter('ja',{granularity:'word'}):null;
-            function isHardUnit(text){return HARD.some(p=>text.includes(p));}
-            function pageOverflow(){const root=document.documentElement;return root.scrollWidth>root.clientWidth+4;}
-            function firstToken(text,start){
-              const rest=text.slice(start); for(const p of HARD)if(rest.startsWith(p))return p;
-              if(seg){const first=seg.segment(rest)[Symbol.iterator]().next().value;if(first&&first.segment)return first.segment;}
-              const m=rest.match(/^[A-Za-z0-9＋+.,:/%_-]+|^[ァ-ヶー]+|^[ぁ-んー]+|^[一-龠々]+|^./u);return m?m[0]:rest[0];
-            }
-            function tokenize(text){
-              const raw=[];let i=0;
-              while(i<text.length){
-                if(/\s/u.test(text[i])){let j=i+1;while(j<text.length&&/\s/u.test(text[j]))j++;raw.push({text:text.slice(i,j),space:true});i=j;continue;}
-                const tok=firstToken(text,i);raw.push({text:tok,space:false});i+=tok.length;
+
+            // Protect only short customer-facing words that must not split.
+            // Do not wrap whole Japanese sentences: that was the source of R2/R3 overflow.
+            const PHRASES=[
+              '受付システム',
+              'ホームページ',
+              '診察券QR',
+              'LINE公式',
+              'マグネット',
+              '取り置き',
+              '受け渡し',
+              'フォロー',
+              'メニュー',
+              'システム',
+              'ありません',
+              'できます',
+              'じゃない',
+              'ひとつ',
+              'つなぐ',
+              'カルテ'
+            ].sort((a,b)=>b.length-a.length);
+
+            const escaped=PHRASES.map(
+              s=>s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')
+            );
+            const phraseRe=new RegExp('('+escaped.join('|')+')','g');
+
+            function protectTextNode(node){
+              const text=node.nodeValue||'';
+              if(!text || !JP.test(text)) return;
+
+              phraseRe.lastIndex=0;
+              if(!phraseRe.test(text)){
+                phraseRe.lastIndex=0;
+                return;
               }
-              const units=[];
-              for(let i=0;i<raw.length;i++){
-                const tok=raw[i];if(tok.space){units.push(tok);continue;}
-                if(CLOSE.test(tok.text)&&units.length&&!units.at(-1).space){units.at(-1).text+=tok.text;continue;}
-                if(ATTACH.has(tok.text)&&units.length&&!units.at(-1).space&&(units.at(-1).text+tok.text).length<=14){units.at(-1).text+=tok.text;continue;}
-                if(tok.text.length===1&&JP.test(tok.text)&&units.length&&!units.at(-1).space&&(units.at(-1).text+tok.text).length<=10){units.at(-1).text+=tok.text;continue;}
-                if(OPEN.test(tok.text)&&i+1<raw.length&&!raw[i+1].space){units.push({text:tok.text+raw[++i].text,space:false});continue;}
-                units.push({...tok});
-              }
-              return units;
-            }
-            function wrapTextNode(node){
-              const text=node.nodeValue||'';if(!JP.test(text)||!text.trim())return;const units=tokenize(text);const frag=document.createDocumentFragment();
-              for(const unit of units){
-                if(unit.space){frag.appendChild(document.createTextNode(unit.text));continue;}
+              phraseRe.lastIndex=0;
+
+              const frag=document.createDocumentFragment();
+              let last=0;
+              let match;
+
+              while((match=phraseRe.exec(text))){
+                if(match.index>last){
+                  frag.appendChild(
+                    document.createTextNode(text.slice(last,match.index))
+                  );
+                }
+
                 const span=document.createElement('span');
-                span.className='dpro-jp-segment'+(isHardUnit(unit.text)?' dpro-jp-segment--hard':'');
-                span.textContent=unit.text;
+                span.className='dpro-jp-keep';
+                span.textContent=match[0];
                 frag.appendChild(span);
+
+                last=match.index+match[0].length;
               }
+
+              if(last<text.length){
+                frag.appendChild(document.createTextNode(text.slice(last)));
+              }
+
               node.replaceWith(frag);
             }
-            function wrapTarget(el){
-              if(!el||el.dataset.dproJpWrapV1==='1'||!JP.test(el.textContent||''))return;
-              const initialWidth=el.getBoundingClientRect().width;
-              el.dataset.dproJpWrapWidth=String(Math.max(1,initialWidth));
+
+            function protectTarget(el){
+              if(
+                !el ||
+                el.dataset.dproJpWrapV1==='1' ||
+                !JP.test(el.textContent||'')
+              ) return;
+
               el.dataset.dproJpWrapV1='1';
               el.classList.add('dpro-jp-wrap-target');
+
               const nodes=[];
-              const walker=document.createTreeWalker(el,NodeFilter.SHOW_TEXT,{acceptNode(node){
-                const p=node.parentElement;
-                if(!p||p.closest('script,style,noscript,.dpro-jp-segment'))return NodeFilter.FILTER_REJECT;
-                return JP.test(node.nodeValue||'')&&node.nodeValue.trim()?NodeFilter.FILTER_ACCEPT:NodeFilter.FILTER_REJECT;
-              }});
-              let node;
-              while((node=walker.nextNode()))nodes.push(node);
-              nodes.forEach(wrapTextNode);
-            }
-            function relaxOversizeSegments(){
-              document.querySelectorAll('.dpro-jp-wrap-target').forEach(el=>{
-                const original=Math.max(24,Number(el.dataset.dproJpWrapWidth)||el.getBoundingClientRect().width||24);
-                const spans=[...el.querySelectorAll('.dpro-jp-segment')];
-                spans.forEach(span=>{
-                  const width=span.getBoundingClientRect().width;
-                  if(width>original-2)span.classList.add('dpro-jp-segment--relax');
-                });
-              });
-            }
-            function stabilize(){
-              relaxOversizeSegments();
-              requestAnimationFrame(()=>{
-                const baseline=!!window.__DPRO_PRODUCT_JP_WRAP_BASE_OVERFLOW__;
-                if(!baseline&&pageOverflow()){
-                  document.documentElement.classList.add('dpro-jp-wrap-safe');
-                  requestAnimationFrame(()=>{
-                    if(pageOverflow())document.documentElement.classList.add('dpro-jp-wrap-safe-all');
-                  });
+              const walker=document.createTreeWalker(
+                el,
+                NodeFilter.SHOW_TEXT,
+                {
+                  acceptNode(node){
+                    const p=node.parentElement;
+                    if(
+                      !p ||
+                      p.closest(
+                        'script,style,noscript,.dpro-jp-keep'
+                      )
+                    ){
+                      return NodeFilter.FILTER_REJECT;
+                    }
+                    return (
+                      node.nodeValue &&
+                      node.nodeValue.trim() &&
+                      JP.test(node.nodeValue)
+                    )
+                      ? NodeFilter.FILTER_ACCEPT
+                      : NodeFilter.FILTER_REJECT;
+                  }
                 }
-              });
+              );
+
+              let node;
+              while((node=walker.nextNode())) nodes.push(node);
+              nodes.forEach(protectTextNode);
             }
+
             function run(){
-              document.querySelectorAll(TARGETS).forEach(wrapTarget);
-              window.__DPRO_PRODUCT_JP_WRAP_V1__=true;
-              stabilize();
+              document.querySelectorAll(TARGETS).forEach(protectTarget);
+              window.__DPRO_PRODUCT_JP_WRAP_V1__='R4';
             }
+
             function boot(){
-              window.__DPRO_PRODUCT_JP_WRAP_BASE_OVERFLOW__=pageOverflow();
               run();
+
               let timer=0;
               const observer=new MutationObserver(()=>{
                 clearTimeout(timer);
-                timer=setTimeout(run,40);
+                timer=setTimeout(run,60);
               });
-              observer.observe(document.body,{childList:true,subtree:true});
-              setTimeout(run,250);
-              setTimeout(run,900);
-              setTimeout(()=>observer.disconnect(),2500);
+
+              observer.observe(
+                document.body,
+                {childList:true,subtree:true}
+              );
+
+              setTimeout(run,300);
+              setTimeout(run,1000);
+              setTimeout(()=>observer.disconnect(),2600);
             }
-            document.readyState==='loading'?document.addEventListener('DOMContentLoaded',boot,{once:true}):boot();
+
+            document.readyState==='loading'
+              ? document.addEventListener(
+                  'DOMContentLoaded',
+                  boot,
+                  {once:true}
+                )
+              : boot();
           })();
           JS
 
@@ -355,8 +380,8 @@ jobs:
         run: |
           set -euo pipefail
           node --check japanese-wrap-v1.js
-          grep -F 'DPRO PRODUCT JAPANESE MOBILE WRAP V1.0' japanese-wrap-v1.css
-          grep -F 'Intl.Segmenter' japanese-wrap-v1.js
+          grep -F 'DPRO PRODUCT JAPANESE MOBILE WRAP V1.0R4' japanese-wrap-v1.css
+          grep -F "window.__DPRO_PRODUCT_JP_WRAP_V1__='R4'" japanese-wrap-v1.js
 
       - name: Post-fix 390px audit
         shell: bash
@@ -370,30 +395,93 @@ jobs:
           set -euo pipefail
           python - <<'PY'
           from pathlib import Path
-          import json,math
-          before_doc=json.loads(Path('/tmp/product-wrap-before.json').read_text(encoding='utf-8'))
-          after_doc=json.loads(Path('/tmp/product-wrap-after.json').read_text(encoding='utf-8'))
-          before=before_doc['summary'];after=after_doc['summary']
-          before_overflow=[x['path'] for x in before_doc['results'] if x.get('overflow')]
-          after_overflow=[x['path'] for x in after_doc['results'] if x.get('overflow')]
+          import json
+
+          before_doc=json.loads(
+              Path('/tmp/product-wrap-before.json').read_text(encoding='utf-8')
+          )
+          after_doc=json.loads(
+              Path('/tmp/product-wrap-after.json').read_text(encoding='utf-8')
+          )
+
+          before=before_doc['summary']
+          after=after_doc['summary']
+
+          before_overflow=[
+              x['path'] for x in before_doc['results'] if x.get('overflow')
+          ]
+          after_overflow=[
+              x['path'] for x in after_doc['results'] if x.get('overflow')
+          ]
+
+          high_pages=[]
+          for page in after_doc['results']:
+              if page.get('high'):
+                  high_pages.append({
+                      'path':page['path'],
+                      'high':page['high'],
+                      'issues':[
+                          {
+                              'text':i.get('text'),
+                              'lines':i.get('lines'),
+                              'reasons':i.get('reasons'),
+                          }
+                          for i in page.get('issues',[])
+                          if any(
+                              r.get('severity')=='HIGH'
+                              for r in i.get('reasons',[])
+                          )
+                      ],
+                  })
+
           result={
-            'before':before,
-            'after':after,
-            'high_reduction':before['high']-after['high'],
-            'issue_reduction':before['issueElements']-after['issueElements'],
-            'before_overflow_pages':before_overflow,
-            'after_overflow_pages':after_overflow,
+              'before':before,
+              'after':after,
+              'high_reduction':before['high']-after['high'],
+              'issue_reduction':before['issueElements']-after['issueElements'],
+              'before_overflow_pages':before_overflow,
+              'after_overflow_pages':after_overflow,
+              'remaining_high_pages':high_pages,
           }
+
           Path('/tmp/product-wrap-comparison.json').write_text(
-            json.dumps(result,ensure_ascii=False,indent=2),
-            encoding='utf-8'
+              json.dumps(result,ensure_ascii=False,indent=2),
+              encoding='utf-8'
           )
           print(json.dumps(result,ensure_ascii=False,indent=2))
-          if before['loadErrors']>3 or after['loadErrors']>3:raise SystemExit('Too many local page load errors')
-          if after['high']>=before['high']:raise SystemExit(f"HIGH did not improve: {before['high']} -> {after['high']}")
-          if after['issueElements']>=before['issueElements']:raise SystemExit('Total Japanese wrap issues did not improve')
-          if before['high']>=20 and after['high']>math.floor(before['high']*.80):raise SystemExit(f"HIGH reduction under 20%: {before['high']} -> {after['high']}")
-          if after['overflowPages']>before['overflowPages']:raise SystemExit(f"Horizontal overflow worsened: {before['overflowPages']} -> {after['overflowPages']} pages={after_overflow}")
+
+          if before['loadErrors'] or after['loadErrors']:
+              raise SystemExit('Page load error detected')
+
+          if after['overflowPages']>before['overflowPages']:
+              raise SystemExit(
+                  f"Horizontal overflow worsened: "
+                  f"{before['overflowPages']} -> {after['overflowPages']} "
+                  f"pages={after_overflow}"
+              )
+
+          if after['high']>=before['high']:
+              raise SystemExit(
+                  f"HIGH did not improve: "
+                  f"{before['high']} -> {after['high']}"
+              )
+
+          # R4 must remove at least 90% of HIGH issues before it is allowed
+          # to reach main. Remaining isolated cases can then be fixed precisely.
+          high_limit=max(10, before['high']//10)
+          if after['high']>high_limit:
+              raise SystemExit(
+                  f"R4 HIGH reduction insufficient: "
+                  f"{before['high']} -> {after['high']} "
+                  f"(limit {high_limit})"
+              )
+
+          if after['issueElements']>=before['issueElements']:
+              raise SystemExit(
+                  'Total Japanese wrap issues did not improve'
+              )
+
+          print('PRODUCT R4 IMPROVEMENT GATE PASS')
           PY
 
       - name: Static safety QA
@@ -409,10 +497,10 @@ jobs:
           if diff_files!=expected:raise SystemExit(f'Unexpected changed files: extra={sorted(diff_files-expected)} missing={sorted(expected-diff_files)}')
           for name in changed:
             if 'DPRO PRODUCT JAPANESE MOBILE WRAP V1.0' not in Path(name).read_text(encoding='utf-8'):raise SystemExit(f'{name}: injection marker missing')
-          print('PRODUCT JAPANESE WRAP V1.0 STATIC QA PASS',len(changed))
+          print('PRODUCT JAPANESE WRAP V1.0R4 STATIC QA PASS',len(changed))
           PY
 
-      - name: Commit PRODUCT V1.0
+      - name: Commit PRODUCT V1.0R4
         shell: bash
         run: |
           set -euo pipefail
@@ -425,7 +513,7 @@ jobs:
           for name in json.loads(Path('/tmp/product-wrap-changed.json').read_text(encoding='utf-8'))['changed']:print(name)
           PY
           while IFS= read -r file; do [ -n "$file" ] && git add "$file"; done </tmp/product-add-files.txt
-          git commit -m 'Fix PRODUCT Japanese mobile wraps V1.0R3'
+          git commit -m 'Fix PRODUCT Japanese mobile wraps V1.0R4'
           git push origin HEAD:main
 
       - name: Wait for PRODUCT Pages propagation
