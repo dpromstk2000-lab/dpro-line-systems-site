@@ -1,4 +1,4 @@
-name: PRODUCT Japanese mobile wrap fix V1.0R6
+name: PRODUCT Japanese mobile wrap fix V1.0R7
 
 on:
   push:
@@ -172,15 +172,19 @@ jobs:
         run: |
           set -euo pipefail
           cat > japanese-wrap-v1.css <<'CSS'
-          /* DPRO PRODUCT JAPANESE MOBILE WRAP V1.0R6 */
+          /* DPRO PRODUCT JAPANESE MOBILE WRAP V1.0R7 */
           @media (max-width:760px){
             .dpro-jp-wrap-target{
               line-break:strict!important;
               word-break:normal!important;
               overflow-wrap:break-word!important;
-              min-width:0!important;
-              max-width:100%!important;
               text-wrap:pretty!important
+            }
+            h1.dpro-jp-wrap-target,
+            h2.dpro-jp-wrap-target,
+            h3.dpro-jp-wrap-target,
+            h4.dpro-jp-wrap-target{
+              text-wrap:balance!important
             }
             .dpro-jp-keep{
               display:inline!important;
@@ -239,7 +243,17 @@ jobs:
               'ため',
               'ます',
               'です',
-              'できる'
+              'できる',
+              '比べてください',
+              'ご相談ください',
+              '確認できる',
+              'いませんか',
+              'ませんか',
+              '合うか',
+              '次回来店へ',
+              '購入後も',
+              '運用も',
+              'つながるか'
             ].sort((a,b)=>b.length-a.length);
 
             const escaped=PHRASES.map(
@@ -287,7 +301,7 @@ jobs:
             function protectTarget(el){
               if(
                 !el ||
-                el.dataset.dproJpWrapV1==='1' ||
+                Boolean(el.dataset.dproJpWrapV1) ||
                 !JP.test(el.textContent||'')
               ) return;
 
@@ -405,7 +419,7 @@ jobs:
 
             function run(){
               document.querySelectorAll(TARGETS).forEach(protectTarget);
-              window.__DPRO_PRODUCT_JP_WRAP_V1__='R6';
+              window.__DPRO_PRODUCT_JP_WRAP_V1__='R7';
               recoverOverflow();
             }
 
@@ -480,8 +494,8 @@ jobs:
         run: |
           set -euo pipefail
           node --check japanese-wrap-v1.js
-          grep -F 'DPRO PRODUCT JAPANESE MOBILE WRAP V1.0R6' japanese-wrap-v1.css
-          grep -F "window.__DPRO_PRODUCT_JP_WRAP_V1__='R6'" japanese-wrap-v1.js
+          grep -F 'DPRO PRODUCT JAPANESE MOBILE WRAP V1.0R7' japanese-wrap-v1.css
+          grep -F "window.__DPRO_PRODUCT_JP_WRAP_V1__='R7'" japanese-wrap-v1.js
 
       - name: Post-fix 390px audit
         shell: bash
@@ -566,12 +580,12 @@ jobs:
                   f"{before['high']} -> {after['high']}"
               )
 
-          # R6 must remove at least 90% of HIGH issues before it is allowed
+          # R7 must remove at least 90% of HIGH issues before it is allowed
           # to reach main. Remaining isolated cases can then be fixed precisely.
           high_limit=min(20, max(10, before['high']//10))
           if after['high']>high_limit:
               raise SystemExit(
-                  f"R6 HIGH reduction insufficient: "
+                  f"R7 HIGH reduction insufficient: "
                   f"{before['high']} -> {after['high']} "
                   f"(limit {high_limit})"
               )
@@ -581,7 +595,7 @@ jobs:
                   'Total Japanese wrap issues did not improve'
               )
 
-          print('PRODUCT R6 IMPROVEMENT GATE PASS')
+          print('PRODUCT R7 IMPROVEMENT GATE PASS')
           PY
 
       - name: Static safety QA
@@ -597,10 +611,10 @@ jobs:
           if diff_files!=expected:raise SystemExit(f'Unexpected changed files: extra={sorted(diff_files-expected)} missing={sorted(expected-diff_files)}')
           for name in changed:
             if 'DPRO PRODUCT JAPANESE MOBILE WRAP V1.0' not in Path(name).read_text(encoding='utf-8'):raise SystemExit(f'{name}: injection marker missing')
-          print('PRODUCT JAPANESE WRAP V1.0R6 STATIC QA PASS',len(changed))
+          print('PRODUCT JAPANESE WRAP V1.0R7 STATIC QA PASS',len(changed))
           PY
 
-      - name: Commit PRODUCT V1.0R6
+      - name: Commit PRODUCT V1.0R7
         shell: bash
         run: |
           set -euo pipefail
@@ -613,7 +627,7 @@ jobs:
           for name in json.loads(Path('/tmp/product-wrap-changed.json').read_text(encoding='utf-8'))['changed']:print(name)
           PY
           while IFS= read -r file; do [ -n "$file" ] && git add "$file"; done </tmp/product-add-files.txt
-          git commit -m 'Fix PRODUCT Japanese mobile wraps V1.0R6'
+          git commit -m 'Fix PRODUCT Japanese mobile wraps V1.0R7'
           git push origin HEAD:main
 
       - name: Wait for PRODUCT Pages propagation
