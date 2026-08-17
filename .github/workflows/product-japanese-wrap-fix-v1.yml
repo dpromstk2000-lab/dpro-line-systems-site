@@ -1,4 +1,4 @@
-name: PRODUCT Japanese mobile wrap fix V1.0R1
+name: PRODUCT Japanese mobile wrap fix V1.0R2
 
 on:
   push:
@@ -234,21 +234,25 @@ jobs:
           tag_re=re.compile(r'<[^>]+>',re.S)
           price_re=re.compile(r'(?:\d{1,3}(?:,\d{3})+|\d+)円')
           attr_re=re.compile(r'(?:href|src|data-src|data-demo-url|data-demo-src|data-live-url|data-live-src)\s*=\s*([\"\'])(.*?)\1',re.I|re.S)
-          def visible(source):
-            s=re.sub(r'<script\b.*?</script>','',source,flags=re.I|re.S);s=re.sub(r'<style\b.*?</style>','',s,flags=re.I|re.S);s=tag_re.sub('',s);return re.sub(r'\s+',' ',html.unescape(s)).strip()
+          def body_source(source):
+            m=re.search(r'<body\b[^>]*>.*',source,flags=re.I|re.S)
+            if not m:raise SystemExit('BODY element not found')
+            return m.group(0)
           changed=[];missing=[]
           for name in targets:
             path=Path(name)
             if not path.exists():missing.append(name);continue
             before=path.read_text(encoding='utf-8')
             if 'DPRO PRODUCT JAPANESE MOBILE WRAP V1.0' in before:continue
-            before_visible=visible(before);before_prices=Counter(price_re.findall(before));before_attrs=Counter(m.group(2) for m in attr_re.finditer(before))
+            before_body=body_source(before);before_prices=Counter(price_re.findall(before));before_attrs=Counter(m.group(2) for m in attr_re.finditer(before))
             prefix='../'*(len(path.parts)-1)
             inject='\n<!-- DPRO PRODUCT JAPANESE MOBILE WRAP V1.0 -->\n'+f'<link rel="stylesheet" href="{prefix}japanese-wrap-v1.css?v=1.0">\n'+f'<script defer src="{prefix}japanese-wrap-v1.js?v=1.0"></script>\n'
             lower=before.lower();pos=lower.rfind('</head>')
             if pos<0:raise SystemExit(f'{name}: </head> not found')
             after=before[:pos]+inject+before[pos:]
-            if visible(after)!=before_visible:raise SystemExit(f'{name}: customer-visible text changed')
+            if after.count('DPRO PRODUCT JAPANESE MOBILE WRAP V1.0')!=1:raise SystemExit(f'{name}: injection marker count invalid')
+            if after.lower().rfind('</head>')<0:raise SystemExit(f'{name}: </head> lost after injection')
+            if body_source(after)!=before_body:raise SystemExit(f'{name}: BODY HTML changed unexpectedly')
             if Counter(price_re.findall(after))!=before_prices:raise SystemExit(f'{name}: price strings changed')
             after_attrs=Counter(m.group(2) for m in attr_re.finditer(after));expected=before_attrs.copy();expected[f'{prefix}japanese-wrap-v1.css?v=1.0']+=1;expected[f'{prefix}japanese-wrap-v1.js?v=1.0']+=1
             if after_attrs!=expected:raise SystemExit(f'{name}: unexpected URL attribute change')
@@ -319,7 +323,7 @@ jobs:
           for name in json.loads(Path('/tmp/product-wrap-changed.json').read_text(encoding='utf-8'))['changed']:print(name)
           PY
           while IFS= read -r file; do [ -n "$file" ] && git add "$file"; done </tmp/product-add-files.txt
-          git commit -m 'Fix PRODUCT Japanese mobile wraps V1.0R1'
+          git commit -m 'Fix PRODUCT Japanese mobile wraps V1.0R2'
           git push origin HEAD:main
 
       - name: Wait for PRODUCT Pages propagation
