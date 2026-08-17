@@ -1,4 +1,4 @@
-name: PRODUCT Japanese mobile wrap fix V1.0R7
+name: PRODUCT Japanese mobile wrap fix V1.0R8
 
 on:
   push:
@@ -172,7 +172,7 @@ jobs:
         run: |
           set -euo pipefail
           cat > japanese-wrap-v1.css <<'CSS'
-          /* DPRO PRODUCT JAPANESE MOBILE WRAP V1.0R7 */
+          /* DPRO PRODUCT JAPANESE MOBILE WRAP V1.0R8 */
           @media (max-width:760px){
             .dpro-jp-wrap-target{
               line-break:strict!important;
@@ -419,7 +419,7 @@ jobs:
 
             function run(){
               document.querySelectorAll(TARGETS).forEach(protectTarget);
-              window.__DPRO_PRODUCT_JP_WRAP_V1__='R7';
+              window.__DPRO_PRODUCT_JP_WRAP_V1__='R8';
               recoverOverflow();
             }
 
@@ -494,8 +494,8 @@ jobs:
         run: |
           set -euo pipefail
           node --check japanese-wrap-v1.js
-          grep -F 'DPRO PRODUCT JAPANESE MOBILE WRAP V1.0R7' japanese-wrap-v1.css
-          grep -F "window.__DPRO_PRODUCT_JP_WRAP_V1__='R7'" japanese-wrap-v1.js
+          grep -F 'DPRO PRODUCT JAPANESE MOBILE WRAP V1.0R8' japanese-wrap-v1.css
+          grep -F "window.__DPRO_PRODUCT_JP_WRAP_V1__='R8'" japanese-wrap-v1.js
 
       - name: Post-fix 390px audit
         shell: bash
@@ -580,12 +580,12 @@ jobs:
                   f"{before['high']} -> {after['high']}"
               )
 
-          # R7 must remove at least 90% of HIGH issues before it is allowed
+          # R8 must remove at least 90% of HIGH issues before it is allowed
           # to reach main. Remaining isolated cases can then be fixed precisely.
           high_limit=min(20, max(10, before['high']//10))
           if after['high']>high_limit:
               raise SystemExit(
-                  f"R7 HIGH reduction insufficient: "
+                  f"R8 HIGH reduction insufficient: "
                   f"{before['high']} -> {after['high']} "
                   f"(limit {high_limit})"
               )
@@ -595,7 +595,7 @@ jobs:
                   'Total Japanese wrap issues did not improve'
               )
 
-          print('PRODUCT R7 IMPROVEMENT GATE PASS')
+          print('PRODUCT R8 IMPROVEMENT GATE PASS')
           PY
 
       - name: Static safety QA
@@ -607,14 +607,21 @@ jobs:
           from pathlib import Path
           import json,subprocess
           changed=json.loads(Path('/tmp/product-wrap-changed.json').read_text(encoding='utf-8'))['changed']
-          diff_files=set(subprocess.check_output(['git','diff','--name-only'],text=True).splitlines());expected=set(changed)|{'japanese-wrap-v1.css','japanese-wrap-v1.js'}
-          if diff_files!=expected:raise SystemExit(f'Unexpected changed files: extra={sorted(diff_files-expected)} missing={sorted(expected-diff_files)}')
+          tracked=set(subprocess.check_output(['git','diff','--name-only'],text=True).splitlines())
+          untracked=set(subprocess.check_output(['git','ls-files','--others','--exclude-standard'],text=True).splitlines())
+          changed_files=tracked|untracked
+          expected=set(changed)|{'japanese-wrap-v1.css','japanese-wrap-v1.js'}
+          if changed_files!=expected:
+            raise SystemExit(f'Unexpected changed files: extra={sorted(changed_files-expected)} missing={sorted(expected-changed_files)}')
+          for required in ('japanese-wrap-v1.css','japanese-wrap-v1.js'):
+            if required not in changed_files:
+              raise SystemExit(f'{required}: generated runtime file missing')
           for name in changed:
             if 'DPRO PRODUCT JAPANESE MOBILE WRAP V1.0' not in Path(name).read_text(encoding='utf-8'):raise SystemExit(f'{name}: injection marker missing')
-          print('PRODUCT JAPANESE WRAP V1.0R7 STATIC QA PASS',len(changed))
+          print('PRODUCT JAPANESE WRAP V1.0R8 STATIC QA PASS',len(changed))
           PY
 
-      - name: Commit PRODUCT V1.0R7
+      - name: Commit PRODUCT V1.0R8
         shell: bash
         run: |
           set -euo pipefail
@@ -627,7 +634,7 @@ jobs:
           for name in json.loads(Path('/tmp/product-wrap-changed.json').read_text(encoding='utf-8'))['changed']:print(name)
           PY
           while IFS= read -r file; do [ -n "$file" ] && git add "$file"; done </tmp/product-add-files.txt
-          git commit -m 'Fix PRODUCT Japanese mobile wraps V1.0R7'
+          git commit -m 'Fix PRODUCT Japanese mobile wraps V1.0R8'
           git push origin HEAD:main
 
       - name: Wait for PRODUCT Pages propagation
