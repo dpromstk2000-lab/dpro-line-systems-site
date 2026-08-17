@@ -1,4 +1,4 @@
-name: PRODUCT Japanese mobile wrap fix V1.0R9
+name: PRODUCT Japanese mobile wrap fix V1.1
 
 on:
   push:
@@ -11,7 +11,7 @@ permissions:
   contents: write
 
 concurrency:
-  group: product-japanese-wrap-fix-v1
+  group: product-japanese-wrap-fix-v11
   cancel-in-progress: false
 
 jobs:
@@ -167,12 +167,15 @@ jobs:
           set -euo pipefail
           AUDIT_BASE='http://127.0.0.1:8765/' AUDIT_OUT='/tmp/product-wrap-before.json' node product-wrap-audit.js
 
-      - name: Add PRODUCT Japanese wrap runtime
+      - name: Apply V1.1 residual HIGH fixes
         shell: bash
         run: |
           set -euo pipefail
+          grep -Eq 'DPRO PRODUCT JAPANESE MOBILE WRAP (V1\.0R9|V1\.1)' japanese-wrap-v1.css
+          grep -Eq "window.__DPRO_PRODUCT_JP_WRAP_V1__='(R9|V1\.1)'" japanese-wrap-v1.js
+
           cat > japanese-wrap-v1.css <<'CSS'
-          /* DPRO PRODUCT JAPANESE MOBILE WRAP V1.0R9 */
+          /* DPRO PRODUCT JAPANESE MOBILE WRAP V1.1 */
           @media (max-width:760px){
             .dpro-jp-wrap-target{
               line-break:strict!important;
@@ -186,7 +189,8 @@ jobs:
             h4.dpro-jp-wrap-target{
               text-wrap:balance!important
             }
-            .dpro-jp-keep{
+            .dpro-jp-keep,
+            .dpro-jp-v11-keep{
               display:inline!important;
               white-space:nowrap!important
             }
@@ -209,105 +213,187 @@ jobs:
               }
             }
           }
+          
+          /* V1.1: PRODUCT top CTA had its mobile grid reset later by product-v3.6.css. */
+          @media (max-width:700px){
+            .p36-proposal-entry{
+              grid-template-columns:1fr!important;
+              gap:16px!important;
+              padding:22px!important
+            }
+            .p36-proposal-entry__copy{
+              min-width:0!important
+            }
+            .p36-proposal-entry__actions{
+              min-width:0!important;
+              width:100%!important
+            }
+          }
           CSS
 
           cat > japanese-wrap-v1.js <<'JS'
           (()=>{
             'use strict';
-
+          
             const TARGETS='h1,h2,h3,h4,button,a.btn,a.dpro-button,a[class*="btn"],[class*="cta"] a';
             const JP=/[ぁ-んァ-ヶ一-龠々ー]/;
-
-            // Protect only short customer-facing words that must not split.
-            // Do not wrap whole Japanese sentences: that was the source of R2/R3 overflow.
+          
+            // R9 generic guards stay locked. V1.1 adds only nine-page residual fixes.
             const PHRASES=[
-              '受付システム',
-              'ホームページ',
-              '診察券QR',
-              'LINE公式',
-              'マグネット',
-              '取り置き',
-              '受け渡し',
-              'フォロー',
-              'メニュー',
-              'システム',
-              'ありません',
-              'できます',
-              'じゃない',
-              'ひとつ',
-              'つなぐ',
-              'カルテ',
-              'まで',
-              'から',
-              'ので',
-              'ため',
-              'ます',
-              'です',
-              'できる',
-              '比べてください',
-              'ご相談ください',
-              '確認できる',
-              'いませんか',
-              'ませんか',
-              '合うか',
-              '次回来店へ',
-              '購入後も',
-              '運用も',
-              'つながるか'
+              '受付システム','ホームページ','診察券QR','LINE公式','マグネット',
+              '取り置き','受け渡し','フォロー','メニュー','システム',
+              'ありません','できます','じゃない','ひとつ','つなぐ','カルテ',
+              'まで','から','ので','ため','ます','です','できる',
+              '比べてください','ご相談ください','確認できる','いませんか',
+              'ませんか','合うか','次回来店へ','購入後も','運用も','つながるか'
             ].sort((a,b)=>b.length-a.length);
-
+          
+            const V11_RULES={
+              'compare-repitte.html':[
+                {text:'「機能を追加する」か。 「業務の流れを設計する」か。',keep:['する」か。']}
+              ],
+              'lp-btype.html':[
+                {text:'LINE公式運用・ホームページ運用・B型専用システム運用まで。',keep:['ホームページ','システム']},
+                {text:'まずは、今の運用に合うか確認してください。',keep:['ください。']}
+              ],
+              'lp-car.html':[
+                {text:'今のお店の仕事が、 どこまで一つにつながるか。 まずは実際の画面を見ながらご相談ください。',keep:['ください。']}
+              ],
+              'lp-chosashi.html':[
+                {text:'「今どうなっていますか？」を、 依頼者自身でも確認できる。',keep:['できる。']}
+              ],
+              'lp-cosmetics.html':[
+                {text:'相談も、購入後も。 LINEでつながる化粧品店へ。',keep:['購入後も。']}
+              ],
+              'lp-gyosei.html':[
+                {text:'今の事務所業務に合うか、 実際の画面を見ながらご相談ください。',keep:['合うか、']}
+              ],
+              'lp-haishoku.html':[
+                {text:'DPRO 高齢者配食管理システム',keep:['システム']}
+              ],
+              'lp-homecare.html':[
+                {text:'訪問の「今日どうなってる？」を、ひとつにつなぐ。',keep:['ひとつ']}
+              ]
+            };
+          
             const escaped=PHRASES.map(
               s=>s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')
             );
             const phraseRe=new RegExp('('+escaped.join('|')+')','g');
-
+          
+            function norm(el){
+              return (el.innerText||el.textContent||'').trim().replace(/\s+/g,' ');
+            }
+          
+            function currentPage(){
+              const parts=location.pathname.split('/').filter(Boolean);
+              return parts.length ? parts[parts.length-1] : 'index.html';
+            }
+          
+            function protectV11Phrase(el,phrase){
+              const nodes=[];
+              const walker=document.createTreeWalker(
+                el,
+                NodeFilter.SHOW_TEXT,
+                {
+                  acceptNode(node){
+                    const p=node.parentElement;
+                    if(!p || p.closest('script,style,noscript,.dpro-jp-v11-keep')){
+                      return NodeFilter.FILTER_REJECT;
+                    }
+                    return (node.nodeValue||'').includes(phrase)
+                      ? NodeFilter.FILTER_ACCEPT
+                      : NodeFilter.FILTER_REJECT;
+                  }
+                }
+              );
+              let node;
+              while((node=walker.nextNode())) nodes.push(node);
+          
+              for(const textNode of nodes){
+                const text=textNode.nodeValue||'';
+                const at=text.indexOf(phrase);
+                if(at<0) continue;
+          
+                const frag=document.createDocumentFragment();
+                if(at>0) frag.appendChild(document.createTextNode(text.slice(0,at)));
+          
+                frag.appendChild(document.createElement('wbr'));
+                const span=document.createElement('span');
+                span.className='dpro-jp-v11-keep';
+                span.textContent=phrase;
+                frag.appendChild(span);
+          
+                const tail=text.slice(at+phrase.length);
+                if(tail) frag.appendChild(document.createTextNode(tail));
+                textNode.replaceWith(frag);
+                return true;
+              }
+              return false;
+            }
+          
+            function applyV11Rules(){
+              const rules=V11_RULES[currentPage()]||[];
+              if(!rules.length) return;
+          
+              const targets=[...document.querySelectorAll(TARGETS)];
+              for(const rule of rules){
+                const el=targets.find(candidate=>norm(candidate)===rule.text);
+                if(!el || el.dataset.dproJpV11==='1') continue;
+                let applied=0;
+                for(const phrase of rule.keep){
+                  if(protectV11Phrase(el,phrase)) applied++;
+                }
+                if(applied===rule.keep.length){
+                  el.dataset.dproJpV11='1';
+                  el.classList.add('dpro-jp-v11-target');
+                }
+              }
+            }
+          
             function protectTextNode(node){
               const text=node.nodeValue||'';
               if(!text || !JP.test(text)) return;
-
+          
               phraseRe.lastIndex=0;
               if(!phraseRe.test(text)){
                 phraseRe.lastIndex=0;
                 return;
               }
               phraseRe.lastIndex=0;
-
+          
               const frag=document.createDocumentFragment();
               let last=0;
               let match;
-
+          
               while((match=phraseRe.exec(text))){
                 if(match.index>last){
-                  frag.appendChild(
-                    document.createTextNode(text.slice(last,match.index))
-                  );
+                  frag.appendChild(document.createTextNode(text.slice(last,match.index)));
                 }
-
+          
                 const span=document.createElement('span');
                 span.className='dpro-jp-keep';
                 span.textContent=match[0];
                 frag.appendChild(span);
-
                 last=match.index+match[0].length;
               }
-
+          
               if(last<text.length){
                 frag.appendChild(document.createTextNode(text.slice(last)));
               }
-
               node.replaceWith(frag);
             }
-
+          
             function protectTarget(el){
               if(
                 !el ||
                 Boolean(el.dataset.dproJpWrapV1) ||
                 !JP.test(el.textContent||'')
               ) return;
-
+          
               el.dataset.dproJpWrapV1='1';
               el.classList.add('dpro-jp-wrap-target');
-
+          
               const nodes=[];
               const walker=document.createTreeWalker(
                 el,
@@ -317,9 +403,7 @@ jobs:
                     const p=node.parentElement;
                     if(
                       !p ||
-                      p.closest(
-                        'script,style,noscript,.dpro-jp-keep'
-                      )
+                      p.closest('script,style,noscript,.dpro-jp-keep,.dpro-jp-v11-keep')
                     ){
                       return NodeFilter.FILTER_REJECT;
                     }
@@ -327,23 +411,21 @@ jobs:
                       node.nodeValue &&
                       node.nodeValue.trim() &&
                       JP.test(node.nodeValue)
-                    )
-                      ? NodeFilter.FILTER_ACCEPT
-                      : NodeFilter.FILTER_REJECT;
+                    ) ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
                   }
                 }
               );
-
+          
               let node;
               while((node=walker.nextNode())) nodes.push(node);
               nodes.forEach(protectTextNode);
             }
-
+          
             function pageOverflow(){
               const root=document.documentElement;
               return root.scrollWidth>root.clientWidth+4;
             }
-
+          
             function targetOverflows(el){
               const root=document.documentElement;
               const r=el.getBoundingClientRect();
@@ -352,7 +434,7 @@ jobs:
               const viewportOverflow=r.right>root.clientWidth+4 || r.left<-4;
               return ownOverflow || viewportOverflow;
             }
-
+          
             function spanOverflows(span){
               const root=document.documentElement;
               const target=span.closest('.dpro-jp-wrap-target');
@@ -365,128 +447,107 @@ jobs:
                 sr.width>Math.max(20,tr.width-2)
               );
             }
-
+          
             function unwrapTarget(el){
               el.querySelectorAll('.dpro-jp-keep').forEach(span=>{
                 span.replaceWith(document.createTextNode(span.textContent||''));
               });
               el.normalize();
-              el.classList.remove(
-                'dpro-jp-wrap-target',
-                'dpro-jp-wrap-target--relax'
-              );
+              el.classList.remove('dpro-jp-wrap-target','dpro-jp-wrap-target--relax');
               el.dataset.dproJpWrapV1='rollback-local';
             }
-
+          
             function recoverOverflow(){
               if(window.__DPRO_PRODUCT_JP_WRAP_BASE_OVERFLOW__) return;
-
+          
               requestAnimationFrame(()=>{
                 if(!pageOverflow()) return;
-
-                // Stage 1: relax only protected phrases that exceed their target box.
+          
                 document.querySelectorAll('.dpro-jp-keep').forEach(span=>{
-                  if(spanOverflows(span)){
-                    span.classList.add('dpro-jp-keep--relax');
-                  }
+                  if(spanOverflows(span)) span.classList.add('dpro-jp-keep--relax');
                 });
-
+          
                 requestAnimationFrame(()=>{
                   if(!pageOverflow()) return;
-
-                  // Stage 2: relax only target elements that are themselves overflowing.
-                  const offenders=[
-                    ...document.querySelectorAll('.dpro-jp-wrap-target')
-                  ].filter(targetOverflows);
-
-                  offenders.forEach(el=>{
-                    el.classList.add('dpro-jp-wrap-target--relax');
-                  });
-
+          
+                  [...document.querySelectorAll('.dpro-jp-wrap-target')]
+                    .filter(targetOverflows)
+                    .forEach(el=>el.classList.add('dpro-jp-wrap-target--relax'));
+          
                   requestAnimationFrame(()=>{
                     if(!pageOverflow()) return;
-
-                    // Stage 3: unwrap only the remaining offending targets.
-                    [
-                      ...document.querySelectorAll('.dpro-jp-wrap-target')
-                    ]
+                    [...document.querySelectorAll('.dpro-jp-wrap-target')]
                       .filter(targetOverflows)
                       .forEach(unwrapTarget);
                   });
                 });
               });
             }
-
+          
             function run(){
+              applyV11Rules();
               document.querySelectorAll(TARGETS).forEach(protectTarget);
-              window.__DPRO_PRODUCT_JP_WRAP_V1__='R9';
+              window.__DPRO_PRODUCT_JP_WRAP_V1__='V1.1';
               recoverOverflow();
             }
-
+          
             function boot(){
               window.__DPRO_PRODUCT_JP_WRAP_BASE_OVERFLOW__=pageOverflow();
               run();
-
+          
               let timer=0;
               const observer=new MutationObserver(()=>{
                 clearTimeout(timer);
                 timer=setTimeout(run,60);
               });
-
-              observer.observe(
-                document.body,
-                {childList:true,subtree:true}
-              );
-
+              observer.observe(document.body,{childList:true,subtree:true});
+          
               setTimeout(run,300);
               setTimeout(run,1000);
               setTimeout(()=>observer.disconnect(),2600);
             }
-
+          
             document.readyState==='loading'
-              ? document.addEventListener(
-                  'DOMContentLoaded',
-                  boot,
-                  {once:true}
-                )
+              ? document.addEventListener('DOMContentLoaded',boot,{once:true})
               : boot();
           })();
           JS
 
           python - <<'PY'
           from pathlib import Path
-          from collections import Counter
-          import json,re,html
-          targets=json.loads(Path('/tmp/product-wrap-targets.json').read_text(encoding='utf-8'))
-          tag_re=re.compile(r'<[^>]+>',re.S)
-          price_re=re.compile(r'(?:\d{1,3}(?:,\d{3})+|\d+)円')
-          attr_re=re.compile(r'(?:href|src|data-src|data-demo-url|data-demo-src|data-live-url|data-live-src)\s*=\s*([\"\'])(.*?)\1',re.I|re.S)
-          def body_source(source):
+          import re
+          residual=['compare-repitte.html', 'index.html', 'lp-btype.html', 'lp-car.html', 'lp-chosashi.html', 'lp-cosmetics.html', 'lp-gyosei.html', 'lp-haishoku.html', 'lp-homecare.html']
+          changed=[]
+          def body(source):
             m=re.search(r'<body\b[^>]*>.*',source,flags=re.I|re.S)
-            if not m:raise SystemExit('BODY element not found')
+            if not m:raise SystemExit('BODY not found')
             return m.group(0)
-          changed=[];missing=[]
-          for name in targets:
-            path=Path(name)
-            if not path.exists():missing.append(name);continue
-            before=path.read_text(encoding='utf-8')
-            if 'DPRO PRODUCT JAPANESE MOBILE WRAP V1.0' in before:continue
-            before_body=body_source(before);before_prices=Counter(price_re.findall(before));before_attrs=Counter(m.group(2) for m in attr_re.finditer(before))
-            prefix='../'*(len(path.parts)-1)
-            inject='\n<!-- DPRO PRODUCT JAPANESE MOBILE WRAP V1.0 -->\n'+f'<link rel="stylesheet" href="{prefix}japanese-wrap-v1.css?v=1.0">\n'+f'<script defer src="{prefix}japanese-wrap-v1.js?v=1.0"></script>\n'
-            lower=before.lower();pos=lower.rfind('</head>')
-            if pos<0:raise SystemExit(f'{name}: </head> not found')
-            after=before[:pos]+inject+before[pos:]
-            if after.count('DPRO PRODUCT JAPANESE MOBILE WRAP V1.0')!=1:raise SystemExit(f'{name}: injection marker count invalid')
-            if after.lower().rfind('</head>')<0:raise SystemExit(f'{name}: </head> lost after injection')
-            if body_source(after)!=before_body:raise SystemExit(f'{name}: BODY HTML changed unexpectedly')
-            if Counter(price_re.findall(after))!=before_prices:raise SystemExit(f'{name}: price strings changed')
-            after_attrs=Counter(m.group(2) for m in attr_re.finditer(after));expected=before_attrs.copy();expected[f'{prefix}japanese-wrap-v1.css?v=1.0']+=1;expected[f'{prefix}japanese-wrap-v1.js?v=1.0']+=1
-            if after_attrs!=expected:raise SystemExit(f'{name}: unexpected URL attribute change')
-            path.write_text(after,encoding='utf-8');changed.append(name)
-          if len(changed)<55:raise SystemExit(f'Expected at least 55 current issue pages to change, got {len(changed)}; missing={missing}')
-          Path('/tmp/product-wrap-changed.json').write_text(json.dumps({'changed':changed,'missing':missing},ensure_ascii=False,indent=2),encoding='utf-8')
-          print('Changed target pages:',len(changed),'Missing:',len(missing))
+          for name in residual:
+            p=Path(name)
+            if not p.is_file():raise SystemExit(f'{name}: missing')
+            before=p.read_text(encoding='utf-8')
+            before_body=body(before)
+            old_css='japanese-wrap-v1.css?v=1.0'
+            old_js='japanese-wrap-v1.js?v=1.0'
+            new_css='japanese-wrap-v1.css?v=1.1'
+            new_js='japanese-wrap-v1.js?v=1.1'
+            if old_css in before or old_js in before:
+              if before.count(old_css)!=1 or before.count(old_js)!=1:
+                raise SystemExit(f'{name}: expected exactly one V1.0 runtime reference pair')
+              after=before.replace(old_css,new_css,1).replace(old_js,new_js,1)
+              p.write_text(after,encoding='utf-8')
+              changed.append(name)
+            else:
+              if before.count(new_css)!=1 or before.count(new_js)!=1:
+                raise SystemExit(f'{name}: V1.1 runtime reference pair missing')
+              after=before
+            if body(after)!=before_body:
+              raise SystemExit(f'{name}: BODY HTML changed unexpectedly')
+          Path('/tmp/product-v11-residual.json').write_text(
+            __import__('json').dumps({'targets':residual,'changed':changed},ensure_ascii=False,indent=2),
+            encoding='utf-8'
+          )
+          print('V1.1 residual targets:',len(residual),'asset refs changed:',len(changed))
           PY
 
       - name: Runtime syntax QA
@@ -494,8 +555,8 @@ jobs:
         run: |
           set -euo pipefail
           node --check japanese-wrap-v1.js
-          grep -F 'DPRO PRODUCT JAPANESE MOBILE WRAP V1.0R9' japanese-wrap-v1.css
-          grep -F "window.__DPRO_PRODUCT_JP_WRAP_V1__='R9'" japanese-wrap-v1.js
+          grep -F 'DPRO PRODUCT JAPANESE MOBILE WRAP V1.1' japanese-wrap-v1.css
+          grep -F "window.__DPRO_PRODUCT_JP_WRAP_V1__='V1.1'" japanese-wrap-v1.js
 
       - name: Post-fix 390px audit
         shell: bash
@@ -503,99 +564,29 @@ jobs:
           set -euo pipefail
           AUDIT_BASE='http://127.0.0.1:8765/' AUDIT_OUT='/tmp/product-wrap-after.json' node product-wrap-audit.js
 
-      - name: Improvement gate
+      - name: V1.1 zero-HIGH gate
         shell: bash
         run: |
           set -euo pipefail
           python - <<'PY'
           from pathlib import Path
           import json
-
-          before_doc=json.loads(
-              Path('/tmp/product-wrap-before.json').read_text(encoding='utf-8')
-          )
-          after_doc=json.loads(
-              Path('/tmp/product-wrap-after.json').read_text(encoding='utf-8')
-          )
-
-          before=before_doc['summary']
-          after=after_doc['summary']
-
-          before_overflow=[
-              x['path'] for x in before_doc['results'] if x.get('overflow')
-          ]
-          after_overflow=[
-              x['path'] for x in after_doc['results'] if x.get('overflow')
-          ]
-
-          high_pages=[]
-          for page in after_doc['results']:
-              if page.get('high'):
-                  high_pages.append({
-                      'path':page['path'],
-                      'high':page['high'],
-                      'issues':[
-                          {
-                              'text':i.get('text'),
-                              'lines':i.get('lines'),
-                              'reasons':i.get('reasons'),
-                          }
-                          for i in page.get('issues',[])
-                          if any(
-                              r.get('severity')=='HIGH'
-                              for r in i.get('reasons',[])
-                          )
-                      ],
-                  })
-
-          result={
-              'before':before,
-              'after':after,
-              'high_reduction':before['high']-after['high'],
-              'issue_reduction':before['issueElements']-after['issueElements'],
-              'before_overflow_pages':before_overflow,
-              'after_overflow_pages':after_overflow,
-              'remaining_high_pages':high_pages,
-          }
-
-          Path('/tmp/product-wrap-comparison.json').write_text(
-              json.dumps(result,ensure_ascii=False,indent=2),
-              encoding='utf-8'
-          )
+          before=json.loads(Path('/tmp/product-wrap-before.json').read_text(encoding='utf-8'))
+          after=json.loads(Path('/tmp/product-wrap-after.json').read_text(encoding='utf-8'))
+          b=before['summary'];a=after['summary']
+          remaining=[{'path':x['path'],'high':x['high'],'issues':x['issues']} for x in after['results'] if x.get('high')]
+          result={'before':b,'after':a,'remaining_high':remaining}
+          Path('/tmp/product-wrap-v11-comparison.json').write_text(json.dumps(result,ensure_ascii=False,indent=2),encoding='utf-8')
           print(json.dumps(result,ensure_ascii=False,indent=2))
-
-          if before['loadErrors'] or after['loadErrors']:
-              raise SystemExit('Page load error detected')
-
-          if after['overflowPages']>before['overflowPages']:
-              raise SystemExit(
-                  f"Horizontal overflow worsened: "
-                  f"{before['overflowPages']} -> {after['overflowPages']} "
-                  f"pages={after_overflow}"
-              )
-
-          if after['high']>=before['high']:
-              raise SystemExit(
-                  f"HIGH did not improve: "
-                  f"{before['high']} -> {after['high']}"
-              )
-
-          # R9 must remove at least 90% of HIGH issues before it is allowed
-          # to reach main. Remaining isolated cases can then be fixed precisely.
-          high_limit=min(20, max(10, before['high']//10))
-          if after['high']>high_limit:
-              raise SystemExit(
-                  f"R9 HIGH reduction insufficient: "
-                  f"{before['high']} -> {after['high']} "
-                  f"(limit {high_limit})"
-              )
-
-          if after['issueElements']>=before['issueElements']:
-              raise SystemExit(
-                  'Total Japanese wrap issues did not improve'
-              )
-
-          print('PRODUCT R9 IMPROVEMENT GATE PASS')
+          if b['loadErrors'] or a['loadErrors']:
+            raise SystemExit('Page load error detected')
+          if a['high']!=0:
+            raise SystemExit(f"V1.1 HIGH must be zero, got {a['high']}")
+          if a['overflowPages']>b['overflowPages']:
+            raise SystemExit(f"Horizontal overflow worsened: {b['overflowPages']} -> {a['overflowPages']}")
+          if a['issueElements']>=b['issueElements']:
+            raise SystemExit(f"Total wrap issues did not improve: {b['issueElements']} -> {a['issueElements']}")
+          print('PRODUCT V1.1 ZERO-HIGH GATE PASS')
           PY
 
       - name: Static safety QA
@@ -605,80 +596,109 @@ jobs:
           git diff --check
           python - <<'PY'
           from pathlib import Path
-          import json,subprocess
-          changed=json.loads(Path('/tmp/product-wrap-changed.json').read_text(encoding='utf-8'))['changed']
+          import json,re,subprocess
+          residual=json.loads(Path('/tmp/product-v11-residual.json').read_text(encoding='utf-8'))['targets']
+          allowed=set(residual)|{'japanese-wrap-v1.css','japanese-wrap-v1.js'}
           tracked=set(subprocess.check_output(['git','diff','--name-only'],text=True).splitlines())
-          expected_tracked=set(changed)
-          if tracked!=expected_tracked:
-            raise SystemExit(f'Unexpected tracked changes: extra={sorted(tracked-expected_tracked)} missing={sorted(expected_tracked-tracked)}')
-
-          required_runtime={
-            'japanese-wrap-v1.css':'DPRO PRODUCT JAPANESE MOBILE WRAP V1.0R9',
-            'japanese-wrap-v1.js':"window.__DPRO_PRODUCT_JP_WRAP_V1__='R9'",
-          }
-          for required,marker in required_runtime.items():
-            p=Path(required)
-            if not p.is_file():
-              raise SystemExit(f'{required}: generated runtime file missing')
-            if marker not in p.read_text(encoding='utf-8'):
-              raise SystemExit(f'{required}: generated runtime marker missing')
-          for name in changed:
-            if 'DPRO PRODUCT JAPANESE MOBILE WRAP V1.0' not in Path(name).read_text(encoding='utf-8'):raise SystemExit(f'{name}: injection marker missing')
-          print('PRODUCT JAPANESE WRAP V1.0R9 STATIC QA PASS',len(changed))
+          if not tracked.issubset(allowed):
+            raise SystemExit(f'Unexpected changed files: {sorted(tracked-allowed)}')
+          if tracked and not {'japanese-wrap-v1.css','japanese-wrap-v1.js'}.issubset(tracked):
+            raise SystemExit('Runtime CSS/JS change missing')
+          def body(source):
+            m=re.search(r'<body\b[^>]*>.*',source,flags=re.I|re.S)
+            if not m:raise SystemExit('BODY not found')
+            return m.group(0)
+          for name in residual:
+            now=Path(name).read_text(encoding='utf-8')
+            old=subprocess.check_output(['git','show',f'HEAD:{name}'],text=True)
+            if body(now)!=body(old):raise SystemExit(f'{name}: BODY changed')
+            if now.count('japanese-wrap-v1.css?v=1.1')!=1:raise SystemExit(f'{name}: CSS cache-bust missing')
+            if now.count('japanese-wrap-v1.js?v=1.1')!=1:raise SystemExit(f'{name}: JS cache-bust missing')
+          if 'DPRO PRODUCT JAPANESE MOBILE WRAP V1.1' not in Path('japanese-wrap-v1.css').read_text(encoding='utf-8'):
+            raise SystemExit('V1.1 CSS marker missing')
+          if "window.__DPRO_PRODUCT_JP_WRAP_V1__='V1.1'" not in Path('japanese-wrap-v1.js').read_text(encoding='utf-8'):
+            raise SystemExit('V1.1 JS marker missing')
+          print('PRODUCT V1.1 STATIC SAFETY QA PASS',sorted(tracked))
           PY
 
-      - name: Commit PRODUCT V1.0R9
+      - name: Commit PRODUCT V1.1
         shell: bash
         run: |
           set -euo pipefail
+          if git diff --quiet -- japanese-wrap-v1.css japanese-wrap-v1.js compare-repitte.html index.html lp-btype.html lp-car.html lp-chosashi.html lp-cosmetics.html lp-gyosei.html lp-haishoku.html lp-homecare.html; then
+            echo 'V1.1 already applied; commit skipped.'
+            exit 0
+          fi
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add japanese-wrap-v1.css japanese-wrap-v1.js
-          python - <<'PY' >/tmp/product-add-files.txt
-          from pathlib import Path
-          import json
-          for name in json.loads(Path('/tmp/product-wrap-changed.json').read_text(encoding='utf-8'))['changed']:print(name)
-          PY
-          while IFS= read -r file; do [ -n "$file" ] && git add "$file"; done </tmp/product-add-files.txt
-          git commit -m 'Fix PRODUCT Japanese mobile wraps V1.0R9'
+          git add compare-repitte.html index.html lp-btype.html lp-car.html lp-chosashi.html lp-cosmetics.html lp-gyosei.html lp-haishoku.html lp-homecare.html
+          git commit -m 'Fix PRODUCT residual Japanese wraps V1.1'
           git push origin HEAD:main
 
-      - name: Wait for PRODUCT Pages propagation
+      - name: Wait for PRODUCT Pages V1.1 propagation
         shell: bash
         run: |
           set -euo pipefail
-          URL="https://dpromstk2000-lab.github.io/dpro-line-systems-site/japanese-wrap-v1.css?run=${GITHUB_RUN_ID}"
+          CSS_URL="https://dpromstk2000-lab.github.io/dpro-line-systems-site/japanese-wrap-v1.css?run=${GITHUB_RUN_ID}"
+          JS_URL="https://dpromstk2000-lab.github.io/dpro-line-systems-site/japanese-wrap-v1.js?run=${GITHUB_RUN_ID}"
           ready=0
-          for i in $(seq 1 48); do
-            css="$(curl -fsSL "$URL" 2>/dev/null || true)"
-            if printf '%s' "$css" | grep -q 'DPRO PRODUCT JAPANESE MOBILE WRAP V1.0'; then ready=1;break;fi
+          for i in $(seq 1 72); do
+            css="$(curl -fsSL "$CSS_URL" 2>/dev/null || true)"
+            js="$(curl -fsSL "$JS_URL" 2>/dev/null || true)"
+            if printf '%s' "$css" | grep -q 'DPRO PRODUCT JAPANESE MOBILE WRAP V1.1' && \
+               printf '%s' "$js" | grep -q "window.__DPRO_PRODUCT_JP_WRAP_V1__='V1.1'"; then
+              ready=1
+              break
+            fi
             sleep 5
           done
-          echo "$ready" >/tmp/product-public-ready
+          if [ "$ready" != '1' ]; then
+            echo 'PRODUCT Pages V1.1 propagation timed out.'
+            exit 1
+          fi
 
-      - name: Public focused audit
+      - name: Public full-58 audit
         shell: bash
         run: |
           set -euo pipefail
-          if [ "$(cat /tmp/product-public-ready)" != '1' ]; then echo '{"status":"SKIPPED","reason":"Pages propagation pending"}' >/tmp/product-wrap-public.json; exit 0; fi
           AUDIT_BASE='https://dpromstk2000-lab.github.io/dpro-line-systems-site/' AUDIT_OUT='/tmp/product-wrap-public.json' node product-wrap-audit.js
 
-      - name: Build audit artifact
+      - name: Public V1.1 final gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          import json
+          before=json.loads(Path('/tmp/product-wrap-before.json').read_text(encoding='utf-8'))['summary']
+          public=json.loads(Path('/tmp/product-wrap-public.json').read_text(encoding='utf-8'))
+          summary=public['summary']
+          remaining=[{'path':x['path'],'high':x['high'],'issues':x['issues']} for x in public['results'] if x.get('high')]
+          print(json.dumps({'public':summary,'remaining_high':remaining},ensure_ascii=False,indent=2))
+          if summary['pages']!=58:raise SystemExit(f"Expected 58 public pages, got {summary['pages']}")
+          if summary['loadErrors']!=0:raise SystemExit(f"Public load errors: {summary['loadErrors']}")
+          if summary['high']!=0:raise SystemExit(f"Public HIGH must be zero, got {summary['high']}")
+          if summary['overflowPages']>before['overflowPages']:
+            raise SystemExit(f"Public overflow worsened: {before['overflowPages']} -> {summary['overflowPages']}")
+          print('PRODUCT V1.1 PUBLIC FINAL GATE PASS')
+          PY
+
+      - name: Build V1.1 audit artifact
         if: always()
         shell: bash
         run: |
-          mkdir -p product-wrap-audit
-          cp /tmp/product-wrap-before.json product-wrap-audit/before.json 2>/dev/null || true
-          cp /tmp/product-wrap-after.json product-wrap-audit/after.json 2>/dev/null || true
-          cp /tmp/product-wrap-comparison.json product-wrap-audit/comparison.json 2>/dev/null || true
-          cp /tmp/product-wrap-public.json product-wrap-audit/public.json 2>/dev/null || true
-          cp /tmp/product-wrap-changed.json product-wrap-audit/changed-pages.json 2>/dev/null || true
+          mkdir -p product-wrap-v11-audit
+          cp /tmp/product-wrap-before.json product-wrap-v11-audit/before.json 2>/dev/null || true
+          cp /tmp/product-wrap-after.json product-wrap-v11-audit/after.json 2>/dev/null || true
+          cp /tmp/product-wrap-v11-comparison.json product-wrap-v11-audit/comparison.json 2>/dev/null || true
+          cp /tmp/product-wrap-public.json product-wrap-v11-audit/public.json 2>/dev/null || true
+          cp /tmp/product-v11-residual.json product-wrap-v11-audit/residual-targets.json 2>/dev/null || true
 
-      - name: Upload PRODUCT wrap audit
+      - name: Upload PRODUCT V1.1 wrap audit
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: product-japanese-wrap-v1
-          path: product-wrap-audit/
+          name: product-japanese-wrap-v11
+          path: product-wrap-v11-audit/
           retention-days: 7
-          compression-level: 6
