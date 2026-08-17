@@ -1,4 +1,4 @@
-name: PRODUCT one-heading wrap hotfix V1.3
+name: PRODUCT one-heading wrap hotfix V1.4
 
 on:
   push:
@@ -11,7 +11,7 @@ permissions:
   contents: write
 
 concurrency:
-  group: product-one-heading-wrap-hotfix-v13
+  group: product-one-heading-wrap-hotfix-v14
   cancel-in-progress: false
 
 jobs:
@@ -25,7 +25,7 @@ jobs:
         with:
           fetch-depth: 3
 
-      - name: Apply desktop-safe three-line heading fix
+      - name: Apply robust desktop-safe heading override
         shell: bash
         run: |
           set -euo pipefail
@@ -44,73 +44,70 @@ jobs:
               'line-height:1.15;letter-spacing:-.055em}'
           )
 
-          old_css = (
-              r'/* DPRO PRODUCT VET HP TITLE WRAP FIX V1.2 */\n'
-              '@media(max-width:980px){'
-              '.p36-vet-hp h2 .p36-vet-hp__title-line,'
-              '.p36-vet-hp h2 em > span{'
-              'display:block!important;'
-              'white-space:nowrap!important;'
-              'word-break:keep-all!important;'
-              'overflow-wrap:normal!important;'
-              'text-wrap:nowrap!important'
-              '}'
-              '}'
-          )
-          new_css = (
-              r'/* DPRO PRODUCT VET HP TITLE WRAP FIX V1.3 */\n'
-              '.p36-vet-hp h2 .p36-vet-hp__title-line,'
-              '.p36-vet-hp h2 em > span{'
-              'display:block!important;'
-              'white-space:nowrap!important;'
-              'word-break:keep-all!important;'
-              'overflow-wrap:normal!important;'
-              'text-wrap:nowrap!important'
-              '}'
-          )
-
           title = (
               '<h2 class="p36-vet-hp__title-locked" data-dpro-jp-wrap-v1="1">'
               '<span class="p36-vet-hp__title-line">ホームページから、</span>'
               '<em><span>受付システムまで</span><span>一続きで体験。</span></em></h2>'
           )
 
+          marker = '/* DPRO PRODUCT VET HP TITLE DESKTOP FIT OVERRIDE V1.4 */'
+          override = (
+              marker + '\n'
+              '      .p36-vet-hp h2 .p36-vet-hp__title-line,'
+              '.p36-vet-hp h2 em > span{'
+              'display:block!important;'
+              'white-space:nowrap!important;'
+              'word-break:keep-all!important;'
+              'overflow-wrap:normal!important;'
+              'text-wrap:nowrap!important'
+              '}'
+          )
+
           old_ref = '<script src="product-v3.6.js?v=3.6.5-vet-title-lock"></script>'
-          new_ref = '<script src="product-v3.6.js?v=3.6.6-vet-title-fit"></script>'
+          new_ref = '<script src="product-v3.6.js?v=3.6.6-vet-title-fit-v14"></script>'
 
           psrc = product.read_text(encoding='utf-8')
           isrc = index.read_text(encoding='utf-8')
 
-          marker = '/* DPRO PRODUCT VET HP TITLE WRAP FIX V1.3 */'
           already = (
               marker in psrc and
               new_h2 in psrc and
-              new_css in psrc and
               title in psrc and
               new_ref in isrc
           )
 
           if already:
-              print('V1.3 already applied')
+              print('V1.4 already applied')
           else:
               checks = {
                   'old_h2': psrc.count(old_h2),
-                  'old_css': psrc.count(old_css),
+                  'new_h2': psrc.count(new_h2),
                   'title': psrc.count(title),
                   'old_ref': isrc.count(old_ref),
+                  'new_ref': isrc.count(new_ref),
+                  'marker': psrc.count(marker),
               }
-              expected = {
-                  'old_h2': 1,
-                  'old_css': 1,
-                  'title': 1,
-                  'old_ref': 1,
-              }
-              if checks != expected:
-                  raise SystemExit(f'Current PRODUCT baseline differs: {checks}')
 
-              psrc = psrc.replace(old_h2, new_h2, 1)
-              psrc = psrc.replace(old_css, new_css, 1)
-              isrc = isrc.replace(old_ref, new_ref, 1)
+              if checks['title'] != 1:
+                  raise SystemExit(f'Target title baseline mismatch: {checks}')
+
+              if checks['marker'] == 0:
+                  if checks['old_h2'] == 1:
+                      replacement = new_h2 + '\n      ' + override
+                      psrc = psrc.replace(old_h2, replacement, 1)
+                  elif checks['new_h2'] == 1:
+                      psrc = psrc.replace(new_h2, new_h2 + '\n      ' + override, 1)
+                  else:
+                      raise SystemExit(f'H2 baseline mismatch: {checks}')
+              elif checks['marker'] != 1:
+                  raise SystemExit(f'Override marker duplicated: {checks}')
+
+              if checks['new_ref'] == 0:
+                  if checks['old_ref'] != 1:
+                      raise SystemExit(f'Index script reference mismatch: {checks}')
+                  isrc = isrc.replace(old_ref, new_ref, 1)
+              elif checks['new_ref'] != 1:
+                  raise SystemExit(f'New script reference duplicated: {checks}')
 
               product.write_text(psrc, encoding='utf-8')
               index.write_text(isrc, encoding='utf-8')
@@ -118,21 +115,25 @@ jobs:
           final_product = product.read_text(encoding='utf-8')
           final_index = index.read_text(encoding='utf-8')
 
-          must = [
+          required = [
               marker,
               new_h2,
-              new_css,
               title,
+              'display:block!important;white-space:nowrap!important;'
+              'word-break:keep-all!important;overflow-wrap:normal!important;'
+              'text-wrap:nowrap!important'
           ]
-          for item in must:
+
+          for item in required:
               if final_product.count(item) != 1:
-                  raise SystemExit('Final V1.3 structure invalid')
+                  raise SystemExit(f'Final V1.4 structure invalid: {item[:80]}')
 
           if final_index.count(new_ref) != 1:
               raise SystemExit('Final cache-bust reference invalid')
 
-          print('HEADING_LINES=ホームページから、 / 受付システムまで / 一続きで体験。')
-          print('NOWRAP_SCOPE=ALL_WIDTHS')
+          print('PATCH=PASS')
+          print('TARGET=PRODUCT VET HP heading only')
+          print('FINAL_LINES=ホームページから、 / 受付システムまで / 一続きで体験。')
           print('DESKTOP_MAX_FONT=48px')
           PY
 
@@ -140,32 +141,34 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+
           node --check product-v3.6.js
           git diff --check
 
           changed="$(git diff --name-only)"
           bad="$(printf '%s\n' "$changed" | grep -Ev '^(product-v3\.6\.js|index\.html)$' || true)"
+
           if [ -n "$bad" ]; then
             echo "Unexpected changed files:"
             printf '%s\n' "$bad"
             exit 1
           fi
 
-          grep -Fq 'DPRO PRODUCT VET HP TITLE WRAP FIX V1.3' product-v3.6.js
+          grep -Fq 'DPRO PRODUCT VET HP TITLE DESKTOP FIT OVERRIDE V1.4' product-v3.6.js
           grep -Fq 'font-size:clamp(32px,3.4vw,48px)' product-v3.6.js
           grep -Fq '<span class="p36-vet-hp__title-line">ホームページから、</span>' product-v3.6.js
           grep -Fq '<em><span>受付システムまで</span><span>一続きで体験。</span></em>' product-v3.6.js
-          grep -Fq 'product-v3.6.js?v=3.6.6-vet-title-fit' index.html
+          grep -Fq 'product-v3.6.js?v=3.6.6-vet-title-fit-v14' index.html
 
           echo 'STATIC_QA=PASS'
 
-      - name: Commit V1.3
+      - name: Commit V1.4
         shell: bash
         run: |
           set -euo pipefail
 
           if git diff --quiet -- product-v3.6.js index.html; then
-            echo 'V1.3 already applied; commit skipped.'
+            echo 'V1.4 already applied; commit skipped.'
             exit 0
           fi
 
@@ -173,7 +176,7 @@ jobs:
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
 
           git add product-v3.6.js index.html
-          git commit -m 'Fix PRODUCT VET HP heading fit at desktop widths'
+          git commit -m 'Fix PRODUCT VET HP desktop heading fit'
           git push origin HEAD:main
 
       - name: Wait for public Pages
@@ -189,12 +192,13 @@ jobs:
             js="$(curl -fsSL "$JS_URL" 2>/dev/null || true)"
             html="$(curl -fsSL "$INDEX_URL" 2>/dev/null || true)"
 
-            if [[ "$js" == *'DPRO PRODUCT VET HP TITLE WRAP FIX V1.3'* && \
+            if [[ "$js" == *'DPRO PRODUCT VET HP TITLE DESKTOP FIT OVERRIDE V1.4'* && \
                   "$js" == *'font-size:clamp(32px,3.4vw,48px)'* && \
-                  "$html" == *'product-v3.6.js?v=3.6.6-vet-title-fit'* ]]; then
+                  "$html" == *'product-v3.6.js?v=3.6.6-vet-title-fit-v14'* ]]; then
               ready=1
               break
             fi
+
             sleep 5
           done
 
