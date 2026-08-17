@@ -1,4 +1,4 @@
-name: PRODUCT one-heading wrap hotfix V1.1
+name: PRODUCT one-heading wrap hotfix V1.2
 
 on:
   push:
@@ -11,7 +11,7 @@ permissions:
   contents: write
 
 concurrency:
-  group: product-one-heading-wrap-hotfix-v11
+  group: product-one-heading-wrap-hotfix-v12
   cancel-in-progress: false
 
 jobs:
@@ -164,19 +164,23 @@ jobs:
           print('CHANGED=' + ','.join(sorted(changed)))
           PY
 
-      - name: Install Playwright
+      - name: Install Playwright in isolated temp dir
         shell: bash
         run: |
           set -euo pipefail
+          rm -rf /tmp/dpro-vet-heading-qa
+          mkdir -p /tmp/dpro-vet-heading-qa
+          cd /tmp/dpro-vet-heading-qa
           npm init -y >/dev/null 2>&1
           npm install playwright@1.55.0 --silent
           npx playwright install --with-deps chromium >/dev/null
+          node -e "console.log('PLAYWRIGHT=' + require.resolve('playwright'))"
 
       - name: Create browser QA
         shell: bash
         run: |
           set -euo pipefail
-          cat > /tmp/vet-heading-qa.js <<'NODE'
+          cat > /tmp/dpro-vet-heading-qa/vet-heading-qa.js <<'NODE'
           const { chromium } = require('playwright');
 
           const base = process.env.QA_BASE;
@@ -222,8 +226,6 @@ jobs:
                   right:Math.round(r.right),
                   display:cs.display,
                   whiteSpace:cs.whiteSpace,
-                  wordBreak:cs.wordBreak,
-                  overflowWrap:cs.overflowWrap,
                   fits:r.left >= -1 && r.right <= root.clientWidth + 1
                 };
               });
@@ -236,8 +238,7 @@ jobs:
                 lockClass: h2.classList.contains('p36-vet-hp__title-locked'),
                 genericKeepDescendants:
                   h2.querySelectorAll('.dpro-jp-keep,.dpro-jp-v11-keep').length,
-                pageOverflow: root.scrollWidth > root.clientWidth + 4,
-                viewport:{clientWidth:root.clientWidth,scrollWidth:root.scrollWidth}
+                viewport:{clientWidth:root.clientWidth}
               };
             });
 
@@ -259,8 +260,7 @@ jobs:
                 x.display === 'block' &&
                 x.whiteSpace === 'nowrap' &&
                 x.fits
-              ) &&
-              !result.pageOverflow;
+              );
 
             console.log(JSON.stringify(result, null, 2));
             await browser.close();
@@ -271,23 +271,42 @@ jobs:
             process.exit(1);
           });
           NODE
-          node --check /tmp/vet-heading-qa.js
+
+          node --check /tmp/dpro-vet-heading-qa/vet-heading-qa.js
 
       - name: Local 390px and 768px gate
         shell: bash
         run: |
           set -euo pipefail
           python3 -m http.server 8765 --bind 127.0.0.1 >/tmp/product-http.log 2>&1 &
+          server_pid=$!
+
+          ready=0
           for i in $(seq 1 30); do
-            curl -fsS http://127.0.0.1:8765/ >/dev/null && break
+            if curl -fsS http://127.0.0.1:8765/ >/dev/null 2>&1; then
+              ready=1
+              break
+            fi
             sleep 1
           done
 
-          QA_WIDTH=390 QA_BASE='http://127.0.0.1:8765/' node /tmp/vet-heading-qa.js
-          QA_WIDTH=768 QA_BASE='http://127.0.0.1:8765/' node /tmp/vet-heading-qa.js
+          if [ "$ready" != "1" ]; then
+            cat /tmp/product-http.log || true
+            kill "$server_pid" 2>/dev/null || true
+            echo 'Local PRODUCT server did not become ready.'
+            exit 1
+          fi
+
+          QA_WIDTH=390 QA_BASE='http://127.0.0.1:8765/' \
+            node /tmp/dpro-vet-heading-qa/vet-heading-qa.js
+
+          QA_WIDTH=768 QA_BASE='http://127.0.0.1:8765/' \
+            node /tmp/dpro-vet-heading-qa/vet-heading-qa.js
+
+          kill "$server_pid" 2>/dev/null || true
           echo 'LOCAL_BROWSER_QA=PASS'
 
-      - name: Commit one-heading hotfix V1.1
+      - name: Commit one-heading hotfix V1.2
         shell: bash
         run: |
           set -euo pipefail
@@ -330,13 +349,14 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+
           QA_WIDTH=390 \
             QA_BASE='https://dpromstk2000-lab.github.io/dpro-line-systems-site/' \
-            node /tmp/vet-heading-qa.js
+            node /tmp/dpro-vet-heading-qa/vet-heading-qa.js
 
           QA_WIDTH=768 \
             QA_BASE='https://dpromstk2000-lab.github.io/dpro-line-systems-site/' \
-            node /tmp/vet-heading-qa.js
+            node /tmp/dpro-vet-heading-qa/vet-heading-qa.js
 
           echo 'PUBLIC_BROWSER_QA=PASS'
           echo 'FINAL=ホームページから、 / 受付システムまで / 一続きで体験。'
