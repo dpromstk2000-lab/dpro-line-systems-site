@@ -1,4 +1,4 @@
-name: PRODUCT one-heading wrap hotfix V1.0
+name: PRODUCT one-heading wrap hotfix V1.1
 
 on:
   push:
@@ -11,186 +11,332 @@ permissions:
   contents: write
 
 concurrency:
-  group: product-one-heading-wrap-hotfix-v1
+  group: product-one-heading-wrap-hotfix-v11
   cancel-in-progress: false
 
 jobs:
   fix:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 20
 
     steps:
       - name: Checkout PRODUCT
         uses: actions/checkout@v4
         with:
-          fetch-depth: 5
+          fetch-depth: 3
 
-      - name: Find and patch only the requested heading
+      - name: Patch dynamic VET HP heading only
         shell: bash
         run: |
           set -euo pipefail
           python3 - <<'PY'
           from pathlib import Path
-          import html
-          import re
 
-          TARGET = 'ホームページから、受付システムまで一続きで体験。'
-          FIRST_PHRASE = 'ホームページから、'
-          CLASS = 'dpro-home-reception-nowrap'
-          STYLE_ID = 'dpro-home-reception-wrap-hotfix'
+          product = Path('product-v3.6.js')
+          index = Path('index.html')
 
-          heading_re = re.compile(
-              r'(?P<open><h[1-4]\b[^>]*>)(?P<body>.*?)(?P<close></h[1-4]>)',
-              re.I | re.S,
+          old_marker = '/* DPRO PRODUCT VET HP TITLE WRAP FIX V1.1R1 */'
+          marker = '/* DPRO PRODUCT VET HP TITLE WRAP FIX V1.2 */'
+
+          old_css = (
+              old_marker + r'\n' +
+              '      @media(max-width:980px){'
+              '.p36-vet-hp h2 .p36-vet-hp__title-line,'
+              '.p36-vet-hp h2 em > span{display:block;white-space:nowrap}'
+              '}'
           )
-          tag_re = re.compile(r'<[^>]+>', re.S)
-
-          def compact_heading(inner_html: str) -> str:
-              value = re.sub(r'<br\s*/?>', ' ', inner_html, flags=re.I)
-              value = tag_re.sub('', value)
-              value = html.unescape(value)
-              return re.sub(r'\s+', '', value)
-
-          matches = []
-          for p in sorted(Path('.').rglob('*.html')):
-              if '.git' in p.parts:
-                  continue
-              src = p.read_text(encoding='utf-8')
-              for m in heading_re.finditer(src):
-                  if compact_heading(m.group('body')) == TARGET:
-                      matches.append((p, src, m))
-
-          if len(matches) != 1:
-              found = [str(x[0]) for x in matches]
-              raise SystemExit(
-                  f'Expected exactly one target heading, got {len(matches)}: {found}'
-              )
-
-          path, src, m = matches[0]
-          body = m.group('body')
-
-          # This hotfix is intentionally narrow: only the first white phrase is
-          # made unbreakable. Everything after it remains exactly as authored.
-          if body.count(FIRST_PHRASE) != 1:
-              raise SystemExit(
-                  f'{path}: expected one literal first phrase inside target heading'
-              )
-
-          wrapped = body.replace(
-              FIRST_PHRASE,
-              f'<span class="{CLASS}">{FIRST_PHRASE}</span>',
-              1,
+          new_css = (
+              marker + r'\n' +
+              '      @media(max-width:980px){'
+              '.p36-vet-hp h2 .p36-vet-hp__title-line,'
+              '.p36-vet-hp h2 em > span{'
+              'display:block!important;'
+              'white-space:nowrap!important;'
+              'word-break:keep-all!important;'
+              'overflow-wrap:normal!important;'
+              'text-wrap:nowrap!important'
+              '}'
+              '}'
           )
-          new_heading = m.group('open') + wrapped + m.group('close')
-          updated = src[:m.start()] + new_heading + src[m.end():]
 
-          style = f'''
-          <style id="{STYLE_ID}">
-          @media (max-width: 700px) {{
-            .{CLASS} {{
-              display: inline-block !important;
-              white-space: nowrap !important;
-              word-break: keep-all !important;
-              overflow-wrap: normal !important;
-            }}
-          }}
-          </style>
-          '''.strip()
+          old_title = (
+              '<h2><span class="p36-vet-hp__title-line">ホームページから、</span>'
+              '<em><span>受付システムまで</span><span>一続きで体験。</span></em></h2>'
+          )
+          new_title = (
+              '<h2 class="p36-vet-hp__title-locked" data-dpro-jp-wrap-v1="1">'
+              '<span class="p36-vet-hp__title-line">ホームページから、</span>'
+              '<em><span>受付システムまで</span><span>一続きで体験。</span></em></h2>'
+          )
 
-          if STYLE_ID not in updated:
-              if '</head>' not in updated.lower():
-                  raise SystemExit(f'{path}: </head> not found')
-              pos = updated.lower().rfind('</head>')
-              updated = updated[:pos] + style + '\n' + updated[pos:]
+          old_ref = '<script src="product-v3.6.js?v=3.6.4-vet-title-r1"></script>'
+          new_ref = '<script src="product-v3.6.js?v=3.6.5-vet-title-lock"></script>'
 
-          if updated == src:
-              raise SystemExit(f'{path}: no change generated')
+          psrc = product.read_text(encoding='utf-8')
+          isrc = index.read_text(encoding='utf-8')
 
-          # Safety: only this heading text is wrapped; wording must remain identical.
-          before_text = compact_heading(body)
-          after_match = heading_re.search(updated, m.start())
-          if not after_match:
-              raise SystemExit(f'{path}: patched heading not found')
-          after_text = compact_heading(after_match.group('body'))
-          if before_text != after_text or after_text != TARGET:
-              raise SystemExit(f'{path}: heading wording changed unexpectedly')
+          already = (
+              marker in psrc and
+              new_css in psrc and
+              new_title in psrc and
+              new_ref in isrc
+          )
 
-          if updated.count(f'class="{CLASS}"') != 1:
-              raise SystemExit(f'{path}: nowrap span count mismatch')
-          if updated.count(f'id="{STYLE_ID}"') != 1:
-              raise SystemExit(f'{path}: style marker count mismatch')
+          if already:
+              print('V1.2 heading lock already applied')
+          else:
+              checks = {
+                  'old_marker': psrc.count(old_marker),
+                  'old_css': psrc.count(old_css),
+                  'old_title': psrc.count(old_title),
+                  'old_ref': isrc.count(old_ref),
+              }
+              if checks != {
+                  'old_marker': 1,
+                  'old_css': 1,
+                  'old_title': 1,
+                  'old_ref': 1,
+              }:
+                  raise SystemExit(f'Expected exact current VET heading baseline: {checks}')
 
-          path.write_text(updated, encoding='utf-8')
-          Path('/tmp/dpro-target-path.txt').write_text(str(path), encoding='utf-8')
-          print('TARGET_FILE=' + str(path))
-          print('PATCH=ONLY_FIRST_PHRASE_NOWRAP')
-          print('TEXT=' + TARGET)
+              psrc = psrc.replace(old_css, new_css, 1)
+              psrc = psrc.replace(old_title, new_title, 1)
+              isrc = isrc.replace(old_ref, new_ref, 1)
+
+              product.write_text(psrc, encoding='utf-8')
+              index.write_text(isrc, encoding='utf-8')
+
+          final_product = product.read_text(encoding='utf-8')
+          final_index = index.read_text(encoding='utf-8')
+
+          if final_product.count(marker) != 1:
+              raise SystemExit('V1.2 marker missing or duplicated')
+          if final_product.count(new_css) != 1:
+              raise SystemExit('V1.2 nowrap CSS missing')
+          if final_product.count(new_title) != 1:
+              raise SystemExit('Locked title markup missing')
+          if final_index.count(new_ref) != 1:
+              raise SystemExit('Cache-bust reference missing')
+
+          print('PATCH_SCOPE=product-v3.6.js dynamic VET HP heading + index cache bust')
+          print('HEADING=ホームページから、 / 受付システムまで / 一続きで体験。')
+          print('GENERIC_JP_WRAP_BYPASS=PASS')
           PY
 
       - name: Static safety QA
         shell: bash
         run: |
           set -euo pipefail
-          target="$(cat /tmp/dpro-target-path.txt)"
+          node --check product-v3.6.js
           git diff --check
           python3 - <<'PY'
           from pathlib import Path
           import subprocess
 
-          target = Path('/tmp/dpro-target-path.txt').read_text(encoding='utf-8').strip()
-          changed = subprocess.check_output(
-              ['git', 'diff', '--name-only'], text=True
-          ).splitlines()
+          changed = set(
+              subprocess.check_output(['git','diff','--name-only'], text=True)
+              .splitlines()
+          )
+          allowed = {'product-v3.6.js', 'index.html'}
+          if not changed.issubset(allowed):
+              raise SystemExit(f'Unexpected changed files: {sorted(changed-allowed)}')
 
-          if changed != [target]:
-              raise SystemExit(f'Only target HTML may change, got: {changed}')
+          p = Path('product-v3.6.js').read_text(encoding='utf-8')
+          i = Path('index.html').read_text(encoding='utf-8')
 
-          text = Path(target).read_text(encoding='utf-8')
-          if text.count('dpro-home-reception-nowrap') != 2:
-              raise SystemExit('Expected one CSS selector and one target span')
-          if text.count('dpro-home-reception-wrap-hotfix') != 1:
-              raise SystemExit('Hotfix style marker mismatch')
-          if 'ホームページから、' not in text:
-              raise SystemExit('Target wording missing')
+          must = [
+              '/* DPRO PRODUCT VET HP TITLE WRAP FIX V1.2 */',
+              'class="p36-vet-hp__title-locked" data-dpro-jp-wrap-v1="1"',
+              '<span class="p36-vet-hp__title-line">ホームページから、</span>',
+              '<em><span>受付システムまで</span><span>一続きで体験。</span></em>',
+              'word-break:keep-all!important',
+              'overflow-wrap:normal!important',
+              'white-space:nowrap!important',
+          ]
+          for x in must:
+              if p.count(x) != 1:
+                  raise SystemExit(f'Expected one marker/snippet: {x}')
+
+          if i.count('product-v3.6.js?v=3.6.5-vet-title-lock') != 1:
+              raise SystemExit('Index cache bust mismatch')
 
           print('STATIC_QA=PASS')
-          print('CHANGED_ONLY=' + target)
+          print('CHANGED=' + ','.join(sorted(changed)))
           PY
 
-      - name: Commit one-heading hotfix
+      - name: Install Playwright
         shell: bash
         run: |
           set -euo pipefail
-          target="$(cat /tmp/dpro-target-path.txt)"
-          if git diff --quiet -- "$target"; then
-            echo 'Hotfix already applied; commit skipped.'
+          npm init -y >/dev/null 2>&1
+          npm install playwright@1.55.0 --silent
+          npx playwright install --with-deps chromium >/dev/null
+
+      - name: Create browser QA
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat > /tmp/vet-heading-qa.js <<'NODE'
+          const { chromium } = require('playwright');
+
+          const base = process.env.QA_BASE;
+          const width = Number(process.env.QA_WIDTH || 390);
+
+          (async () => {
+            const browser = await chromium.launch({headless:true});
+            const page = await browser.newPage({
+              viewport:{width,height:844},
+              deviceScaleFactor:1
+            });
+
+            const url = new URL(
+              'index.html?qa=vet-heading-v12-' + width + '-' + Date.now(),
+              base
+            ).toString();
+
+            const response = await page.goto(url, {
+              waitUntil:'domcontentloaded',
+              timeout:30000
+            });
+
+            await page.waitForSelector('.p36-vet-hp h2', {timeout:30000});
+            await page.evaluate(() => document.fonts && document.fonts.ready);
+            await page.waitForTimeout(1600);
+
+            const result = await page.evaluate(() => {
+              const h2 = document.querySelector('.p36-vet-hp h2');
+              const parts = [
+                h2.querySelector(':scope > .p36-vet-hp__title-line'),
+                h2.querySelector(':scope > em > span:first-child'),
+                h2.querySelector(':scope > em > span:last-child')
+              ];
+              const root = document.documentElement;
+
+              const rows = parts.map(el => {
+                const r = el.getBoundingClientRect();
+                const cs = getComputedStyle(el);
+                return {
+                  text:(el.textContent || '').trim(),
+                  top:Math.round(r.top),
+                  left:Math.round(r.left),
+                  right:Math.round(r.right),
+                  display:cs.display,
+                  whiteSpace:cs.whiteSpace,
+                  wordBreak:cs.wordBreak,
+                  overflowWrap:cs.overflowWrap,
+                  fits:r.left >= -1 && r.right <= root.clientWidth + 1
+                };
+              });
+
+              return {
+                lines: rows.map(x => x.text),
+                rows,
+                distinctRows: new Set(rows.map(x => x.top)).size,
+                lockAttr: h2.getAttribute('data-dpro-jp-wrap-v1'),
+                lockClass: h2.classList.contains('p36-vet-hp__title-locked'),
+                genericKeepDescendants:
+                  h2.querySelectorAll('.dpro-jp-keep,.dpro-jp-v11-keep').length,
+                pageOverflow: root.scrollWidth > root.clientWidth + 4,
+                viewport:{clientWidth:root.clientWidth,scrollWidth:root.scrollWidth}
+              };
+            });
+
+            const expected = [
+              'ホームページから、',
+              '受付システムまで',
+              '一続きで体験。'
+            ];
+
+            result.status = response ? response.status() : null;
+            result.pass =
+              result.status === 200 &&
+              JSON.stringify(result.lines) === JSON.stringify(expected) &&
+              result.distinctRows === 3 &&
+              result.lockAttr === '1' &&
+              result.lockClass &&
+              result.genericKeepDescendants === 0 &&
+              result.rows.every(x =>
+                x.display === 'block' &&
+                x.whiteSpace === 'nowrap' &&
+                x.fits
+              ) &&
+              !result.pageOverflow;
+
+            console.log(JSON.stringify(result, null, 2));
+            await browser.close();
+
+            if (!result.pass) process.exit(1);
+          })().catch(err => {
+            console.error(err);
+            process.exit(1);
+          });
+          NODE
+          node --check /tmp/vet-heading-qa.js
+
+      - name: Local 390px and 768px gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m http.server 8765 --bind 127.0.0.1 >/tmp/product-http.log 2>&1 &
+          for i in $(seq 1 30); do
+            curl -fsS http://127.0.0.1:8765/ >/dev/null && break
+            sleep 1
+          done
+
+          QA_WIDTH=390 QA_BASE='http://127.0.0.1:8765/' node /tmp/vet-heading-qa.js
+          QA_WIDTH=768 QA_BASE='http://127.0.0.1:8765/' node /tmp/vet-heading-qa.js
+          echo 'LOCAL_BROWSER_QA=PASS'
+
+      - name: Commit one-heading hotfix V1.1
+        shell: bash
+        run: |
+          set -euo pipefail
+          if git diff --quiet -- product-v3.6.js index.html; then
+            echo 'Heading lock already applied; commit skipped.'
             exit 0
           fi
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add "$target"
-          git commit -m 'Fix PRODUCT home-to-reception heading wrap'
+          git add product-v3.6.js index.html
+          git commit -m 'Lock PRODUCT VET HP heading into three lines'
           git push origin HEAD:main
 
-      - name: Wait for GitHub Pages propagation
+      - name: Wait for GitHub Pages
         shell: bash
         run: |
           set -euo pipefail
-          target="$(cat /tmp/dpro-target-path.txt)"
-          url="https://dpromstk2000-lab.github.io/dpro-line-systems-site/${target}?run=${GITHUB_RUN_ID}"
+          JS_URL="https://dpromstk2000-lab.github.io/dpro-line-systems-site/product-v3.6.js?run=$GITHUB_RUN_ID"
+          INDEX_URL="https://dpromstk2000-lab.github.io/dpro-line-systems-site/?run=$GITHUB_RUN_ID"
+
           ready=0
           for i in $(seq 1 72); do
-            page="$(curl -fsSL "$url" 2>/dev/null || true)"
-            if printf '%s' "$page" | grep -q 'dpro-home-reception-wrap-hotfix' && \
-               printf '%s' "$page" | grep -q 'dpro-home-reception-nowrap'; then
+            js="$(curl -fsSL "$JS_URL" 2>/dev/null || true)"
+            html="$(curl -fsSL "$INDEX_URL" 2>/dev/null || true)"
+            if [[ "$js" == *'DPRO PRODUCT VET HP TITLE WRAP FIX V1.2'* && \
+                  "$html" == *'product-v3.6.js?v=3.6.5-vet-title-lock'* ]]; then
               ready=1
               break
             fi
             sleep 5
           done
+
           if [ "$ready" != '1' ]; then
-            echo "Pages propagation timed out: $url"
+            echo 'Pages propagation timed out.'
             exit 1
           fi
-          echo "PUBLIC_QA=PASS"
-          echo "PUBLIC_URL=$url"
+          echo 'PAGES_PROPAGATION=PASS'
+
+      - name: Public 390px and 768px final gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          QA_WIDTH=390 \
+            QA_BASE='https://dpromstk2000-lab.github.io/dpro-line-systems-site/' \
+            node /tmp/vet-heading-qa.js
+
+          QA_WIDTH=768 \
+            QA_BASE='https://dpromstk2000-lab.github.io/dpro-line-systems-site/' \
+            node /tmp/vet-heading-qa.js
+
+          echo 'PUBLIC_BROWSER_QA=PASS'
+          echo 'FINAL=ホームページから、 / 受付システムまで / 一続きで体験。'
