@@ -1,4 +1,4 @@
-name: PRODUCT Japanese mobile wrap fix V1.0R4
+name: PRODUCT Japanese mobile wrap fix V1.0R5
 
 on:
   push:
@@ -172,18 +172,27 @@ jobs:
         run: |
           set -euo pipefail
           cat > japanese-wrap-v1.css <<'CSS'
-          /* DPRO PRODUCT JAPANESE MOBILE WRAP V1.0R4 */
+          /* DPRO PRODUCT JAPANESE MOBILE WRAP V1.0R5 */
           @media (max-width:760px){
             .dpro-jp-wrap-target{
               line-break:strict!important;
               word-break:normal!important;
               overflow-wrap:break-word!important;
               min-width:0!important;
-              max-width:100%!important
+              max-width:100%!important;
+              text-wrap:pretty!important
             }
             .dpro-jp-keep{
               display:inline!important;
               white-space:nowrap!important
+            }
+            html.dpro-jp-wrap-overflow-failsafe .dpro-jp-keep{
+              white-space:normal!important
+            }
+            html.dpro-jp-wrap-overflow-failsafe .dpro-jp-wrap-target{
+              word-break:normal!important;
+              overflow-wrap:break-word!important;
+              text-wrap:pretty!important
             }
             @supports (word-break:auto-phrase){
               .dpro-jp-wrap-target{
@@ -219,7 +228,14 @@ jobs:
               'じゃない',
               'ひとつ',
               'つなぐ',
-              'カルテ'
+              'カルテ',
+              'まで',
+              'から',
+              'ので',
+              'ため',
+              'ます',
+              'です',
+              'できる'
             ].sort((a,b)=>b.length-a.length);
 
             const escaped=PHRASES.map(
@@ -305,12 +321,43 @@ jobs:
               nodes.forEach(protectTextNode);
             }
 
+            function pageOverflow(){
+              const root=document.documentElement;
+              return root.scrollWidth>root.clientWidth+4;
+            }
+
+            function unwrap(el){
+              el.querySelectorAll('.dpro-jp-keep').forEach(span=>{
+                span.replaceWith(document.createTextNode(span.textContent||''));
+              });
+              el.normalize();
+              el.classList.remove('dpro-jp-wrap-target');
+              el.dataset.dproJpWrapV1='rollback';
+            }
+
+            function rollbackIfNeeded(){
+              if(window.__DPRO_PRODUCT_JP_WRAP_BASE_OVERFLOW__) return;
+              requestAnimationFrame(()=>{
+                if(!pageOverflow()) return;
+
+                document.querySelectorAll('.dpro-jp-wrap-target').forEach(unwrap);
+
+                requestAnimationFrame(()=>{
+                  if(pageOverflow()){
+                    document.documentElement.classList.add('dpro-jp-wrap-overflow-failsafe');
+                  }
+                });
+              });
+            }
+
             function run(){
               document.querySelectorAll(TARGETS).forEach(protectTarget);
-              window.__DPRO_PRODUCT_JP_WRAP_V1__='R4';
+              window.__DPRO_PRODUCT_JP_WRAP_V1__='R5';
+              rollbackIfNeeded();
             }
 
             function boot(){
+              window.__DPRO_PRODUCT_JP_WRAP_BASE_OVERFLOW__=pageOverflow();
               run();
 
               let timer=0;
@@ -380,8 +427,8 @@ jobs:
         run: |
           set -euo pipefail
           node --check japanese-wrap-v1.js
-          grep -F 'DPRO PRODUCT JAPANESE MOBILE WRAP V1.0R4' japanese-wrap-v1.css
-          grep -F "window.__DPRO_PRODUCT_JP_WRAP_V1__='R4'" japanese-wrap-v1.js
+          grep -F 'DPRO PRODUCT JAPANESE MOBILE WRAP V1.0R5' japanese-wrap-v1.css
+          grep -F "window.__DPRO_PRODUCT_JP_WRAP_V1__='R5'" japanese-wrap-v1.js
 
       - name: Post-fix 390px audit
         shell: bash
@@ -466,12 +513,12 @@ jobs:
                   f"{before['high']} -> {after['high']}"
               )
 
-          # R4 must remove at least 90% of HIGH issues before it is allowed
+          # R5 must remove at least 90% of HIGH issues before it is allowed
           # to reach main. Remaining isolated cases can then be fixed precisely.
           high_limit=max(10, before['high']//10)
           if after['high']>high_limit:
               raise SystemExit(
-                  f"R4 HIGH reduction insufficient: "
+                  f"R5 HIGH reduction insufficient: "
                   f"{before['high']} -> {after['high']} "
                   f"(limit {high_limit})"
               )
@@ -481,7 +528,7 @@ jobs:
                   'Total Japanese wrap issues did not improve'
               )
 
-          print('PRODUCT R4 IMPROVEMENT GATE PASS')
+          print('PRODUCT R5 IMPROVEMENT GATE PASS')
           PY
 
       - name: Static safety QA
@@ -497,10 +544,10 @@ jobs:
           if diff_files!=expected:raise SystemExit(f'Unexpected changed files: extra={sorted(diff_files-expected)} missing={sorted(expected-diff_files)}')
           for name in changed:
             if 'DPRO PRODUCT JAPANESE MOBILE WRAP V1.0' not in Path(name).read_text(encoding='utf-8'):raise SystemExit(f'{name}: injection marker missing')
-          print('PRODUCT JAPANESE WRAP V1.0R4 STATIC QA PASS',len(changed))
+          print('PRODUCT JAPANESE WRAP V1.0R5 STATIC QA PASS',len(changed))
           PY
 
-      - name: Commit PRODUCT V1.0R4
+      - name: Commit PRODUCT V1.0R5
         shell: bash
         run: |
           set -euo pipefail
@@ -513,7 +560,7 @@ jobs:
           for name in json.loads(Path('/tmp/product-wrap-changed.json').read_text(encoding='utf-8'))['changed']:print(name)
           PY
           while IFS= read -r file; do [ -n "$file" ] && git add "$file"; done </tmp/product-add-files.txt
-          git commit -m 'Fix PRODUCT Japanese mobile wraps V1.0R4'
+          git commit -m 'Fix PRODUCT Japanese mobile wraps V1.0R5'
           git push origin HEAD:main
 
       - name: Wait for PRODUCT Pages propagation
