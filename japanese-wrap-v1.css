@@ -1,4 +1,4 @@
-/* DPRO PRODUCT JAPANESE MOBILE WRAP V1.0R9 */
+/* DPRO PRODUCT JAPANESE MOBILE WRAP V1.2 */
 @media (max-width:760px){
   .dpro-jp-wrap-target{
     line-break:strict!important;
@@ -12,7 +12,8 @@
   h4.dpro-jp-wrap-target{
     text-wrap:balance!important
   }
-  .dpro-jp-keep{
+  .dpro-jp-keep,
+  .dpro-jp-v11-keep{
     display:inline!important;
     white-space:nowrap!important
   }
@@ -33,5 +34,21 @@
       word-break:auto-phrase!important;
       overflow-wrap:normal!important
     }
+  }
+}
+
+/* V1.2: preserve the V1.1 PRODUCT top CTA mobile grid correction. */
+@media (max-width:700px){
+  .p36-proposal-entry{
+    grid-template-columns:1fr!important;
+    gap:16px!important;
+    padding:22px!important
+  }
+  .p36-proposal-entry__copy{
+    min-width:0!important
+  }
+  .p36-proposal-entry__actions{
+    min-width:0!important;
+    width:100%!important
   }
 }
