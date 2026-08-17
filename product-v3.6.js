@@ -31,7 +31,9 @@
       .p36-vet-hp__grid{display:grid;grid-template-columns:minmax(0,.88fr) minmax(420px,1.12fr);gap:clamp(28px,5vw,68px);align-items:center}
       .p36-vet-hp__eyebrow{margin:0 0 12px;color:#ff9ab9;font-size:12px;font-weight:1000;letter-spacing:.14em}
       .p36-vet-hp__eyebrow span{display:inline-block;margin-right:8px;padding:4px 7px;border-radius:999px;background:#a51743;color:#fff;font-size:9px}
-      .p36-vet-hp h2{margin:0;font-size:clamp(32px,4.6vw,58px);line-height:1.15;letter-spacing:-.055em}
+      .p36-vet-hp h2{margin:0;font-size:clamp(32px,3.4vw,48px);line-height:1.15;letter-spacing:-.055em}
+      /* DPRO PRODUCT VET HP TITLE FINAL FIT V1.5 */
+      .p36-vet-hp h2 .p36-vet-hp__title-line,.p36-vet-hp h2 em > span{display:block!important;white-space:nowrap!important;word-break:keep-all!important;overflow-wrap:normal!important;text-wrap:nowrap!important}
       .p36-vet-hp h2 em{display:block;color:#7de6c7;font-style:normal}\n      /* DPRO PRODUCT VET HP TITLE WRAP FIX V1.2 */\n      @media(max-width:980px){.p36-vet-hp h2 .p36-vet-hp__title-line,.p36-vet-hp h2 em > span{display:block!important;white-space:nowrap!important;word-break:keep-all!important;overflow-wrap:normal!important;text-wrap:nowrap!important}}
       .p36-vet-hp__lead{margin:18px 0 0;max-width:640px;color:#d9cfD5;font-size:16px;line-height:1.95}
       .p36-vet-hp__flow{display:flex;flex-wrap:wrap;gap:8px;margin-top:21px}
