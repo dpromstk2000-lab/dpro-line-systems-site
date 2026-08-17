@@ -1,4 +1,4 @@
-name: PRODUCT Japanese mobile wrap fix V1.0
+name: PRODUCT Japanese mobile wrap fix V1.0R1
 
 on:
   push:
@@ -33,7 +33,7 @@ jobs:
           ["compare-repitte.html","compare-sotomachi-vet.html","flyer-dental.html","flyer-houkago.html","index.html","lp-bakery.html","lp-btype.html","lp-buyback.html","lp-cake.html","lp-car-service.html","lp-car.html","lp-careplan.html","lp-caretaxi.html","lp-chosashi.html","lp-cleaning.html","lp-cosmetics.html","lp-daycare.html","lp-dental.html","lp-disposal.html","lp-estate.html","lp-esthe.html","lp-eye.html","lp-flower.html","lp-funeral.html","lp-gakudo.html","lp-green-rental.html","lp-gym.html","lp-gyosei.html","lp-hair.html","lp-haishoku.html","lp-homecare.html","lp-homenursing.html","lp-housekeep.html","lp-izakaya.html","lp-nail.html","lp-pet-salon.html","lp-photo.html","lp-reform.html","lp-repair.html","lp-salesnavi.html","lp-salon.html","lp-school.html","lp-seitai.html","lp-sharoushi.html","lp-shiho.html","lp-sodan.html","lp-stay.html","lp-takeout.html","lp-tax.html","lp-vet.html","lp-welfare-shuttle.html","lp-welfare.html","lp-yakiniku.html","lp-yoga.html","proposal.html","systems/car-service.html","systems/homecare.html","systems/pet-care.html"]
           JSON
 
-          cat > /tmp/product-wrap-audit.js <<'NODE'
+          cat > product-wrap-audit.js <<'NODE'
           const { chromium } = require('playwright');
           const fs = require('fs');
           const targets = JSON.parse(fs.readFileSync('/tmp/product-wrap-targets.json','utf8'));
@@ -146,6 +146,8 @@ jobs:
           npm init -y >/dev/null 2>&1
           npm install playwright@1.55.0 --silent
           npx playwright install --with-deps chromium
+          node -e "console.log('PLAYWRIGHT_RESOLVE=' + require.resolve('playwright'))"
+          node --check product-wrap-audit.js
 
       - name: Start local PRODUCT server
         shell: bash
@@ -163,7 +165,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          AUDIT_BASE='http://127.0.0.1:8765/' AUDIT_OUT='/tmp/product-wrap-before.json' node /tmp/product-wrap-audit.js
+          AUDIT_BASE='http://127.0.0.1:8765/' AUDIT_OUT='/tmp/product-wrap-before.json' node product-wrap-audit.js
 
       - name: Add PRODUCT Japanese wrap runtime
         shell: bash
@@ -268,7 +270,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          AUDIT_BASE='http://127.0.0.1:8765/' AUDIT_OUT='/tmp/product-wrap-after.json' node /tmp/product-wrap-audit.js
+          AUDIT_BASE='http://127.0.0.1:8765/' AUDIT_OUT='/tmp/product-wrap-after.json' node product-wrap-audit.js
 
       - name: Improvement gate
         shell: bash
@@ -317,7 +319,7 @@ jobs:
           for name in json.loads(Path('/tmp/product-wrap-changed.json').read_text(encoding='utf-8'))['changed']:print(name)
           PY
           while IFS= read -r file; do [ -n "$file" ] && git add "$file"; done </tmp/product-add-files.txt
-          git commit -m 'Fix PRODUCT Japanese mobile wraps V1.0'
+          git commit -m 'Fix PRODUCT Japanese mobile wraps V1.0R1'
           git push origin HEAD:main
 
       - name: Wait for PRODUCT Pages propagation
@@ -338,7 +340,7 @@ jobs:
         run: |
           set -euo pipefail
           if [ "$(cat /tmp/product-public-ready)" != '1' ]; then echo '{"status":"SKIPPED","reason":"Pages propagation pending"}' >/tmp/product-wrap-public.json; exit 0; fi
-          AUDIT_BASE='https://dpromstk2000-lab.github.io/dpro-line-systems-site/' AUDIT_OUT='/tmp/product-wrap-public.json' node /tmp/product-wrap-audit.js
+          AUDIT_BASE='https://dpromstk2000-lab.github.io/dpro-line-systems-site/' AUDIT_OUT='/tmp/product-wrap-public.json' node product-wrap-audit.js
 
       - name: Build audit artifact
         if: always()
