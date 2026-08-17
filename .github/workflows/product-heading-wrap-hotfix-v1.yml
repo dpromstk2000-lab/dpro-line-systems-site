@@ -1,0 +1,196 @@
+name: PRODUCT one-heading wrap hotfix V1.0
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/product-heading-wrap-hotfix-v1.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: product-one-heading-wrap-hotfix-v1
+  cancel-in-progress: false
+
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout PRODUCT
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 5
+
+      - name: Find and patch only the requested heading
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          import html
+          import re
+
+          TARGET = 'ホームページから、受付システムまで一続きで体験。'
+          FIRST_PHRASE = 'ホームページから、'
+          CLASS = 'dpro-home-reception-nowrap'
+          STYLE_ID = 'dpro-home-reception-wrap-hotfix'
+
+          heading_re = re.compile(
+              r'(?P<open><h[1-4]\b[^>]*>)(?P<body>.*?)(?P<close></h[1-4]>)',
+              re.I | re.S,
+          )
+          tag_re = re.compile(r'<[^>]+>', re.S)
+
+          def compact_heading(inner_html: str) -> str:
+              value = re.sub(r'<br\s*/?>', ' ', inner_html, flags=re.I)
+              value = tag_re.sub('', value)
+              value = html.unescape(value)
+              return re.sub(r'\s+', '', value)
+
+          matches = []
+          for p in sorted(Path('.').rglob('*.html')):
+              if '.git' in p.parts:
+                  continue
+              src = p.read_text(encoding='utf-8')
+              for m in heading_re.finditer(src):
+                  if compact_heading(m.group('body')) == TARGET:
+                      matches.append((p, src, m))
+
+          if len(matches) != 1:
+              found = [str(x[0]) for x in matches]
+              raise SystemExit(
+                  f'Expected exactly one target heading, got {len(matches)}: {found}'
+              )
+
+          path, src, m = matches[0]
+          body = m.group('body')
+
+          # This hotfix is intentionally narrow: only the first white phrase is
+          # made unbreakable. Everything after it remains exactly as authored.
+          if body.count(FIRST_PHRASE) != 1:
+              raise SystemExit(
+                  f'{path}: expected one literal first phrase inside target heading'
+              )
+
+          wrapped = body.replace(
+              FIRST_PHRASE,
+              f'<span class="{CLASS}">{FIRST_PHRASE}</span>',
+              1,
+          )
+          new_heading = m.group('open') + wrapped + m.group('close')
+          updated = src[:m.start()] + new_heading + src[m.end():]
+
+          style = f'''
+          <style id="{STYLE_ID}">
+          @media (max-width: 700px) {{
+            .{CLASS} {{
+              display: inline-block !important;
+              white-space: nowrap !important;
+              word-break: keep-all !important;
+              overflow-wrap: normal !important;
+            }}
+          }}
+          </style>
+          '''.strip()
+
+          if STYLE_ID not in updated:
+              if '</head>' not in updated.lower():
+                  raise SystemExit(f'{path}: </head> not found')
+              pos = updated.lower().rfind('</head>')
+              updated = updated[:pos] + style + '\n' + updated[pos:]
+
+          if updated == src:
+              raise SystemExit(f'{path}: no change generated')
+
+          # Safety: only this heading text is wrapped; wording must remain identical.
+          before_text = compact_heading(body)
+          after_match = heading_re.search(updated, m.start())
+          if not after_match:
+              raise SystemExit(f'{path}: patched heading not found')
+          after_text = compact_heading(after_match.group('body'))
+          if before_text != after_text or after_text != TARGET:
+              raise SystemExit(f'{path}: heading wording changed unexpectedly')
+
+          if updated.count(f'class="{CLASS}"') != 1:
+              raise SystemExit(f'{path}: nowrap span count mismatch')
+          if updated.count(f'id="{STYLE_ID}"') != 1:
+              raise SystemExit(f'{path}: style marker count mismatch')
+
+          path.write_text(updated, encoding='utf-8')
+          Path('/tmp/dpro-target-path.txt').write_text(str(path), encoding='utf-8')
+          print('TARGET_FILE=' + str(path))
+          print('PATCH=ONLY_FIRST_PHRASE_NOWRAP')
+          print('TEXT=' + TARGET)
+          PY
+
+      - name: Static safety QA
+        shell: bash
+        run: |
+          set -euo pipefail
+          target="$(cat /tmp/dpro-target-path.txt)"
+          git diff --check
+          python3 - <<'PY'
+          from pathlib import Path
+          import subprocess
+
+          target = Path('/tmp/dpro-target-path.txt').read_text(encoding='utf-8').strip()
+          changed = subprocess.check_output(
+              ['git', 'diff', '--name-only'], text=True
+          ).splitlines()
+
+          if changed != [target]:
+              raise SystemExit(f'Only target HTML may change, got: {changed}')
+
+          text = Path(target).read_text(encoding='utf-8')
+          if text.count('dpro-home-reception-nowrap') != 2:
+              raise SystemExit('Expected one CSS selector and one target span')
+          if text.count('dpro-home-reception-wrap-hotfix') != 1:
+              raise SystemExit('Hotfix style marker mismatch')
+          if 'ホームページから、' not in text:
+              raise SystemExit('Target wording missing')
+
+          print('STATIC_QA=PASS')
+          print('CHANGED_ONLY=' + target)
+          PY
+
+      - name: Commit one-heading hotfix
+        shell: bash
+        run: |
+          set -euo pipefail
+          target="$(cat /tmp/dpro-target-path.txt)"
+          if git diff --quiet -- "$target"; then
+            echo 'Hotfix already applied; commit skipped.'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add "$target"
+          git commit -m 'Fix PRODUCT home-to-reception heading wrap'
+          git push origin HEAD:main
+
+      - name: Wait for GitHub Pages propagation
+        shell: bash
+        run: |
+          set -euo pipefail
+          target="$(cat /tmp/dpro-target-path.txt)"
+          url="https://dpromstk2000-lab.github.io/dpro-line-systems-site/${target}?run=${GITHUB_RUN_ID}"
+          ready=0
+          for i in $(seq 1 72); do
+            page="$(curl -fsSL "$url" 2>/dev/null || true)"
+            if printf '%s' "$page" | grep -q 'dpro-home-reception-wrap-hotfix' && \
+               printf '%s' "$page" | grep -q 'dpro-home-reception-nowrap'; then
+              ready=1
+              break
+            fi
+            sleep 5
+          done
+          if [ "$ready" != '1' ]; then
+            echo "Pages propagation timed out: $url"
+            exit 1
+          fi
+          echo "PUBLIC_QA=PASS"
+          echo "PUBLIC_URL=$url"
