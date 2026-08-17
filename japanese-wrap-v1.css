@@ -1,0 +1,37 @@
+/* DPRO PRODUCT JAPANESE MOBILE WRAP V1.0R9 */
+@media (max-width:760px){
+  .dpro-jp-wrap-target{
+    line-break:strict!important;
+    word-break:normal!important;
+    overflow-wrap:break-word!important;
+    text-wrap:pretty!important
+  }
+  h1.dpro-jp-wrap-target,
+  h2.dpro-jp-wrap-target,
+  h3.dpro-jp-wrap-target,
+  h4.dpro-jp-wrap-target{
+    text-wrap:balance!important
+  }
+  .dpro-jp-keep{
+    display:inline!important;
+    white-space:nowrap!important
+  }
+  .dpro-jp-keep--relax{
+    white-space:normal!important;
+    overflow-wrap:normal!important
+  }
+  .dpro-jp-wrap-target--relax .dpro-jp-keep{
+    white-space:normal!important
+  }
+  .dpro-jp-wrap-target--relax{
+    word-break:normal!important;
+    overflow-wrap:break-word!important;
+    text-wrap:pretty!important
+  }
+  @supports (word-break:auto-phrase){
+    .dpro-jp-wrap-target{
+      word-break:auto-phrase!important;
+      overflow-wrap:normal!important
+    }
+  }
+}
