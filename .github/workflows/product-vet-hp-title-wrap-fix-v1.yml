@@ -1,4 +1,4 @@
-name: PRODUCT VET HP title wrap fix V1.0
+name: PRODUCT VET HP title wrap fix V1.0R1
 
 on:
   push:
@@ -11,7 +11,7 @@ permissions:
   contents: write
 
 concurrency:
-  group: product-vet-hp-title-wrap-fix-v1
+  group: product-vet-hp-title-wrap-fix-v1r1
   cancel-in-progress: false
 
 jobs:
@@ -321,8 +321,8 @@ jobs:
           for i in $(seq 1 72); do
             js="$(curl -fsSL "$JS_URL" 2>/dev/null || true)"
             html="$(curl -fsSL "$INDEX_URL" 2>/dev/null || true)"
-            if printf '%s' "$js" | grep -q 'DPRO PRODUCT VET HP TITLE WRAP FIX V1.0' && \
-               printf '%s' "$html" | grep -q 'product-v3.6.js?v=3.6.3-vet-title'; then
+            if [[ "$js" == *'DPRO PRODUCT VET HP TITLE WRAP FIX V1.0'* && \
+                  "$html" == *'product-v3.6.js?v=3.6.3-vet-title'* ]]; then
               ready=1
               break
             fi
@@ -357,7 +357,6 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: product-vet-hp-title-wrap-v1
+          name: product-vet-hp-title-wrap-v1r1
           path: product-vet-title-audit/
           retention-days: 7
-
