@@ -32,7 +32,7 @@
       .p36-vet-hp__eyebrow{margin:0 0 12px;color:#ff9ab9;font-size:12px;font-weight:1000;letter-spacing:.14em}
       .p36-vet-hp__eyebrow span{display:inline-block;margin-right:8px;padding:4px 7px;border-radius:999px;background:#a51743;color:#fff;font-size:9px}
       .p36-vet-hp h2{margin:0;font-size:clamp(32px,4.6vw,58px);line-height:1.15;letter-spacing:-.055em}
-      .p36-vet-hp h2 em{display:block;color:#7de6c7;font-style:normal}\n      /* DPRO PRODUCT VET HP TITLE WRAP FIX V1.1R1 */\n      @media(max-width:980px){.p36-vet-hp h2 .p36-vet-hp__title-line,.p36-vet-hp h2 em > span{display:block;white-space:nowrap}}
+      .p36-vet-hp h2 em{display:block;color:#7de6c7;font-style:normal}\n      /* DPRO PRODUCT VET HP TITLE WRAP FIX V1.2 */\n      @media(max-width:980px){.p36-vet-hp h2 .p36-vet-hp__title-line,.p36-vet-hp h2 em > span{display:block!important;white-space:nowrap!important;word-break:keep-all!important;overflow-wrap:normal!important;text-wrap:nowrap!important}}
       .p36-vet-hp__lead{margin:18px 0 0;max-width:640px;color:#d9cfD5;font-size:16px;line-height:1.95}
       .p36-vet-hp__flow{display:flex;flex-wrap:wrap;gap:8px;margin-top:21px}
       .p36-vet-hp__flow span{padding:8px 10px;border:1px solid rgba(255,255,255,.16);border-radius:999px;background:rgba(255,255,255,.06);font-size:12px;font-weight:900}
@@ -70,7 +70,7 @@
       <div class="p36-shell p36-vet-hp__grid">
         <div>
           <p class="p36-vet-hp__eyebrow"><span>NEW</span>ANIMAL HOSPITAL / HP × LINE × DPRO</p>
-          <h2><span class="p36-vet-hp__title-line">ホームページから、</span><em><span>受付システムまで</span><span>一続きで体験。</span></em></h2>
+          <h2 class="p36-vet-hp__title-locked" data-dpro-jp-wrap-v1="1"><span class="p36-vet-hp__title-line">ホームページから、</span><em><span>受付システムまで</span><span>一続きで体験。</span></em></h2>
           <p class="p36-vet-hp__lead">DPRO VETは業務画面だけではありません。飼い主が見るホームページで本日の診療状況を確認し、順番受付・日時指定予約・LINE診察券へ。その先の受付・診察進行まで、表側と裏側の両方を確認できます。</p>
           <div class="p36-vet-hp__flow"><span>ホームページ</span><i>→</i><span>受付・予約</span><i>→</i><span>LINE診察券</span><i>→</i><span>DPRO受付・診察</span></div>
           <div class="p36-vet-hp__actions"><a class="is-hp" href="${HP_DEMO}" target="_blank" rel="noopener">HP統合デモを開く ↗</a><a class="is-product" href="${VET_PRODUCT}">VET製品ページ</a><a class="is-official" href="${VET_OFFICIAL}" target="_blank" rel="noopener">青OFFICIALで詳しく ↗</a></div>
