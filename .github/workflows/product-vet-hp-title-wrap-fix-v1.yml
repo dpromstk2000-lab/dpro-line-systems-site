@@ -1,0 +1,363 @@
+name: PRODUCT VET HP title wrap fix V1.0
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/product-vet-hp-title-wrap-fix-v1.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: product-vet-hp-title-wrap-fix-v1
+  cancel-in-progress: false
+
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout PRODUCT
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Apply title-only mobile wrap fix
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          import subprocess
+
+          product=Path('product-v3.6.js')
+          index=Path('index.html')
+          expected_product_blob='0a08fff34c0906ce9df9ede37f8c4eeba3847208'
+          expected_index_blob='1ce2499c58ea17bdd3b1efc46ef80385f85dc2a4'
+
+          marker='/* DPRO PRODUCT VET HP TITLE WRAP FIX V1.0 */'
+          old_css='.p36-vet-hp h2 em{display:block;color:#7de6c7;font-style:normal}'
+          new_css=(
+            old_css+'\\n'
+            '      '+marker+'\\n'
+            '      @media(max-width:760px){'
+            '.p36-vet-hp h2 .p36-vet-hp__title-line,'
+            '.p36-vet-hp h2 em span{display:block;white-space:nowrap}'
+            '}'
+          )
+          old_title='<h2>ホームページから、<em>受付システムまで一続きで体験。</em></h2>'
+          new_title=(
+            '<h2><span class="p36-vet-hp__title-line">ホームページから、</span>'
+            '<em><span>受付システムまで</span><span>一続きで体験。</span></em></h2>'
+          )
+          old_ref='<script src="product-v3.6.js?v=3.6.2"></script>'
+          new_ref='<script src="product-v3.6.js?v=3.6.3-vet-title"></script>'
+
+          psrc=product.read_text(encoding='utf-8')
+          isrc=index.read_text(encoding='utf-8')
+          already=(
+            marker in psrc and
+            new_title in psrc and
+            new_ref in isrc
+          )
+          if already:
+            print('VET HP title wrap V1.0 already applied')
+          else:
+            actual_product=subprocess.check_output(
+              ['git','hash-object',str(product)],text=True
+            ).strip()
+            actual_index=subprocess.check_output(
+              ['git','hash-object',str(index)],text=True
+            ).strip()
+            if actual_product!=expected_product_blob:
+              raise SystemExit(
+                f'product-v3.6.js baseline changed: {actual_product}'
+              )
+            if actual_index!=expected_index_blob:
+              raise SystemExit(f'index.html baseline changed: {actual_index}')
+            checks={
+              'title':psrc.count(old_title),
+              'css':psrc.count(old_css),
+              'index_ref':isrc.count(old_ref),
+            }
+            if checks!={'title':1,'css':1,'index_ref':1}:
+              raise SystemExit(f'Expected exact single targets: {checks}')
+            psrc=psrc.replace(old_css,new_css,1).replace(old_title,new_title,1)
+            isrc=isrc.replace(old_ref,new_ref,1)
+            product.write_text(psrc,encoding='utf-8')
+            index.write_text(isrc,encoding='utf-8')
+
+          final_product=product.read_text(encoding='utf-8')
+          final_index=index.read_text(encoding='utf-8')
+          if final_product.count(marker)!=1:
+            raise SystemExit('Title fix marker missing or duplicated')
+          if final_product.count(new_title)!=1:
+            raise SystemExit('Clean three-line title markup missing')
+          if final_index.count(new_ref)!=1:
+            raise SystemExit('PRODUCT cache-bust reference missing')
+          print('PRODUCT VET HP TITLE-ONLY PATCH PASS')
+          PY
+
+      - name: Static title-only safety QA
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --check product-v3.6.js
+          git diff --check
+          python3 - <<'PY'
+          from pathlib import Path
+          import subprocess
+
+          changed=set(
+            subprocess.check_output(['git','diff','--name-only'],text=True).splitlines()
+          )
+          allowed={'product-v3.6.js','index.html'}
+          if not changed.issubset(allowed):
+            raise SystemExit(f'Unexpected changed files: {sorted(changed-allowed)}')
+
+          marker='/* DPRO PRODUCT VET HP TITLE WRAP FIX V1.0 */'
+          old_css='.p36-vet-hp h2 em{display:block;color:#7de6c7;font-style:normal}'
+          new_css=(
+            old_css+'\\n'
+            '      '+marker+'\\n'
+            '      @media(max-width:760px){'
+            '.p36-vet-hp h2 .p36-vet-hp__title-line,'
+            '.p36-vet-hp h2 em span{display:block;white-space:nowrap}'
+            '}'
+          )
+          old_title='<h2>ホームページから、<em>受付システムまで一続きで体験。</em></h2>'
+          new_title=(
+            '<h2><span class="p36-vet-hp__title-line">ホームページから、</span>'
+            '<em><span>受付システムまで</span><span>一続きで体験。</span></em></h2>'
+          )
+          old_ref='<script src="product-v3.6.js?v=3.6.2"></script>'
+          new_ref='<script src="product-v3.6.js?v=3.6.3-vet-title"></script>'
+
+          now_product=Path('product-v3.6.js').read_text(encoding='utf-8')
+          now_index=Path('index.html').read_text(encoding='utf-8')
+          head_product=subprocess.check_output(
+            ['git','show','HEAD:product-v3.6.js'],text=True
+          )
+          head_index=subprocess.check_output(
+            ['git','show','HEAD:index.html'],text=True
+          )
+          if changed:
+            restored_product=now_product.replace(new_title,old_title,1).replace(
+              new_css,old_css,1
+            )
+            restored_index=now_index.replace(new_ref,old_ref,1)
+            if restored_product!=head_product:
+              raise SystemExit('product-v3.6.js contains changes outside the title')
+            if restored_index!=head_index:
+              raise SystemExit('index.html contains changes outside cache-bust')
+          if now_product.count(marker)!=1 or now_product.count(new_title)!=1:
+            raise SystemExit('Final title patch structure invalid')
+          if now_index.count(new_ref)!=1:
+            raise SystemExit('Final cache-bust structure invalid')
+          print('TITLE-ONLY SCOPE QA PASS',sorted(changed))
+          PY
+
+      - name: Install Playwright
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm init -y >/dev/null 2>&1
+          npm install playwright@1.55.0 --silent
+          npx playwright install --with-deps chromium
+          node -e "console.log('PLAYWRIGHT_RESOLVE=' + require.resolve('playwright'))"
+
+      - name: Prepare 390px title audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat > vet-hp-title-qa.js <<'NODE'
+          const { chromium } = require('playwright');
+          const fs = require('fs');
+
+          const base = process.env.QA_BASE;
+          const out = process.env.QA_OUT;
+          const shot = process.env.QA_SHOT;
+          const expected = [
+            'ホームページから、',
+            '受付システムまで',
+            '一続きで体験。'
+          ];
+
+          (async () => {
+            const browser = await chromium.launch({ headless: true });
+            const context = await browser.newContext({
+              viewport: { width: 390, height: 844 },
+              deviceScaleFactor: 1,
+              isMobile: true,
+              hasTouch: true
+            });
+            const page = await context.newPage();
+            const url = new URL(
+              'index.html?qa=vet-hp-title-v1-' + Date.now(),
+              base
+            ).toString();
+            const response = await page.goto(url, {
+              waitUntil: 'domcontentloaded',
+              timeout: 25000
+            });
+            await page.waitForSelector('.p36-vet-hp h2', { timeout: 25000 });
+            await page.evaluate(() => document.fonts && document.fonts.ready);
+            await page.waitForTimeout(1300);
+
+            const result = await page.evaluate((expected) => {
+              const h2 = document.querySelector('.p36-vet-hp h2');
+              const parts = [
+                h2.querySelector(':scope > .p36-vet-hp__title-line'),
+                h2.querySelector(':scope > em > span:first-child'),
+                h2.querySelector(':scope > em > span:last-child')
+              ];
+              const root = document.documentElement;
+              const rows = parts.map((el) => {
+                if (!el) return null;
+                const r = el.getBoundingClientRect();
+                const cs = getComputedStyle(el);
+                return {
+                  text: (el.innerText || el.textContent || '').trim(),
+                  top: Math.round(r.top),
+                  left: Math.round(r.left),
+                  right: Math.round(r.right),
+                  display: cs.display,
+                  whiteSpace: cs.whiteSpace,
+                  fits: r.left >= -1 && r.right <= root.clientWidth + 1
+                };
+              });
+              const lines = rows.map((row) => row && row.text);
+              const distinctRows = new Set(rows.map((row) => row && row.top)).size;
+              const marker = (
+                document.getElementById('p36-vet-hp-style')?.textContent || ''
+              ).includes('DPRO PRODUCT VET HP TITLE WRAP FIX V1.0');
+              return {
+                text: (h2.innerText || h2.textContent || '')
+                  .replace(/\s+/g, ''),
+                lines,
+                rows,
+                distinctRows,
+                marker,
+                overflow: root.scrollWidth > root.clientWidth + 4,
+                viewport: {
+                  width: root.clientWidth,
+                  scrollWidth: root.scrollWidth
+                }
+              };
+            }, expected);
+
+            result.url = url;
+            result.status = response ? response.status() : null;
+            result.pass = (
+              result.status === 200 &&
+              JSON.stringify(result.lines) === JSON.stringify(expected) &&
+              result.distinctRows === 3 &&
+              result.rows.every((row) =>
+                row &&
+                row.display === 'block' &&
+                row.whiteSpace === 'nowrap' &&
+                row.fits
+              ) &&
+              result.marker &&
+              !result.overflow
+            );
+            if (shot) await page.screenshot({ path: shot, fullPage: false });
+            fs.writeFileSync(out, JSON.stringify(result, null, 2));
+            console.log(JSON.stringify(result, null, 2));
+            await browser.close();
+            if (!result.pass) process.exit(1);
+          })().catch((error) => {
+            console.error(error);
+            process.exit(1);
+          });
+          NODE
+          node --check vet-hp-title-qa.js
+
+      - name: Start local PRODUCT server
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m http.server 8765 --bind 127.0.0.1 >/tmp/product-http.log 2>&1 &
+          for i in $(seq 1 30); do
+            curl -fsS http://127.0.0.1:8765/ >/dev/null && exit 0
+            sleep 1
+          done
+          cat /tmp/product-http.log || true
+          exit 1
+
+      - name: Local 390px title-only gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          QA_BASE='http://127.0.0.1:8765/' \
+            QA_OUT='/tmp/vet-title-local.json' \
+            QA_SHOT='/tmp/vet-title-local.png' \
+            node vet-hp-title-qa.js
+
+      - name: Commit PRODUCT title-only fix
+        shell: bash
+        run: |
+          set -euo pipefail
+          if git diff --quiet -- product-v3.6.js index.html; then
+            echo 'PRODUCT VET HP title fix already applied; commit skipped.'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add product-v3.6.js index.html
+          git commit -m 'Fix PRODUCT VET HP mobile title wrap'
+          git push origin HEAD:main
+
+      - name: Wait for PRODUCT Pages title fix
+        shell: bash
+        run: |
+          set -euo pipefail
+          JS_URL="https://dpromstk2000-lab.github.io/dpro-line-systems-site/product-v3.6.js?run=$GITHUB_RUN_ID"
+          INDEX_URL="https://dpromstk2000-lab.github.io/dpro-line-systems-site/?run=$GITHUB_RUN_ID"
+          ready=0
+          for i in $(seq 1 72); do
+            js="$(curl -fsSL "$JS_URL" 2>/dev/null || true)"
+            html="$(curl -fsSL "$INDEX_URL" 2>/dev/null || true)"
+            if printf '%s' "$js" | grep -q 'DPRO PRODUCT VET HP TITLE WRAP FIX V1.0' && \
+               printf '%s' "$html" | grep -q 'product-v3.6.js?v=3.6.3-vet-title'; then
+              ready=1
+              break
+            fi
+            sleep 5
+          done
+          if [ "$ready" != '1' ]; then
+            echo 'PRODUCT Pages title fix propagation timed out.'
+            exit 1
+          fi
+
+      - name: Public 390px title-only final gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          QA_BASE='https://dpromstk2000-lab.github.io/dpro-line-systems-site/' \
+            QA_OUT='/tmp/vet-title-public.json' \
+            QA_SHOT='/tmp/vet-title-public.png' \
+            node vet-hp-title-qa.js
+          echo 'PRODUCT VET HP TITLE WRAP PUBLIC GATE PASS'
+
+      - name: Build title audit artifact
+        if: always()
+        shell: bash
+        run: |
+          mkdir -p product-vet-title-audit
+          cp /tmp/vet-title-local.json product-vet-title-audit/local.json 2>/dev/null || true
+          cp /tmp/vet-title-local.png product-vet-title-audit/local.png 2>/dev/null || true
+          cp /tmp/vet-title-public.json product-vet-title-audit/public.json 2>/dev/null || true
+          cp /tmp/vet-title-public.png product-vet-title-audit/public.png 2>/dev/null || true
+
+      - name: Upload PRODUCT VET title audit
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: product-vet-hp-title-wrap-v1
+          path: product-vet-title-audit/
+          retention-days: 7
+
