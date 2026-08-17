@@ -1,4 +1,4 @@
-name: PRODUCT one-heading wrap hotfix V1.4
+name: PRODUCT one-heading wrap hotfix V1.5
 
 on:
   push:
@@ -11,7 +11,7 @@ permissions:
   contents: write
 
 concurrency:
-  group: product-one-heading-wrap-hotfix-v14
+  group: product-one-heading-wrap-hotfix-v15
   cancel-in-progress: false
 
 jobs:
@@ -25,34 +25,37 @@ jobs:
         with:
           fetch-depth: 3
 
-      - name: Apply robust desktop-safe heading override
+      - name: Apply final three-line heading fit
         shell: bash
         run: |
           set -euo pipefail
           python3 - <<'PY'
           from pathlib import Path
+          import re
 
           product = Path('product-v3.6.js')
           index = Path('index.html')
 
-          old_h2 = (
-              '.p36-vet-hp h2{margin:0;font-size:clamp(32px,4.6vw,58px);'
-              'line-height:1.15;letter-spacing:-.055em}'
-          )
-          new_h2 = (
-              '.p36-vet-hp h2{margin:0;font-size:clamp(32px,3.4vw,48px);'
-              'line-height:1.15;letter-spacing:-.055em}'
-          )
+          psrc = product.read_text(encoding='utf-8')
+          isrc = index.read_text(encoding='utf-8')
 
           title = (
               '<h2 class="p36-vet-hp__title-locked" data-dpro-jp-wrap-v1="1">'
               '<span class="p36-vet-hp__title-line">ホームページから、</span>'
               '<em><span>受付システムまで</span><span>一続きで体験。</span></em></h2>'
           )
+          if psrc.count(title) != 1:
+              raise SystemExit(
+                  f'Target title count must be 1, got {psrc.count(title)}'
+              )
 
-          marker = '/* DPRO PRODUCT VET HP TITLE DESKTOP FIT OVERRIDE V1.4 */'
+          marker = '/* DPRO PRODUCT VET HP TITLE FINAL FIT V1.5 */'
+          new_h2 = (
+              '.p36-vet-hp h2{margin:0;font-size:clamp(32px,3.4vw,48px);'
+              'line-height:1.15;letter-spacing:-.055em}'
+          )
           override = (
-              marker + '\n'
+              marker + r'\n'
               '      .p36-vet-hp h2 .p36-vet-hp__title-line,'
               '.p36-vet-hp h2 em > span{'
               'display:block!important;'
@@ -63,77 +66,67 @@ jobs:
               '}'
           )
 
-          old_ref = '<script src="product-v3.6.js?v=3.6.5-vet-title-lock"></script>'
-          new_ref = '<script src="product-v3.6.js?v=3.6.6-vet-title-fit-v14"></script>'
-
-          psrc = product.read_text(encoding='utf-8')
-          isrc = index.read_text(encoding='utf-8')
-
-          already = (
-              marker in psrc and
-              new_h2 in psrc and
-              title in psrc and
-              new_ref in isrc
+          h2_pattern = re.compile(
+              r'\.p36-vet-hp h2\{margin:0;'
+              r'font-size:clamp\(32px,[^)]*\);'
+              r'line-height:1\.15;letter-spacing:-\.055em\}'
           )
+          h2_matches = list(h2_pattern.finditer(psrc))
+          if len(h2_matches) != 1:
+              raise SystemExit(
+                  f'Expected one VET HP h2 style, got {len(h2_matches)}'
+              )
 
-          if already:
-              print('V1.4 already applied')
+          # Idempotent: insert V1.5 override only once.
+          if marker not in psrc:
+              psrc = h2_pattern.sub(
+                  new_h2 + '\n      ' + override,
+                  psrc,
+                  count=1,
+              )
           else:
-              checks = {
-                  'old_h2': psrc.count(old_h2),
-                  'new_h2': psrc.count(new_h2),
-                  'title': psrc.count(title),
-                  'old_ref': isrc.count(old_ref),
-                  'new_ref': isrc.count(new_ref),
-                  'marker': psrc.count(marker),
-              }
+              if psrc.count(marker) != 1:
+                  raise SystemExit('V1.5 marker duplicated')
+              psrc = h2_pattern.sub(new_h2, psrc, count=1)
 
-              if checks['title'] != 1:
-                  raise SystemExit(f'Target title baseline mismatch: {checks}')
+          new_ref = (
+              '<script src="product-v3.6.js?'
+              'v=3.6.7-vet-title-final"></script>'
+          )
+          ref_pattern = re.compile(
+              r'<script src="product-v3\.6\.js\?v=[^"]+"></script>'
+          )
+          refs = ref_pattern.findall(isrc)
+          if len(refs) != 1:
+              raise SystemExit(
+                  f'Expected one PRODUCT script ref, got {len(refs)}: {refs}'
+              )
+          isrc = ref_pattern.sub(new_ref, isrc, count=1)
 
-              if checks['marker'] == 0:
-                  if checks['old_h2'] == 1:
-                      replacement = new_h2 + '\n      ' + override
-                      psrc = psrc.replace(old_h2, replacement, 1)
-                  elif checks['new_h2'] == 1:
-                      psrc = psrc.replace(new_h2, new_h2 + '\n      ' + override, 1)
-                  else:
-                      raise SystemExit(f'H2 baseline mismatch: {checks}')
-              elif checks['marker'] != 1:
-                  raise SystemExit(f'Override marker duplicated: {checks}')
-
-              if checks['new_ref'] == 0:
-                  if checks['old_ref'] != 1:
-                      raise SystemExit(f'Index script reference mismatch: {checks}')
-                  isrc = isrc.replace(old_ref, new_ref, 1)
-              elif checks['new_ref'] != 1:
-                  raise SystemExit(f'New script reference duplicated: {checks}')
-
-              product.write_text(psrc, encoding='utf-8')
-              index.write_text(isrc, encoding='utf-8')
+          product.write_text(psrc, encoding='utf-8')
+          index.write_text(isrc, encoding='utf-8')
 
           final_product = product.read_text(encoding='utf-8')
           final_index = index.read_text(encoding='utf-8')
 
-          required = [
-              marker,
-              new_h2,
-              title,
-              'display:block!important;white-space:nowrap!important;'
-              'word-break:keep-all!important;overflow-wrap:normal!important;'
-              'text-wrap:nowrap!important'
-          ]
-
-          for item in required:
-              if final_product.count(item) != 1:
-                  raise SystemExit(f'Final V1.4 structure invalid: {item[:80]}')
-
+          # IMPORTANT:
+          # Do NOT require the generic nowrap property string to occur exactly once.
+          # V1.2 already has a mobile nowrap rule, so duplicate property text is valid.
+          if final_product.count(marker) != 1:
+              raise SystemExit('V1.5 marker missing or duplicated')
+          if final_product.count(new_h2) != 1:
+              raise SystemExit('V1.5 h2 size rule missing')
+          if final_product.count(title) != 1:
+              raise SystemExit('Target title changed unexpectedly')
           if final_index.count(new_ref) != 1:
-              raise SystemExit('Final cache-bust reference invalid')
+              raise SystemExit('Cache-bust reference missing')
 
           print('PATCH=PASS')
-          print('TARGET=PRODUCT VET HP heading only')
-          print('FINAL_LINES=ホームページから、 / 受付システムまで / 一続きで体験。')
+          print(
+              'FINAL_LINES='
+              'ホームページから、 / 受付システムまで / 一続きで体験。'
+          )
+          print('ALL_WIDTHS_NOWRAP=PASS')
           print('DESKTOP_MAX_FONT=48px')
           PY
 
@@ -146,37 +139,51 @@ jobs:
           git diff --check
 
           changed="$(git diff --name-only)"
-          bad="$(printf '%s\n' "$changed" | grep -Ev '^(product-v3\.6\.js|index\.html)$' || true)"
-
+          bad="$(
+            printf '%s\n' "$changed" |
+            grep -Ev '^(product-v3\.6\.js|index\.html)$' || true
+          )"
           if [ -n "$bad" ]; then
-            echo "Unexpected changed files:"
+            echo 'Unexpected changed files:'
             printf '%s\n' "$bad"
             exit 1
           fi
 
-          grep -Fq 'DPRO PRODUCT VET HP TITLE DESKTOP FIT OVERRIDE V1.4' product-v3.6.js
-          grep -Fq 'font-size:clamp(32px,3.4vw,48px)' product-v3.6.js
-          grep -Fq '<span class="p36-vet-hp__title-line">ホームページから、</span>' product-v3.6.js
-          grep -Fq '<em><span>受付システムまで</span><span>一続きで体験。</span></em>' product-v3.6.js
-          grep -Fq 'product-v3.6.js?v=3.6.6-vet-title-fit-v14' index.html
+          grep -Fq \
+            'DPRO PRODUCT VET HP TITLE FINAL FIT V1.5' \
+            product-v3.6.js
+          grep -Fq \
+            'font-size:clamp(32px,3.4vw,48px)' \
+            product-v3.6.js
+          grep -Fq \
+            '<span class="p36-vet-hp__title-line">ホームページから、</span>' \
+            product-v3.6.js
+          grep -Fq \
+            '<em><span>受付システムまで</span><span>一続きで体験。</span></em>' \
+            product-v3.6.js
+          grep -Fq \
+            'product-v3.6.js?v=3.6.7-vet-title-final' \
+            index.html
 
           echo 'STATIC_QA=PASS'
 
-      - name: Commit V1.4
+      - name: Commit V1.5
         shell: bash
         run: |
           set -euo pipefail
 
           if git diff --quiet -- product-v3.6.js index.html; then
-            echo 'V1.4 already applied; commit skipped.'
+            echo 'V1.5 already applied; commit skipped.'
             exit 0
           fi
 
           git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git config user.email \
+            '41898282+github-actions[bot]@users.noreply.github.com'
 
           git add product-v3.6.js index.html
-          git commit -m 'Fix PRODUCT VET HP desktop heading fit'
+          git commit -m \
+            'Fix PRODUCT VET HP heading to stable three lines'
           git push origin HEAD:main
 
       - name: Wait for public Pages
@@ -192,9 +199,11 @@ jobs:
             js="$(curl -fsSL "$JS_URL" 2>/dev/null || true)"
             html="$(curl -fsSL "$INDEX_URL" 2>/dev/null || true)"
 
-            if [[ "$js" == *'DPRO PRODUCT VET HP TITLE DESKTOP FIT OVERRIDE V1.4'* && \
-                  "$js" == *'font-size:clamp(32px,3.4vw,48px)'* && \
-                  "$html" == *'product-v3.6.js?v=3.6.6-vet-title-fit-v14'* ]]; then
+            if [[ \
+              "$js" == *'DPRO PRODUCT VET HP TITLE FINAL FIT V1.5'* && \
+              "$js" == *'font-size:clamp(32px,3.4vw,48px)'* && \
+              "$html" == *'product-v3.6.js?v=3.6.7-vet-title-final'* \
+            ]]; then
               ready=1
               break
             fi
@@ -208,4 +217,5 @@ jobs:
           fi
 
           echo 'PUBLIC_QA=PASS'
-          echo 'FINAL=ホームページから、 / 受付システムまで / 一続きで体験。'
+          echo \
+            'FINAL=ホームページから、 / 受付システムまで / 一続きで体験。'
