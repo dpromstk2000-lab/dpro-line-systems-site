@@ -1,4 +1,4 @@
-name: PRODUCT Japanese mobile wrap fix V1.0R2
+name: PRODUCT Japanese mobile wrap fix V1.0R3
 
 on:
   push:
@@ -174,9 +174,38 @@ jobs:
           cat > japanese-wrap-v1.css <<'CSS'
           /* DPRO PRODUCT JAPANESE MOBILE WRAP V1.0 */
           @media (max-width:760px){
-            .dpro-jp-wrap-target{line-break:strict!important;word-break:normal!important;overflow-wrap:normal!important;text-wrap:balance}
+            .dpro-jp-wrap-target{
+              line-break:strict!important;
+              word-break:normal!important;
+              overflow-wrap:normal!important;
+              text-wrap:balance;
+              min-width:0!important;
+              max-width:100%!important
+            }
             .dpro-jp-segment{display:inline;white-space:nowrap!important}
-            @supports (word-break:auto-phrase){.dpro-jp-wrap-target{word-break:auto-phrase!important}}
+            .dpro-jp-segment--relax{
+              white-space:normal!important;
+              word-break:normal!important;
+              overflow-wrap:anywhere!important
+            }
+            html.dpro-jp-wrap-safe .dpro-jp-segment:not(.dpro-jp-segment--hard){
+              white-space:normal!important;
+              word-break:normal!important;
+              overflow-wrap:normal!important
+            }
+            html.dpro-jp-wrap-safe-all .dpro-jp-segment{
+              white-space:normal!important;
+              word-break:normal!important;
+              overflow-wrap:anywhere!important
+            }
+            @supports (word-break:auto-phrase){
+              .dpro-jp-wrap-target{word-break:auto-phrase!important}
+              .dpro-jp-segment--relax,
+              html.dpro-jp-wrap-safe .dpro-jp-segment:not(.dpro-jp-segment--hard),
+              html.dpro-jp-wrap-safe-all .dpro-jp-segment{
+                word-break:auto-phrase!important
+              }
+            }
           }
           CSS
 
@@ -190,6 +219,8 @@ jobs:
             const CLOSE=/^[、。，．！？!?）」』】）》〉〕］）)％%：:；;]+$/;
             const OPEN=/^[（(「『【《〈〔［]+$/;
             const seg=typeof Intl!=='undefined'&&Intl.Segmenter?new Intl.Segmenter('ja',{granularity:'word'}):null;
+            function isHardUnit(text){return HARD.some(p=>text.includes(p));}
+            function pageOverflow(){const root=document.documentElement;return root.scrollWidth>root.clientWidth+4;}
             function firstToken(text,start){
               const rest=text.slice(start); for(const p of HARD)if(rest.startsWith(p))return p;
               if(seg){const first=seg.segment(rest)[Symbol.iterator]().next().value;if(first&&first.segment)return first.segment;}
@@ -214,14 +245,71 @@ jobs:
             }
             function wrapTextNode(node){
               const text=node.nodeValue||'';if(!JP.test(text)||!text.trim())return;const units=tokenize(text);const frag=document.createDocumentFragment();
-              for(const unit of units){if(unit.space){frag.appendChild(document.createTextNode(unit.text));continue;}const span=document.createElement('span');span.className='dpro-jp-segment';span.textContent=unit.text;frag.appendChild(span);}node.replaceWith(frag);
+              for(const unit of units){
+                if(unit.space){frag.appendChild(document.createTextNode(unit.text));continue;}
+                const span=document.createElement('span');
+                span.className='dpro-jp-segment'+(isHardUnit(unit.text)?' dpro-jp-segment--hard':'');
+                span.textContent=unit.text;
+                frag.appendChild(span);
+              }
+              node.replaceWith(frag);
             }
             function wrapTarget(el){
-              if(!el||el.dataset.dproJpWrapV1==='1'||!JP.test(el.textContent||''))return;el.dataset.dproJpWrapV1='1';el.classList.add('dpro-jp-wrap-target');
-              const nodes=[];const walker=document.createTreeWalker(el,NodeFilter.SHOW_TEXT,{acceptNode(node){const p=node.parentElement;if(!p||p.closest('script,style,noscript,.dpro-jp-segment'))return NodeFilter.FILTER_REJECT;return JP.test(node.nodeValue||'')&&node.nodeValue.trim()?NodeFilter.FILTER_ACCEPT:NodeFilter.FILTER_REJECT;}});let node;while((node=walker.nextNode()))nodes.push(node);nodes.forEach(wrapTextNode);
+              if(!el||el.dataset.dproJpWrapV1==='1'||!JP.test(el.textContent||''))return;
+              const initialWidth=el.getBoundingClientRect().width;
+              el.dataset.dproJpWrapWidth=String(Math.max(1,initialWidth));
+              el.dataset.dproJpWrapV1='1';
+              el.classList.add('dpro-jp-wrap-target');
+              const nodes=[];
+              const walker=document.createTreeWalker(el,NodeFilter.SHOW_TEXT,{acceptNode(node){
+                const p=node.parentElement;
+                if(!p||p.closest('script,style,noscript,.dpro-jp-segment'))return NodeFilter.FILTER_REJECT;
+                return JP.test(node.nodeValue||'')&&node.nodeValue.trim()?NodeFilter.FILTER_ACCEPT:NodeFilter.FILTER_REJECT;
+              }});
+              let node;
+              while((node=walker.nextNode()))nodes.push(node);
+              nodes.forEach(wrapTextNode);
             }
-            function run(){document.querySelectorAll(TARGETS).forEach(wrapTarget);window.__DPRO_PRODUCT_JP_WRAP_V1__=true;}
-            function boot(){run();let timer=0;const observer=new MutationObserver(()=>{clearTimeout(timer);timer=setTimeout(run,40)});observer.observe(document.body,{childList:true,subtree:true});setTimeout(run,250);setTimeout(run,900);setTimeout(()=>observer.disconnect(),2500);}
+            function relaxOversizeSegments(){
+              document.querySelectorAll('.dpro-jp-wrap-target').forEach(el=>{
+                const original=Math.max(24,Number(el.dataset.dproJpWrapWidth)||el.getBoundingClientRect().width||24);
+                const spans=[...el.querySelectorAll('.dpro-jp-segment')];
+                spans.forEach(span=>{
+                  const width=span.getBoundingClientRect().width;
+                  if(width>original-2)span.classList.add('dpro-jp-segment--relax');
+                });
+              });
+            }
+            function stabilize(){
+              relaxOversizeSegments();
+              requestAnimationFrame(()=>{
+                const baseline=!!window.__DPRO_PRODUCT_JP_WRAP_BASE_OVERFLOW__;
+                if(!baseline&&pageOverflow()){
+                  document.documentElement.classList.add('dpro-jp-wrap-safe');
+                  requestAnimationFrame(()=>{
+                    if(pageOverflow())document.documentElement.classList.add('dpro-jp-wrap-safe-all');
+                  });
+                }
+              });
+            }
+            function run(){
+              document.querySelectorAll(TARGETS).forEach(wrapTarget);
+              window.__DPRO_PRODUCT_JP_WRAP_V1__=true;
+              stabilize();
+            }
+            function boot(){
+              window.__DPRO_PRODUCT_JP_WRAP_BASE_OVERFLOW__=pageOverflow();
+              run();
+              let timer=0;
+              const observer=new MutationObserver(()=>{
+                clearTimeout(timer);
+                timer=setTimeout(run,40);
+              });
+              observer.observe(document.body,{childList:true,subtree:true});
+              setTimeout(run,250);
+              setTimeout(run,900);
+              setTimeout(()=>observer.disconnect(),2500);
+            }
             document.readyState==='loading'?document.addEventListener('DOMContentLoaded',boot,{once:true}):boot();
           })();
           JS
@@ -283,15 +371,29 @@ jobs:
           python - <<'PY'
           from pathlib import Path
           import json,math
-          before=json.loads(Path('/tmp/product-wrap-before.json').read_text(encoding='utf-8'))['summary'];after=json.loads(Path('/tmp/product-wrap-after.json').read_text(encoding='utf-8'))['summary']
-          print('BEFORE',before);print('AFTER',after)
+          before_doc=json.loads(Path('/tmp/product-wrap-before.json').read_text(encoding='utf-8'))
+          after_doc=json.loads(Path('/tmp/product-wrap-after.json').read_text(encoding='utf-8'))
+          before=before_doc['summary'];after=after_doc['summary']
+          before_overflow=[x['path'] for x in before_doc['results'] if x.get('overflow')]
+          after_overflow=[x['path'] for x in after_doc['results'] if x.get('overflow')]
+          result={
+            'before':before,
+            'after':after,
+            'high_reduction':before['high']-after['high'],
+            'issue_reduction':before['issueElements']-after['issueElements'],
+            'before_overflow_pages':before_overflow,
+            'after_overflow_pages':after_overflow,
+          }
+          Path('/tmp/product-wrap-comparison.json').write_text(
+            json.dumps(result,ensure_ascii=False,indent=2),
+            encoding='utf-8'
+          )
+          print(json.dumps(result,ensure_ascii=False,indent=2))
           if before['loadErrors']>3 or after['loadErrors']>3:raise SystemExit('Too many local page load errors')
           if after['high']>=before['high']:raise SystemExit(f"HIGH did not improve: {before['high']} -> {after['high']}")
           if after['issueElements']>=before['issueElements']:raise SystemExit('Total Japanese wrap issues did not improve')
           if before['high']>=20 and after['high']>math.floor(before['high']*.80):raise SystemExit(f"HIGH reduction under 20%: {before['high']} -> {after['high']}")
-          if after['overflowPages']>before['overflowPages']:raise SystemExit(f"Horizontal overflow worsened: {before['overflowPages']} -> {after['overflowPages']}")
-          result={'before':before,'after':after,'high_reduction':before['high']-after['high'],'issue_reduction':before['issueElements']-after['issueElements']}
-          Path('/tmp/product-wrap-comparison.json').write_text(json.dumps(result,ensure_ascii=False,indent=2),encoding='utf-8');print(json.dumps(result,ensure_ascii=False,indent=2))
+          if after['overflowPages']>before['overflowPages']:raise SystemExit(f"Horizontal overflow worsened: {before['overflowPages']} -> {after['overflowPages']} pages={after_overflow}")
           PY
 
       - name: Static safety QA
@@ -323,7 +425,7 @@ jobs:
           for name in json.loads(Path('/tmp/product-wrap-changed.json').read_text(encoding='utf-8'))['changed']:print(name)
           PY
           while IFS= read -r file; do [ -n "$file" ] && git add "$file"; done </tmp/product-add-files.txt
-          git commit -m 'Fix PRODUCT Japanese mobile wraps V1.0R2'
+          git commit -m 'Fix PRODUCT Japanese mobile wraps V1.0R3'
           git push origin HEAD:main
 
       - name: Wait for PRODUCT Pages propagation
