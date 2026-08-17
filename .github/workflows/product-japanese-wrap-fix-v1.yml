@@ -1,4 +1,4 @@
-name: PRODUCT Japanese mobile wrap fix V1.1
+name: PRODUCT Japanese mobile wrap fix V1.2
 
 on:
   push:
@@ -11,7 +11,7 @@ permissions:
   contents: write
 
 concurrency:
-  group: product-japanese-wrap-fix-v11
+  group: product-japanese-wrap-fix-v12
   cancel-in-progress: false
 
 jobs:
@@ -23,121 +23,75 @@ jobs:
       - name: Checkout PRODUCT
         uses: actions/checkout@v4
         with:
-          fetch-depth: 1
+          fetch-depth: 20
 
-      - name: Prepare targets and audit script
+      - name: Prepare locked V1.1 audit and runtime sources
         shell: bash
         run: |
           set -euo pipefail
-          cat > /tmp/product-wrap-targets.json <<'JSON'
-          ["compare-repitte.html","compare-sotomachi-vet.html","flyer-dental.html","flyer-houkago.html","index.html","lp-bakery.html","lp-btype.html","lp-buyback.html","lp-cake.html","lp-car-service.html","lp-car.html","lp-careplan.html","lp-caretaxi.html","lp-chosashi.html","lp-cleaning.html","lp-cosmetics.html","lp-daycare.html","lp-dental.html","lp-disposal.html","lp-estate.html","lp-esthe.html","lp-eye.html","lp-flower.html","lp-funeral.html","lp-gakudo.html","lp-green-rental.html","lp-gym.html","lp-gyosei.html","lp-hair.html","lp-haishoku.html","lp-homecare.html","lp-homenursing.html","lp-housekeep.html","lp-izakaya.html","lp-nail.html","lp-pet-salon.html","lp-photo.html","lp-reform.html","lp-repair.html","lp-salesnavi.html","lp-salon.html","lp-school.html","lp-seitai.html","lp-sharoushi.html","lp-shiho.html","lp-sodan.html","lp-stay.html","lp-takeout.html","lp-tax.html","lp-vet.html","lp-welfare-shuttle.html","lp-welfare.html","lp-yakiniku.html","lp-yoga.html","proposal.html","systems/car-service.html","systems/homecare.html","systems/pet-care.html"]
-          JSON
+          python3 - <<'PY'
+          from pathlib import Path
+          import subprocess
 
-          cat > product-wrap-audit.js <<'NODE'
-          const { chromium } = require('playwright');
-          const fs = require('fs');
-          const targets = JSON.parse(fs.readFileSync('/tmp/product-wrap-targets.json','utf8'));
-          const base = process.env.AUDIT_BASE || 'http://127.0.0.1:8765/';
-          const out = process.env.AUDIT_OUT || '/tmp/product-wrap-audit.json';
-          const splitTokens = [
-            'ホームページ','LINE公式','受付システム','システム','カルテ','つなぐ','ひとつ',
-            'から','まで','ので','ため','じゃない','できます','できる','ありません',
-            'ます','です','取り置き','フォロー','受け渡し','診察券QR','メニュー','マグネット'
-          ];
+          workflow='.github/workflows/product-japanese-wrap-fix-v1.yml'
+          commits=subprocess.check_output(
+            ['git','log','-n','20','--format=%H','--',workflow],text=True
+          ).splitlines()
+          source=None
+          source_sha=None
+          for sha in commits:
+            try:
+              candidate=subprocess.check_output(
+                ['git','show',f'{sha}:{workflow}'],text=True
+              )
+            except subprocess.CalledProcessError:
+              continue
+            if (
+              'name: PRODUCT Japanese mobile wrap fix V1.1' in candidate and
+              "cat > product-wrap-audit.js <<'NODE'" in candidate and
+              "cat > japanese-wrap-v1.js <<'JS'" in candidate
+            ):
+              source=candidate
+              source_sha=sha
+              break
+          if source is None:
+            raise SystemExit('Locked V1.1 workflow source not found in recent history')
 
-          async function inspect(context, path) {
-            const page = await context.newPage();
-            const url = new URL(path + (path.includes('?') ? '&' : '?') + 'qa=product-wrap-v1', base).toString();
-            let status = null, error = null;
-            try {
-              const response = await page.goto(url,{waitUntil:'domcontentloaded',timeout:18000});
-              status = response ? response.status() : null;
-              await page.waitForLoadState('networkidle',{timeout:3500}).catch(()=>{});
-              await page.evaluate(() => document.fonts?.ready).catch(()=>{});
-              await page.waitForTimeout(220);
-            } catch (e) { error = String(e.message || e); }
+          def heredoc(target,marker):
+            lines=source.splitlines()
+            start=next(
+              (i for i,line in enumerate(lines)
+               if line.strip()==f"cat > {target} <<'{marker}'"),None
+            )
+            if start is None:
+              raise SystemExit(f'{target}: V1.1 source block not found')
+            end=next(
+              (i for i in range(start+1,len(lines)) if lines[i].strip()==marker),None
+            )
+            if end is None:
+              raise SystemExit(f'{target}: V1.1 source terminator not found')
+            body=[]
+            for line in lines[start+1:end]:
+              body.append(line[10:] if line.startswith('          ') else line)
+            return '\n'.join(body)+'\n'
 
-            let result = {path,url,status,error,high:0,medium:0,issues:[],overflow:false};
-            if (!error) {
-              result = await page.evaluate(({path,url,status,splitTokens}) => {
-                const jp = /[ぁ-んァ-ヶ一-龠々ー]/;
-                const badStart = /^[、。，．！？!?）」』】）》〉〕］）)％%：:；;]/;
-                function visible(el) {
-                  const cs=getComputedStyle(el), r=el.getBoundingClientRect();
-                  return cs.display!=='none' && cs.visibility!=='hidden' && Number(cs.opacity||1)>=.03 && r.width>4 && r.height>4;
-                }
-                function linesOf(el) {
-                  const walker=document.createTreeWalker(el,NodeFilter.SHOW_TEXT,{acceptNode(node){
-                    const p=node.parentElement;
-                    if(!p||['SCRIPT','STYLE','NOSCRIPT'].includes(p.tagName)) return NodeFilter.FILTER_REJECT;
-                    return node.nodeValue&&node.nodeValue.trim()?NodeFilter.FILTER_ACCEPT:NodeFilter.FILTER_REJECT;
-                  }});
-                  const chars=[]; let node;
-                  while((node=walker.nextNode())){
-                    const text=node.nodeValue||''; let offset=0;
-                    for(const ch of Array.from(text)){
-                      const start=offset; offset+=ch.length; if(!ch.trim()) continue;
-                      const range=document.createRange();
-                      try{range.setStart(node,start);range.setEnd(node,offset);}catch{continue;}
-                      const r=range.getBoundingClientRect(); if(r.width>0&&r.height>0) chars.push({ch,top:Math.round(r.top)});
-                    }
-                  }
-                  const groups=[];
-                  for(const c of chars){
-                    let line=groups.find(x=>Math.abs(x.top-c.top)<=2);
-                    if(!line){line={top:c.top,chars:[]};groups.push(line);} line.chars.push(c.ch);
-                  }
-                  groups.sort((a,b)=>a.top-b.top);
-                  return groups.map(x=>x.chars.join('').replace(/\s+/g,'')).filter(Boolean);
-                }
-                function splitToken(prev,next){
-                  for(const token of splitTokens){
-                    for(let i=1;i<token.length;i++) if(prev.endsWith(token.slice(0,i))&&next.startsWith(token.slice(i))) return token;
-                  }
-                  return null;
-                }
-                const raw=[...document.querySelectorAll('h1,h2,h3,h4,button,a.btn,a.dpro-button,a[class*="btn"],[class*="cta"] a')];
-                const seen=new Set();
-                const candidates=raw.filter(el=>{
-                  if(seen.has(el))return false; seen.add(el); if(!visible(el))return false;
-                  const text=(el.innerText||el.textContent||'').trim().replace(/\s+/g,' ');
-                  return jp.test(text)&&text.length>=4&&text.length<=220;
-                });
-                const issues=[];
-                for(const el of candidates){
-                  const lines=linesOf(el); if(lines.length<2)continue; const full=lines.join(''); const reasons=[];
-                  for(let i=1;i<lines.length;i++){
-                    const prev=lines[i-1],next=lines[i],token=splitToken(prev,next);
-                    if(token)reasons.push({type:'SPLIT_TOKEN',severity:'HIGH',token});
-                    if(badStart.test(next))reasons.push({type:'BAD_LINE_START',severity:'HIGH'});
-                    const clean=next.replace(/[、。！？!?）」』】）》〉〕］）)]/g,'');
-                    if(full.length>=8&&jp.test(clean)&&clean.length<=1)reasons.push({type:'ORPHAN_LINE',severity:'HIGH'});
-                    else if(full.length>=10&&jp.test(clean)&&i===lines.length-1&&clean.length<=2)reasons.push({type:'SHORT_LAST_LINE',severity:'MEDIUM'});
-                  }
-                  if(reasons.length)issues.push({tag:el.tagName,text:(el.innerText||el.textContent||'').trim().replace(/\s+/g,' ').slice(0,220),lines,reasons});
-                }
-                let high=0,medium=0;
-                for(const item of issues){if(item.reasons.some(r=>r.severity==='HIGH'))high++;else medium++;}
-                const root=document.documentElement;
-                return {path,url,status,error:null,high,medium,issues,overflow:root.scrollWidth>root.clientWidth+4};
-              },{path,url,status,splitTokens});
-            }
-            await page.close(); return result;
-          }
-
-          (async()=>{
-            const browser=await chromium.launch({headless:true}); const results=[]; let cursor=0; const workers=6;
-            async function worker(){
-              const context=await browser.newContext({viewport:{width:390,height:844},deviceScaleFactor:1,isMobile:true,hasTouch:true});
-              while(true){const idx=cursor++;if(idx>=targets.length)break;results[idx]=await inspect(context,targets[idx]);}
-              await context.close();
-            }
-            await Promise.all(Array.from({length:workers},()=>worker())); await browser.close();
-            const clean=results.filter(Boolean);
-            const summary={pages:clean.length,high:clean.reduce((n,x)=>n+x.high,0),medium:clean.reduce((n,x)=>n+x.medium,0),issueElements:clean.reduce((n,x)=>n+x.high+x.medium,0),overflowPages:clean.filter(x=>x.overflow).length,loadErrors:clean.filter(x=>x.error||(x.status&&x.status>=400)).length};
-            fs.writeFileSync(out,JSON.stringify({summary,results:clean},null,2)); console.log(JSON.stringify(summary,null,2));
-          })().catch(err=>{console.error(err);process.exit(1);});
-          NODE
+          Path('/tmp/product-wrap-targets.json').write_text(
+            heredoc('/tmp/product-wrap-targets.json','JSON'),encoding='utf-8'
+          )
+          Path('product-wrap-audit.js').write_text(
+            heredoc('product-wrap-audit.js','NODE'),encoding='utf-8'
+          )
+          Path('/tmp/japanese-wrap-v11-base.css').write_text(
+            heredoc('japanese-wrap-v1.css','CSS'),encoding='utf-8'
+          )
+          Path('/tmp/japanese-wrap-v11-base.js').write_text(
+            heredoc('japanese-wrap-v1.js','JS'),encoding='utf-8'
+          )
+          print('LOCKED_V11_SOURCE',source_sha)
+          print('AUDIT_TARGETS',len(__import__('json').loads(
+            Path('/tmp/product-wrap-targets.json').read_text(encoding='utf-8')
+          )))
+          PY
 
       - name: Install Playwright
         shell: bash
@@ -165,359 +119,65 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          AUDIT_BASE='http://127.0.0.1:8765/' AUDIT_OUT='/tmp/product-wrap-before.json' node product-wrap-audit.js
+          AUDIT_BASE='http://127.0.0.1:8765/' \
+            AUDIT_OUT='/tmp/product-wrap-before.json' node product-wrap-audit.js
 
-      - name: Apply V1.1 residual HIGH fixes
+      - name: Apply V1.2 final residual HIGH fix
         shell: bash
         run: |
           set -euo pipefail
-          grep -Eq 'DPRO PRODUCT JAPANESE MOBILE WRAP (V1\.0R9|V1\.1)' japanese-wrap-v1.css
-          grep -Eq "window.__DPRO_PRODUCT_JP_WRAP_V1__='(R9|V1\.1)'" japanese-wrap-v1.js
-
-          cat > japanese-wrap-v1.css <<'CSS'
-          /* DPRO PRODUCT JAPANESE MOBILE WRAP V1.1 */
-          @media (max-width:760px){
-            .dpro-jp-wrap-target{
-              line-break:strict!important;
-              word-break:normal!important;
-              overflow-wrap:break-word!important;
-              text-wrap:pretty!important
-            }
-            h1.dpro-jp-wrap-target,
-            h2.dpro-jp-wrap-target,
-            h3.dpro-jp-wrap-target,
-            h4.dpro-jp-wrap-target{
-              text-wrap:balance!important
-            }
-            .dpro-jp-keep,
-            .dpro-jp-v11-keep{
-              display:inline!important;
-              white-space:nowrap!important
-            }
-            .dpro-jp-keep--relax{
-              white-space:normal!important;
-              overflow-wrap:normal!important
-            }
-            .dpro-jp-wrap-target--relax .dpro-jp-keep{
-              white-space:normal!important
-            }
-            .dpro-jp-wrap-target--relax{
-              word-break:normal!important;
-              overflow-wrap:break-word!important;
-              text-wrap:pretty!important
-            }
-            @supports (word-break:auto-phrase){
-              .dpro-jp-wrap-target{
-                word-break:auto-phrase!important;
-                overflow-wrap:normal!important
-              }
-            }
-          }
-          
-          /* V1.1: PRODUCT top CTA had its mobile grid reset later by product-v3.6.css. */
-          @media (max-width:700px){
-            .p36-proposal-entry{
-              grid-template-columns:1fr!important;
-              gap:16px!important;
-              padding:22px!important
-            }
-            .p36-proposal-entry__copy{
-              min-width:0!important
-            }
-            .p36-proposal-entry__actions{
-              min-width:0!important;
-              width:100%!important
-            }
-          }
-          CSS
-
-          cat > japanese-wrap-v1.js <<'JS'
-          (()=>{
-            'use strict';
-          
-            const TARGETS='h1,h2,h3,h4,button,a.btn,a.dpro-button,a[class*="btn"],[class*="cta"] a';
-            const JP=/[ぁ-んァ-ヶ一-龠々ー]/;
-          
-            // R9 generic guards stay locked. V1.1 adds only nine-page residual fixes.
-            const PHRASES=[
-              '受付システム','ホームページ','診察券QR','LINE公式','マグネット',
-              '取り置き','受け渡し','フォロー','メニュー','システム',
-              'ありません','できます','じゃない','ひとつ','つなぐ','カルテ',
-              'まで','から','ので','ため','ます','です','できる',
-              '比べてください','ご相談ください','確認できる','いませんか',
-              'ませんか','合うか','次回来店へ','購入後も','運用も','つながるか'
-            ].sort((a,b)=>b.length-a.length);
-          
-            const V11_RULES={
-              'compare-repitte.html':[
-                {text:'「機能を追加する」か。 「業務の流れを設計する」か。',keep:['する」か。']}
-              ],
-              'lp-btype.html':[
-                {text:'LINE公式運用・ホームページ運用・B型専用システム運用まで。',keep:['ホームページ','システム']},
-                {text:'まずは、今の運用に合うか確認してください。',keep:['ください。']}
-              ],
-              'lp-car.html':[
-                {text:'今のお店の仕事が、 どこまで一つにつながるか。 まずは実際の画面を見ながらご相談ください。',keep:['ください。']}
-              ],
-              'lp-chosashi.html':[
-                {text:'「今どうなっていますか？」を、 依頼者自身でも確認できる。',keep:['できる。']}
-              ],
-              'lp-cosmetics.html':[
-                {text:'相談も、購入後も。 LINEでつながる化粧品店へ。',keep:['購入後も。']}
-              ],
-              'lp-gyosei.html':[
-                {text:'今の事務所業務に合うか、 実際の画面を見ながらご相談ください。',keep:['合うか、']}
-              ],
-              'lp-haishoku.html':[
-                {text:'DPRO 高齢者配食管理システム',keep:['システム']}
-              ],
-              'lp-homecare.html':[
-                {text:'訪問の「今日どうなってる？」を、ひとつにつなぐ。',keep:['ひとつ']}
-              ]
-            };
-          
-            const escaped=PHRASES.map(
-              s=>s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')
-            );
-            const phraseRe=new RegExp('('+escaped.join('|')+')','g');
-          
-            function norm(el){
-              return (el.innerText||el.textContent||'').trim().replace(/\s+/g,' ');
-            }
-          
-            function currentPage(){
-              const parts=location.pathname.split('/').filter(Boolean);
-              return parts.length ? parts[parts.length-1] : 'index.html';
-            }
-          
-            function protectV11Phrase(el,phrase){
-              const nodes=[];
-              const walker=document.createTreeWalker(
-                el,
-                NodeFilter.SHOW_TEXT,
-                {
-                  acceptNode(node){
-                    const p=node.parentElement;
-                    if(!p || p.closest('script,style,noscript,.dpro-jp-v11-keep')){
-                      return NodeFilter.FILTER_REJECT;
-                    }
-                    return (node.nodeValue||'').includes(phrase)
-                      ? NodeFilter.FILTER_ACCEPT
-                      : NodeFilter.FILTER_REJECT;
-                  }
-                }
-              );
-              let node;
-              while((node=walker.nextNode())) nodes.push(node);
-          
-              for(const textNode of nodes){
-                const text=textNode.nodeValue||'';
-                const at=text.indexOf(phrase);
-                if(at<0) continue;
-          
-                const frag=document.createDocumentFragment();
-                if(at>0) frag.appendChild(document.createTextNode(text.slice(0,at)));
-          
-                frag.appendChild(document.createElement('wbr'));
-                const span=document.createElement('span');
-                span.className='dpro-jp-v11-keep';
-                span.textContent=phrase;
-                frag.appendChild(span);
-          
-                const tail=text.slice(at+phrase.length);
-                if(tail) frag.appendChild(document.createTextNode(tail));
-                textNode.replaceWith(frag);
-                return true;
-              }
-              return false;
-            }
-          
-            function applyV11Rules(){
-              const rules=V11_RULES[currentPage()]||[];
-              if(!rules.length) return;
-          
-              const targets=[...document.querySelectorAll(TARGETS)];
-              for(const rule of rules){
-                const el=targets.find(candidate=>norm(candidate)===rule.text);
-                if(!el || el.dataset.dproJpV11==='1') continue;
-                let applied=0;
-                for(const phrase of rule.keep){
-                  if(protectV11Phrase(el,phrase)) applied++;
-                }
-                if(applied===rule.keep.length){
-                  el.dataset.dproJpV11='1';
-                  el.classList.add('dpro-jp-v11-target');
-                }
-              }
-            }
-          
-            function protectTextNode(node){
-              const text=node.nodeValue||'';
-              if(!text || !JP.test(text)) return;
-          
-              phraseRe.lastIndex=0;
-              if(!phraseRe.test(text)){
-                phraseRe.lastIndex=0;
-                return;
-              }
-              phraseRe.lastIndex=0;
-          
-              const frag=document.createDocumentFragment();
-              let last=0;
-              let match;
-          
-              while((match=phraseRe.exec(text))){
-                if(match.index>last){
-                  frag.appendChild(document.createTextNode(text.slice(last,match.index)));
-                }
-          
-                const span=document.createElement('span');
-                span.className='dpro-jp-keep';
-                span.textContent=match[0];
-                frag.appendChild(span);
-                last=match.index+match[0].length;
-              }
-          
-              if(last<text.length){
-                frag.appendChild(document.createTextNode(text.slice(last)));
-              }
-              node.replaceWith(frag);
-            }
-          
-            function protectTarget(el){
-              if(
-                !el ||
-                Boolean(el.dataset.dproJpWrapV1) ||
-                !JP.test(el.textContent||'')
-              ) return;
-          
-              el.dataset.dproJpWrapV1='1';
-              el.classList.add('dpro-jp-wrap-target');
-          
-              const nodes=[];
-              const walker=document.createTreeWalker(
-                el,
-                NodeFilter.SHOW_TEXT,
-                {
-                  acceptNode(node){
-                    const p=node.parentElement;
-                    if(
-                      !p ||
-                      p.closest('script,style,noscript,.dpro-jp-keep,.dpro-jp-v11-keep')
-                    ){
-                      return NodeFilter.FILTER_REJECT;
-                    }
-                    return (
-                      node.nodeValue &&
-                      node.nodeValue.trim() &&
-                      JP.test(node.nodeValue)
-                    ) ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
-                  }
-                }
-              );
-          
-              let node;
-              while((node=walker.nextNode())) nodes.push(node);
-              nodes.forEach(protectTextNode);
-            }
-          
-            function pageOverflow(){
-              const root=document.documentElement;
-              return root.scrollWidth>root.clientWidth+4;
-            }
-          
-            function targetOverflows(el){
-              const root=document.documentElement;
-              const r=el.getBoundingClientRect();
-              const targetWidth=Math.max(el.clientWidth||0,r.width||0);
-              const ownOverflow=(el.scrollWidth||0)>targetWidth+3;
-              const viewportOverflow=r.right>root.clientWidth+4 || r.left<-4;
-              return ownOverflow || viewportOverflow;
-            }
-          
-            function spanOverflows(span){
-              const root=document.documentElement;
-              const target=span.closest('.dpro-jp-wrap-target');
-              if(!target) return false;
-              const sr=span.getBoundingClientRect();
-              const tr=target.getBoundingClientRect();
-              return (
-                sr.right>Math.min(tr.right,root.clientWidth)+3 ||
-                sr.left<Math.max(tr.left,0)-3 ||
-                sr.width>Math.max(20,tr.width-2)
-              );
-            }
-          
-            function unwrapTarget(el){
-              el.querySelectorAll('.dpro-jp-keep').forEach(span=>{
-                span.replaceWith(document.createTextNode(span.textContent||''));
-              });
-              el.normalize();
-              el.classList.remove('dpro-jp-wrap-target','dpro-jp-wrap-target--relax');
-              el.dataset.dproJpWrapV1='rollback-local';
-            }
-          
-            function recoverOverflow(){
-              if(window.__DPRO_PRODUCT_JP_WRAP_BASE_OVERFLOW__) return;
-          
-              requestAnimationFrame(()=>{
-                if(!pageOverflow()) return;
-          
-                document.querySelectorAll('.dpro-jp-keep').forEach(span=>{
-                  if(spanOverflows(span)) span.classList.add('dpro-jp-keep--relax');
-                });
-          
-                requestAnimationFrame(()=>{
-                  if(!pageOverflow()) return;
-          
-                  [...document.querySelectorAll('.dpro-jp-wrap-target')]
-                    .filter(targetOverflows)
-                    .forEach(el=>el.classList.add('dpro-jp-wrap-target--relax'));
-          
-                  requestAnimationFrame(()=>{
-                    if(!pageOverflow()) return;
-                    [...document.querySelectorAll('.dpro-jp-wrap-target')]
-                      .filter(targetOverflows)
-                      .forEach(unwrapTarget);
-                  });
-                });
-              });
-            }
-          
-            function run(){
-              applyV11Rules();
-              document.querySelectorAll(TARGETS).forEach(protectTarget);
-              window.__DPRO_PRODUCT_JP_WRAP_V1__='V1.1';
-              recoverOverflow();
-            }
-          
-            function boot(){
-              window.__DPRO_PRODUCT_JP_WRAP_BASE_OVERFLOW__=pageOverflow();
-              run();
-          
-              let timer=0;
-              const observer=new MutationObserver(()=>{
-                clearTimeout(timer);
-                timer=setTimeout(run,60);
-              });
-              observer.observe(document.body,{childList:true,subtree:true});
-          
-              setTimeout(run,300);
-              setTimeout(run,1000);
-              setTimeout(()=>observer.disconnect(),2600);
-            }
-          
-            document.readyState==='loading'
-              ? document.addEventListener('DOMContentLoaded',boot,{once:true})
-              : boot();
-          })();
-          JS
-
-          python - <<'PY'
+          python3 - <<'PY'
           from pathlib import Path
-          import re
-          residual=['compare-repitte.html', 'index.html', 'lp-btype.html', 'lp-car.html', 'lp-chosashi.html', 'lp-cosmetics.html', 'lp-gyosei.html', 'lp-haishoku.html', 'lp-homecare.html']
+          import json,re
+
+          current_css=Path('japanese-wrap-v1.css').read_text(encoding='utf-8')
+          current_js=Path('japanese-wrap-v1.js').read_text(encoding='utf-8')
+          if not re.search(r'DPRO PRODUCT JAPANESE MOBILE WRAP (V1\.0R9|V1\.1|V1\.2)',current_css):
+            raise SystemExit('Unexpected CSS baseline marker')
+          if not re.search(r"window\.__DPRO_PRODUCT_JP_WRAP_V1__='(R9|V1\.1|V1\.2)'",current_js):
+            raise SystemExit('Unexpected JS baseline marker')
+
+          css=Path('/tmp/japanese-wrap-v11-base.css').read_text(encoding='utf-8')
+          js=Path('/tmp/japanese-wrap-v11-base.js').read_text(encoding='utf-8')
+
+          css=css.replace(
+            'DPRO PRODUCT JAPANESE MOBILE WRAP V1.1',
+            'DPRO PRODUCT JAPANESE MOBILE WRAP V1.2'
+          ).replace(
+            '/* V1.1: PRODUCT top CTA had its mobile grid reset later by product-v3.6.css. */',
+            '/* V1.2: preserve the V1.1 PRODUCT top CTA mobile grid correction. */'
+          )
+
+          old_rule=(
+            "{text:'「機能を追加する」か。 「業務の流れを設計する」か。',"
+            "keep:['する」か。']}"
+          )
+          new_rule=(
+            "{text:'「機能を追加する」か。 「業務の流れを設計する」か。',"
+            "keep:['する」か。','設計する」か。']}"
+          )
+          if js.count(old_rule)!=1:
+            raise SystemExit(f'Expected one locked compare rule, got {js.count(old_rule)}')
+          js=js.replace(old_rule,new_rule,1).replace('V1.1','V1.2')
+
+          if css.count('DPRO PRODUCT JAPANESE MOBILE WRAP V1.2')!=1:
+            raise SystemExit('V1.2 CSS marker mismatch')
+          if js.count("window.__DPRO_PRODUCT_JP_WRAP_V1__='V1.2'")!=1:
+            raise SystemExit('V1.2 JS marker mismatch')
+          if js.count("keep:['する」か。','設計する」か。']")!=1:
+            raise SystemExit('V1.2 final compare protection missing')
+
+          Path('japanese-wrap-v1.css').write_text(css,encoding='utf-8')
+          Path('japanese-wrap-v1.js').write_text(js,encoding='utf-8')
+
+          residual=[
+            'compare-repitte.html','index.html','lp-btype.html','lp-car.html',
+            'lp-chosashi.html','lp-cosmetics.html','lp-gyosei.html',
+            'lp-haishoku.html','lp-homecare.html'
+          ]
           changed=[]
+          css_re=re.compile(r'japanese-wrap-v1\.css\?v=(?:1\.0|1\.1|1\.2)')
+          js_re=re.compile(r'japanese-wrap-v1\.js\?v=(?:1\.0|1\.1|1\.2)')
           def body(source):
             m=re.search(r'<body\b[^>]*>.*',source,flags=re.I|re.S)
             if not m:raise SystemExit('BODY not found')
@@ -527,27 +187,25 @@ jobs:
             if not p.is_file():raise SystemExit(f'{name}: missing')
             before=p.read_text(encoding='utf-8')
             before_body=body(before)
-            old_css='japanese-wrap-v1.css?v=1.0'
-            old_js='japanese-wrap-v1.js?v=1.0'
-            new_css='japanese-wrap-v1.css?v=1.1'
-            new_js='japanese-wrap-v1.js?v=1.1'
-            if old_css in before or old_js in before:
-              if before.count(old_css)!=1 or before.count(old_js)!=1:
-                raise SystemExit(f'{name}: expected exactly one V1.0 runtime reference pair')
-              after=before.replace(old_css,new_css,1).replace(old_js,new_js,1)
-              p.write_text(after,encoding='utf-8')
-              changed.append(name)
-            else:
-              if before.count(new_css)!=1 or before.count(new_js)!=1:
-                raise SystemExit(f'{name}: V1.1 runtime reference pair missing')
-              after=before
+            if len(css_re.findall(before))!=1 or len(js_re.findall(before))!=1:
+              raise SystemExit(f'{name}: expected one supported runtime reference pair')
+            after=css_re.sub('japanese-wrap-v1.css?v=1.2',before,count=1)
+            after=js_re.sub('japanese-wrap-v1.js?v=1.2',after,count=1)
             if body(after)!=before_body:
               raise SystemExit(f'{name}: BODY HTML changed unexpectedly')
-          Path('/tmp/product-v11-residual.json').write_text(
-            __import__('json').dumps({'targets':residual,'changed':changed},ensure_ascii=False,indent=2),
-            encoding='utf-8'
+            if after!=before:
+              p.write_text(after,encoding='utf-8')
+              changed.append(name)
+          Path('/tmp/product-v12-residual.json').write_text(
+            json.dumps({
+              'version':'V1.2',
+              'targets':residual,
+              'changed':changed,
+              'final_high_target':'compare-repitte.html',
+              'final_keep':['する」か。','設計する」か。']
+            },ensure_ascii=False,indent=2),encoding='utf-8'
           )
-          print('V1.1 residual targets:',len(residual),'asset refs changed:',len(changed))
+          print('V1.2 residual targets:',len(residual),'asset refs changed:',len(changed))
           PY
 
       - name: Runtime syntax QA
@@ -555,38 +213,55 @@ jobs:
         run: |
           set -euo pipefail
           node --check japanese-wrap-v1.js
-          grep -F 'DPRO PRODUCT JAPANESE MOBILE WRAP V1.1' japanese-wrap-v1.css
-          grep -F "window.__DPRO_PRODUCT_JP_WRAP_V1__='V1.1'" japanese-wrap-v1.js
+          grep -F 'DPRO PRODUCT JAPANESE MOBILE WRAP V1.2' japanese-wrap-v1.css
+          grep -F "window.__DPRO_PRODUCT_JP_WRAP_V1__='V1.2'" japanese-wrap-v1.js
+          grep -F "keep:['する」か。','設計する」か。']" japanese-wrap-v1.js
 
       - name: Post-fix 390px audit
         shell: bash
         run: |
           set -euo pipefail
-          AUDIT_BASE='http://127.0.0.1:8765/' AUDIT_OUT='/tmp/product-wrap-after.json' node product-wrap-audit.js
+          AUDIT_BASE='http://127.0.0.1:8765/' \
+            AUDIT_OUT='/tmp/product-wrap-after.json' node product-wrap-audit.js
 
-      - name: V1.1 zero-HIGH gate
+      - name: V1.2 zero-HIGH gate
         shell: bash
         run: |
           set -euo pipefail
-          python - <<'PY'
+          python3 - <<'PY'
           from pathlib import Path
           import json
           before=json.loads(Path('/tmp/product-wrap-before.json').read_text(encoding='utf-8'))
           after=json.loads(Path('/tmp/product-wrap-after.json').read_text(encoding='utf-8'))
           b=before['summary'];a=after['summary']
-          remaining=[{'path':x['path'],'high':x['high'],'issues':x['issues']} for x in after['results'] if x.get('high')]
+          remaining=[
+            {'path':x['path'],'high':x['high'],'issues':x['issues']}
+            for x in after['results'] if x.get('high')
+          ]
           result={'before':b,'after':a,'remaining_high':remaining}
-          Path('/tmp/product-wrap-v11-comparison.json').write_text(json.dumps(result,ensure_ascii=False,indent=2),encoding='utf-8')
+          Path('/tmp/product-wrap-v12-comparison.json').write_text(
+            json.dumps(result,ensure_ascii=False,indent=2),encoding='utf-8'
+          )
           print(json.dumps(result,ensure_ascii=False,indent=2))
+          if b['pages']!=58 or a['pages']!=58:
+            raise SystemExit(f"Expected 58 pages, got {b['pages']} -> {a['pages']}")
           if b['loadErrors'] or a['loadErrors']:
             raise SystemExit('Page load error detected')
           if a['high']!=0:
-            raise SystemExit(f"V1.1 HIGH must be zero, got {a['high']}")
+            raise SystemExit(f"V1.2 HIGH must be zero, got {a['high']}")
           if a['overflowPages']>b['overflowPages']:
-            raise SystemExit(f"Horizontal overflow worsened: {b['overflowPages']} -> {a['overflowPages']}")
-          if a['issueElements']>=b['issueElements']:
-            raise SystemExit(f"Total wrap issues did not improve: {b['issueElements']} -> {a['issueElements']}")
-          print('PRODUCT V1.1 ZERO-HIGH GATE PASS')
+            raise SystemExit(
+              f"Horizontal overflow worsened: {b['overflowPages']} -> {a['overflowPages']}"
+            )
+          if b['high']>0 and a['issueElements']>=b['issueElements']:
+            raise SystemExit(
+              f"Total wrap issues did not improve: {b['issueElements']} -> {a['issueElements']}"
+            )
+          if b['high']==0 and a['issueElements']>b['issueElements']:
+            raise SystemExit(
+              f"Total wrap issues worsened: {b['issueElements']} -> {a['issueElements']}"
+            )
+          print('PRODUCT V1.2 ZERO-HIGH GATE PASS')
           PY
 
       - name: Static safety QA
@@ -594,12 +269,16 @@ jobs:
         run: |
           set -euo pipefail
           git diff --check
-          python - <<'PY'
+          python3 - <<'PY'
           from pathlib import Path
           import json,re,subprocess
-          residual=json.loads(Path('/tmp/product-v11-residual.json').read_text(encoding='utf-8'))['targets']
+          residual=json.loads(
+            Path('/tmp/product-v12-residual.json').read_text(encoding='utf-8')
+          )['targets']
           allowed=set(residual)|{'japanese-wrap-v1.css','japanese-wrap-v1.js'}
-          tracked=set(subprocess.check_output(['git','diff','--name-only'],text=True).splitlines())
+          tracked=set(
+            subprocess.check_output(['git','diff','--name-only'],text=True).splitlines()
+          )
           if not tracked.issubset(allowed):
             raise SystemExit(f'Unexpected changed files: {sorted(tracked-allowed)}')
           if tracked and not {'japanese-wrap-v1.css','japanese-wrap-v1.js'}.issubset(tracked):
@@ -612,31 +291,41 @@ jobs:
             now=Path(name).read_text(encoding='utf-8')
             old=subprocess.check_output(['git','show',f'HEAD:{name}'],text=True)
             if body(now)!=body(old):raise SystemExit(f'{name}: BODY changed')
-            if now.count('japanese-wrap-v1.css?v=1.1')!=1:raise SystemExit(f'{name}: CSS cache-bust missing')
-            if now.count('japanese-wrap-v1.js?v=1.1')!=1:raise SystemExit(f'{name}: JS cache-bust missing')
-          if 'DPRO PRODUCT JAPANESE MOBILE WRAP V1.1' not in Path('japanese-wrap-v1.css').read_text(encoding='utf-8'):
-            raise SystemExit('V1.1 CSS marker missing')
-          if "window.__DPRO_PRODUCT_JP_WRAP_V1__='V1.1'" not in Path('japanese-wrap-v1.js').read_text(encoding='utf-8'):
-            raise SystemExit('V1.1 JS marker missing')
-          print('PRODUCT V1.1 STATIC SAFETY QA PASS',sorted(tracked))
+            if now.count('japanese-wrap-v1.css?v=1.2')!=1:
+              raise SystemExit(f'{name}: CSS cache-bust missing')
+            if now.count('japanese-wrap-v1.js?v=1.2')!=1:
+              raise SystemExit(f'{name}: JS cache-bust missing')
+          css=Path('japanese-wrap-v1.css').read_text(encoding='utf-8')
+          js=Path('japanese-wrap-v1.js').read_text(encoding='utf-8')
+          if 'DPRO PRODUCT JAPANESE MOBILE WRAP V1.2' not in css:
+            raise SystemExit('V1.2 CSS marker missing')
+          if "window.__DPRO_PRODUCT_JP_WRAP_V1__='V1.2'" not in js:
+            raise SystemExit('V1.2 JS marker missing')
+          if "keep:['する」か。','設計する」か。']" not in js:
+            raise SystemExit('V1.2 final compare protection missing')
+          print('PRODUCT V1.2 STATIC SAFETY QA PASS',sorted(tracked))
           PY
 
-      - name: Commit PRODUCT V1.1
+      - name: Commit PRODUCT V1.2
         shell: bash
         run: |
           set -euo pipefail
-          if git diff --quiet -- japanese-wrap-v1.css japanese-wrap-v1.js compare-repitte.html index.html lp-btype.html lp-car.html lp-chosashi.html lp-cosmetics.html lp-gyosei.html lp-haishoku.html lp-homecare.html; then
-            echo 'V1.1 already applied; commit skipped.'
+          targets=(
+            japanese-wrap-v1.css japanese-wrap-v1.js compare-repitte.html index.html
+            lp-btype.html lp-car.html lp-chosashi.html lp-cosmetics.html
+            lp-gyosei.html lp-haishoku.html lp-homecare.html
+          )
+          if git diff --quiet -- "${targets[@]}"; then
+            echo 'V1.2 already applied; commit skipped.'
             exit 0
           fi
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add japanese-wrap-v1.css japanese-wrap-v1.js
-          git add compare-repitte.html index.html lp-btype.html lp-car.html lp-chosashi.html lp-cosmetics.html lp-gyosei.html lp-haishoku.html lp-homecare.html
-          git commit -m 'Fix PRODUCT residual Japanese wraps V1.1'
+          git add "${targets[@]}"
+          git commit -m 'Fix PRODUCT final Japanese wrap HIGH V1.2'
           git push origin HEAD:main
 
-      - name: Wait for PRODUCT Pages V1.1 propagation
+      - name: Wait for PRODUCT Pages V1.2 propagation
         shell: bash
         run: |
           set -euo pipefail
@@ -646,15 +335,15 @@ jobs:
           for i in $(seq 1 72); do
             css="$(curl -fsSL "$CSS_URL" 2>/dev/null || true)"
             js="$(curl -fsSL "$JS_URL" 2>/dev/null || true)"
-            if printf '%s' "$css" | grep -q 'DPRO PRODUCT JAPANESE MOBILE WRAP V1.1' && \
-               printf '%s' "$js" | grep -q "window.__DPRO_PRODUCT_JP_WRAP_V1__='V1.1'"; then
+            if printf '%s' "$css" | grep -q 'DPRO PRODUCT JAPANESE MOBILE WRAP V1.2' && \
+               printf '%s' "$js" | grep -q "window.__DPRO_PRODUCT_JP_WRAP_V1__='V1.2'"; then
               ready=1
               break
             fi
             sleep 5
           done
           if [ "$ready" != '1' ]; then
-            echo 'PRODUCT Pages V1.1 propagation timed out.'
+            echo 'PRODUCT Pages V1.2 propagation timed out.'
             exit 1
           fi
 
@@ -662,43 +351,62 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          AUDIT_BASE='https://dpromstk2000-lab.github.io/dpro-line-systems-site/' AUDIT_OUT='/tmp/product-wrap-public.json' node product-wrap-audit.js
+          AUDIT_BASE='https://dpromstk2000-lab.github.io/dpro-line-systems-site/' \
+            AUDIT_OUT='/tmp/product-wrap-public.json' node product-wrap-audit.js
 
-      - name: Public V1.1 final gate
+      - name: Public V1.2 final gate
         shell: bash
         run: |
           set -euo pipefail
-          python - <<'PY'
+          python3 - <<'PY'
           from pathlib import Path
           import json
-          before=json.loads(Path('/tmp/product-wrap-before.json').read_text(encoding='utf-8'))['summary']
-          public=json.loads(Path('/tmp/product-wrap-public.json').read_text(encoding='utf-8'))
+          before=json.loads(
+            Path('/tmp/product-wrap-before.json').read_text(encoding='utf-8')
+          )['summary']
+          public=json.loads(
+            Path('/tmp/product-wrap-public.json').read_text(encoding='utf-8')
+          )
           summary=public['summary']
-          remaining=[{'path':x['path'],'high':x['high'],'issues':x['issues']} for x in public['results'] if x.get('high')]
-          print(json.dumps({'public':summary,'remaining_high':remaining},ensure_ascii=False,indent=2))
-          if summary['pages']!=58:raise SystemExit(f"Expected 58 public pages, got {summary['pages']}")
-          if summary['loadErrors']!=0:raise SystemExit(f"Public load errors: {summary['loadErrors']}")
-          if summary['high']!=0:raise SystemExit(f"Public HIGH must be zero, got {summary['high']}")
+          remaining=[
+            {'path':x['path'],'high':x['high'],'issues':x['issues']}
+            for x in public['results'] if x.get('high')
+          ]
+          result={'public':summary,'remaining_high':remaining}
+          Path('/tmp/product-wrap-v12-public-result.json').write_text(
+            json.dumps(result,ensure_ascii=False,indent=2),encoding='utf-8'
+          )
+          print(json.dumps(result,ensure_ascii=False,indent=2))
+          if summary['pages']!=58:
+            raise SystemExit(f"Expected 58 public pages, got {summary['pages']}")
+          if summary['loadErrors']!=0:
+            raise SystemExit(f"Public load errors: {summary['loadErrors']}")
+          if summary['high']!=0:
+            raise SystemExit(f"Public HIGH must be zero, got {summary['high']}")
           if summary['overflowPages']>before['overflowPages']:
-            raise SystemExit(f"Public overflow worsened: {before['overflowPages']} -> {summary['overflowPages']}")
-          print('PRODUCT V1.1 PUBLIC FINAL GATE PASS')
+            raise SystemExit(
+              f"Public overflow worsened: {before['overflowPages']} -> {summary['overflowPages']}"
+            )
+          print('PRODUCT V1.2 PUBLIC FINAL GATE PASS')
           PY
 
-      - name: Build V1.1 audit artifact
+      - name: Build V1.2 audit artifact
         if: always()
         shell: bash
         run: |
-          mkdir -p product-wrap-v11-audit
-          cp /tmp/product-wrap-before.json product-wrap-v11-audit/before.json 2>/dev/null || true
-          cp /tmp/product-wrap-after.json product-wrap-v11-audit/after.json 2>/dev/null || true
-          cp /tmp/product-wrap-v11-comparison.json product-wrap-v11-audit/comparison.json 2>/dev/null || true
-          cp /tmp/product-wrap-public.json product-wrap-v11-audit/public.json 2>/dev/null || true
-          cp /tmp/product-v11-residual.json product-wrap-v11-audit/residual-targets.json 2>/dev/null || true
+          mkdir -p product-wrap-v12-audit
+          cp /tmp/product-wrap-before.json product-wrap-v12-audit/before.json 2>/dev/null || true
+          cp /tmp/product-wrap-after.json product-wrap-v12-audit/after.json 2>/dev/null || true
+          cp /tmp/product-wrap-v12-comparison.json product-wrap-v12-audit/comparison.json 2>/dev/null || true
+          cp /tmp/product-wrap-public.json product-wrap-v12-audit/public.json 2>/dev/null || true
+          cp /tmp/product-wrap-v12-public-result.json product-wrap-v12-audit/public-result.json 2>/dev/null || true
+          cp /tmp/product-v12-residual.json product-wrap-v12-audit/residual-targets.json 2>/dev/null || true
 
-      - name: Upload PRODUCT V1.1 wrap audit
+      - name: Upload PRODUCT V1.2 wrap audit
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: product-japanese-wrap-v11
-          path: product-wrap-v11-audit/
+          name: product-japanese-wrap-v12
+          path: product-wrap-v12-audit/
           retention-days: 7
+
