@@ -1,4 +1,4 @@
-name: PRODUCT VET HP title wrap fix V1.1
+name: PRODUCT VET HP title wrap fix V1.1R1
 
 on:
   push:
@@ -11,7 +11,7 @@ permissions:
   contents: write
 
 concurrency:
-  group: product-vet-hp-title-wrap-fix-v11
+  group: product-vet-hp-title-wrap-fix-v11r1
   cancel-in-progress: false
 
 jobs:
@@ -25,7 +25,7 @@ jobs:
         with:
           fetch-depth: 1
 
-      - name: Apply title breakpoint fix V1.1
+      - name: Apply title breakpoint fix V1.1R1
         shell: bash
         run: |
           set -euo pipefail
@@ -39,7 +39,7 @@ jobs:
           expected_index_blob='63dee7aa68dc4315941a1c6496ad00c96d327ad7'
 
           old_marker='/* DPRO PRODUCT VET HP TITLE WRAP FIX V1.0 */'
-          marker='/* DPRO PRODUCT VET HP TITLE WRAP FIX V1.1 */'
+          marker='/* DPRO PRODUCT VET HP TITLE WRAP FIX V1.1R1 */'
           title=(
             '<h2><span class="p36-vet-hp__title-line">ホームページから、</span>'
             '<em><span>受付システムまで</span><span>一続きで体験。</span></em></h2>'
@@ -55,11 +55,11 @@ jobs:
             marker+'\\n'
             '      @media(max-width:980px){'
             '.p36-vet-hp h2 .p36-vet-hp__title-line,'
-            '.p36-vet-hp h2 em span{display:block;white-space:nowrap}'
+            '.p36-vet-hp h2 em > span{display:block;white-space:nowrap}'
             '}'
           )
           old_ref='<script src="product-v3.6.js?v=3.6.3-vet-title"></script>'
-          new_ref='<script src="product-v3.6.js?v=3.6.4-vet-title"></script>'
+          new_ref='<script src="product-v3.6.js?v=3.6.4-vet-title-r1"></script>'
 
           psrc=product.read_text(encoding='utf-8')
           isrc=index.read_text(encoding='utf-8')
@@ -70,7 +70,7 @@ jobs:
             new_ref in isrc
           )
           if already:
-            print('VET HP title wrap V1.1 already applied')
+            print('VET HP title wrap V1.1R1 already applied')
           else:
             actual_product=subprocess.check_output(
               ['git','hash-object',str(product)],text=True
@@ -104,7 +104,7 @@ jobs:
             raise SystemExit('Clean three-line title markup missing')
           if final_index.count(new_ref)!=1:
             raise SystemExit('PRODUCT cache-bust reference missing')
-          print('PRODUCT VET HP TITLE BREAKPOINT V1.1 PATCH PASS')
+          print('PRODUCT VET HP TITLE BREAKPOINT V1.1R1 PATCH PASS')
           PY
 
       - name: Static title-only safety QA
@@ -125,7 +125,7 @@ jobs:
             raise SystemExit(f'Unexpected changed files: {sorted(changed-allowed)}')
 
           old_marker='/* DPRO PRODUCT VET HP TITLE WRAP FIX V1.0 */'
-          marker='/* DPRO PRODUCT VET HP TITLE WRAP FIX V1.1 */'
+          marker='/* DPRO PRODUCT VET HP TITLE WRAP FIX V1.1R1 */'
           title=(
             '<h2><span class="p36-vet-hp__title-line">ホームページから、</span>'
             '<em><span>受付システムまで</span><span>一続きで体験。</span></em></h2>'
@@ -141,11 +141,11 @@ jobs:
             marker+'\\n'
             '      @media(max-width:980px){'
             '.p36-vet-hp h2 .p36-vet-hp__title-line,'
-            '.p36-vet-hp h2 em span{display:block;white-space:nowrap}'
+            '.p36-vet-hp h2 em > span{display:block;white-space:nowrap}'
             '}'
           )
           old_ref='<script src="product-v3.6.js?v=3.6.3-vet-title"></script>'
-          new_ref='<script src="product-v3.6.js?v=3.6.4-vet-title"></script>'
+          new_ref='<script src="product-v3.6.js?v=3.6.4-vet-title-r1"></script>'
 
           now_product=Path('product-v3.6.js').read_text(encoding='utf-8')
           now_index=Path('index.html').read_text(encoding='utf-8')
@@ -247,7 +247,10 @@ jobs:
               const distinctRows = new Set(rows.map((row) => row && row.top)).size;
               const marker = (
                 document.getElementById('p36-vet-hp-style')?.textContent || ''
-              ).includes('DPRO PRODUCT VET HP TITLE WRAP FIX V1.1');
+              ).includes('DPRO PRODUCT VET HP TITLE WRAP FIX V1.1R1');
+              const nestedBlockCount = [
+                ...h2.querySelectorAll(':scope > em > span span')
+              ].filter((el) => getComputedStyle(el).display === 'block').length;
               return {
                 text: (h2.innerText || h2.textContent || '')
                   .replace(/\s+/g, ''),
@@ -255,6 +258,7 @@ jobs:
                 rows,
                 distinctRows,
                 marker,
+                nestedBlockCount,
                 overflow: root.scrollWidth > root.clientWidth + 4,
                 viewport: {
                   width: root.clientWidth,
@@ -276,6 +280,7 @@ jobs:
                 row.fits
               ) &&
               result.marker &&
+              result.nestedBlockCount === 0 &&
               !result.overflow
             );
             if (shot) await page.screenshot({ path: shot, fullPage: false });
@@ -326,7 +331,7 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add product-v3.6.js index.html
-          git commit -m 'Extend PRODUCT VET HP clean title wrap to 980px'
+          git commit -m 'Fix PRODUCT VET HP nested title span wrapping'
           git push origin HEAD:main
 
       - name: Wait for PRODUCT Pages title fix
@@ -339,8 +344,8 @@ jobs:
           for i in $(seq 1 72); do
             js="$(curl -fsSL "$JS_URL" 2>/dev/null || true)"
             html="$(curl -fsSL "$INDEX_URL" 2>/dev/null || true)"
-            if [[ "$js" == *'DPRO PRODUCT VET HP TITLE WRAP FIX V1.1'* && \
-                  "$html" == *'product-v3.6.js?v=3.6.4-vet-title'* ]]; then
+            if [[ "$js" == *'DPRO PRODUCT VET HP TITLE WRAP FIX V1.1R1'* && \
+                  "$html" == *'product-v3.6.js?v=3.6.4-vet-title-r1'* ]]; then
               ready=1
               break
             fi
@@ -365,7 +370,7 @@ jobs:
             QA_OUT='/tmp/vet-title-public-768.json' \
             QA_SHOT='/tmp/vet-title-public-768.png' \
             node vet-hp-title-qa.js
-          echo 'PRODUCT VET HP TITLE WRAP V1.1 MULTI-WIDTH PUBLIC GATE PASS'
+          echo 'PRODUCT VET HP TITLE WRAP V1.1R1 MULTI-WIDTH PUBLIC GATE PASS'
 
       - name: Build title audit artifact
         if: always()
@@ -385,6 +390,6 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: product-vet-hp-title-wrap-v11
+          name: product-vet-hp-title-wrap-v11r1
           path: product-vet-title-audit/
           retention-days: 7
