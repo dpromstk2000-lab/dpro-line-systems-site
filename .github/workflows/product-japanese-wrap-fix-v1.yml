@@ -1,4 +1,4 @@
-name: PRODUCT Japanese mobile wrap fix V1.2
+name: PRODUCT Japanese mobile wrap fix V1.2R1
 
 on:
   push:
@@ -11,7 +11,7 @@ permissions:
   contents: write
 
 concurrency:
-  group: product-japanese-wrap-fix-v12
+  group: product-japanese-wrap-fix-v12r1
   cancel-in-progress: false
 
 jobs:
@@ -47,7 +47,7 @@ jobs:
             except subprocess.CalledProcessError:
               continue
             if (
-              'name: PRODUCT Japanese mobile wrap fix V1.1' in candidate and
+              candidate.startswith('name: PRODUCT Japanese mobile wrap fix V1.1\n') and
               "cat > product-wrap-audit.js <<'NODE'" in candidate and
               "cat > japanese-wrap-v1.js <<'JS'" in candidate
             ):
@@ -409,4 +409,3 @@ jobs:
           name: product-japanese-wrap-v12
           path: product-wrap-v12-audit/
           retention-days: 7
-
