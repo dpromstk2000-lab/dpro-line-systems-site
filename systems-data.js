@@ -75,7 +75,7 @@
     "lpUrl": "lp-nail.html",
     "flyerHtml": "flyer-nail.html",
     "flyerPdf": "flyer-nail.pdf",
-    "demoUrl": "https://dpromstk2000-lab.github.io/liff-nail-reserve/index.html",
+    "demoUrl": "https://dpromstk2000-lab.github.io/liff-nail-reserve/demo-guide.html",
     "status": "AVAILABLE",
     "verificationStatus": "VERIFIED",
     "tagline": "写真付きデザイン予約から再来店フォローまでを、一つの流れにつなぐ。",
