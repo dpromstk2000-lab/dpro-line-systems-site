@@ -75,6 +75,54 @@ h2{margin:8px 0 12px;font-size:clamp(1.85rem,5vw,3.2rem);line-height:1.2;letter-
 }
 
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+
+/* DPRO LP HAIR WRAP FIX V1.0 CENTRAL
+   Cause: the 700px two-column breakpoint leaves the hero copy column too narrow
+   because the visual column has a 420px minimum width.
+   Fix: keep 700-979px as a single-column hero and rebalance desktop columns.
+   Scope: HAIR LP hero only. Copy/order/design identity preserved. */
+.hero-copy{
+  min-width:0;
+  min-inline-size:0;
+}
+.hero-copy h1,
+.hero-copy h1 span{
+  max-width:100%;
+  white-space:normal;
+  word-break:normal;
+  overflow-wrap:normal;
+  line-break:strict;
+}
+.hero-copy h1{
+  text-wrap:balance;
+}
+
+@media (min-width:700px) and (max-width:979px){
+  .hero-grid{
+    grid-template-columns:minmax(0,1fr) !important;
+    gap:30px;
+  }
+  .hero-copy{
+    max-width:760px;
+  }
+  .hero-copy h1{
+    font-size:clamp(2.75rem,7.2vw,4.1rem);
+  }
+  .hero-stage{
+    min-width:0;
+  }
+}
+
+@media (min-width:980px){
+  .hero-grid{
+    grid-template-columns:minmax(0,1.12fr) minmax(420px,.88fr);
+    gap:38px;
+  }
+  .hero-copy h1{
+    font-size:clamp(3.05rem,5.15vw,3.75rem);
+  }
+}
+
 </style>
 
 <!-- DPRO PRODUCT JAPANESE MOBILE WRAP V1.0 -->
