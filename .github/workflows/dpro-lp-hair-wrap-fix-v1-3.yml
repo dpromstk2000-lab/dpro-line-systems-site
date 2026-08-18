@@ -1,0 +1,100 @@
+name: DPRO LP HAIR Wrap Fix V1.3
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/dpro-lp-hair-wrap-fix-v1-3.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: dpro-lp-hair-wrap-fix-v1-3
+  cancel-in-progress: false
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Guard current HAIR and ALL49 baseline
+        shell: bash
+        run: |
+          hair_blob="$(git hash-object lp-hair.html)"
+          systems_blob="$(git hash-object systems-data.js)"
+          echo "lp-hair.html: $hair_blob"
+          echo "systems-data.js: $systems_blob"
+          test "$hair_blob" = "b6285df3291a358bbf74e59217c7772fd8e60001" || {
+            echo "BLOCKER: lp-hair.html changed after V1.2 screenshot QA."
+            exit 1
+          }
+          test "$systems_blob" = "1388eb84fe70b15a9ee365b990662ee48b725cf2" || {
+            echo "BLOCKER: ALL49 LIVE DEMO routing changed."
+            exit 1
+          }
+
+      - name: Apply V1.3 structural fix
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          TARGET = Path('lp-hair.html')
+          MARKER = 'DPRO LP HAIR WRAP FIX V1.3 CENTRAL'
+          SHARED_CSS = '<link rel="stylesheet" href="japanese-wrap-v1.css?v=1.0">'
+          SHARED_JS = '<script defer src="japanese-wrap-v1.js?v=1.0"></script>'
+          text = TARGET.read_text(encoding='utf-8')
+          if MARKER in text: raise SystemExit('BLOCKER: V1.3 marker already exists')
+          if 'class="hair-hero-title"' not in text: raise SystemExit('BLOCKER: V1.2 semantic HAIR title prerequisite missing')
+          if SHARED_CSS not in text or SHARED_JS not in text: raise SystemExit('BLOCKER: shared Japanese wrap layer not found')
+          if '</head>' not in text: raise SystemExit('BLOCKER: </head> missing')
+          text = text.replace(SHARED_CSS, '<!-- HAIR V1.3: generic Japanese wrap CSS intentionally disabled on this LP -->', 1)
+          text = text.replace(SHARED_JS, '<!-- HAIR V1.3: generic Japanese wrap JS intentionally disabled on this LP -->', 1)
+          text, removed = re.subn(r'<style id="dpro-hair-wrap-v1-2">.*?</style>', '', text, count=1, flags=re.S)
+          if removed != 1: raise SystemExit('BLOCKER: V1.2 late style was not removed exactly once')
+          FINAL_STYLE = '<style id="dpro-hair-wrap-v1-3">\n/* DPRO LP HAIR WRAP FIX V1.3 CENTRAL\n   FINAL STRUCTURAL FIX after browser screenshot QA.\n   - No runtime Japanese tokenization in the HAIR hero.\n   - Desktop headline has a guaranteed readable track.\n   - Laptop/tablet uses one-column hero rather than crushing Japanese copy.\n   - Mobile uses native Japanese wrapping at a controlled font size. */\n.hero .hero-grid{\n  display:grid!important;\n  grid-template-columns:minmax(0,1fr)!important;\n  gap:32px!important;\n  align-items:center!important;\n}\n.hero .hero-copy{\n  min-width:0!important;\n  min-inline-size:0!important;\n  width:100%!important;\n  max-width:780px!important;\n}\n.hero .hair-hero-title{\n  margin:12px 0 14px!important;\n  max-width:780px!important;\n  color:var(--brand)!important;\n  font-size:clamp(2.15rem,8.6vw,2.7rem)!important;\n  line-height:1.08!important;\n  letter-spacing:-.035em!important;\n  white-space:normal!important;\n  word-break:normal!important;\n  overflow-wrap:normal!important;\n  line-break:strict!important;\n  text-wrap:wrap!important;\n}\n.hero .hair-hero-title .hair-hero-line1,\n.hero .hair-hero-title .hair-hero-line2{\n  display:block!important;\n  max-width:none!important;\n  white-space:normal!important;\n  word-break:normal!important;\n  overflow-wrap:normal!important;\n}\n.hero .hair-hero-title .hair-hero-line1{\n  margin:0!important;\n  color:var(--brand)!important;\n  font-size:1em!important;\n  line-height:1.08!important;\n  letter-spacing:inherit!important;\n}\n.hero .hair-hero-title .hair-hero-line2{\n  margin:9px 0 0!important;\n  color:#293b34!important;\n  font-size:.55em!important;\n  line-height:1.28!important;\n  letter-spacing:-.02em!important;\n}\n@media (min-width:700px) and (max-width:1279px){\n  .hero .hero-grid{grid-template-columns:minmax(0,1fr)!important;}\n  .hero .hero-copy{max-width:820px!important;}\n  .hero .hair-hero-title{max-width:820px!important;font-size:clamp(2.8rem,5.2vw,3.35rem)!important;}\n  .hero .hair-hero-title .hair-hero-line1,\n  .hero .hair-hero-title .hair-hero-line2{white-space:nowrap!important;}\n}\n@media (min-width:1280px){\n  .hero .hero-grid{grid-template-columns:minmax(560px,.98fr) minmax(0,1.02fr)!important;gap:44px!important;}\n  .hero .hero-copy{min-width:560px!important;width:560px!important;max-width:560px!important;}\n  .hero .hair-hero-title{width:560px!important;max-width:560px!important;font-size:3.12rem!important;line-height:1.08!important;}\n  .hero .hair-hero-title .hair-hero-line1,\n  .hero .hair-hero-title .hair-hero-line2{white-space:nowrap!important;}\n  .hero .hero-stage{min-width:0!important;}\n}\n</style>'
+          text = text.replace('</head>', FINAL_STYLE + '\n</head>', 1)
+          TARGET.write_text(text, encoding='utf-8', newline='\n')
+          check = TARGET.read_text(encoding='utf-8')
+          if check.count(MARKER) != 1: raise SystemExit('BLOCKER: V1.3 marker count invalid')
+          if SHARED_CSS in check or SHARED_JS in check: raise SystemExit('BLOCKER: generic Japanese wrap layer still active')
+          if 'min-width:560px!important;' not in check: raise SystemExit('BLOCKER: desktop readable-width guard missing')
+          if '@media (min-width:700px) and (max-width:1279px)' not in check: raise SystemExit('BLOCKER: laptop/tablet single-column guard missing')
+          print('PASS: HAIR V1.3 structural wrap fix applied')
+          print('PASS: generic Japanese wrap CSS/JS disabled for lp-hair.html only')
+          print('PASS: desktop title track fixed at 560px; tablet/laptop remains one-column')
+
+          PY
+
+      - name: Validate isolated scope
+        shell: bash
+        run: |
+          git diff --check -- lp-hair.html
+          changed="$(git diff --name-only)"
+          echo "$changed"
+          test "$changed" = "lp-hair.html" || {
+            echo "BLOCKER: unexpected modified files"
+            exit 1
+          }
+          grep -q "DPRO LP HAIR WRAP FIX V1.3 CENTRAL" lp-hair.html
+          grep -q 'class="hair-hero-title"' lp-hair.html
+          ! grep -q '<link rel="stylesheet" href="japanese-wrap-v1.css?v=1.0">' lp-hair.html
+          ! grep -q '<script defer src="japanese-wrap-v1.js?v=1.0"></script>' lp-hair.html
+          test "$(git hash-object systems-data.js)" = "1388eb84fe70b15a9ee365b990662ee48b725cf2"
+
+      - name: Commit and remove one-shot workflow
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add lp-hair.html
+          git rm --ignore-unmatch ".github/workflows/dpro-lp-hair-wrap-fix-v1-3.yml"
+          git commit -m "Fix HAIR LP hero wrapping structurally V1.3"
+          git push origin HEAD:main
