@@ -112,7 +112,67 @@
         experienceScreens: Object.freeze([])
       });
 
-      const systems = base.systems.slice();
+      /* DPRO LIVE DEMO ALL49 CENTRAL OVERRIDES START */
+      const liveDemoOverrides = Object.freeze({
+        "BAKERY": "https://dpromstk2000-lab.github.io/bakery-line-system/demo-guide.html",
+        "BTYPE": "https://dpromstk2000-lab.github.io/dpro-btype-line-liff/demo-guide.html",
+        "BUYBACK": "https://dpromstk2000-lab.github.io/dpro-buyback-line/demo-guide.html",
+        "CAKE": "https://dpromstk2000-lab.github.io/dpro-cake-line-liff/demo-guide.html",
+        "CAR": "https://dpromstk2000-lab.github.io/dpro-used-car-line-liff/demo-guide.html",
+        "CAREPLAN": "https://dpromstk2000-lab.github.io/dpro-careplan-line/demo-guide.html",
+        "CARETAXI": "https://dpromstk2000-lab.github.io/dpro-caretaxi-line/demo-guide.html",
+        "CHOSASHI": "https://dpromstk2000-lab.github.io/dpro-chosashi-line-liff/demo-guide.html",
+        "CONSULT": "https://dpromstk2000-lab.github.io/dpro-consult-line/demo-guide.html",
+        "COSMETICS": "https://dpromstk2000-lab.github.io/dpro-cosmetics-line-liff/demo-guide.html",
+        "DAYCARE": "https://dpromstk2000-lab.github.io/dpro-dayservice-line/demo-guide.html",
+        "DENTAL": "https://dpromstk2000-lab.github.io/DEGITAL-QR/demo-guide.html",
+        "DISPOSAL": "https://dpromstk2000-lab.github.io/dpro-disposal-line-liff/demo-guide.html",
+        "ESTATE": "https://dpromstk2000-lab.github.io/dpro-estate-line-liff/demo-guide.html",
+        "ESTHE": "https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/demo-guide.html",
+        "EYE": "https://dpromstk2000-lab.github.io/dpro-eye-salon-line/demo-guide.html",
+        "FLOWER": "https://dpromstk2000-lab.github.io/dpro-flower-line-liff/demo-guide.html",
+        "FUNERAL": "https://dpromstk2000-lab.github.io/dpro-funeral-line/demo-guide.html",
+        "GAKUDO": "https://dpromstk2000-lab.github.io/dpro-gakudo-line/demo-guide.html",
+        "GREEN": "https://dpromstk2000-lab.github.io/dpro-green-rental-line/demo-guide.html",
+        "GYM": "https://dpromstk2000-lab.github.io/liff-gym-demo/demo-guide.html",
+        "GYOSEI": "https://dpromstk2000-lab.github.io/dpro-gyosei-permit-line/demo-guide.html",
+        "HAISHOKU": "https://dpromstk2000-lab.github.io/dpro-senior-meal-delivery-line/demo-guide.html",
+        "HOMECARE": "https://dpromstk2000-lab.github.io/dpro-homecare-family-line/demo-guide.html",
+        "HOMENURSING": "https://dpromstk2000-lab.github.io/dpro-home-nursing-line/demo-guide.html",
+        "HOUKAGO": "https://dpromstk2000-lab.github.io/dpro-houkago-dayservice-line/demo-guide.html",
+        "HOUSEKEEP": "https://dpromstk2000-lab.github.io/dpro-housekeep-line-liff/demo-guide.html",
+        "IZAKAYA": "https://izakaya-liff-demo.pages.dev/demo-guide.html",
+        "KSH": "https://dpromstk2000-lab.github.io/line-shaken-liff/demo-guide.html",
+        "PETSALON": "https://dpromstk2000-lab.github.io/dpro-pet-salon-liff/demo-guide.html",
+        "PHOTO": "https://dpromstk2000-lab.github.io/dpro-photo-studio-line/demo-guide.html",
+        "REFORM": "https://dpromstk2000-lab.github.io/dpro-reform-line-liff/demo-guide.html",
+        "REPAIR": "https://dpromstk2000-lab.github.io/dpro-repair-line-liff/demo-guide.html",
+        "SALESNAVI": "https://dpro-salesnavi-demo.pages.dev/demo-guide.html",
+        "SALON": "https://dpromstk2000-lab.github.io/liff-salon-reserve/demo-guide.html",
+        "SCHOOL": "https://dpromstk2000-lab.github.io/dpro-school-line/demo-guide.html",
+        "SEITAI": "https://dpromstk2000-lab.github.io/dpro-seitai-line/demo-guide.html",
+        "SHIHO": "https://dpromstk2000-lab.github.io/dpro-shiho-inheritance-line-liff/demo-guide.html",
+        "SHUTTLE": "https://dpromstk2000-lab.github.io/dpro-welfare-shuttle-line/demo-guide.html",
+        "SODAN": "https://dpromstk2000-lab.github.io/dpro-sodan-line/demo-guide.html",
+        "STAY": "https://dpromstk2000-lab.github.io/dpro-stay-line/demo-guide.html",
+        "TAKEOUT": "https://dpromstk2000-lab.github.io/dpro-takeout-line-liff/demo-guide.html",
+        "TAX": "https://dpromstk2000-lab.github.io/dpro-tax-accounting-line-liff/demo-guide.html",
+        "VET": "https://dpromstk2000-lab.github.io/DPRO-VET-QR/demo-guide.html",
+        "WELFARE": "https://dpromstk2000-lab.github.io/dpro-welfare-equipment-line/demo-guide.html",
+        "YAKINIKU": "https://dpromstk2000-lab.github.io/dpro-yakiniku-line-liff/demo-guide.html",
+        "YOGA": "https://dpromstk2000-lab.github.io/liff-yoga-reserve/demo-guide.html"
+      });
+      const sourceCodes = new Set(base.systems.map(item => String((item && item.code) || "").toUpperCase()));
+      const missingOverrideCodes = Object.keys(liveDemoOverrides).filter(code => !sourceCodes.has(code));
+      if (missingOverrideCodes.length) {
+        throw new Error("DPRO LIVE DEMO override codes missing from locked CORE: " + missingOverrideCodes.join(", "));
+      }
+      const systems = base.systems.map((item) => {
+        const code = String((item && item.code) || "").toUpperCase();
+        const overrideDemoUrl = liveDemoOverrides[code];
+        return overrideDemoUrl ? Object.freeze({ ...item, demoUrl: overrideDemoUrl }) : item;
+      });
+      /* DPRO LIVE DEMO ALL49 CENTRAL OVERRIDES END */
       const dentalIndex = systems.findIndex(item => item && item.code === "DENTAL");
       systems.splice(dentalIndex >= 0 ? dentalIndex + 1 : systems.length, 0, medical);
 
