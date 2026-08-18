@@ -123,6 +123,58 @@ h2{margin:8px 0 12px;font-size:clamp(1.85rem,5vw,3.2rem);line-height:1.2;letter-
   }
 }
 
+
+/* DPRO LP HAIR WRAP FIX V1.1 CENTRAL
+   Visual correction after browser screenshot QA.
+   V1.0 removed the narrow breakpoint bug, but desktop hero copy still looked
+   vertically fragmented because the left track was too small for the large JP H1.
+   V1.1 deliberately gives the headline a readable minimum width and delays
+   the two-column hero until a sufficiently wide viewport. */
+@media (min-width:700px) and (max-width:1179px){
+  .hero-grid{
+    grid-template-columns:minmax(0,1fr) !important;
+    gap:32px;
+  }
+  .hero-copy{
+    max-width:820px;
+  }
+  .hero-copy h1{
+    max-width:820px;
+    font-size:clamp(2.7rem,6vw,3.55rem);
+    line-height:1.08;
+    text-wrap:balance;
+  }
+  .hero-copy h1 span{
+    margin-top:8px;
+    font-size:.52em;
+    line-height:1.28;
+  }
+}
+
+@media (min-width:1180px){
+  .hero-grid{
+    grid-template-columns:minmax(500px,1fr) minmax(0,1fr) !important;
+    gap:44px;
+    align-items:center;
+  }
+  .hero-copy{
+    min-width:500px;
+    max-width:560px;
+  }
+  .hero-copy h1{
+    max-width:560px;
+    font-size:clamp(3rem,4vw,3.4rem);
+    line-height:1.08;
+    letter-spacing:-.035em;
+    text-wrap:balance;
+  }
+  .hero-copy h1 span{
+    margin-top:10px;
+    font-size:.52em;
+    line-height:1.28;
+  }
+}
+
 </style>
 
 <!-- DPRO PRODUCT JAPANESE MOBILE WRAP V1.0 -->
