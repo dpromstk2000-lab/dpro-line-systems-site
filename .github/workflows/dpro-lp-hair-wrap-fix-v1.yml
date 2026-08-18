@@ -1,0 +1,146 @@
+name: DPRO LP HAIR Wrap Fix V1.0
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/dpro-lp-hair-wrap-fix-v1.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: dpro-lp-hair-wrap-fix-v1
+  cancel-in-progress: false
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Guard locked baselines
+        shell: bash
+        run: |
+          hair_blob="$(git hash-object lp-hair.html)"
+          systems_blob="$(git hash-object systems-data.js)"
+          echo "lp-hair.html: $hair_blob"
+          echo "systems-data.js: $systems_blob"
+          test "$hair_blob" = "a1bb26a92416aefceabba15a04d9c88c3c9b694e" || {
+            echo "BLOCKER: lp-hair.html changed since CENTRAL binding."
+            exit 1
+          }
+          test "$systems_blob" = "1388eb84fe70b15a9ee365b990662ee48b725cf2" || {
+            echo "BLOCKER: ALL49 LIVE DEMO routing source changed."
+            exit 1
+          }
+
+      - name: Apply HAIR-only wrap fix
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          TARGET = Path("lp-hair.html")
+          BASELINE = "a1bb26a92416aefceabba15a04d9c88c3c9b694e"
+          MARKER = "DPRO LP HAIR WRAP FIX V1.0 CENTRAL"
+
+          text = TARGET.read_text(encoding="utf-8")
+          if MARKER in text:
+              raise SystemExit("BLOCKER: HAIR wrap fix marker already exists")
+          if "予約から美容カルテ、" not in text or "次回来店までをひとつに。" not in text:
+              raise SystemExit("BLOCKER: expected HAIR hero copy not found")
+          if "</style>" not in text:
+              raise SystemExit("BLOCKER: style closing tag not found")
+
+          patch = r"""
+          /* DPRO LP HAIR WRAP FIX V1.0 CENTRAL
+             Cause: the 700px two-column breakpoint leaves the hero copy column too narrow
+             because the visual column has a 420px minimum width.
+             Fix: keep 700-979px as a single-column hero and rebalance desktop columns.
+             Scope: HAIR LP hero only. Copy/order/design identity preserved. */
+          .hero-copy{
+            min-width:0;
+            min-inline-size:0;
+          }
+          .hero-copy h1,
+          .hero-copy h1 span{
+            max-width:100%;
+            white-space:normal;
+            word-break:normal;
+            overflow-wrap:normal;
+            line-break:strict;
+          }
+          .hero-copy h1{
+            text-wrap:balance;
+          }
+
+          @media (min-width:700px) and (max-width:979px){
+            .hero-grid{
+              grid-template-columns:minmax(0,1fr) !important;
+              gap:30px;
+            }
+            .hero-copy{
+              max-width:760px;
+            }
+            .hero-copy h1{
+              font-size:clamp(2.75rem,7.2vw,4.1rem);
+            }
+            .hero-stage{
+              min-width:0;
+            }
+          }
+
+          @media (min-width:980px){
+            .hero-grid{
+              grid-template-columns:minmax(0,1.12fr) minmax(420px,.88fr);
+              gap:38px;
+            }
+            .hero-copy h1{
+              font-size:clamp(3.05rem,5.15vw,3.75rem);
+            }
+          }
+          """
+
+          text = text.replace("</style>", patch + "\n</style>", 1)
+          TARGET.write_text(text, encoding="utf-8", newline="\n")
+
+          check = TARGET.read_text(encoding="utf-8")
+          if check.count(MARKER) != 1:
+              raise SystemExit("BLOCKER: patch marker count invalid")
+          if "grid-template-columns:minmax(0,1fr) !important;" not in check:
+              raise SystemExit("BLOCKER: tablet single-column guard missing")
+          if "grid-template-columns:minmax(0,1.12fr) minmax(420px,.88fr);" not in check:
+              raise SystemExit("BLOCKER: desktop rebalance missing")
+
+          print("PASS: HAIR LP hero wrap patch applied")
+
+          PY
+
+      - name: Validate scope
+        shell: bash
+        run: |
+          git diff --check -- lp-hair.html
+          changed="$(git diff --name-only)"
+          echo "$changed"
+          test "$changed" = "lp-hair.html" || {
+            echo "BLOCKER: unexpected modified files before commit."
+            exit 1
+          }
+          grep -q "DPRO LP HAIR WRAP FIX V1.0 CENTRAL" lp-hair.html
+          test "$(git hash-object systems-data.js)" = "1388eb84fe70b15a9ee365b990662ee48b725cf2"
+
+      - name: Commit patch and remove one-shot workflow
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add lp-hair.html
+          git rm --ignore-unmatch ".github/workflows/dpro-lp-hair-wrap-fix-v1.yml"
+          git commit -m "Fix HAIR LP Japanese hero wrapping V1.0"
+          git push origin HEAD:main
