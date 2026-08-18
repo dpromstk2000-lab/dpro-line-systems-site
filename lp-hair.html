@@ -178,50 +178,76 @@ h2{margin:8px 0 12px;font-size:clamp(1.85rem,5vw,3.2rem);line-height:1.2;letter-
 </style>
 
 <!-- DPRO PRODUCT JAPANESE MOBILE WRAP V1.0 -->
-<link rel="stylesheet" href="japanese-wrap-v1.css?v=1.0">
-<script defer src="japanese-wrap-v1.js?v=1.0"></script><style id="dpro-hair-wrap-v1-2">
-/* DPRO LP HAIR WRAP FIX V1.2 CENTRAL
-   Screenshot QA root-cause fix:
-   japanese-wrap-v1.css/js is loaded after the LP inline CSS and adds
-   text-wrap:balance plus nowrap phrase spans. Width-only fixes therefore
-   could still fragment the Japanese headline. V1.2 defines the intended
-   two semantic headline lines after the shared wrap layer. */
-.hero-copy .hair-hero-title{
+<!-- HAIR V1.3: generic Japanese wrap CSS intentionally disabled on this LP -->
+<!-- HAIR V1.3: generic Japanese wrap JS intentionally disabled on this LP -->
+<style id="dpro-hair-wrap-v1-3">
+/* DPRO LP HAIR WRAP FIX V1.3 CENTRAL
+   FINAL STRUCTURAL FIX after browser screenshot QA.
+   - No runtime Japanese tokenization in the HAIR hero.
+   - Desktop headline has a guaranteed readable track.
+   - Laptop/tablet uses one-column hero rather than crushing Japanese copy.
+   - Mobile uses native Japanese wrapping at a controlled font size. */
+.hero .hero-grid{
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr)!important;
+  gap:32px!important;
+  align-items:center!important;
+}
+.hero .hero-copy{
+  min-width:0!important;
+  min-inline-size:0!important;
+  width:100%!important;
+  max-width:780px!important;
+}
+.hero .hair-hero-title{
+  margin:12px 0 14px!important;
+  max-width:780px!important;
+  color:var(--brand)!important;
+  font-size:clamp(2.15rem,8.6vw,2.7rem)!important;
+  line-height:1.08!important;
+  letter-spacing:-.035em!important;
+  white-space:normal!important;
+  word-break:normal!important;
+  overflow-wrap:normal!important;
+  line-break:strict!important;
   text-wrap:wrap!important;
 }
-.hero-copy .hair-hero-title .hair-hero-line1,
-.hero-copy .hair-hero-title .hair-hero-line2{
+.hero .hair-hero-title .hair-hero-line1,
+.hero .hair-hero-title .hair-hero-line2{
   display:block!important;
+  max-width:none!important;
+  white-space:normal!important;
+  word-break:normal!important;
+  overflow-wrap:normal!important;
 }
-.hero-copy .hair-hero-title .hair-hero-line1{
-  margin-top:0!important;
+.hero .hair-hero-title .hair-hero-line1{
+  margin:0!important;
   color:var(--brand)!important;
   font-size:1em!important;
   line-height:1.08!important;
+  letter-spacing:inherit!important;
 }
-.hero-copy .hair-hero-title .hair-hero-line2{
-  margin-top:10px!important;
+.hero .hair-hero-title .hair-hero-line2{
+  margin:9px 0 0!important;
   color:#293b34!important;
-  font-size:.52em!important;
+  font-size:.55em!important;
   line-height:1.28!important;
+  letter-spacing:-.02em!important;
 }
-.hero-copy .hair-hero-title .dpro-jp-keep,
-.hero-copy .hair-hero-title .dpro-jp-v11-keep{
-  white-space:inherit!important;
+@media (min-width:700px) and (max-width:1279px){
+  .hero .hero-grid{grid-template-columns:minmax(0,1fr)!important;}
+  .hero .hero-copy{max-width:820px!important;}
+  .hero .hair-hero-title{max-width:820px!important;font-size:clamp(2.8rem,5.2vw,3.35rem)!important;}
+  .hero .hair-hero-title .hair-hero-line1,
+  .hero .hair-hero-title .hair-hero-line2{white-space:nowrap!important;}
 }
-
-@media (min-width:700px){
-  .hero-copy .hair-hero-title .hair-hero-line1,
-  .hero-copy .hair-hero-title .hair-hero-line2{
-    white-space:nowrap!important;
-  }
-}
-
-@media (max-width:699px){
-  .hero-copy .hair-hero-title .hair-hero-line1,
-  .hero-copy .hair-hero-title .hair-hero-line2{
-    white-space:normal!important;
-  }
+@media (min-width:1280px){
+  .hero .hero-grid{grid-template-columns:minmax(560px,.98fr) minmax(0,1.02fr)!important;gap:44px!important;}
+  .hero .hero-copy{min-width:560px!important;width:560px!important;max-width:560px!important;}
+  .hero .hair-hero-title{width:560px!important;max-width:560px!important;font-size:3.12rem!important;line-height:1.08!important;}
+  .hero .hair-hero-title .hair-hero-line1,
+  .hero .hair-hero-title .hair-hero-line2{white-space:nowrap!important;}
+  .hero .hero-stage{min-width:0!important;}
 }
 </style>
 </head>
