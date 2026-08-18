@@ -1,0 +1,269 @@
+name: DPRO LP Native Japanese Wrap Reset V1.0
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/dpro-lp-native-japanese-wrap-reset-v1.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: dpro-lp-native-japanese-wrap-reset-v1
+  cancel-in-progress: false
+
+jobs:
+  repair:
+    name: Reset common wrap layer and verify all 50 LPs
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - name: Checkout current Product Site
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Guard protected Product state
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object systems-data.js)" = "e676cb5a559c3f89bdd9e86f3074756df8479dfa" || {
+            echo "BLOCKER: systems-data.js changed after MEDICAL flyer integration"
+            exit 1
+          }
+          test "$(git hash-object lp-hair.html)" = "baf040122e6c1086b2af77e4eb8eaf0f5bf8f352" || {
+            echo "BLOCKER: HAIR V1.3 baseline changed"
+            exit 1
+          }
+          test -f flyer-medical.html
+          test -f flyer-medical.pdf
+          grep -Fq 'flyerHtml: "flyer-medical.html"' systems-data.js
+          grep -Fq 'DPRO LIVE DEMO ALL49 CENTRAL OVERRIDES START' systems-data.js
+          grep -Fq 'DPRO LIVE DEMO ALL49 CENTRAL OVERRIDES END' systems-data.js
+          grep -Fq 'DPRO LP HAIR WRAP FIX V1.3 CENTRAL' lp-hair.html
+          echo "PASS: MEDICAL, HAIR V1.3 and ALL49 protected state present"
+
+      - name: Install browser QA
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm init -y >/dev/null 2>&1
+          npm install playwright@1.55.0 --silent
+          npx playwright install --with-deps chromium
+          node -e "console.log('PLAYWRIGHT=' + require.resolve('playwright'))"
+
+      - name: Create valid audit runner
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          import base64
+          Path('dpro-lp-native-wrap-audit.js').write_bytes(base64.b64decode('Y29uc3QgZnM9cmVxdWlyZSgnZnMnKTsKY29uc3QgcGF0aD1yZXF1aXJlKCdwYXRoJyk7CmNvbnN0IHsgY2hyb21pdW0gfT1yZXF1aXJlKCdwbGF5d3JpZ2h0Jyk7Cgpjb25zdCBtb2RlPXByb2Nlc3MuYXJndlsyXXx8J2FmdGVyJzsKY29uc3Qgb3V0UGF0aD1wcm9jZXNzLmFyZ3ZbM118fGBxYS9scC13cmFwLSR7bW9kZX0uanNvbmA7CmNvbnN0IHJvb3Q9cHJvY2Vzcy5jd2QoKTsKY29uc3QgcGFnZXM9ZnMucmVhZGRpclN5bmMocm9vdCkuZmlsdGVyKG49Pi9ebHAtW2EtejAtOS1dK1wuaHRtbCQvaS50ZXN0KG4pKS5zb3J0KCk7CmNvbnN0IHZpZXdwb3J0cz1bCiAge25hbWU6J2Rlc2t0b3AnLHdpZHRoOjE0NDAsaGVpZ2h0OjEwMDB9LAogIHtuYW1lOidsYXB0b3AnLHdpZHRoOjEwMjQsaGVpZ2h0OjkwMH0sCiAge25hbWU6J21vYmlsZScsd2lkdGg6MzkwLGhlaWdodDo4NDR9Cl07CgpmdW5jdGlvbiB1bmlxKGEpe3JldHVybiBbLi4ubmV3IFNldChhKV07fQoKKGFzeW5jKCk9PnsKICBpZihwYWdlcy5sZW5ndGghPT01MCkgdGhyb3cgbmV3IEVycm9yKGBFeHBlY3RlZCBleGFjdGx5IDUwIHJvb3QgTFAgcGFnZXMsIGZvdW5kICR7cGFnZXMubGVuZ3RofWApOwoKICBjb25zdCBicm93c2VyPWF3YWl0IGNocm9taXVtLmxhdW5jaCh7aGVhZGxlc3M6dHJ1ZX0pOwogIGNvbnN0IHJlc3VsdHM9W107CiAgbGV0IGxvYWRFcnJvcnM9MCxhdWRpdEVycm9ycz0wOwoKICBmb3IoY29uc3QgZmlsZSBvZiBwYWdlcyl7CiAgICBmb3IoY29uc3QgdnAgb2Ygdmlld3BvcnRzKXsKICAgICAgY29uc3QgY3R4PWF3YWl0IGJyb3dzZXIubmV3Q29udGV4dCh7CiAgICAgICAgdmlld3BvcnQ6e3dpZHRoOnZwLndpZHRoLGhlaWdodDp2cC5oZWlnaHR9LAogICAgICAgIGRldmljZVNjYWxlRmFjdG9yOjEKICAgICAgfSk7CiAgICAgIGNvbnN0IHBhZ2U9YXdhaXQgY3R4Lm5ld1BhZ2UoKTsKICAgICAgbGV0IGxvYWRFcnJvcj0nJyxhdWRpdEVycm9yPScnLG1ldHJpY3M9e2hvcml6b250YWxPdmVyZmxvdzpmYWxzZSxpc3N1ZXM6W119OwoKICAgICAgdHJ5ewogICAgICAgIGF3YWl0IHBhZ2UuZ290byhgaHR0cDovLzEyNy4wLjAuMTo4NzY1LyR7ZmlsZX1gLHsKICAgICAgICAgIHdhaXRVbnRpbDonZG9tY29udGVudGxvYWRlZCcsCiAgICAgICAgICB0aW1lb3V0OjIwMDAwCiAgICAgICAgfSk7CiAgICAgICAgdHJ5ewogICAgICAgICAgYXdhaXQgcGFnZS5ldmFsdWF0ZShhc3luYygpPT57CiAgICAgICAgICAgIGlmKGRvY3VtZW50LmZvbnRzJiZkb2N1bWVudC5mb250cy5yZWFkeSkgYXdhaXQgZG9jdW1lbnQuZm9udHMucmVhZHk7CiAgICAgICAgICB9KTsKICAgICAgICB9Y2F0Y2goXyl7fQogICAgICAgIC8vIEJlZm9yZSByZXNldCB0aGUgb2xkIG11dGF0aW9uIGxheWVyIGNhbiBjb250aW51ZSBicmllZmx5LgogICAgICAgIGF3YWl0IHBhZ2Uud2FpdEZvclRpbWVvdXQobW9kZT09PSdiZWZvcmUnPzMwMDA6OTAwKTsKCiAgICAgICAgdHJ5ewogICAgICAgICAgbWV0cmljcz1hd2FpdCBwYWdlLmV2YWx1YXRlKCh7dnBOYW1lLHZ3fSk9PnsKICAgICAgICAgICAgY29uc3QgSlA9L1vjgYEt44KT44KhLeODtuS4gC3pvqDjgIXjg7xdLzsKICAgICAgICAgICAgY29uc3Qgcm9vdEVsPWRvY3VtZW50LmRvY3VtZW50RWxlbWVudDsKICAgICAgICAgICAgY29uc3QgdGFyZ2V0cz1bLi4uZG9jdW1lbnQucXVlcnlTZWxlY3RvckFsbCgKICAgICAgICAgICAgICAnaDEsaDIsaDMsaDQsYnV0dG9uLGEuYnRuLGEuZHByby1idXR0b24sYVtjbGFzcyo9ImJ0biJdLFtjbGFzcyo9ImN0YSJdIGEnCiAgICAgICAgICAgICldOwoKICAgICAgICAgICAgZnVuY3Rpb24gbm9ybShzKXtyZXR1cm4gU3RyaW5nKHN8fCcnKS50cmltKCkucmVwbGFjZSgvXHMrL2csJyAnKTt9CiAgICAgICAgICAgIGZ1bmN0aW9uIHZpc2libGUoZWwpewogICAgICAgICAgICAgIGNvbnN0IGNzPWdldENvbXB1dGVkU3R5bGUoZWwpLHI9ZWwuZ2V0Qm91bmRpbmdDbGllbnRSZWN0KCk7CiAgICAgICAgICAgICAgcmV0dXJuIGNzLmRpc3BsYXkhPT0nbm9uZScmJmNzLnZpc2liaWxpdHkhPT0naGlkZGVuJyYmci53aWR0aD4xJiZyLmhlaWdodD4xOwogICAgICAgICAgICB9CiAgICAgICAgICAgIGZ1bmN0aW9uIGxpbmVUZXh0cyhlbCl7CiAgICAgICAgICAgICAgY29uc3QgY2hhcnM9W107CiAgICAgICAgICAgICAgdHJ5ewogICAgICAgICAgICAgICAgY29uc3Qgd2Fsa2VyPWRvY3VtZW50LmNyZWF0ZVRyZWVXYWxrZXIoZWwsTm9kZUZpbHRlci5TSE9XX1RFWFQsewogICAgICAgICAgICAgICAgICBhY2NlcHROb2RlKG5vZGUpewogICAgICAgICAgICAgICAgICAgIGNvbnN0IHA9bm9kZS5wYXJlbnRFbGVtZW50OwogICAgICAgICAgICAgICAgICAgIGlmKCFwfHxwLmNsb3Nlc3QoJ3NjcmlwdCxzdHlsZSxub3NjcmlwdCcpKSByZXR1cm4gTm9kZUZpbHRlci5GSUxURVJfUkVKRUNUOwogICAgICAgICAgICAgICAgICAgIHJldHVybiBub3JtKG5vZGUubm9kZVZhbHVlKT9Ob2RlRmlsdGVyLkZJTFRFUl9BQ0NFUFQ6Tm9kZUZpbHRlci5GSUxURVJfUkVKRUNUOwogICAgICAgICAgICAgICAgICB9CiAgICAgICAgICAgICAgICB9KTsKICAgICAgICAgICAgICAgIGNvbnN0IG5vZGVzPVtdO2xldCBub2RlOwogICAgICAgICAgICAgICAgd2hpbGUoKG5vZGU9d2Fsa2VyLm5leHROb2RlKCkpKSBub2Rlcy5wdXNoKG5vZGUpOwogICAgICAgICAgICAgICAgZm9yKGNvbnN0IG4gb2Ygbm9kZXMpewogICAgICAgICAgICAgICAgICBjb25zdCB0ZXh0PW4ubm9kZVZhbHVlfHwnJzsKICAgICAgICAgICAgICAgICAgZm9yKGxldCBpPTA7aTx0ZXh0Lmxlbmd0aDtpKyspewogICAgICAgICAgICAgICAgICAgIGNvbnN0IGNoPXRleHRbaV07CiAgICAgICAgICAgICAgICAgICAgaWYoL1xzLy50ZXN0KGNoKSkgY29udGludWU7CiAgICAgICAgICAgICAgICAgICAgdHJ5ewogICAgICAgICAgICAgICAgICAgICAgY29uc3QgcmFuZ2U9ZG9jdW1lbnQuY3JlYXRlUmFuZ2UoKTsKICAgICAgICAgICAgICAgICAgICAgIHJhbmdlLnNldFN0YXJ0KG4saSk7cmFuZ2Uuc2V0RW5kKG4saSsxKTsKICAgICAgICAgICAgICAgICAgICAgIGNvbnN0IHI9cmFuZ2UuZ2V0Qm91bmRpbmdDbGllbnRSZWN0KCk7CiAgICAgICAgICAgICAgICAgICAgICBpZihyLndpZHRoPi4yJiZyLmhlaWdodD4uMikgY2hhcnMucHVzaCh7Y2gsdG9wOnIudG9wLGxlZnQ6ci5sZWZ0fSk7CiAgICAgICAgICAgICAgICAgICAgfWNhdGNoKF8pe30KICAgICAgICAgICAgICAgICAgfQogICAgICAgICAgICAgICAgfQogICAgICAgICAgICAgIH1jYXRjaChfKXt9CiAgICAgICAgICAgICAgY2hhcnMuc29ydCgoYSxiKT0+TWF0aC5hYnMoYS50b3AtYi50b3ApPjI/YS50b3AtYi50b3A6YS5sZWZ0LWIubGVmdCk7CiAgICAgICAgICAgICAgY29uc3QgbGluZXM9W107CiAgICAgICAgICAgICAgZm9yKGNvbnN0IGMgb2YgY2hhcnMpewogICAgICAgICAgICAgICAgbGV0IGxpbmU9bGluZXMuZmluZCh4PT5NYXRoLmFicyh4LnRvcC1jLnRvcCk8PTMpOwogICAgICAgICAgICAgICAgaWYoIWxpbmUpe2xpbmU9e3RvcDpjLnRvcCxjaGFyczpbXX07bGluZXMucHVzaChsaW5lKTt9CiAgICAgICAgICAgICAgICBsaW5lLmNoYXJzLnB1c2goYy5jaCk7CiAgICAgICAgICAgICAgfQogICAgICAgICAgICAgIGxpbmVzLnNvcnQoKGEsYik9PmEudG9wLWIudG9wKTsKICAgICAgICAgICAgICByZXR1cm4gbGluZXMubWFwKHg9PnguY2hhcnMuam9pbignJykpOwogICAgICAgICAgICB9CgogICAgICAgICAgICBjb25zdCBob3Jpem9udGFsT3ZlcmZsb3c9cm9vdEVsLnNjcm9sbFdpZHRoPnJvb3RFbC5jbGllbnRXaWR0aCs0OwogICAgICAgICAgICBjb25zdCBpc3N1ZXM9W107CiAgICAgICAgICAgIGZvcihjb25zdCBlbCBvZiB0YXJnZXRzKXsKICAgICAgICAgICAgICB0cnl7CiAgICAgICAgICAgICAgICBpZighdmlzaWJsZShlbCkpIGNvbnRpbnVlOwogICAgICAgICAgICAgICAgY29uc3QgdGV4dD1ub3JtKGVsLmlubmVyVGV4dHx8ZWwudGV4dENvbnRlbnR8fCcnKTsKICAgICAgICAgICAgICAgIGlmKHRleHQubGVuZ3RoPDR8fCFKUC50ZXN0KHRleHQpKSBjb250aW51ZTsKICAgICAgICAgICAgICAgIGNvbnN0IHI9ZWwuZ2V0Qm91bmRpbmdDbGllbnRSZWN0KCksY3M9Z2V0Q29tcHV0ZWRTdHlsZShlbCk7CiAgICAgICAgICAgICAgICBjb25zdCBmb250PXBhcnNlRmxvYXQoY3MuZm9udFNpemUpfHwxNjsKICAgICAgICAgICAgICAgIGNvbnN0IGxpbmVzPWxpbmVUZXh0cyhlbCk7CiAgICAgICAgICAgICAgICBjb25zdCBjb3VudHM9bGluZXMubWFwKHM9PlsuLi5zXS5sZW5ndGgpLmZpbHRlcihCb29sZWFuKTsKICAgICAgICAgICAgICAgIGNvbnN0IHNpbmdsZT1jb3VudHMuZmlsdGVyKG49Pm48PTEpLmxlbmd0aDsKICAgICAgICAgICAgICAgIGNvbnN0IHNob3J0PWNvdW50cy5maWx0ZXIobj0+bjw9MikubGVuZ3RoOwogICAgICAgICAgICAgICAgY29uc3QgYXZnPWNvdW50cy5sZW5ndGg/Y291bnRzLnJlZHVjZSgoYSxiKT0+YStiLDApL2NvdW50cy5sZW5ndGg6MDsKICAgICAgICAgICAgICAgIGNvbnN0IGhlYWRpbmc9L15IWzEtNF0kLy50ZXN0KGVsLnRhZ05hbWUpOwogICAgICAgICAgICAgICAgY29uc3QgZGVza3RvcGlzaD12cE5hbWUhPT0nbW9iaWxlJzsKICAgICAgICAgICAgICAgIGNvbnN0IHJlYXNvbnM9W107CgogICAgICAgICAgICAgICAgaWYoci5yaWdodD52dys0fHxyLmxlZnQ8LTR8fGVsLnNjcm9sbFdpZHRoPmVsLmNsaWVudFdpZHRoKzQpIHJlYXNvbnMucHVzaCgnb3ZlcmZsb3cnKTsKCiAgICAgICAgICAgICAgICBpZihoZWFkaW5nJiZ0ZXh0Lmxlbmd0aD49OCl7CiAgICAgICAgICAgICAgICAgIC8vIENhdGNoIHRoZSBhY3R1YWwgSEFJUi10eXBlIGZhaWx1cmU6IGxvbmcgSlAgaGVhZGluZyBicm9rZW4gaW50byBtYW55IHRpbnkgcm93cy4KICAgICAgICAgICAgICAgICAgaWYoZGVza3RvcGlzaCYmbGluZXMubGVuZ3RoPj00JiZzaG9ydD49MikgcmVhc29ucy5wdXNoKCdmcmFnbWVudGVkLWhlYWRpbmcnKTsKICAgICAgICAgICAgICAgICAgaWYoZGVza3RvcGlzaCYmbGluZXMubGVuZ3RoPj0zJiZzaW5nbGU+PTEpIHJlYXNvbnMucHVzaCgnc2luZ2xldG9uLWxpbmUnKTsKICAgICAgICAgICAgICAgICAgaWYoZGVza3RvcGlzaCYmZWwudGFnTmFtZT09PSdIMScmJnIud2lkdGg8Zm9udCo0LjIpIHJlYXNvbnMucHVzaCgnbmFycm93LWgxLXRyYWNrJyk7CiAgICAgICAgICAgICAgICAgIGlmKCFkZXNrdG9waXNoJiZsaW5lcy5sZW5ndGg+PTcmJnNpbmdsZT49MiYmYXZnPDQpIHJlYXNvbnMucHVzaCgnc2V2ZXJlLW1vYmlsZS1mcmFnbWVudCcpOwogICAgICAgICAgICAgICAgfQoKICAgICAgICAgICAgICAgIGlmKCFoZWFkaW5nJiZ0ZXh0Lmxlbmd0aD49NiYmbGluZXMubGVuZ3RoPj00JiZzaW5nbGU+PTIpewogICAgICAgICAgICAgICAgICByZWFzb25zLnB1c2goJ2ZyYWdtZW50ZWQtY29udHJvbCcpOwogICAgICAgICAgICAgICAgfQoKICAgICAgICAgICAgICAgIGlmKHJlYXNvbnMubGVuZ3RoKXsKICAgICAgICAgICAgICAgICAgaXNzdWVzLnB1c2goewogICAgICAgICAgICAgICAgICAgIHRhZzplbC50YWdOYW1lLAogICAgICAgICAgICAgICAgICAgIHRleHQsCiAgICAgICAgICAgICAgICAgICAgbGluZXMsCiAgICAgICAgICAgICAgICAgICAgY291bnRzLAogICAgICAgICAgICAgICAgICAgIHdpZHRoOityLndpZHRoLnRvRml4ZWQoMSksCiAgICAgICAgICAgICAgICAgICAgZm9udDorZm9udC50b0ZpeGVkKDEpLAogICAgICAgICAgICAgICAgICAgIHJlYXNvbnM6dW5pcShyZWFzb25zKQogICAgICAgICAgICAgICAgICB9KTsKICAgICAgICAgICAgICAgIH0KICAgICAgICAgICAgICB9Y2F0Y2goZXJyKXsKICAgICAgICAgICAgICAgIGlzc3Vlcy5wdXNoKHsKICAgICAgICAgICAgICAgICAgdGFnOmVsLnRhZ05hbWV8fCdVTktOT1dOJywKICAgICAgICAgICAgICAgICAgdGV4dDpub3JtKGVsLnRleHRDb250ZW50fHwnJykuc2xpY2UoMCwxMjApLAogICAgICAgICAgICAgICAgICBsaW5lczpbXSxjb3VudHM6W10sd2lkdGg6MCxmb250OjAsCiAgICAgICAgICAgICAgICAgIHJlYXNvbnM6WydlbGVtZW50LWF1ZGl0LWVycm9yJ10sCiAgICAgICAgICAgICAgICAgIGVycm9yOlN0cmluZyhlcnImJmVyci5tZXNzYWdlfHxlcnIpCiAgICAgICAgICAgICAgICB9KTsKICAgICAgICAgICAgICB9CiAgICAgICAgICAgIH0KICAgICAgICAgICAgcmV0dXJuIHtob3Jpem9udGFsT3ZlcmZsb3csaXNzdWVzfTsKICAgICAgICAgIH0se3ZwTmFtZTp2cC5uYW1lLHZ3OnZwLndpZHRofSk7CiAgICAgICAgfWNhdGNoKGVycil7CiAgICAgICAgICBhdWRpdEVycm9yPVN0cmluZyhlcnImJmVyci5tZXNzYWdlfHxlcnIpOwogICAgICAgICAgYXVkaXRFcnJvcnMrKzsKICAgICAgICB9CiAgICAgIH1jYXRjaChlcnIpewogICAgICAgIGxvYWRFcnJvcj1TdHJpbmcoZXJyJiZlcnIubWVzc2FnZXx8ZXJyKTsKICAgICAgICBsb2FkRXJyb3JzKys7CiAgICAgIH0KCiAgICAgIGNvbnN0IGhpZ2g9Qm9vbGVhbihsb2FkRXJyb3J8fGF1ZGl0RXJyb3J8fG1ldHJpY3MuaG9yaXpvbnRhbE92ZXJmbG93fHxtZXRyaWNzLmlzc3Vlcy5sZW5ndGgpOwogICAgICByZXN1bHRzLnB1c2goewogICAgICAgIGZpbGUsdmlld3BvcnQ6dnAsbG9hZEVycm9yLGF1ZGl0RXJyb3IsCiAgICAgICAgaG9yaXpvbnRhbE92ZXJmbG93Om1ldHJpY3MuaG9yaXpvbnRhbE92ZXJmbG93LAogICAgICAgIGlzc3VlczptZXRyaWNzLmlzc3VlcyxoaWdoCiAgICAgIH0pOwogICAgICBhd2FpdCBjdHguY2xvc2UoKTsKICAgIH0KICB9CgogIGF3YWl0IGJyb3dzZXIuY2xvc2UoKTsKCiAgY29uc3QgaGlnaFJlc3VsdHM9cmVzdWx0cy5maWx0ZXIocj0+ci5oaWdoKTsKICBjb25zdCBoaWdoUGFnZXM9dW5pcShoaWdoUmVzdWx0cy5tYXAocj0+ci5maWxlKSk7CiAgY29uc3Qgb3ZlcmZsb3dDaGVja3M9cmVzdWx0cy5maWx0ZXIocj0+ci5ob3Jpem9udGFsT3ZlcmZsb3cpLmxlbmd0aDsKICBjb25zdCBzdW1tYXJ5PXsKICAgIG1vZGUsCiAgICBwYWdlczpwYWdlcy5sZW5ndGgsCiAgICBjaGVja3M6cmVzdWx0cy5sZW5ndGgsCiAgICBoaWdoQ2hlY2tzOmhpZ2hSZXN1bHRzLmxlbmd0aCwKICAgIGhpZ2hQYWdlczpoaWdoUGFnZXMubGVuZ3RoLAogICAgb3ZlcmZsb3dDaGVja3MsCiAgICBsb2FkRXJyb3JzLAogICAgYXVkaXRFcnJvcnMsCiAgICBoYWlySW5jbHVkZWQ6cGFnZXMuaW5jbHVkZXMoJ2xwLWhhaXIuaHRtbCcpCiAgfTsKICBjb25zdCByZXBvcnQ9e3N1bW1hcnksaGlnaFBhZ2VzLHJlc3VsdHN9OwogIGZzLm1rZGlyU3luYyhwYXRoLmRpcm5hbWUob3V0UGF0aCkse3JlY3Vyc2l2ZTp0cnVlfSk7CiAgZnMud3JpdGVGaWxlU3luYyhvdXRQYXRoLEpTT04uc3RyaW5naWZ5KHJlcG9ydCxudWxsLDIpLCd1dGY4Jyk7CiAgY29uc29sZS5sb2coSlNPTi5zdHJpbmdpZnkoc3VtbWFyeSxudWxsLDIpKTsKCiAgaWYocmVzdWx0cy5sZW5ndGghPT1wYWdlcy5sZW5ndGgqdmlld3BvcnRzLmxlbmd0aCkgdGhyb3cgbmV3IEVycm9yKCdJbmNvbXBsZXRlIGF1ZGl0IG1hdHJpeCcpOwogIGlmKGxvYWRFcnJvcnN8fGF1ZGl0RXJyb3JzKSB0aHJvdyBuZXcgRXJyb3IoYEF1ZGl0IGludmFsaWQ6IGxvYWRFcnJvcnM9JHtsb2FkRXJyb3JzfSwgYXVkaXRFcnJvcnM9JHthdWRpdEVycm9yc31gKTsKfSkoKS5jYXRjaChlcnI9Pntjb25zb2xlLmVycm9yKGVycik7cHJvY2Vzcy5leGl0KDEpO30pOwo='))
+          PY
+          node --check dpro-lp-native-wrap-audit.js
+
+      - name: Start local Product Site
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m http.server 8765 --bind 127.0.0.1 >/tmp/dpro-lp-http.log 2>&1 &
+          for i in $(seq 1 30); do
+            curl -fsS http://127.0.0.1:8765/ >/dev/null && exit 0
+            sleep 1
+          done
+          cat /tmp/dpro-lp-http.log || true
+          exit 1
+
+      - name: Baseline render audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          node dpro-lp-native-wrap-audit.js before /tmp/LP_WRAP_BEFORE.json
+
+      - name: Disable generic mutation layer on LP pages only
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          import re,json,subprocess
+
+          pages=sorted(Path('.').glob('lp-*.html'))
+          if len(pages)!=50:
+              raise SystemExit(f'BLOCKER: expected 50 LPs, found {len(pages)}')
+
+          css_re=re.compile(
+              r'<link\b[^>]*href=["\']japanese-wrap-v1\.css\?v=[^"\']+["\'][^>]*>\s*',
+              flags=re.I
+          )
+          js_re=re.compile(
+              r'<script\b[^>]*src=["\']japanese-wrap-v1\.js\?v=[^"\']+["\'][^>]*>\s*</script>\s*',
+              flags=re.I
+          )
+          marker='<!-- DPRO LP NATIVE JAPANESE WRAP V1.0: generic runtime wrap disabled; page-native CSS controls wrapping. -->'
+
+          changed=[]
+          active_before={}
+          for p in pages:
+              before=p.read_text(encoding='utf-8')
+              css_hits=len(css_re.findall(before))
+              js_hits=len(js_re.findall(before))
+              if css_hits!=js_hits:
+                  raise SystemExit(f'BLOCKER: {p.name} mismatched wrap CSS/JS refs {css_hits}/{js_hits}')
+              active_before[p.name]=css_hits
+              if not css_hits:
+                  continue
+              if css_hits!=1:
+                  raise SystemExit(f'BLOCKER: {p.name} expected one active pair, got {css_hits}')
+              after=css_re.sub(marker+'\n',before,count=1)
+              after=js_re.sub('',after,count=1)
+              if after==before:
+                  raise SystemExit(f'BLOCKER: {p.name} did not change')
+              p.write_text(after,encoding='utf-8',newline='\n')
+              changed.append(p.name)
+
+          # Widespread common-layer deployment is the premise for this reset.
+          if len(changed)<35:
+              raise SystemExit(f'BLOCKER: only {len(changed)} LPs had active generic wrap; expected widespread deployment')
+
+          # HAIR V1.3 already disabled the generic layer and must remain byte-identical.
+          hair=subprocess.check_output(['git','hash-object','lp-hair.html'],text=True).strip()
+          if hair!='baf040122e6c1086b2af77e4eb8eaf0f5bf8f352':
+              raise SystemExit('BLOCKER: HAIR V1.3 changed during common reset')
+
+          Path('/tmp/lp-native-wrap-reset.json').write_text(
+              json.dumps({
+                  'version':'V1.0',
+                  'lp_pages':len(pages),
+                  'changed_count':len(changed),
+                  'changed':changed,
+                  'already_native':[p.name for p in pages if not active_before[p.name]]
+              },ensure_ascii=False,indent=2),
+              encoding='utf-8'
+          )
+          print(Path('/tmp/lp-native-wrap-reset.json').read_text(encoding='utf-8'))
+          PY
+
+      - name: Verify scope before post-fix audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object systems-data.js)" = "e676cb5a559c3f89bdd9e86f3074756df8479dfa"
+          test "$(git hash-object lp-hair.html)" = "baf040122e6c1086b2af77e4eb8eaf0f5bf8f352"
+          test "$(git hash-object japanese-wrap-v1.css)" = "e7bb782631735d8297a9c7144587e78cccca860f"
+          test "$(git hash-object japanese-wrap-v1.js)" = "3003d4145ed05970ec609181fc42f98fe511dd32"
+          python3 - <<'PY'
+          from pathlib import Path
+          import re,subprocess
+          changed=set(subprocess.check_output(['git','diff','--name-only'],text=True).splitlines())
+          illegal={p for p in changed if not re.fullmatch(r'lp-[a-z0-9-]+\.html',p)}
+          if illegal:
+              raise SystemExit(f'BLOCKER: non-LP files changed before audit: {sorted(illegal)}')
+          print('PASS: only LP HTML files changed',len(changed))
+          PY
+
+      - name: Post-reset render audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          node dpro-lp-native-wrap-audit.js after /tmp/LP_WRAP_AFTER.json
+
+      - name: Compare before and after
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          import json
+
+          before=json.loads(Path('/tmp/LP_WRAP_BEFORE.json').read_text(encoding='utf-8'))
+          after=json.loads(Path('/tmp/LP_WRAP_AFTER.json').read_text(encoding='utf-8'))
+          reset=json.loads(Path('/tmp/lp-native-wrap-reset.json').read_text(encoding='utf-8'))
+          b=before['summary']; a=after['summary']
+
+          if b['pages']!=50 or a['pages']!=50 or b['checks']!=150 or a['checks']!=150:
+              raise SystemExit('BLOCKER: incomplete 50 LP × 3 viewport audit matrix')
+          if b['auditErrors'] or a['auditErrors'] or b['loadErrors'] or a['loadErrors']:
+              raise SystemExit('BLOCKER: invalid browser audit')
+          if a['highChecks']>b['highChecks']:
+              raise SystemExit(f"BLOCKER: HIGH checks worsened {b['highChecks']} -> {a['highChecks']}")
+          if a['overflowChecks']>b['overflowChecks']:
+              raise SystemExit(f"BLOCKER: overflow worsened {b['overflowChecks']} -> {a['overflowChecks']}")
+
+          summary={
+              'version':'DPRO LP NATIVE JAPANESE WRAP RESET V1.0',
+              'changed_lp_count':reset['changed_count'],
+              'before':b,
+              'after':a,
+              'residual_high_pages':after['highPages']
+          }
+          Path('qa/LP_NATIVE_WRAP_RESET_V1.0_BEFORE.json').write_text(
+              json.dumps(before,ensure_ascii=False,indent=2),encoding='utf-8'
+          )
+          Path('qa/LP_NATIVE_WRAP_RESET_V1.0_AFTER.json').write_text(
+              json.dumps(after,ensure_ascii=False,indent=2),encoding='utf-8'
+          )
+
+          lines=[
+              '# DPRO LP NATIVE JAPANESE WRAP RESET V1.0',
+              '',
+              f"- Changed LPs: {reset['changed_count']} / 50",
+              f"- Before HIGH pages: {b['highPages']}",
+              f"- After HIGH pages: {a['highPages']}",
+              f"- Before HIGH checks: {b['highChecks']} / 150",
+              f"- After HIGH checks: {a['highChecks']} / 150",
+              f"- Before overflow checks: {b['overflowChecks']}",
+              f"- After overflow checks: {a['overflowChecks']}",
+              f"- Audit errors: {a['auditErrors']}",
+              f"- Load errors: {a['loadErrors']}",
+              '',
+              '## Residual HIGH pages',
+              ''
+          ]
+          if after['highPages']:
+              lines += [f'- {x}' for x in after['highPages']]
+          else:
+              lines += ['- NONE']
+          lines += [
+              '',
+              '## Policy',
+              '',
+              '- Root LP pages no longer use the generic Japanese DOM mutation layer.',
+              '- Each LP uses its own native HTML/CSS wrapping.',
+              '- Shared japanese-wrap-v1.css/js files remain unchanged for non-LP Product pages.',
+              '- HAIR V1.3 remains byte-identical.',
+              '- systems-data.js / ALL49 LIVE DEMO routing remains unchanged.'
+          ]
+          Path('qa/LP_NATIVE_WRAP_RESET_V1.0_SUMMARY.md').write_text(
+              '\n'.join(lines)+'\n',encoding='utf-8'
+          )
+          print('\n'.join(lines))
+          PY
+
+      - name: Final protected-state QA
+        shell: bash
+        run: |
+          set -euo pipefail
+          git diff --check
+          test "$(git hash-object systems-data.js)" = "e676cb5a559c3f89bdd9e86f3074756df8479dfa"
+          test "$(git hash-object lp-hair.html)" = "baf040122e6c1086b2af77e4eb8eaf0f5bf8f352"
+          grep -Fq 'flyerHtml: "flyer-medical.html"' systems-data.js
+          grep -Fq 'DPRO LIVE DEMO ALL49 CENTRAL OVERRIDES START' systems-data.js
+          grep -Fq 'DPRO LIVE DEMO ALL49 CENTRAL OVERRIDES END' systems-data.js
+          echo "PASS: protected Product state unchanged"
+
+      - name: Commit common-layer reset and QA report
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -f dpro-lp-native-wrap-audit.js
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add lp-*.html qa/LP_NATIVE_WRAP_RESET_V1.0_BEFORE.json qa/LP_NATIVE_WRAP_RESET_V1.0_AFTER.json qa/LP_NATIVE_WRAP_RESET_V1.0_SUMMARY.md
+          git rm --ignore-unmatch ".github/workflows/dpro-lp-native-japanese-wrap-reset-v1.yml"
+          git commit -m "Reset LP Japanese wrapping to native layout V1.0"
+          git push origin HEAD:main
