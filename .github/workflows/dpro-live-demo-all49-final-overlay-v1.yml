@@ -1,0 +1,185 @@
+name: DPRO LIVE DEMO ALL49 FINAL OVERLAY V1.0
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/dpro-live-demo-all49-final-overlay-v1.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Guard current Product Site baseline
+        shell: bash
+        run: |
+          current_blob="$(git hash-object systems-data.js)"
+          echo "systems-data.js blob: $current_blob"
+          if [ "$current_blob" != "6b8634cb7850ac9c70d48faa7d061a10f5d6868a" ]; then
+            echo "BLOCKER: Product Site systems-data.js changed since CENTRAL final preflight."
+            echo "Expected: 6b8634cb7850ac9c70d48faa7d061a10f5d6868a"
+            echo "Actual:   $current_blob"
+            exit 1
+          fi
+
+      - name: Apply 47 LIVE DEMO entry overrides
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          EXPECTED_BLOB = "6b8634cb7850ac9c70d48faa7d061a10f5d6868a"
+          PIN = "d8ac2578c4b713493dd80315f8ba7e6d3bfcc269"
+          START = "      /* DPRO LIVE DEMO ALL49 CENTRAL OVERRIDES START */"
+          END = "      /* DPRO LIVE DEMO ALL49 CENTRAL OVERRIDES END */"
+
+          EXPECTED = {
+                        "BAKERY": "https://dpromstk2000-lab.github.io/bakery-line-system/demo-guide.html",
+                        "BTYPE": "https://dpromstk2000-lab.github.io/dpro-btype-line-liff/demo-guide.html",
+                        "BUYBACK": "https://dpromstk2000-lab.github.io/dpro-buyback-line/demo-guide.html",
+                        "CAKE": "https://dpromstk2000-lab.github.io/dpro-cake-line-liff/demo-guide.html",
+                        "CAR": "https://dpromstk2000-lab.github.io/dpro-used-car-line-liff/demo-guide.html",
+                        "CAREPLAN": "https://dpromstk2000-lab.github.io/dpro-careplan-line/demo-guide.html",
+                        "CARETAXI": "https://dpromstk2000-lab.github.io/dpro-caretaxi-line/demo-guide.html",
+                        "CHOSASHI": "https://dpromstk2000-lab.github.io/dpro-chosashi-line-liff/demo-guide.html",
+                        "CONSULT": "https://dpromstk2000-lab.github.io/dpro-consult-line/demo-guide.html",
+                        "COSMETICS": "https://dpromstk2000-lab.github.io/dpro-cosmetics-line-liff/demo-guide.html",
+                        "DAYCARE": "https://dpromstk2000-lab.github.io/dpro-dayservice-line/demo-guide.html",
+                        "DENTAL": "https://dpromstk2000-lab.github.io/DEGITAL-QR/demo-guide.html",
+                        "DISPOSAL": "https://dpromstk2000-lab.github.io/dpro-disposal-line-liff/demo-guide.html",
+                        "ESTATE": "https://dpromstk2000-lab.github.io/dpro-estate-line-liff/demo-guide.html",
+                        "ESTHE": "https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/demo-guide.html",
+                        "EYE": "https://dpromstk2000-lab.github.io/dpro-eye-salon-line/demo-guide.html",
+                        "FLOWER": "https://dpromstk2000-lab.github.io/dpro-flower-line-liff/demo-guide.html",
+                        "FUNERAL": "https://dpromstk2000-lab.github.io/dpro-funeral-line/demo-guide.html",
+                        "GAKUDO": "https://dpromstk2000-lab.github.io/dpro-gakudo-line/demo-guide.html",
+                        "GREEN": "https://dpromstk2000-lab.github.io/dpro-green-rental-line/demo-guide.html",
+                        "GYM": "https://dpromstk2000-lab.github.io/liff-gym-demo/demo-guide.html",
+                        "GYOSEI": "https://dpromstk2000-lab.github.io/dpro-gyosei-permit-line/demo-guide.html",
+                        "HAISHOKU": "https://dpromstk2000-lab.github.io/dpro-senior-meal-delivery-line/demo-guide.html",
+                        "HOMECARE": "https://dpromstk2000-lab.github.io/dpro-homecare-family-line/demo-guide.html",
+                        "HOMENURSING": "https://dpromstk2000-lab.github.io/dpro-home-nursing-line/demo-guide.html",
+                        "HOUKAGO": "https://dpromstk2000-lab.github.io/dpro-houkago-dayservice-line/demo-guide.html",
+                        "HOUSEKEEP": "https://dpromstk2000-lab.github.io/dpro-housekeep-line-liff/demo-guide.html",
+                        "IZAKAYA": "https://izakaya-liff-demo.pages.dev/demo-guide.html",
+                        "KSH": "https://dpromstk2000-lab.github.io/line-shaken-liff/demo-guide.html",
+                        "PETSALON": "https://dpromstk2000-lab.github.io/dpro-pet-salon-liff/demo-guide.html",
+                        "PHOTO": "https://dpromstk2000-lab.github.io/dpro-photo-studio-line/demo-guide.html",
+                        "REFORM": "https://dpromstk2000-lab.github.io/dpro-reform-line-liff/demo-guide.html",
+                        "REPAIR": "https://dpromstk2000-lab.github.io/dpro-repair-line-liff/demo-guide.html",
+                        "SALESNAVI": "https://dpro-salesnavi-demo.pages.dev/demo-guide.html",
+                        "SALON": "https://dpromstk2000-lab.github.io/liff-salon-reserve/demo-guide.html",
+                        "SCHOOL": "https://dpromstk2000-lab.github.io/dpro-school-line/demo-guide.html",
+                        "SEITAI": "https://dpromstk2000-lab.github.io/dpro-seitai-line/demo-guide.html",
+                        "SHIHO": "https://dpromstk2000-lab.github.io/dpro-shiho-inheritance-line-liff/demo-guide.html",
+                        "SHUTTLE": "https://dpromstk2000-lab.github.io/dpro-welfare-shuttle-line/demo-guide.html",
+                        "SODAN": "https://dpromstk2000-lab.github.io/dpro-sodan-line/demo-guide.html",
+                        "STAY": "https://dpromstk2000-lab.github.io/dpro-stay-line/demo-guide.html",
+                        "TAKEOUT": "https://dpromstk2000-lab.github.io/dpro-takeout-line-liff/demo-guide.html",
+                        "TAX": "https://dpromstk2000-lab.github.io/dpro-tax-accounting-line-liff/demo-guide.html",
+                        "VET": "https://dpromstk2000-lab.github.io/DPRO-VET-QR/demo-guide.html",
+                        "WELFARE": "https://dpromstk2000-lab.github.io/dpro-welfare-equipment-line/demo-guide.html",
+                        "YAKINIKU": "https://dpromstk2000-lab.github.io/dpro-yakiniku-line-liff/demo-guide.html",
+                        "YOGA": "https://dpromstk2000-lab.github.io/liff-yoga-reserve/demo-guide.html",
+          }
+
+          p = Path("systems-data.js")
+          text = p.read_text(encoding="utf-8")
+
+          if PIN not in text:
+              raise SystemExit("BLOCKER: locked 50-system CORE pin changed")
+          if "DPRO PRODUCT SITE / DPRO MEDICAL CATALOG ADDON V1.2.1" not in text:
+              raise SystemExit("BLOCKER: expected DPRO MEDICAL CATALOG ADDON V1.2.1 missing")
+          if "function addMedical(global)" not in text or 'code: "MEDICAL"' not in text:
+              raise SystemExit("BLOCKER: MEDICAL addon structure missing")
+          if len(EXPECTED) != 47:
+              raise SystemExit(f"BLOCKER: expected 47 overrides, got {len(EXPECTED)}")
+          if any(code in EXPECTED for code in ("NAIL", "HAIR", "CLEANING", "MEDICAL")):
+              raise SystemExit("BLOCKER: LOCK/KEEP code included in overrides")
+          if START in text or END in text:
+              raise SystemExit("BLOCKER: ALL49 final override already present; return to CENTRAL")
+
+          anchor = "      const systems = base.systems.slice();"
+          if text.count(anchor) != 1:
+              raise SystemExit("BLOCKER: expected systems anchor not found exactly once")
+
+          body_rows = []
+          for code in sorted(EXPECTED):
+              body_rows.append(f'        "{code}": "{EXPECTED[code]}"')
+          map_body = ",\n".join(body_rows)
+
+          replacement = (
+              START + "\n"
+              "      const liveDemoOverrides = Object.freeze({\n" + map_body + "\n      });\n"
+              "      const sourceCodes = new Set(base.systems.map(item => String((item && item.code) || \"\").toUpperCase()));\n"
+              "      const missingOverrideCodes = Object.keys(liveDemoOverrides).filter(code => !sourceCodes.has(code));\n"
+              "      if (missingOverrideCodes.length) {\n"
+              "        throw new Error(\"DPRO LIVE DEMO override codes missing from locked CORE: \" + missingOverrideCodes.join(\", \"));\n"
+              "      }\n"
+              "      const systems = base.systems.map((item) => {\n"
+              "        const code = String((item && item.code) || \"\").toUpperCase();\n"
+              "        const overrideDemoUrl = liveDemoOverrides[code];\n"
+              "        return overrideDemoUrl ? Object.freeze({ ...item, demoUrl: overrideDemoUrl }) : item;\n"
+              "      });\n"
+              + END
+          )
+
+          text = text.replace(anchor, replacement, 1)
+
+          if PIN not in text or 'code: "MEDICAL"' not in text:
+              raise SystemExit("BLOCKER: CORE pin or MEDICAL addon lost during patch")
+          if text.count(START) != 1 or text.count(END) != 1:
+              raise SystemExit("BLOCKER: final markers missing")
+          block = text[text.index(START): text.index(END) + len(END)]
+          for code, url in EXPECTED.items():
+              if f'"{code}": "{url}"' not in block:
+                  raise SystemExit(f"BLOCKER: override missing after patch: {code}")
+
+          p.write_text(text, encoding="utf-8", newline="\n")
+          print("PASS: 47 LIVE DEMO overrides installed")
+          print("PASS: NAIL / HAIR / CLEANING remain locked CORE-managed")
+          print("PASS: DPRO MEDICAL addon V1.2.1 preserved")
+
+          PY
+
+      - name: Validate JavaScript and scope
+        shell: bash
+        run: |
+          node --check systems-data.js
+          git diff --check -- systems-data.js
+
+          changed="$(git diff --name-only)"
+          if [ "$changed" != "systems-data.js" ]; then
+            echo "BLOCKER: unexpected modified files"
+            echo "$changed"
+            exit 1
+          fi
+
+          grep -q "DPRO LIVE DEMO ALL49 CENTRAL OVERRIDES START" systems-data.js
+          grep -q "DPRO LIVE DEMO ALL49 CENTRAL OVERRIDES END" systems-data.js
+          grep -q 'code: "MEDICAL"' systems-data.js
+          grep -q "d8ac2578c4b713493dd80315f8ba7e6d3bfcc269" systems-data.js
+
+          echo "PASS: scoped Product Site patch validated."
+
+      - name: Commit and remove one-shot workflow
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add systems-data.js
+          git rm --ignore-unmatch ".github/workflows/dpro-live-demo-all49-final-overlay-v1.yml"
+
+          git commit -m "Apply DPRO LIVE DEMO ALL49 final overlay"
+          git push origin HEAD:main
