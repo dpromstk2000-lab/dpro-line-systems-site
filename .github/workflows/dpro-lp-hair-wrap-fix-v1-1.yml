@@ -1,0 +1,146 @@
+name: DPRO LP HAIR Wrap Fix V1.1
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/dpro-lp-hair-wrap-fix-v1-1.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Guard current HAIR and ALL49 baseline
+        shell: bash
+        run: |
+          hair_blob="$(git hash-object lp-hair.html)"
+          systems_blob="$(git hash-object systems-data.js)"
+          echo "lp-hair.html: $hair_blob"
+          echo "systems-data.js: $systems_blob"
+          test "$hair_blob" = "e5be48212d3b73304f2897bb0d17e67725c234be" || {
+            echo "BLOCKER: lp-hair.html changed after CENTRAL screenshot QA."
+            exit 1
+          }
+          test "$systems_blob" = "1388eb84fe70b15a9ee365b990662ee48b725cf2" || {
+            echo "BLOCKER: ALL49 LIVE DEMO routing changed."
+            exit 1
+          }
+
+      - name: Apply V1.1 visual correction
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          TARGET = Path("lp-hair.html")
+          MARKER = "DPRO LP HAIR WRAP FIX V1.1 CENTRAL"
+
+          text = TARGET.read_text(encoding="utf-8")
+
+          if MARKER in text:
+              raise SystemExit("BLOCKER: V1.1 marker already exists")
+          if "DPRO LP HAIR WRAP FIX V1.0 CENTRAL" not in text:
+              raise SystemExit("BLOCKER: V1.0 prerequisite missing")
+          if "</style>" not in text:
+              raise SystemExit("BLOCKER: </style> not found")
+
+          patch = r"""
+          /* DPRO LP HAIR WRAP FIX V1.1 CENTRAL
+             Visual correction after browser screenshot QA.
+             V1.0 removed the narrow breakpoint bug, but desktop hero copy still looked
+             vertically fragmented because the left track was too small for the large JP H1.
+             V1.1 deliberately gives the headline a readable minimum width and delays
+             the two-column hero until a sufficiently wide viewport. */
+          @media (min-width:700px) and (max-width:1179px){
+            .hero-grid{
+              grid-template-columns:minmax(0,1fr) !important;
+              gap:32px;
+            }
+            .hero-copy{
+              max-width:820px;
+            }
+            .hero-copy h1{
+              max-width:820px;
+              font-size:clamp(2.7rem,6vw,3.55rem);
+              line-height:1.08;
+              text-wrap:balance;
+            }
+            .hero-copy h1 span{
+              margin-top:8px;
+              font-size:.52em;
+              line-height:1.28;
+            }
+          }
+
+          @media (min-width:1180px){
+            .hero-grid{
+              grid-template-columns:minmax(500px,1fr) minmax(0,1fr) !important;
+              gap:44px;
+              align-items:center;
+            }
+            .hero-copy{
+              min-width:500px;
+              max-width:560px;
+            }
+            .hero-copy h1{
+              max-width:560px;
+              font-size:clamp(3rem,4vw,3.4rem);
+              line-height:1.08;
+              letter-spacing:-.035em;
+              text-wrap:balance;
+            }
+            .hero-copy h1 span{
+              margin-top:10px;
+              font-size:.52em;
+              line-height:1.28;
+            }
+          }
+          """
+
+          text = text.replace("</style>", patch + "\n</style>", 1)
+          TARGET.write_text(text, encoding="utf-8", newline="\n")
+
+          check = TARGET.read_text(encoding="utf-8")
+          if check.count(MARKER) != 1:
+              raise SystemExit("BLOCKER: V1.1 marker invalid")
+          if "grid-template-columns:minmax(500px,1fr) minmax(0,1fr) !important;" not in check:
+              raise SystemExit("BLOCKER: desktop readable-width guard missing")
+          if "@media (min-width:700px) and (max-width:1179px)" not in check:
+              raise SystemExit("BLOCKER: single-column tablet/laptop guard missing")
+
+          print("PASS: HAIR LP V1.1 visual wrap correction applied")
+
+          PY
+
+      - name: Validate scope
+        shell: bash
+        run: |
+          git diff --check -- lp-hair.html
+          changed="$(git diff --name-only)"
+          test "$changed" = "lp-hair.html" || {
+            echo "BLOCKER: unexpected changed files"
+            echo "$changed"
+            exit 1
+          }
+          grep -q "DPRO LP HAIR WRAP FIX V1.1 CENTRAL" lp-hair.html
+          test "$(git hash-object systems-data.js)" = "1388eb84fe70b15a9ee365b990662ee48b725cf2"
+
+      - name: Commit and remove one-shot workflow
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add lp-hair.html
+          git rm --ignore-unmatch ".github/workflows/dpro-lp-hair-wrap-fix-v1-1.yml"
+          git commit -m "Refine HAIR LP hero Japanese wrapping V1.1"
+          git push origin HEAD:main
