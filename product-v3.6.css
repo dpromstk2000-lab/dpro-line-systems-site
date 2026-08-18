@@ -115,3 +115,9 @@ body.product-v36{margin:0;background:#fff;color:var(--p36-ink);font-family:-appl
     flex-wrap:wrap!important;
   }
 }
+
+
+/* DPRO PRODUCT SALES BRUSHUP V1.0 */
+.product-v36-catalog .p36-card-actions .is-demo{border:2px solid rgba(165,23,67,.26);background:var(--p36-red-soft);color:var(--p36-red);font-weight:950;box-shadow:0 7px 18px rgba(165,23,67,.08)}
+.product-v36-catalog .p36-card-actions .is-demo:hover{border-color:var(--p36-red);background:#ffe7ee}
+.product-v36-catalog .p36-card-actions .is-product{box-shadow:0 8px 20px rgba(165,23,67,.15)}
