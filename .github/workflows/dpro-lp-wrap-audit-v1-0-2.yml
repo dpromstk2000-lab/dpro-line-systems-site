@@ -1,0 +1,112 @@
+name: DPRO LP Wrap Audit V1.0.2
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/dpro-lp-wrap-audit-v1-0-2.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: dpro-lp-wrap-audit-v1-0-2
+  cancel-in-progress: false
+
+jobs:
+  audit:
+    name: Audit all LP wrapping V1.0.2
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout current Product Site
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 1
+
+      - name: Guard completed MEDICAL and HAIR state
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f flyer-medical.html || { echo 'BLOCKER: MEDICAL flyer HTML missing'; exit 1; }
+          test -f flyer-medical.pdf || { echo 'BLOCKER: MEDICAL flyer PDF missing'; exit 1; }
+          grep -Fq 'flyerHtml: "flyer-medical.html"' systems-data.js
+          grep -Fq 'flyerPdf: "flyer-medical.pdf"' systems-data.js
+          grep -Fq '../flyer-medical.html' systems/medical.html
+          grep -Fq '../flyer-medical.pdf' systems/medical.html
+          grep -Fq 'DPRO LP HAIR WRAP FIX V1.3 CENTRAL' lp-hair.html
+          grep -Fq 'DPRO LIVE DEMO ALL49 CENTRAL OVERRIDES START' systems-data.js
+          grep -Fq 'DPRO LIVE DEMO ALL49 CENTRAL OVERRIDES END' systems-data.js
+          echo 'PASS: MEDICAL integration, HAIR V1.3, ALL49 override block present'
+
+      - name: Install Playwright
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm init -y >/dev/null 2>&1
+          npm install playwright@1.55.0 --silent
+          npx playwright install --with-deps chromium
+
+      - name: Create robust audit runner
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import base64
+          Path('/tmp/dpro-lp-wrap-audit-v102.js').write_bytes(base64.b64decode('Y29uc3QgZnM9cmVxdWlyZSgnZnMnKTsKY29uc3QgcGF0aD1yZXF1aXJlKCdwYXRoJyk7CmNvbnN0IHsgY2hyb21pdW0gfT1yZXF1aXJlKCdwbGF5d3JpZ2h0Jyk7Cgpjb25zdCBST09UPXByb2Nlc3MuY3dkKCk7CmNvbnN0IE9VVD1wYXRoLmpvaW4oUk9PVCwncWEnKTsKZnMubWtkaXJTeW5jKE9VVCx7cmVjdXJzaXZlOnRydWV9KTsKCmNvbnN0IHBhZ2VzPWZzLnJlYWRkaXJTeW5jKFJPT1QpCiAgLmZpbHRlcihuPT4vXmxwLVthLXowLTktXStcLmh0bWwkL2kudGVzdChuKSkKICAuc29ydCgpOwoKY29uc3Qgdmlld3BvcnRzPVsKICB7bmFtZTonZGVza3RvcCcsd2lkdGg6MTQ0MCxoZWlnaHQ6MTAwMH0sCiAge25hbWU6J2xhcHRvcCcsd2lkdGg6MTAyNCxoZWlnaHQ6OTAwfSwKICB7bmFtZTonbW9iaWxlJyx3aWR0aDozOTAsaGVpZ2h0Ojg0NH0KXTsKCmZ1bmN0aW9uIGNvbXBhY3Qocyl7cmV0dXJuIFN0cmluZyhzfHwnJykudHJpbSgpLnJlcGxhY2UoL1xzKy9nLCcgJyk7fQpmdW5jdGlvbiBkZWR1cGUoYSl7cmV0dXJuIFsuLi5uZXcgU2V0KGEpXTt9CgooYXN5bmMoKT0+ewogIGlmKHBhZ2VzLmxlbmd0aCA8IDQwKSB0aHJvdyBuZXcgRXJyb3IoYEV4cGVjdGVkIDQwKyBMUCBwYWdlcywgZm91bmQgJHtwYWdlcy5sZW5ndGh9YCk7CgogIGNvbnN0IGJyb3dzZXI9YXdhaXQgY2hyb21pdW0ubGF1bmNoKHtoZWFkbGVzczp0cnVlfSk7CiAgY29uc3QgcmVzdWx0cz1bXTsKICBsZXQgbG9hZEVycm9ycz0wOwogIGxldCBhdWRpdEVycm9ycz0wOwoKICBmb3IoY29uc3QgZmlsZSBvZiBwYWdlcyl7CiAgICBmb3IoY29uc3QgdnAgb2Ygdmlld3BvcnRzKXsKICAgICAgY29uc3QgY3R4PWF3YWl0IGJyb3dzZXIubmV3Q29udGV4dCh7CiAgICAgICAgdmlld3BvcnQ6e3dpZHRoOnZwLndpZHRoLGhlaWdodDp2cC5oZWlnaHR9LAogICAgICAgIGRldmljZVNjYWxlRmFjdG9yOjEKICAgICAgfSk7CiAgICAgIGNvbnN0IHBhZ2U9YXdhaXQgY3R4Lm5ld1BhZ2UoKTsKICAgICAgbGV0IGxvYWRFcnJvcj0nJzsKICAgICAgbGV0IGF1ZGl0RXJyb3I9Jyc7CiAgICAgIGxldCBtZXRyaWNzPXtob3Jpem9udGFsT3ZlcmZsb3c6ZmFsc2UsaXNzdWVzOltdfTsKCiAgICAgIHRyeXsKICAgICAgICBhd2FpdCBwYWdlLmdvdG8oYGh0dHA6Ly8xMjcuMC4wLjE6ODc2NS8ke2ZpbGV9YCx7CiAgICAgICAgICB3YWl0VW50aWw6J2RvbWNvbnRlbnRsb2FkZWQnLAogICAgICAgICAgdGltZW91dDoyMDAwMAogICAgICAgIH0pOwogICAgICAgIHRyeXsKICAgICAgICAgIGF3YWl0IHBhZ2UuZXZhbHVhdGUoYXN5bmMoKT0+ewogICAgICAgICAgICBpZihkb2N1bWVudC5mb250cyAmJiBkb2N1bWVudC5mb250cy5yZWFkeSkgYXdhaXQgZG9jdW1lbnQuZm9udHMucmVhZHk7CiAgICAgICAgICB9KTsKICAgICAgICB9Y2F0Y2goXyl7fQogICAgICAgIC8vIGphcGFuZXNlLXdyYXAtdjEuanMgY2FuIGtlZXAgb2JzZXJ2aW5nL211dGF0aW5nIHVudGlsIH4yNjAwbXMuCiAgICAgICAgLy8gQXVkaXQgb25seSBhZnRlciB0aGF0IHJ1bnRpbWUgbGF5ZXIgaGFzIHNldHRsZWQuCiAgICAgICAgYXdhaXQgcGFnZS53YWl0Rm9yVGltZW91dCgyOTAwKTsKCiAgICAgICAgbWV0cmljcz1hd2FpdCBwYWdlLmV2YWx1YXRlKCh7dnBOYW1lLHZ3fSk9PnsKICAgICAgICAgIGNvbnN0IEpQPS9b44GBLeOCk+OCoS3jg7bkuIAt6b6g44CF44O8XS87CiAgICAgICAgICBjb25zdCByb290PWRvY3VtZW50LmRvY3VtZW50RWxlbWVudDsKICAgICAgICAgIGNvbnN0IHRhcmdldHM9Wy4uLmRvY3VtZW50LnF1ZXJ5U2VsZWN0b3JBbGwoCiAgICAgICAgICAgICdoMSxoMixoMyxoNCxidXR0b24sYS5idG4sYS5kcHJvLWJ1dHRvbixhW2NsYXNzKj0iYnRuIl0nCiAgICAgICAgICApXTsKCiAgICAgICAgICBjb25zdCBob3Jpem9udGFsT3ZlcmZsb3c9cm9vdC5zY3JvbGxXaWR0aD5yb290LmNsaWVudFdpZHRoKzQ7CiAgICAgICAgICBjb25zdCBpc3N1ZXM9W107CgogICAgICAgICAgZnVuY3Rpb24gdmlzaWJsZShlbCl7CiAgICAgICAgICAgIGNvbnN0IGNzPWdldENvbXB1dGVkU3R5bGUoZWwpOwogICAgICAgICAgICBjb25zdCByPWVsLmdldEJvdW5kaW5nQ2xpZW50UmVjdCgpOwogICAgICAgICAgICByZXR1cm4gY3MuZGlzcGxheSE9PSdub25lJyAmJiBjcy52aXNpYmlsaXR5IT09J2hpZGRlbicgJiYgci53aWR0aD4xICYmIHIuaGVpZ2h0PjE7CiAgICAgICAgICB9CgogICAgICAgICAgZnVuY3Rpb24gY2hhckxpbmVzKGVsKXsKICAgICAgICAgICAgdHJ5ewogICAgICAgICAgICAgIGNvbnN0IGNoYXJzPVtdOwogICAgICAgICAgICAgIGNvbnN0IHdhbGtlcj1kb2N1bWVudC5jcmVhdGVUcmVlV2Fsa2VyKAogICAgICAgICAgICAgICAgZWwsCiAgICAgICAgICAgICAgICBOb2RlRmlsdGVyLlNIT1dfVEVYVCwKICAgICAgICAgICAgICAgIHsKICAgICAgICAgICAgICAgICAgYWNjZXB0Tm9kZShuKXsKICAgICAgICAgICAgICAgICAgICBjb25zdCBwPW4ucGFyZW50RWxlbWVudDsKICAgICAgICAgICAgICAgICAgICBpZighcCB8fCBwLmNsb3Nlc3QoJ3NjcmlwdCxzdHlsZSxub3NjcmlwdCcpKSByZXR1cm4gTm9kZUZpbHRlci5GSUxURVJfUkVKRUNUOwogICAgICAgICAgICAgICAgICAgIHJldHVybiBjb21wYWN0KG4ubm9kZVZhbHVlKSA/IE5vZGVGaWx0ZXIuRklMVEVSX0FDQ0VQVCA6IE5vZGVGaWx0ZXIuRklMVEVSX1JFSkVDVDsKICAgICAgICAgICAgICAgICAgfQogICAgICAgICAgICAgICAgfQogICAgICAgICAgICAgICk7CiAgICAgICAgICAgICAgY29uc3Qgbm9kZXM9W107CiAgICAgICAgICAgICAgbGV0IG47CiAgICAgICAgICAgICAgd2hpbGUoKG49d2Fsa2VyLm5leHROb2RlKCkpKSBub2Rlcy5wdXNoKG4pOwoKICAgICAgICAgICAgICBmb3IoY29uc3Qgbm9kZSBvZiBub2Rlcyl7CiAgICAgICAgICAgICAgICBjb25zdCB0ZXh0PW5vZGUubm9kZVZhbHVlfHwnJzsKICAgICAgICAgICAgICAgIGZvcihsZXQgaT0wO2k8dGV4dC5sZW5ndGg7aSsrKXsKICAgICAgICAgICAgICAgICAgY29uc3QgY2g9dGV4dFtpXTsKICAgICAgICAgICAgICAgICAgaWYoL1xzLy50ZXN0KGNoKSkgY29udGludWU7CiAgICAgICAgICAgICAgICAgIHRyeXsKICAgICAgICAgICAgICAgICAgICBjb25zdCByYW5nZT1kb2N1bWVudC5jcmVhdGVSYW5nZSgpOwogICAgICAgICAgICAgICAgICAgIHJhbmdlLnNldFN0YXJ0KG5vZGUsaSk7CiAgICAgICAgICAgICAgICAgICAgcmFuZ2Uuc2V0RW5kKG5vZGUsaSsxKTsKICAgICAgICAgICAgICAgICAgICBjb25zdCByPXJhbmdlLmdldEJvdW5kaW5nQ2xpZW50UmVjdCgpOwogICAgICAgICAgICAgICAgICAgIGlmKHIud2lkdGg+LjIgJiYgci5oZWlnaHQ+LjIpIGNoYXJzLnB1c2goe2NoLHRvcDpyLnRvcCxsZWZ0OnIubGVmdH0pOwogICAgICAgICAgICAgICAgICB9Y2F0Y2goXyl7fQogICAgICAgICAgICAgICAgfQogICAgICAgICAgICAgIH0KCiAgICAgICAgICAgICAgY2hhcnMuc29ydCgoYSxiKT0+TWF0aC5hYnMoYS50b3AtYi50b3ApPjI/YS50b3AtYi50b3A6YS5sZWZ0LWIubGVmdCk7CiAgICAgICAgICAgICAgY29uc3QgbGluZXM9W107CiAgICAgICAgICAgICAgZm9yKGNvbnN0IGMgb2YgY2hhcnMpewogICAgICAgICAgICAgICAgbGV0IGxpbmU9bGluZXMuZmluZChsPT5NYXRoLmFicyhsLnRvcC1jLnRvcCk8PTMpOwogICAgICAgICAgICAgICAgaWYoIWxpbmUpeyBsaW5lPXt0b3A6Yy50b3AsY2hhcnM6W119OyBsaW5lcy5wdXNoKGxpbmUpOyB9CiAgICAgICAgICAgICAgICBsaW5lLmNoYXJzLnB1c2goYy5jaCk7CiAgICAgICAgICAgICAgfQogICAgICAgICAgICAgIGxpbmVzLnNvcnQoKGEsYik9PmEudG9wLWIudG9wKTsKICAgICAgICAgICAgICByZXR1cm4gbGluZXMubWFwKGw9PmwuY2hhcnMuam9pbignJykpOwogICAgICAgICAgICB9Y2F0Y2goXyl7CiAgICAgICAgICAgICAgcmV0dXJuIFtdOwogICAgICAgICAgICB9CiAgICAgICAgICB9CgogICAgICAgICAgZm9yKGNvbnN0IFtpbmRleCxlbF0gb2YgdGFyZ2V0cy5lbnRyaWVzKCkpewogICAgICAgICAgICB0cnl7CiAgICAgICAgICAgICAgaWYoIXZpc2libGUoZWwpKSBjb250aW51ZTsKICAgICAgICAgICAgICBjb25zdCB0ZXh0PWNvbXBhY3QoZWwuaW5uZXJUZXh0fHxlbC50ZXh0Q29udGVudHx8JycpOwogICAgICAgICAgICAgIGlmKHRleHQubGVuZ3RoPDQgfHwgIUpQLnRlc3QodGV4dCkpIGNvbnRpbnVlOwoKICAgICAgICAgICAgICBjb25zdCByPWVsLmdldEJvdW5kaW5nQ2xpZW50UmVjdCgpOwogICAgICAgICAgICAgIGNvbnN0IGNzPWdldENvbXB1dGVkU3R5bGUoZWwpOwogICAgICAgICAgICAgIGNvbnN0IGZvbnQ9cGFyc2VGbG9hdChjcy5mb250U2l6ZSl8fDE2OwogICAgICAgICAgICAgIGNvbnN0IGxpbmVzPWNoYXJMaW5lcyhlbCk7CiAgICAgICAgICAgICAgY29uc3QgY291bnRzPWxpbmVzLm1hcCh4PT5bLi4ueF0ubGVuZ3RoKS5maWx0ZXIoQm9vbGVhbik7CiAgICAgICAgICAgICAgY29uc3Qgc2luZ2xlPWNvdW50cy5maWx0ZXIobj0+bjw9MSkubGVuZ3RoOwogICAgICAgICAgICAgIGNvbnN0IHNob3J0PWNvdW50cy5maWx0ZXIobj0+bjw9MikubGVuZ3RoOwogICAgICAgICAgICAgIGNvbnN0IGF2Zz1jb3VudHMubGVuZ3RoP2NvdW50cy5yZWR1Y2UoKGEsYik9PmErYiwwKS9jb3VudHMubGVuZ3RoOjA7CiAgICAgICAgICAgICAgY29uc3QgcmVhc29ucz1bXTsKCiAgICAgICAgICAgICAgaWYoci5yaWdodD52dys0IHx8IHIubGVmdDwtNCB8fCBlbC5zY3JvbGxXaWR0aD5lbC5jbGllbnRXaWR0aCs0KXsKICAgICAgICAgICAgICAgIHJlYXNvbnMucHVzaCgnb3ZlcmZsb3cnKTsKICAgICAgICAgICAgICB9CgogICAgICAgICAgICAgIGNvbnN0IGhlYWRpbmc9L15IWzEtNF0kLy50ZXN0KGVsLnRhZ05hbWUpOwogICAgICAgICAgICAgIGNvbnN0IGRlc2t0b3Bpc2g9dnBOYW1lIT09J21vYmlsZSc7CgogICAgICAgICAgICAgIGlmKGhlYWRpbmcgJiYgdGV4dC5sZW5ndGg+PTgpewogICAgICAgICAgICAgICAgaWYoZGVza3RvcGlzaCAmJiBsaW5lcy5sZW5ndGg+PTQgJiYgc2hvcnQ+PTIpIHJlYXNvbnMucHVzaCgnZnJhZ21lbnRlZC1oZWFkaW5nJyk7CiAgICAgICAgICAgICAgICBpZihkZXNrdG9waXNoICYmIGxpbmVzLmxlbmd0aD49MyAmJiBzaW5nbGU+PTEpIHJlYXNvbnMucHVzaCgnc2luZ2xldG9uLWxpbmUnKTsKICAgICAgICAgICAgICAgIGlmKGRlc2t0b3Bpc2ggJiYgZWwudGFnTmFtZT09PSdIMScgJiYgci53aWR0aDxmb250KjQuMykgcmVhc29ucy5wdXNoKCduYXJyb3ctaDEtdHJhY2snKTsKICAgICAgICAgICAgICAgIGlmKCFkZXNrdG9waXNoICYmIGxpbmVzLmxlbmd0aD49NyAmJiBzaW5nbGU+PTIgJiYgYXZnPDQpIHJlYXNvbnMucHVzaCgnc2V2ZXJlLW1vYmlsZS1mcmFnbWVudCcpOwogICAgICAgICAgICAgIH0KCiAgICAgICAgICAgICAgaWYoIWhlYWRpbmcgJiYgdGV4dC5sZW5ndGg+PTYgJiYgbGluZXMubGVuZ3RoPj00ICYmIHNpbmdsZT49Mil7CiAgICAgICAgICAgICAgICByZWFzb25zLnB1c2goJ2ZyYWdtZW50ZWQtY29udHJvbCcpOwogICAgICAgICAgICAgIH0KCiAgICAgICAgICAgICAgaWYocmVhc29ucy5sZW5ndGgpewogICAgICAgICAgICAgICAgaXNzdWVzLnB1c2goewogICAgICAgICAgICAgICAgICBpbmRleCwKICAgICAgICAgICAgICAgICAgdGFnOmVsLnRhZ05hbWUsCiAgICAgICAgICAgICAgICAgIHRleHQsCiAgICAgICAgICAgICAgICAgIGxpbmVzLAogICAgICAgICAgICAgICAgICBjb3VudHMsCiAgICAgICAgICAgICAgICAgIHdpZHRoOityLndpZHRoLnRvRml4ZWQoMSksCiAgICAgICAgICAgICAgICAgIGZvbnQ6K2ZvbnQudG9GaXhlZCgxKSwKICAgICAgICAgICAgICAgICAgcmVhc29uczpkZWR1cGUocmVhc29ucykKICAgICAgICAgICAgICAgIH0pOwogICAgICAgICAgICAgIH0KICAgICAgICAgICAgfWNhdGNoKGVycil7CiAgICAgICAgICAgICAgaXNzdWVzLnB1c2goewogICAgICAgICAgICAgICAgdGFnOmVsLnRhZ05hbWV8fCdVTktOT1dOJywKICAgICAgICAgICAgICAgIHRleHQ6Y29tcGFjdChlbC50ZXh0Q29udGVudHx8JycpLnNsaWNlKDAsMTIwKSwKICAgICAgICAgICAgICAgIGxpbmVzOltdLAogICAgICAgICAgICAgICAgY291bnRzOltdLAogICAgICAgICAgICAgICAgd2lkdGg6MCwKICAgICAgICAgICAgICAgIGZvbnQ6MCwKICAgICAgICAgICAgICAgIHJlYXNvbnM6WydlbGVtZW50LWF1ZGl0LWVycm9yJ10sCiAgICAgICAgICAgICAgICBlcnJvcjpTdHJpbmcoZXJyICYmIGVyci5tZXNzYWdlIHx8IGVycikKICAgICAgICAgICAgICB9KTsKICAgICAgICAgICAgfQogICAgICAgICAgfQogICAgICAgICAgcmV0dXJuIHtob3Jpem9udGFsT3ZlcmZsb3csaXNzdWVzfTsKICAgICAgICB9LHt2cE5hbWU6dnAubmFtZSx2dzp2cC53aWR0aH0pOwogICAgICB9Y2F0Y2goZXJyKXsKICAgICAgICBjb25zdCBtc2c9U3RyaW5nKGVyciAmJiBlcnIubWVzc2FnZSB8fCBlcnIpOwogICAgICAgIGlmKCFsb2FkRXJyb3IgJiYgL2dvdG98bmF2aWdhdGlvbnx0aW1lb3V0L2kudGVzdChtc2cpKXsKICAgICAgICAgIGxvYWRFcnJvcj1tc2c7CiAgICAgICAgICBsb2FkRXJyb3JzKys7CiAgICAgICAgfWVsc2V7CiAgICAgICAgICBhdWRpdEVycm9yPW1zZzsKICAgICAgICAgIGF1ZGl0RXJyb3JzKys7CiAgICAgICAgfQogICAgICB9CgogICAgICByZXN1bHRzLnB1c2goewogICAgICAgIGZpbGUsCiAgICAgICAgdmlld3BvcnQ6dnAsCiAgICAgICAgbG9hZEVycm9yLAogICAgICAgIGF1ZGl0RXJyb3IsCiAgICAgICAgaG9yaXpvbnRhbE92ZXJmbG93Om1ldHJpY3MuaG9yaXpvbnRhbE92ZXJmbG93LAogICAgICAgIGlzc3VlczptZXRyaWNzLmlzc3VlcywKICAgICAgICBoaWdoOkJvb2xlYW4obG9hZEVycm9yIHx8IGF1ZGl0RXJyb3IgfHwgbWV0cmljcy5ob3Jpem9udGFsT3ZlcmZsb3cgfHwgbWV0cmljcy5pc3N1ZXMubGVuZ3RoKQogICAgICB9KTsKCiAgICAgIGF3YWl0IGN0eC5jbG9zZSgpOwogICAgfQogIH0KCiAgYXdhaXQgYnJvd3Nlci5jbG9zZSgpOwoKICBjb25zdCBoaWdoUmVzdWx0cz1yZXN1bHRzLmZpbHRlcihyPT5yLmhpZ2gpOwogIGNvbnN0IGhpZ2hQYWdlcz1kZWR1cGUoaGlnaFJlc3VsdHMubWFwKHI9PnIuZmlsZSkpOwogIGNvbnN0IHN1bW1hcnk9ewogICAgdmVyc2lvbjonRFBSTyBMUCBXUkFQIEFVRElUIFYxLjAuMicsCiAgICBwYWdlczpwYWdlcy5sZW5ndGgsCiAgICB2aWV3cG9ydHM6dmlld3BvcnRzLmxlbmd0aCwKICAgIGNoZWNrczpyZXN1bHRzLmxlbmd0aCwKICAgIGhpZ2hDaGVja3M6aGlnaFJlc3VsdHMubGVuZ3RoLAogICAgaGlnaFBhZ2VzOmhpZ2hQYWdlcy5sZW5ndGgsCiAgICBsb2FkRXJyb3JzLAogICAgYXVkaXRFcnJvcnMsCiAgICBoYWlySW5jbHVkZWQ6cGFnZXMuaW5jbHVkZXMoJ2xwLWhhaXIuaHRtbCcpCiAgfTsKCiAgY29uc3QgcmVwb3J0PXtzdW1tYXJ5LGhpZ2hQYWdlcyxyZXN1bHRzfTsKICBmcy53cml0ZUZpbGVTeW5jKAogICAgcGF0aC5qb2luKE9VVCwnTFBfV1JBUF9BVURJVF9WMS4wLjIuanNvbicpLAogICAgSlNPTi5zdHJpbmdpZnkocmVwb3J0LG51bGwsMiksCiAgICAndXRmOCcKICApOwoKICBjb25zdCBtZD1bCiAgICAnIyBEUFJPIExQIFdSQVAgQVVESVQgVjEuMC4yJywKICAgICcnLAogICAgYC0gTFAgcGFnZXM6ICR7c3VtbWFyeS5wYWdlc31gLAogICAgYC0gQ2hlY2tzOiAke3N1bW1hcnkuY2hlY2tzfSAoJHtzdW1tYXJ5LnZpZXdwb3J0c30gdmlld3BvcnRzIHBlciBMUClgLAogICAgYC0gSElHSCBwYWdlczogJHtzdW1tYXJ5LmhpZ2hQYWdlc31gLAogICAgYC0gTG9hZCBlcnJvcnM6ICR7c3VtbWFyeS5sb2FkRXJyb3JzfWAsCiAgICBgLSBBdWRpdCBlcnJvcnM6ICR7c3VtbWFyeS5hdWRpdEVycm9yc31gLAogICAgYC0gSEFJUiBpbmNsdWRlZDogJHtzdW1tYXJ5LmhhaXJJbmNsdWRlZH1gLAogICAgJycKICBdOwoKICBpZighaGlnaFBhZ2VzLmxlbmd0aCl7CiAgICBtZC5wdXNoKCcjIyBSRVNVTFQnLCcnLCdaRVJPIEhJR0ggLyByZW5kZXJlZCBnZW9tZXRyeSBhdWRpdCBQQVNTJyk7CiAgfWVsc2V7CiAgICBtZC5wdXNoKCcjIyBISUdIIFBBR0VTJywnJyk7CiAgICBmb3IoY29uc3QgZmlsZSBvZiBoaWdoUGFnZXMpewogICAgICBtZC5wdXNoKGAjIyMgJHtmaWxlfWApOwogICAgICBmb3IoY29uc3QgciBvZiBoaWdoUmVzdWx0cy5maWx0ZXIoeD0+eC5maWxlPT09ZmlsZSkpewogICAgICAgIGNvbnN0IGxhYmVscz1bXTsKICAgICAgICBpZihyLmxvYWRFcnJvcikgbGFiZWxzLnB1c2goJ0xPQURfRVJST1InKTsKICAgICAgICBpZihyLmF1ZGl0RXJyb3IpIGxhYmVscy5wdXNoKCdBVURJVF9FUlJPUicpOwogICAgICAgIGlmKHIuaG9yaXpvbnRhbE92ZXJmbG93KSBsYWJlbHMucHVzaCgnUEFHRV9PVkVSRkxPVycpOwogICAgICAgIGZvcihjb25zdCBpIG9mIHIuaXNzdWVzKSBsYWJlbHMucHVzaCguLi5pLnJlYXNvbnMpOwogICAgICAgIG1kLnB1c2goYC0gJHtyLnZpZXdwb3J0Lm5hbWV9ICR7ci52aWV3cG9ydC53aWR0aH1weDogJHtkZWR1cGUobGFiZWxzKS5qb2luKCcsICcpfHwnSElHSCd9YCk7CiAgICAgICAgZm9yKGNvbnN0IGkgb2Ygci5pc3N1ZXMuc2xpY2UoMCwxMCkpewogICAgICAgICAgbWQucHVzaChgICAtICR7aS50YWd9OiAke2kudGV4dH1gKTsKICAgICAgICAgIG1kLnB1c2goYCAgICAtIGxpbmVzOiAke0pTT04uc3RyaW5naWZ5KGkubGluZXMpfWApOwogICAgICAgICAgbWQucHVzaChgICAgIC0gcmVhc29uczogJHtpLnJlYXNvbnMuam9pbignLCAnKX1gKTsKICAgICAgICB9CiAgICAgIH0KICAgICAgbWQucHVzaCgnJyk7CiAgICB9CiAgfQoKICBmcy53cml0ZUZpbGVTeW5jKAogICAgcGF0aC5qb2luKE9VVCwnTFBfV1JBUF9BVURJVF9WMS4wLjIubWQnKSwKICAgIG1kLmpvaW4oJ1xuJyksCiAgICAndXRmOCcKICApOwoKICBjb25zb2xlLmxvZyhKU09OLnN0cmluZ2lmeShzdW1tYXJ5LG51bGwsMikpOwoKICBpZihyZXN1bHRzLmxlbmd0aCAhPT0gcGFnZXMubGVuZ3RoKnZpZXdwb3J0cy5sZW5ndGgpewogICAgdGhyb3cgbmV3IEVycm9yKGBJbmNvbXBsZXRlIGF1ZGl0IG1hdHJpeDogJHtyZXN1bHRzLmxlbmd0aH0vJHtwYWdlcy5sZW5ndGgqdmlld3BvcnRzLmxlbmd0aH1gKTsKICB9Cn0pKCkuY2F0Y2goZXJyPT57CiAgY29uc29sZS5lcnJvcihlcnIpOwogIHByb2Nlc3MuZXhpdCgxKTsKfSk7Cg=='))
+          PY
+          node --check /tmp/dpro-lp-wrap-audit-v102.js
+
+      - name: Start local Product Site
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m http.server 8765 --bind 127.0.0.1 >/tmp/dpro-lp-http.log 2>&1 &
+          for i in $(seq 1 30); do
+            curl -fsS http://127.0.0.1:8765/ >/dev/null && exit 0
+            sleep 1
+          done
+          cat /tmp/dpro-lp-http.log || true
+          exit 1
+
+      - name: Render and audit every LP
+        shell: bash
+        run: |
+          set -euo pipefail
+          node /tmp/dpro-lp-wrap-audit-v102.js
+          test -s qa/LP_WRAP_AUDIT_V1.0.2.json
+          test -s qa/LP_WRAP_AUDIT_V1.0.2.md
+          cat qa/LP_WRAP_AUDIT_V1.0.2.md
+
+      - name: Validate report matrix
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          import json
+          p=Path('qa/LP_WRAP_AUDIT_V1.0.2.json')
+          data=json.loads(p.read_text(encoding='utf-8'))
+          s=data['summary']
+          if s['pages'] < 40:
+              raise SystemExit(f"BLOCKER: only {s['pages']} LP pages audited")
+          if s['checks'] != s['pages']*3:
+              raise SystemExit(f"BLOCKER: matrix incomplete {s['checks']} != {s['pages']*3}")
+          if not s['hairIncluded']:
+              raise SystemExit('BLOCKER: lp-hair.html missing from audit')
+          print('PASS: complete desktop/laptop/mobile audit matrix')
+          print(json.dumps(s,ensure_ascii=False,indent=2))
+          PY
+
+      - name: Publish CENTRAL-readable audit report
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add qa/LP_WRAP_AUDIT_V1.0.2.json qa/LP_WRAP_AUDIT_V1.0.2.md
+          git rm --ignore-unmatch ".github/workflows/dpro-lp-wrap-audit-v1-0-2.yml"
+          git commit -m "Publish DPRO LP wrap audit V1.0.2"
+          git push origin HEAD:main
