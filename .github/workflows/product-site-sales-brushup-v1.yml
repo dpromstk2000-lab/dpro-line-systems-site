@@ -1,0 +1,374 @@
+name: DPRO PRODUCT SITE Sales Brushup V1.0
+
+"on":
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: dpro-product-site-sales-brushup-v1
+  cancel-in-progress: false
+
+jobs:
+  apply-sales-brushup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Apply accepted sales brush-up
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          def replace_once(path, old, new, label):
+              p = Path(path)
+              text = p.read_text(encoding="utf-8")
+              if new in text:
+                  print(f"SKIP already applied: {label}")
+                  return
+              if old not in text:
+                  raise SystemExit(f"ANCHOR NOT FOUND [{label}] in {path}")
+              p.write_text(text.replace(old, new, 1), encoding="utf-8")
+              print(f"APPLY: {label}")
+
+          # ------------------------------------------------------------
+          # index.html — first 10 seconds: find -> touch -> ask
+          # ------------------------------------------------------------
+          replace_once(
+              "index.html",
+              'DPRO LINE SYSTEMS。51の業種専用システムから自分の業種に合う製品を探し、スマホ・PC・iPadの実画面やLIVE DEMOで操作感を確認できます。料金・導入についてはDPRO SHOPでご案内しています。',
+              'DPRO LINE SYSTEMS。51の業種専用完成システムから自分の業種に合う製品を探し、導入前にスマホ・PC・iPadの実画面と公開LIVE DEMOを見て・触って確認。料金・導入はDPRO SHOPで相談できます。',
+              "index meta description"
+          )
+          replace_once(
+              "index.html",
+              'あなたの業種に、もう完成した仕組みがあります。51のDPROシステムを探して、実際の画面・LIVE DEMOを確認できます。',
+              'あなたの業種に、もう完成したシステムがあります。51の業種別DPROを探して、導入前に実画面・公開LIVE DEMOを確認できます。',
+              "index og description"
+          )
+          replace_once(
+              "index.html",
+              '<h1>あなたの業種に、<em>もう完成した仕組みがあります。</em></h1>',
+              '<h1>あなたの業種に、<em>もう完成したシステムがあります。</em></h1>',
+              "index hero headline"
+          )
+          replace_once(
+              "index.html",
+              '<p class="p36-lead"><strong><span data-p36-count>51</span>の業種専用DPROシステム。</strong> 業種から製品を探し、実際の画面やLIVE DEMOで操作感を確認できます。</p>',
+              '<p class="p36-lead"><strong><span data-p36-count>51</span>の業種専用DPROシステム。</strong> 導入前に、スマホ・PC・iPadの実画面と公開LIVE DEMOを見て・触って確認。納得したらDPRO SHOPで料金・導入をご相談いただけます。</p>',
+              "index hero lead"
+          )
+          replace_once(
+              "index.html",
+              '''<div class="p36-actions">\n <a class="p36-btn p36-btn--product" href="systems.html#catalog">業種からシステムを探す</a>\n <a class="p36-btn p36-btn--demo" href="#live-demo">LIVE DEMOを見る</a>\n <a class="p36-btn p36-btn--proposal" href="proposal.html">業種別の導入例を見る</a>\n <a class="p36-btn p36-btn--official" href="https://dpro-shop.com/" target="_blank" rel="noopener">DPRO SHOPで料金・導入を確認 ↗</a>\n </div>''',
+              '''<div class="p36-actions">\n <a class="p36-btn p36-btn--product" href="systems.html#catalog">業種からシステムを探す</a>\n <a class="p36-btn p36-btn--demo" href="#live-demo">公開LIVE DEMOを見る</a>\n <a class="p36-btn p36-btn--official" href="https://dpro-shop.com/" target="_blank" rel="noopener">料金・導入をDPRO SHOPで相談 ↗</a>\n </div>''',
+              "index CTA hierarchy"
+          )
+          replace_once(
+              "index.html",
+              '<div class="p36-proof"><span><b>51</b> 業種別システム</span><span>スマホ・PC・iPad</span><span>LIVE DEMO</span><span>PRODUCT SITE</span></div>',
+              '<div class="p36-proof"><span><b>51</b> 業種別完成システム</span><span>導入前に実物確認</span><span>スマホ・PC・iPad</span><span>公開LIVE DEMO</span></div>',
+              "index proof chips"
+          )
+          replace_once(
+              "index.html",
+              '<section class="p36-role" aria-label="DPROを知る・試す・相談する流れ">',
+              '<section class="p36-role" aria-label="業種から探す・実物を試す・料金導入を相談する流れ">',
+              "index funnel aria"
+          )
+          replace_once(
+              "index.html",
+              '''<article class="p36-role-card p36-role-card--official"><small>SERVICE GUIDE</small><strong>サービスを知る</strong><span>機能・料金・導入条件をDPRO SHOPで確認</span></article>\n <div class="p36-role__arrow">→</div>\n <article class="p36-role-card p36-role-card--product"><small>LIVE PRODUCT</small><strong>実画面で確かめる</strong><span>業種別システム・スマホ・PC・iPad・LIVE DEMO</span></article>\n <div class="p36-role__arrow">→</div>\n <article class="p36-role-card p36-role-card--official"><small>CONSULTATION</small><strong>導入を相談する</strong><span>自分の店舗に合う導入内容をLINEで相談</span></article>''',
+              '''<article class="p36-role-card p36-role-card--product"><small>STEP 1 / FIND</small><strong>業種から見つける</strong><span>51の業種別システムから、自分の業種に近い完成製品を探す</span></article>\n <div class="p36-role__arrow">→</div>\n <article class="p36-role-card p36-role-card--product"><small>STEP 2 / TOUCH</small><strong>実物を見て・触る</strong><span>スマホ・PC・iPadの実画面と公開LIVE DEMOで操作感を確認</span></article>\n <div class="p36-role__arrow">→</div>\n <article class="p36-role-card p36-role-card--official"><small>STEP 3 / ASK</small><strong>料金・導入を相談する</strong><span>納得したらDPRO SHOPで料金・提供条件・導入内容を確認</span></article>''',
+              "index 3-step funnel"
+          )
+          replace_once(
+              "index.html",
+              '<header class="p36-section__head"><p class="p36-eyebrow">REAL SCREEN / LIVE DEMO</p><h2>説明だけでなく、<br>実際のシステムを。</h2><p>代表的な完成製品から、製品ページとLIVE DEMOへ直接進めます。</p></header>',
+              '<header class="p36-section__head"><p class="p36-eyebrow">REAL SCREEN / PUBLIC LIVE DEMO</p><h2>導入前に、<br>実際に見て・触る。</h2><p>代表的な完成製品から、製品ページと公開LIVE DEMOへ直接進めます。資料だけでは分からない画面と操作感まで確認できます。</p></header>',
+              "index LIVE DEMO proof"
+          )
+          replace_once(
+              "index.html",
+              '<div><small>DPRO SHOP</small><h2>詳しい機能・料金・導入については、DPRO SHOPへ。</h2><p>気になるシステムが見つかったら、DPRO SHOPで料金・LINE構築・ホームページ・導入条件をご確認いただけます。</p></div>',
+              '<div><small>DPRO SHOP</small><h2>実物を確認したら、料金・導入はDPRO SHOPへ。</h2><p>気になるシステムの操作感を確認した後、料金・LINE構築・ホームページ・提供条件・導入内容をご相談いただけます。</p></div>',
+              "index official handoff"
+          )
+          replace_once(
+              "index.html",
+              '<nav class="p36-mobile-cta" aria-label="スマホ固定メニュー"><a class="is-product" href="systems.html">システム一覧</a><a class="is-proposal" href="proposal.html">業種別の導入例</a><a class="is-official" href="https://dpro-shop.com/" target="_blank" rel="noopener">DPRO SHOP ↗</a></nav>',
+              '<nav class="p36-mobile-cta" aria-label="スマホ固定メニュー"><a class="is-product" href="systems.html#catalog">業種から探す</a><a class="is-proposal" href="#live-demo">LIVE DEMO</a><a class="is-official" href="https://dpro-shop.com/" target="_blank" rel="noopener">料金・導入相談 ↗</a></nav>',
+              "index mobile CTA"
+          )
+
+          # ------------------------------------------------------------
+          # systems.html — catalog -> real proof -> DPRO SHOP
+          # ------------------------------------------------------------
+          replace_once(
+              "systems.html",
+              'DPRO LINE SYSTEMSの51システム一覧。業種・悩み・主要機能から自分に合うシステムを探し、商品ページやLIVE DEMOで実際の画面を確認できます。料金・導入についてはDPRO SHOPでご案内しています。',
+              'DPRO LINE SYSTEMSの51システム一覧。業種・悩み・主要機能から自分に合う完成システムを探し、導入前に商品ページと公開LIVE DEMOで実際の画面・操作感を確認できます。料金・導入はDPRO SHOPで相談できます。',
+              "systems meta description"
+          )
+          replace_once(
+              "systems.html",
+              '51の完成DPROシステムを検索・絞り込み。製品ページとLIVE DEMOから実際の画面を確認できます。',
+              '51の完成DPROシステムを検索・絞り込み。導入前に製品ページと公開LIVE DEMOで実際の画面・操作感を確認できます。',
+              "systems og description"
+          )
+          replace_once(
+              "systems.html",
+              '<div><span class="p36-site-chip">SYSTEM CATALOG</span><p class="p36-kicker" style="color:#ff91b1">FIND · TOUCH · COMPARE</p><h1>業種ごとに、<br>完成したシステムがあります。</h1><p>業種名・悩み・主要機能から検索。気になる製品は、商品ページやLIVE DEMOで実際に確認できます。料金・導入条件はDPRO SHOPでご案内しています。</p></div>',
+              '<div><span class="p36-site-chip">SYSTEM CATALOG</span><p class="p36-kicker" style="color:#ff91b1">FIND · TOUCH · COMPARE</p><h1>業種ごとに、<br>完成したシステムがあります。</h1><p>業種名・悩み・主要機能から検索。気になる製品は、商品ページと公開LIVE DEMOで導入前に実物を確認できます。納得したら料金・導入条件をDPRO SHOPでご相談ください。</p></div>',
+              "systems hero sales proof"
+          )
+          replace_once(
+              "systems.html",
+              '<div><p class="p36-eyebrow">SYSTEM CATALOG</p><h2>業種別システム一覧</h2><p>気になるシステムは、商品ページやLIVE DEMOで画面と操作感を確認できます。</p></div>',
+              '<div><p class="p36-eyebrow">SYSTEM CATALOG</p><h2>業種別システム一覧</h2><p>商品ページで内容を見て、公開LIVE DEMOで画面と操作感を確認。導入前に「自分たちで使えそうか」を確かめられます。</p></div>',
+              "systems catalog proof copy"
+          )
+          replace_once(
+              "systems.html",
+              '<div><small>DPRO SHOP</small><h2>気になる製品が見つかったら、料金・導入内容を確認。</h2><p>DPRO SHOPでは、業種別の機能・料金・LINE構築・ホームページ・提供条件をご案内しています。</p></div>',
+              '<div><small>DPRO SHOP</small><h2>実物を確認したら、料金・導入内容をDPRO SHOPで確認。</h2><p>業種別の機能・料金・LINE構築・ホームページ・提供条件を確認し、そのまま導入相談へ進めます。</p></div>',
+              "systems official handoff"
+          )
+          replace_once(
+              "systems.html",
+              '<nav class="p36-mobile-cta" aria-label="スマホ固定メニュー"><a class="is-product" href="#catalog">システム一覧</a><a class="is-proposal" href="proposal.html">業種別の導入例</a><a class="is-official" href="https://dpro-shop.com/systems/" target="_blank" rel="noopener">DPRO SHOP ↗</a></nav>',
+              '<nav class="p36-mobile-cta" aria-label="スマホ固定メニュー"><a class="is-product" href="#finder">業種から探す</a><a class="is-proposal" href="#catalog">実物を確認</a><a class="is-official" href="https://dpro-shop.com/systems/" target="_blank" rel="noopener">料金・導入相談 ↗</a></nav>',
+              "systems mobile CTA"
+          )
+          replace_once(
+              "systems.html",
+              '<link rel="stylesheet" href="product-v3.6.css?v=3.6">',
+              '<link rel="stylesheet" href="product-v3.6.css?v=3.6-sales-v10">',
+              "systems sales CSS cache bust"
+          )
+
+          # ------------------------------------------------------------
+          # proposal.html — 51 consistency + conversion path
+          # ------------------------------------------------------------
+          replace_once(
+              "proposal.html",
+              'DPRO LINE SYSTEMSの業種別の導入例。気になる業種を選ぶと、詳しい紹介ページ、A4資料、LIVE DEMOをまとめて確認できます。',
+              'DPRO LINE SYSTEMSの51業種別システム導入例。気になる業種を選ぶと、詳しい紹介ページ、A4資料、公開LIVE DEMOをまとめて確認できます。',
+              "proposal meta description"
+          )
+          replace_once(
+              "proposal.html",
+              '業種ごとの詳しい紹介、A4資料、LIVE DEMOをまとめて確認。50システム対応。',
+              '業種ごとの詳しい紹介、A4資料、公開LIVE DEMOをまとめて確認。51システム対応。',
+              "proposal og count"
+          )
+          replace_once(
+              "proposal.html",
+              '"description":"50のDPROシステムから、業種別の詳しい紹介・A4資料・LIVE DEMOをまとめて確認できるページ。","numberOfItems":50',
+              '"description":"51のDPROシステムから、業種別の詳しい紹介・A4資料・公開LIVE DEMOをまとめて確認できるページ。","numberOfItems":51',
+              "proposal structured data count"
+          )
+          replace_once(
+              "proposal.html",
+              '<p class="p36-lead">50システムから業種を選び、<strong>詳しい紹介・A4資料・LIVE DEMO</strong>をまとめて確認できます。</p>',
+              '<p class="p36-lead"><span data-p36-count>51</span>システムから業種を選び、<strong>詳しい紹介・A4資料・公開LIVE DEMO</strong>をまとめて確認。導入前に「どう使えるか」と「実際の操作感」を続けて確かめられます。</p>',
+              "proposal hero lead count"
+          )
+          replace_once(
+              "proposal.html",
+              '<div class="p36-proof"><span><b data-p36-count>50</b> SYSTEMS</span><span>提案ページ</span><span>ページ共有</span><span>A4チラシ</span><span>LIVE DEMO</span></div>',
+              '<div class="p36-proof"><span><b data-p36-count>51</b> SYSTEMS</span><span>業種別導入例</span><span>A4資料</span><span>公開LIVE DEMO</span><span>DPRO SHOP相談</span></div>',
+              "proposal proof chips"
+          )
+          replace_once(
+              "proposal.html",
+              '<span>業種別の導入例を確認</span>',
+              '<span>導入例 → 資料 → LIVE DEMO</span>',
+              "proposal hero panel path"
+          )
+          replace_once(
+              "proposal.html",
+              '<div class="p36-visible"><span data-p36-proposal-visible>50</span> / <span data-p36-count>50</span> 件</div>',
+              '<div class="p36-visible"><span data-p36-proposal-visible>51</span> / <span data-p36-count>51</span> 件</div>',
+              "proposal visible count"
+          )
+          replace_once(
+              "proposal.html",
+              '<div><p class="p36-eyebrow">INDUSTRY GUIDE</p><h2>業種別の導入例</h2><p>気になる業種から、詳しい紹介・A4資料・LIVE DEMOへ進めます。</p></div>',
+              '<div><p class="p36-eyebrow">INDUSTRY GUIDE</p><h2>業種別の導入例</h2><p>詳しい紹介で使い方を知り、A4資料で要点を確認し、公開LIVE DEMOで実際の操作感まで確かめられます。</p></div>',
+              "proposal conversion path"
+          )
+          replace_once(
+              "proposal.html",
+              '<div class="p36-proposal-grid" data-p36-proposals><p>50件の業種別の導入例を読み込み中...</p></div>',
+              '<div class="p36-proposal-grid" data-p36-proposals><p>51件の業種別の導入例を読み込み中...</p></div>',
+              "proposal loading count"
+          )
+          replace_once(
+              "proposal.html",
+              '<footer class="p36-footer"><div class="p36-shell p36-footer__grid"><div><a class="p36-brand" href="index.html"><span class="p36-brand__mark">D</span><span><strong>DPRO LINE SYSTEMS</strong><small>PRODUCT SITE</small></span></a><p>50の業種別システムを、探す・触る・提案する。</p></div>',
+              '<footer class="p36-footer"><div class="p36-shell p36-footer__grid"><div><a class="p36-brand" href="index.html"><span class="p36-brand__mark">D</span><span><strong>DPRO LINE SYSTEMS</strong><small>PRODUCT SITE</small></span></a><p>51の業種別システムを、探す・知る・触って確かめる。</p></div>',
+              "proposal footer count"
+          )
+          replace_once(
+              "proposal.html",
+              '<nav class="p36-mobile-cta" aria-label="スマホ固定メニュー"><a class="is-product" href="systems.html">システム一覧</a><a class="is-proposal" href="#proposals">業種別の導入例</a><a class="is-official" href="https://dpro-shop.com/systems/" target="_blank" rel="noopener">DPRO SHOP ↗</a></nav>',
+              '<nav class="p36-mobile-cta" aria-label="スマホ固定メニュー"><a class="is-product" href="#proposals">業種から探す</a><a class="is-proposal" href="index.html#live-demo">LIVE DEMO</a><a class="is-official" href="https://dpro-shop.com/systems/" target="_blank" rel="noopener">料金・導入相談 ↗</a></nav>',
+              "proposal mobile CTA"
+          )
+
+          # ------------------------------------------------------------
+          # dpro-system.html — explanation -> public proof -> price handoff
+          # ------------------------------------------------------------
+          replace_once(
+              "dpro-system.html",
+              'DPRO SYSTEMは、予約・受付・顧客・案件・進捗などを業種に合わせてまとめ、日々の確認先をひとつにする業種別システムです。',
+              'DPRO SYSTEMは、予約・受付・顧客・案件・進捗などを業種に合わせてまとめる業種別システムです。導入前に実画面と公開LIVE DEMOで操作感を確認できます。',
+              "dpro-system meta proof"
+          )
+          replace_once(
+              "dpro-system.html",
+              'LINEやホームページから入った予約・相談・受付を、業種ごとの仕事に合わせてひとつの流れで管理します。機能の多さではなく、日々の運営が途切れないことを重視します。',
+              'LINEやホームページから入った予約・相談・受付を、業種ごとの仕事に合わせてひとつの流れで管理します。説明だけでなく、導入前に実際の画面と公開LIVE DEMOを確認できることもDPRO PRODUCT SITEの大きな特徴です。',
+              "dpro-system hero lead"
+          )
+          replace_once(
+              "dpro-system.html",
+              '>実画面を見る</a>',
+              '>公開LIVE DEMOを見る</a>',
+              "dpro-system hero demo CTA"
+          )
+          replace_once(
+              "dpro-system.html",
+              '<span>実画面デモ</span>',
+              '<span>公開LIVE DEMO</span>',
+              "dpro-system proof chip"
+          )
+          replace_once(
+              "dpro-system.html",
+              '<section class="core-section" id="live-demo"><div class="core-heading"><p class="core-kicker">REAL SCREEN / ON DEMAND</p><h2>導入前に、実際の画面を確認。</h2><p>代表例として、ペットサロンの会員画面を実際に操作してご確認いただけます。</p></div>',
+              '<section class="core-section" id="live-demo"><div class="core-heading"><p class="core-kicker">REAL SCREEN / PUBLIC LIVE DEMO</p><h2>導入前に、実際の画面を見て・触る。</h2><p>代表例として、ペットサロンの会員画面を実際に操作できます。資料だけでは分からない画面遷移や操作感を確認してください。</p></div>',
+              "dpro-system live proof section"
+          )
+          replace_once(
+              "dpro-system.html",
+              '<section class="core-section core-section--dark"><div class="core-heading"><p class="core-kicker">WHY DPRO</p><h2>ゼロから考える前に、完成済みの業種製品を確認できます。</h2><p>業種ごとの製品ページから、機能・デモを分かりやすく確認できます。</p></div>',
+              '<section class="core-section core-section--dark"><div class="core-heading"><p class="core-kicker">WHY DPRO</p><h2>ゼロから考える前に、完成済みの業種製品を確認できます。</h2><p>まず自分の業種を探し、製品ページで内容を確認し、公開LIVE DEMOで実物を触ってから導入を検討できます。</p></div>',
+              "dpro-system why DPRO funnel"
+          )
+          replace_once(
+              "dpro-system.html",
+              '料金・導入条件をOFFICIALで見る ↗',
+              '料金・導入条件をDPRO SHOPで見る ↗',
+              "dpro-system DPRO SHOP label"
+          )
+          replace_once(
+              "dpro-system.html",
+              '>50システムから探す</a>',
+              '>51システムから探す</a>',
+              "dpro-system final count"
+          )
+          replace_once(
+              "dpro-system.html",
+              '<span><b>50製品</b>PRODUCT</span>',
+              '<span><b>51製品</b>PRODUCT</span>',
+              "dpro-system mobile count"
+          )
+
+          # ------------------------------------------------------------
+          # product-v3.6.css — make LIVE DEMO proof visually obvious on catalog cards
+          # ------------------------------------------------------------
+          css = Path("product-v3.6.css")
+          css_text = css.read_text(encoding="utf-8")
+          marker = "/* DPRO PRODUCT SALES BRUSHUP V1.0 */"
+          if marker not in css_text:
+              css_text += '''\n\n/* DPRO PRODUCT SALES BRUSHUP V1.0 */\n.product-v36-catalog .p36-card-actions .is-demo{border:2px solid rgba(165,23,67,.26);background:var(--p36-red-soft);color:var(--p36-red);font-weight:950;box-shadow:0 7px 18px rgba(165,23,67,.08)}\n.product-v36-catalog .p36-card-actions .is-demo:hover{border-color:var(--p36-red);background:#ffe7ee}\n.product-v36-catalog .p36-card-actions .is-product{box-shadow:0 8px 20px rgba(165,23,67,.15)}\n'''
+              css.write_text(css_text, encoding="utf-8")
+              print("APPLY: catalog LIVE DEMO emphasis")
+          else:
+              print("SKIP already applied: catalog LIVE DEMO emphasis")
+          PY
+
+      - name: Static QA gates
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+
+          targets = ["index.html", "systems.html", "proposal.html", "dpro-system.html"]
+          combined = "\n".join(Path(p).read_text(encoding="utf-8") for p in targets)
+
+          stale_patterns = [
+              r"50システム",
+              r"50製品",
+              r"data-p36-count>50",
+              r"data-p36-proposal-visible>50",
+              r'"numberOfItems":50',
+          ]
+          for pat in stale_patterns:
+              if re.search(pat, combined):
+                  raise SystemExit(f"QA FAIL: stale count remains: {pat}")
+
+          required = {
+              "index.html": ["51", "公開LIVE DEMO", "DPRO SHOP", "業種から"],
+              "systems.html": ["51", "公開LIVE DEMO", "DPRO SHOP", "業種から"],
+              "proposal.html": ["51", "公開LIVE DEMO", "DPRO SHOP", "業種から"],
+              "dpro-system.html": ["51", "公開LIVE DEMO", "DPRO SHOP", "業種"],
+          }
+          for path, needles in required.items():
+              text = Path(path).read_text(encoding="utf-8")
+              for needle in needles:
+                  if needle not in text:
+                      raise SystemExit(f"QA FAIL: {path} missing {needle}")
+
+          # Protected routing references must remain present and unedited by this workflow.
+          for path in ["index.html", "systems.html", "proposal.html", "dpro-system.html"]:
+              text = Path(path).read_text(encoding="utf-8")
+              if "systems-data.js" not in text:
+                  raise SystemExit(f"QA FAIL: {path} lost systems-data.js reference")
+
+          print("STATIC CONTENT QA: PASS")
+          PY
+
+          git diff --check
+
+          changed="$(git diff --name-only | sort)"
+          printf '%s\n' "$changed"
+          allowed="$(printf '%s\n' dpro-system.html index.html product-v3.6.css proposal.html systems.html | sort)"
+          if [ "$changed" != "$allowed" ]; then
+            echo "QA FAIL: unexpected changed-file set"
+            echo "EXPECTED:"
+            printf '%s\n' "$allowed"
+            echo "ACTUAL:"
+            printf '%s\n' "$changed"
+            exit 1
+          fi
+
+          # FINAL LOCK guard: these files must not be modified.
+          for protected in systems-data.js demo-guide.html product-v3.6.js; do
+            if git diff --name-only -- "$protected" | grep -q .; then
+              echo "QA FAIL: protected file changed: $protected"
+              exit 1
+            fi
+          done
+
+          echo "FINAL LOCK FILE GUARD: PASS"
+
+      - name: Commit accepted brush-up
+        shell: bash
+        run: |
+          if git diff --quiet; then
+            echo "No changes required."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html systems.html proposal.html dpro-system.html product-v3.6.css
+          git commit -m "PRODUCT SITE sales appeal brush-up V1.0"
+          git push
