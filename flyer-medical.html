@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>DPRO MEDICAL 営業チラシ V1.1</title>
+<style>
+@page{size:A4 portrait;margin:0}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:#dfeaf1;color:#0b2c43;font-family:"Noto Sans CJK JP","Noto Sans JP",sans-serif;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.page{width:210mm;height:297mm;margin:0 auto;background:#fff;position:relative;overflow:hidden}
+.top{height:80mm;position:relative;overflow:hidden;padding:8mm 14mm 6mm;color:#fff;background:linear-gradient(135deg,#061d2e 0%,#0b3552 58%,#0b6790 100%)}
+.top:before{content:"";position:absolute;width:112mm;height:112mm;border-radius:50%;right:-34mm;top:-54mm;background:rgba(78,192,239,.16)}
+.top:after{content:"";position:absolute;width:74mm;height:74mm;border-radius:50%;right:19mm;bottom:-49mm;background:rgba(85,210,191,.12)}
+.brandrow{display:flex;align-items:center;justify-content:space-between;position:relative;z-index:2}
+.brand{display:flex;align-items:center;gap:3mm;font-weight:900;letter-spacing:.02em}
+.brandmark{width:9.8mm;height:9.8mm;border-radius:2.8mm;display:grid;place-items:center;background:#167fbd;font-size:17pt;box-shadow:0 4px 15px rgba(0,0,0,.16)}
+.brand small{display:block;font-size:6.6pt;letter-spacing:.12em;color:#acdcef;margin-top:.2mm}
+.chips{display:flex;gap:2mm;flex-wrap:wrap;justify-content:flex-end}
+.chip{font-size:6.3pt;font-weight:900;letter-spacing:.06em;padding:1.7mm 2.7mm;border:1px solid rgba(255,255,255,.28);border-radius:99px;background:rgba(255,255,255,.08)}
+.hero{position:relative;z-index:2;margin-top:4mm;display:grid;grid-template-columns:1.15fr .85fr;gap:7mm;align-items:end}
+.kicker{font-size:8.3pt;font-weight:900;letter-spacing:.15em;color:#8bd9ff;margin:0 0 2.2mm}
+h1{font-size:25.5pt;line-height:1.08;letter-spacing:-.045em;margin:0 0 3mm;font-weight:950}
+h1 em{font-style:normal;color:#8bd9ff}
+.lead{font-size:8.4pt;line-height:1.5;color:#d9edf8;margin:0;max-width:114mm}
+.hero-card{border:1px solid rgba(255,255,255,.22);border-radius:5mm;padding:3.3mm;background:rgba(255,255,255,.10);backdrop-filter:blur(10px)}
+.hero-card .big{font-size:15.5pt;font-weight:950;line-height:1.1}
+.hero-card p{font-size:6.7pt;line-height:1.45;margin:1.5mm 0 0;color:#d7ebf6}
+.minirow{display:grid;grid-template-columns:repeat(3,1fr);gap:1.4mm;margin-top:2mm}
+.mini{background:rgba(255,255,255,.1);border-radius:2.3mm;padding:1.4mm;text-align:center}
+.mini b{display:block;font-size:10.5pt;color:#fff}
+.mini span{font-size:6.2pt;color:#bfe6f6}
+.main{padding:5mm 12mm 0}
+.section-title{display:flex;align-items:end;justify-content:space-between;gap:5mm;margin-bottom:3mm}.section-title>div{flex:0 0 124mm;min-width:0}
+.section-title small{font-size:6.5pt;font-weight:950;letter-spacing:.14em;color:#1672b3}
+.section-title h2{margin:.5mm 0 0;font-size:14.4pt;line-height:1.25;letter-spacing:-.03em}.section-title h2 .flow-title-line,.section-title h2 .core-line{white-space:nowrap}
+.section-title p{width:49mm;flex:0 0 49mm;margin:0;font-size:7.2pt;line-height:1.55;color:#60778a;text-align:right}
+.flow{display:grid;grid-template-columns:33mm 6mm 1fr 6mm 38mm;gap:2mm;align-items:stretch}
+.entry{border:1px solid #d4e4ed;border-radius:4mm;padding:3mm;background:#f8fbfd}
+.entry h3,.output h3{margin:0 0 2mm;font-size:9.6pt}
+.entry .pill{display:flex;gap:1.5mm;margin-bottom:1.7mm}
+.entry .pill span{flex:1;text-align:center;border-radius:2mm;padding:1.2mm .8mm;color:#fff;font-size:7pt;font-weight:900}
+.entry .pill .line{background:#15a76e} .entry .pill .web{background:#1672b3}
+.entry ul,.output ul{list-style:none;margin:0;padding:0;display:grid;gap:1.2mm}
+.entry li,.output li{font-size:7pt;line-height:1.4;color:#3f6176;padding-left:3.3mm;position:relative}
+.entry li:before,.output li:before{content:"";width:1.6mm;height:1.6mm;border-radius:50%;position:absolute;left:0;top:1.2mm;background:#55b3db}
+.arrow{display:grid;place-items:center;font-weight:950;color:#1672b3;font-size:16pt}
+.core{border-radius:5mm;padding:3.5mm;background:linear-gradient(145deg,#0a3855,#126d94);color:#fff;box-shadow:0 4mm 9mm rgba(10,56,85,.14)}
+.core-head{display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,.15);padding-bottom:2.3mm}
+.core-head small{font-size:6.4pt;letter-spacing:.1em;color:#a9def2;font-weight:900}
+.core-head b{font-size:7.2pt;padding:1mm 1.8mm;border-radius:99px;background:#14795f}
+.core h3{font-size:15pt;margin:2.5mm 0 2mm}
+.steps{display:grid;grid-template-columns:repeat(5,1fr);gap:1.4mm}
+.step{border:1px solid rgba(255,255,255,.13);background:rgba(255,255,255,.07);border-radius:2.5mm;padding:2mm 1.3mm;min-height:21mm}
+.step b{display:grid;place-items:center;width:5.2mm;height:5.2mm;border-radius:50%;background:#fff;color:#0c4668;font-size:6.5pt}
+.step strong{display:block;font-size:7pt;margin-top:1.2mm;line-height:1.3}
+.step span{display:block;font-size:5.9pt;color:#cde7f1;line-height:1.35;margin-top:.7mm}
+.output{border:1px solid #cae0e9;border-radius:4mm;padding:3mm;background:#eef7fb}
+.output .screen{font-size:6.7pt;background:#fff;border:1px solid #d7e8ef;border-radius:2.2mm;padding:1.6mm;margin-bottom:1.1mm;font-weight:800}
+.middle{display:grid;grid-template-columns:1.14fr .86fr;gap:4mm;margin-top:4mm}
+.panel{border:1px solid #d7e4ec;border-radius:4mm;padding:3.7mm;background:#fff}
+.panel.soft{background:#f2f8fb}
+.panel h3{font-size:11pt;margin:0 0 2mm}
+.panel p{font-size:6.9pt;line-height:1.5;color:#5d7486;margin:0}
+.presets{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5mm;margin-top:2.4mm}
+.preset{border:1px solid #d8e8ef;border-radius:2.2mm;padding:1.7mm;background:#fff}
+.preset small{display:block;font-size:5.5pt;color:#1672b3;font-weight:950;letter-spacing:.04em}
+.preset strong{display:block;font-size:7pt;margin-top:.5mm}
+.trust{display:grid;grid-template-columns:1fr 1fr;gap:2mm;margin-top:2.4mm}
+.trustbox{border-radius:2.5mm;padding:2.2mm;background:#eef7fb;border:1px solid #d0e4ee}
+.trustbox.safe{background:#effaf6;border-color:#c9e7dc}
+.trustbox b{font-size:7.3pt;display:block;margin-bottom:.6mm}
+.trustbox span{font-size:5.9pt;line-height:1.4;color:#527084}
+.demo{margin:4mm 12mm 0;border-radius:5mm;padding:4.5mm;background:linear-gradient(135deg,#0a2f49,#0a4867);color:#fff;display:grid;grid-template-columns:1fr 40mm 40mm;gap:4mm;align-items:center}
+.demo .eyebrow{font-size:6.2pt;letter-spacing:.12em;font-weight:950;color:#8bd9ff}
+.demo h2{font-size:15pt;line-height:1.25;margin:1mm 0 1.7mm}
+.demo p{font-size:7.3pt;line-height:1.55;color:#d8eaf3;margin:0}
+.qr{background:#fff;border-radius:3.2mm;padding:2.4mm;color:#143449;text-align:center}
+.qr img{width:27mm;height:27mm;display:block;margin:0 auto 1mm}
+.qr b{display:block;font-size:7.2pt;line-height:1.25}
+.qr span{display:block;font-size:5.3pt;color:#61798a;margin-top:.5mm}
+.bottom{padding:4mm 12mm 0;display:flex;align-items:center;justify-content:space-between;gap:5mm}
+.bottom .note{font-size:5.8pt;line-height:1.5;color:#718798;max-width:139mm}
+.bottom .official{font-size:6.2pt;text-align:right;color:#1672b3;font-weight:900}
+.footer{position:absolute;left:0;right:0;bottom:0;height:9mm;padding:0 12mm;background:#071b2a;color:#b8cfdd;display:flex;align-items:center;justify-content:space-between;font-size:5.7pt}
+@media print{html,body{background:#fff}.page{margin:0}}
+</style></head><body><div class="page">
+<section class="top">
+ <div class="brandrow"><div class="brand"><span class="brandmark">D</span><div>DPRO MEDICAL<small>DPRO SHOP / MEDICAL OPERATIONS</small></div></div><div class="chips"><span class="chip">ONE CORE</span><span class="chip">5 SCREENS</span><span class="chip">6 PRESETS</span><span class="chip">PUBLIC LIVE DEMO</span></div></div>
+ <div class="hero"><div><p class="kicker">予約だけでは、医療の運用はつながらない。</p><h1>患者側から院内まで。<br><em>医療運用を、ひとつに。</em></h1><p class="lead">LINE / WEB → 予約・問診・受付 → 院内進行 → 次回フォロー。患者と医院の運用を同じ医療COREへ。</p></div>
+ <div class="hero-card"><div class="big">「予約システム」ではなく<br>医院運用の基盤へ。</div><p>受付だけ、問診だけ、HPだけを別々に増やすのではなく、必要な機能を医院の運用に合わせて整理します。</p><div class="minirow"><div class="mini"><b>5</b><span>画面</span></div><div class="mini"><b>6</b><span>診療PRESET</span></div><div class="mini"><b>30秒</b><span>LIVE DEMO</span></div></div></div></div>
+</section>
+<main class="main">
+ <div class="section-title"><div><small>MEDICAL OPERATION FLOW</small><h2><span class="flow-title-line">予約・受付・問診・院内進行・再来までを</span><br><span class="core-line">ONE COREへ。</span></h2></div><p>お客様の入口はLINEでもWEBでも。医院側の確認先と運用を、必要な範囲で一つに整理します。</p></div>
+ <div class="flow">
+  <div class="entry"><h3>患者側の入口</h3><div class="pill"><span class="line">LINE</span><span class="web">WEB</span></div><ul><li>予約・問い合わせ</li><li>WEB問診</li><li>来院前の案内</li><li>患者スマホ</li></ul></div>
+  <div class="arrow">→</div>
+  <div class="core"><div class="core-head"><small>DPRO MEDICAL / ONE CORE</small><b>院内で共有</b></div><h3>DPRO MEDICAL</h3><div class="steps"><div class="step"><b>1</b><strong>予約</strong><span>LINE / WEB</span></div><div class="step"><b>2</b><strong>問診</strong><span>来院前確認</span></div><div class="step"><b>3</b><strong>受付</strong><span>来院・待ち</span></div><div class="step"><b>4</b><strong>院内進行</strong><span>状態を共有</span></div><div class="step"><b>5</b><strong>再来</strong><span>次回フォロー</span></div></div></div>
+  <div class="arrow">→</div>
+  <div class="output"><h3>医院側の5画面</h3><div class="screen">📱 患者スマホ</div><div class="screen">🖥 医院管理PC</div><div class="screen">▣ 受付iPad</div><div class="screen">👥 スタッフ</div><div class="screen">🌐 医院HP</div></div>
+ </div>
+ <div class="middle">
+  <section class="panel soft"><h3>診療科に合わせる。COREは増やさない。</h3><p>6つの正式PRESETを基準に、医院ごとの必要機能・設定・ワークフローを構成します。</p><div class="presets"><div class="preset"><small>STANDARD</small><strong>一般・内科</strong></div><div class="preset"><small>EYE</small><strong>眼科</strong></div><div class="preset"><small>PEDIATRIC</small><strong>小児科</strong></div><div class="preset"><small>ORTHO</small><strong>整形外科</strong></div><div class="preset"><small>BEAUTY</small><strong>美容医療</strong></div><div class="preset"><small>WOMEN</small><strong>婦人科・女性医療</strong></div></div></section>
+  <section class="panel"><h3>導入前に、実画面で確認できます。</h3><p>説明だけで決める必要はありません。公開LIVE DEMOで患者側→医院側の反映とPRESET差分を確認できます。</p><div class="trust"><div class="trustbox"><b>PUBLIC DEMO</b><span>架空患者・架空医院の営業用環境。本番患者情報・本番DBを使用しません。</span></div><div class="trustbox safe"><b>REAL CUSTOMER</b><span>実医院では受注後に医院専用環境を準備し、本番確認後に運用開始します。</span></div></div></section>
+ </div>
+</main>
+<section class="demo"><div><div class="eyebrow">SEE IT BEFORE YOU DECIDE</div><h2>まず30秒、実際に触ってください。</h2><p>患者スマホで受付 → 医院管理PCで反映確認 → 診療PRESET切替。導入後のイメージを、相談前に確認できます。</p></div><div class="qr"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAcIAAAHCAQAAAABUY/ToAAADtUlEQVR4nO2czW3rOBCAv1kJyJECXEBKoTvYkoIt6XUgluICHkAeDVCYPZCUaDtvD3G8sYyZgxAz/EARGMyvSFG+JuGvL4JgpJFGGmmkkUYa+XykVBkhiIjIBHJMY3lAebRZxx9+WyOfi0RVVfGqqhoHxcehhdlOFRhUZ6flH93keV/7NPLxZGr2JUyA14xqXARcBn8SAaCYqu9a08jXIMfboUUIU1RZB+R2zl1rGvnapM4uoxq3kUV6//aINY3cN9nskFMgATA0E+Qisv5UEvSatK99GvlwcsvGPk4jxfD400h5AMiRpaRlP/+2Rj4VWTSkty8uo2EaVsNzbkrjLv3ZvvZp5OPIm9weaoLfIqNBdQZ0pv2lltsb2UmzQ+mQBZcB97sZnjQCLKI+TuB1EXyc7l/TyNciq1VRrdlYMUuXlcVSJCqTI1iN0cjPyCBvCk5VjklEZ3cW+Yhtko/UODu8q16SP/G2Rj4VWXyZ4H4L/teEhvc84iNrgn8WSAeFtIjl9kZ+IjVCLqFQbq4trv/fSo4uo7Nrvs98mZFNmtK0dqtfVaokZwy66VBtn5kOGdmL9pJR1aY+JcQuykXtw85gOmTklVTPBF2XrKRk3NaHtg9ATIeMXKUm864WGstYDXu2GOnqYTpkZCetTp37n9A6+DNUDwbQh0z72qeRjyO7GmOxQzUUGro4u6pZbE7OdMjIC7mJh9ZQqDi0MpYBajfNfJmRl7I1Ny4yr5ahVW3KXH1UbTpk5CpbfahrhnVtMddHS1YfMvI/STm6DCSR2hZLIvjTiM7prRaJqkP7tjWNfAFy7ZedRYMMCpR+GeDyKH7OiJ9LPJR7cl/7NPJ/IAfF61lKBz9MsH0/VB/uLAQZW6q/030a+e1k/x3jDGzVxlaibsH2lqFZPGTkhWzFn63d2lL9rVLEWj3CdMjIK+l0aA2YS2nopj7UppgOGXlLdg2ymsfXKEiOLqN6eqvdtK2EtMt9GvkIsuVlRYasxdK0U2VKmtrUdCjWSPx835pGviS5VRZDux1GPuKgciz+rd3eUA3UD7+tkU9FtrPSaQL/C/DxkAnvCmGK/RnFIG3evWsa+eJkmECOgHycpBaENLYziv+85z+SX1/TyF2TN3fHeAUNfy+jhmnIgouAU8Qr4ONy/5pGvibp1hpjuc1q0HK+zMd6XQOkEZHJ+mVGXkm1QyXYYUD8nNf7ZDIKywjpoAJ2vszIz+T63g/dCo11pPRh0XVE713TSCONNNJII4008pnIfwHoygebAgWJ4wAAAABJRU5ErkJggg=="><b>LIVE DEMO</b><span>実際の操作を確認</span></div><div class="qr"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAUoAAAFKAQAAAABTUiuoAAAB60lEQVR4nO2ZQW7jMAxFH0cCsrSBHki+Qa9sH2VuIC0LyGAXkhw36QySAI61oBZObL3FB4hPSqQoD67lz6MkGGqooYYaauiRqNTlkQmQKXlkSu3zdLgAQx9avvyEGSB9oLB6JYGSXAZAjhRg6Ato2iyULgrDV3kVEf8eAYa+gIqMq8iULqrzKQIMfQYN0SnLuDarvV2Aof9eLc8NCiSAIaNQq9X+7ny6VkMruoiIyAhQjoMeYC1HwncIMPSRVbx1335apfrtaAGGPoGiqqoEVSVEIGgGhtz2h7qr8+laDa3RAtB5yOjMjwgy5PJq0eoAbZGJbhcygmZ0xml5WLQ6Qbe6lUsbQ0JcAZwSdBVCHEWPFGDoC5lwqGYqhYotJ86A1a1e0F2NqkkwuvKvbVjd6gdtmTCNABeVchxMHkgjLOLaOf50rYZW4+wMVkpWbkkwYt7qBr2tW6oRVOPmKDsTdoTuvPXjlrXdmLcdi1Yv6HV2zDKu0uqW/wU9RoChz6DFQhHqY2s/LW36349WQ7fZscjotHTjl9J+X60H3y1a78RJ5Gq1twow9D/L334If30mxI8s4DLLZ/bWeeoFvZ8dAxLmL1HSKDvifK2G7iYmgNObjZIJrU/YCXo7O76bIl8HyKdrNdRQQw011NBvLP5Pu4inICQAAAAASUVORK5CYII="><b>LINEで無料相談</b><span>医院の運用から相談</span></div></section>
+<div class="bottom"><div class="note">※ 実際の機能・連携範囲・画面構成は、診療科・医院運用・導入範囲により異なります。公開LIVE DEMOは営業用の架空環境です。</div><div class="official">OFFICIAL SITE<br>dpro-shop.com/systems/medical</div></div>
+<footer class="footer"><span>DPRO SHOP / DPRO MEDICAL</span><span>LINE + WEB + MEDICAL OPERATIONS / ONE CORE</span></footer>
+</div></body></html>
