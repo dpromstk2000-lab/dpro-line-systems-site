@@ -1,0 +1,2362 @@
+{
+  "summary": {
+    "mode": "before",
+    "pages": 50,
+    "checks": 150,
+    "highChecks": 20,
+    "highPages": 15,
+    "overflowChecks": 0,
+    "loadErrors": 0,
+    "auditErrors": 0,
+    "hairIncluded": true
+  },
+  "highPages": [
+    "lp-bakery.html",
+    "lp-btype.html",
+    "lp-car.html",
+    "lp-caretaxi.html",
+    "lp-cleaning.html",
+    "lp-daycare.html",
+    "lp-funeral.html",
+    "lp-green-rental.html",
+    "lp-izakaya.html",
+    "lp-nail.html",
+    "lp-pet-salon.html",
+    "lp-stay.html",
+    "lp-takeout.html",
+    "lp-vet.html",
+    "lp-yakiniku.html"
+  ],
+  "results": [
+    {
+      "file": "lp-bakery.html",
+      "viewport": {
+        "name": "desktop",
+        "width": 1440,
+        "height": 1000
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-bakery.html",
+      "viewport": {
+        "name": "laptop",
+        "width": 1024,
+        "height": 900
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-bakery.html",
+      "viewport": {
+        "name": "mobile",
+        "width": 390,
+        "height": 844
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [
+        {
+          "tag": "H1",
+          "text": "パンを写真で見せて、そのまま取り置きへ。店頭の準備・受け渡しまでつながる、DPROベーカリーシステム。",
+          "lines": [],
+          "counts": [],
+          "width": 0,
+          "font": 0,
+          "reasons": [
+            "element-audit-error"
+          ],
+          "error": "uniq is not defined"
+        },
+        {
+          "tag": "A",
+          "text": "実際のベーカリーDEMOを見る",
+          "lines": [],
+          "counts": [],
+          "width": 0,
+          "font": 0,
+          "reasons": [
+            "element-audit-error"
+          ],
+          "error": "uniq is not defined"
+        }
+      ],
+      "high": true
+    },
+    {
+      "file": "lp-btype.html",
+      "viewport": {
+        "name": "desktop",
+        "width": 1440,
+        "height": 1000
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [
+        {
+          "tag": "H1",
+          "text": "相談から通所、作業、支援、工賃まで。B型事業所の毎日を、ひとつにつなぐ。",
+          "lines": [],
+          "counts": [],
+          "width": 0,
+          "font": 0,
+          "reasons": [
+            "element-audit-error"
+          ],
+          "error": "uniq is not defined"
+        }
+      ],
+      "high": true
+    },
+    {
+      "file": "lp-btype.html",
+      "viewport": {
+        "name": "laptop",
+        "width": 1024,
+        "height": 900
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [
+        {
+          "tag": "H1",
+          "text": "相談から通所、作業、支援、工賃まで。B型事業所の毎日を、ひとつにつなぐ。",
+          "lines": [],
+          "counts": [],
+          "width": 0,
+          "font": 0,
+          "reasons": [
+            "element-audit-error"
+          ],
+          "error": "uniq is not defined"
+        }
+      ],
+      "high": true
+    },
+    {
+      "file": "lp-btype.html",
+      "viewport": {
+        "name": "mobile",
+        "width": 390,
+        "height": 844
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-buyback.html",
+      "viewport": {
+        "name": "desktop",
+        "width": 1440,
+        "height": 1000
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-buyback.html",
+      "viewport": {
+        "name": "laptop",
+        "width": 1024,
+        "height": 900
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-buyback.html",
+      "viewport": {
+        "name": "mobile",
+        "width": 390,
+        "height": 844
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-cake.html",
+      "viewport": {
+        "name": "desktop",
+        "width": 1440,
+        "height": 1000
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-cake.html",
+      "viewport": {
+        "name": "laptop",
+        "width": 1024,
+        "height": 900
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-cake.html",
+      "viewport": {
+        "name": "mobile",
+        "width": 390,
+        "height": 844
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-car-service.html",
+      "viewport": {
+        "name": "desktop",
+        "width": 1440,
+        "height": 1000
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-car-service.html",
+      "viewport": {
+        "name": "laptop",
+        "width": 1024,
+        "height": 900
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-car-service.html",
+      "viewport": {
+        "name": "mobile",
+        "width": 390,
+        "height": 844
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-car.html",
+      "viewport": {
+        "name": "desktop",
+        "width": 1440,
+        "height": 1000
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-car.html",
+      "viewport": {
+        "name": "laptop",
+        "width": 1024,
+        "height": 900
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [
+        {
+          "tag": "H1",
+          "text": "査定・買取から、販売・納車、その後のフォローまで。車とお客様を、ひとつの流れでつなぐ。",
+          "lines": [],
+          "counts": [],
+          "width": 0,
+          "font": 0,
+          "reasons": [
+            "element-audit-error"
+          ],
+          "error": "uniq is not defined"
+        }
+      ],
+      "high": true
+    },
+    {
+      "file": "lp-car.html",
+      "viewport": {
+        "name": "mobile",
+        "width": 390,
+        "height": 844
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-careplan.html",
+      "viewport": {
+        "name": "desktop",
+        "width": 1440,
+        "height": 1000
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-careplan.html",
+      "viewport": {
+        "name": "laptop",
+        "width": 1024,
+        "height": 900
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-careplan.html",
+      "viewport": {
+        "name": "mobile",
+        "width": 390,
+        "height": 844
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-caretaxi.html",
+      "viewport": {
+        "name": "desktop",
+        "width": 1440,
+        "height": 1000
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-caretaxi.html",
+      "viewport": {
+        "name": "laptop",
+        "width": 1024,
+        "height": 900
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [
+        {
+          "tag": "H1",
+          "text": "送迎依頼から、配車・運行・料金管理まで。DPRO介護タクシーシステム",
+          "lines": [],
+          "counts": [],
+          "width": 0,
+          "font": 0,
+          "reasons": [
+            "element-audit-error"
+          ],
+          "error": "uniq is not defined"
+        }
+      ],
+      "high": true
+    },
+    {
+      "file": "lp-caretaxi.html",
+      "viewport": {
+        "name": "mobile",
+        "width": 390,
+        "height": 844
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-chosashi.html",
+      "viewport": {
+        "name": "desktop",
+        "width": 1440,
+        "height": 1000
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-chosashi.html",
+      "viewport": {
+        "name": "laptop",
+        "width": 1024,
+        "height": 900
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-chosashi.html",
+      "viewport": {
+        "name": "mobile",
+        "width": 390,
+        "height": 844
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-cleaning.html",
+      "viewport": {
+        "name": "desktop",
+        "width": 1440,
+        "height": 1000
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-cleaning.html",
+      "viewport": {
+        "name": "laptop",
+        "width": 1024,
+        "height": 900
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-cleaning.html",
+      "viewport": {
+        "name": "mobile",
+        "width": 390,
+        "height": 844
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [
+        {
+          "tag": "H2",
+          "text": "お客様も、「今どうなっている？」を確認できる。",
+          "lines": [],
+          "counts": [],
+          "width": 0,
+          "font": 0,
+          "reasons": [
+            "element-audit-error"
+          ],
+          "error": "uniq is not defined"
+        },
+        {
+          "tag": "H2",
+          "text": "預かるところから、安心して返すところまで。",
+          "lines": [],
+          "counts": [],
+          "width": 0,
+          "font": 0,
+          "reasons": [
+            "element-audit-error"
+          ],
+          "error": "uniq is not defined"
+        },
+        {
+          "tag": "BUTTON",
+          "text": "公開DEMOを確認する",
+          "lines": [],
+          "counts": [],
+          "width": 0,
+          "font": 0,
+          "reasons": [
+            "element-audit-error"
+          ],
+          "error": "uniq is not defined"
+        },
+        {
+          "tag": "A",
+          "text": "LINEで導入を相談する",
+          "lines": [],
+          "counts": [],
+          "width": 0,
+          "font": 0,
+          "reasons": [
+            "element-audit-error"
+          ],
+          "error": "uniq is not defined"
+        }
+      ],
+      "high": true
+    },
+    {
+      "file": "lp-cosmetics.html",
+      "viewport": {
+        "name": "desktop",
+        "width": 1440,
+        "height": 1000
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-cosmetics.html",
+      "viewport": {
+        "name": "laptop",
+        "width": 1024,
+        "height": 900
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-cosmetics.html",
+      "viewport": {
+        "name": "mobile",
+        "width": 390,
+        "height": 844
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-daycare.html",
+      "viewport": {
+        "name": "desktop",
+        "width": 1440,
+        "height": 1000
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [
+        {
+          "tag": "H1",
+          "text": "家族からの連絡を、デイサービスの「今日の業務」まで。",
+          "lines": [],
+          "counts": [],
+          "width": 0,
+          "font": 0,
+          "reasons": [
+            "element-audit-error"
+          ],
+          "error": "uniq is not defined"
+        }
+      ],
+      "high": true
+    },
+    {
+      "file": "lp-daycare.html",
+      "viewport": {
+        "name": "laptop",
+        "width": 1024,
+        "height": 900
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [
+        {
+          "tag": "H1",
+          "text": "家族からの連絡を、デイサービスの「今日の業務」まで。",
+          "lines": [],
+          "counts": [],
+          "width": 0,
+          "font": 0,
+          "reasons": [
+            "element-audit-error"
+          ],
+          "error": "uniq is not defined"
+        }
+      ],
+      "high": true
+    },
+    {
+      "file": "lp-daycare.html",
+      "viewport": {
+        "name": "mobile",
+        "width": 390,
+        "height": 844
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-dental.html",
+      "viewport": {
+        "name": "desktop",
+        "width": 1440,
+        "height": 1000
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-dental.html",
+      "viewport": {
+        "name": "laptop",
+        "width": 1024,
+        "height": 900
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-dental.html",
+      "viewport": {
+        "name": "mobile",
+        "width": 390,
+        "height": 844
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-disposal.html",
+      "viewport": {
+        "name": "desktop",
+        "width": 1440,
+        "height": 1000
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-disposal.html",
+      "viewport": {
+        "name": "laptop",
+        "width": 1024,
+        "height": 900
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-disposal.html",
+      "viewport": {
+        "name": "mobile",
+        "width": 390,
+        "height": 844
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-estate.html",
+      "viewport": {
+        "name": "desktop",
+        "width": 1440,
+        "height": 1000
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-estate.html",
+      "viewport": {
+        "name": "laptop",
+        "width": 1024,
+        "height": 900
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-estate.html",
+      "viewport": {
+        "name": "mobile",
+        "width": 390,
+        "height": 844
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-esthe.html",
+      "viewport": {
+        "name": "desktop",
+        "width": 1440,
+        "height": 1000
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-esthe.html",
+      "viewport": {
+        "name": "laptop",
+        "width": 1024,
+        "height": 900
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-esthe.html",
+      "viewport": {
+        "name": "mobile",
+        "width": 390,
+        "height": 844
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-eye.html",
+      "viewport": {
+        "name": "desktop",
+        "width": 1440,
+        "height": 1000
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-eye.html",
+      "viewport": {
+        "name": "laptop",
+        "width": 1024,
+        "height": 900
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-eye.html",
+      "viewport": {
+        "name": "mobile",
+        "width": 390,
+        "height": 844
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-flower.html",
+      "viewport": {
+        "name": "desktop",
+        "width": 1440,
+        "height": 1000
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-flower.html",
+      "viewport": {
+        "name": "laptop",
+        "width": 1024,
+        "height": 900
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-flower.html",
+      "viewport": {
+        "name": "mobile",
+        "width": 390,
+        "height": 844
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-funeral.html",
+      "viewport": {
+        "name": "desktop",
+        "width": 1440,
+        "height": 1000
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [
+        {
+          "tag": "H1",
+          "text": "葬儀前の相談から、葬儀後・法要まで。ご家族との対応を、ひとつにつなぐ。",
+          "lines": [],
+          "counts": [],
+          "width": 0,
+          "font": 0,
+          "reasons": [
+            "element-audit-error"
+          ],
+          "error": "uniq is not defined"
+        }
+      ],
+      "high": true
+    },
+    {
+      "file": "lp-funeral.html",
+      "viewport": {
+        "name": "laptop",
+        "width": 1024,
+        "height": 900
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [
+        {
+          "tag": "H1",
+          "text": "葬儀前の相談から、葬儀後・法要まで。ご家族との対応を、ひとつにつなぐ。",
+          "lines": [],
+          "counts": [],
+          "width": 0,
+          "font": 0,
+          "reasons": [
+            "element-audit-error"
+          ],
+          "error": "uniq is not defined"
+        }
+      ],
+      "high": true
+    },
+    {
+      "file": "lp-funeral.html",
+      "viewport": {
+        "name": "mobile",
+        "width": 390,
+        "height": 844
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-gakudo.html",
+      "viewport": {
+        "name": "desktop",
+        "width": 1440,
+        "height": 1000
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-gakudo.html",
+      "viewport": {
+        "name": "laptop",
+        "width": 1024,
+        "height": 900
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-gakudo.html",
+      "viewport": {
+        "name": "mobile",
+        "width": 390,
+        "height": 844
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-green-rental.html",
+      "viewport": {
+        "name": "desktop",
+        "width": 1440,
+        "height": 1000
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [
+        {
+          "tag": "H2",
+          "text": "今の巡回方法に合わせて、使う画面から整理できます。",
+          "lines": [],
+          "counts": [],
+          "width": 0,
+          "font": 0,
+          "reasons": [
+            "element-audit-error"
+          ],
+          "error": "uniq is not defined"
+        }
+      ],
+      "high": true
+    },
+    {
+      "file": "lp-green-rental.html",
+      "viewport": {
+        "name": "laptop",
+        "width": 1024,
+        "height": 900
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-green-rental.html",
+      "viewport": {
+        "name": "mobile",
+        "width": 390,
+        "height": 844
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-gym.html",
+      "viewport": {
+        "name": "desktop",
+        "width": 1440,
+        "height": 1000
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-gym.html",
+      "viewport": {
+        "name": "laptop",
+        "width": 1024,
+        "height": 900
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-gym.html",
+      "viewport": {
+        "name": "mobile",
+        "width": 390,
+        "height": 844
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-gyosei.html",
+      "viewport": {
+        "name": "desktop",
+        "width": 1440,
+        "height": 1000
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-gyosei.html",
+      "viewport": {
+        "name": "laptop",
+        "width": 1024,
+        "height": 900
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-gyosei.html",
+      "viewport": {
+        "name": "mobile",
+        "width": 390,
+        "height": 844
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-hair.html",
+      "viewport": {
+        "name": "desktop",
+        "width": 1440,
+        "height": 1000
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-hair.html",
+      "viewport": {
+        "name": "laptop",
+        "width": 1024,
+        "height": 900
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-hair.html",
+      "viewport": {
+        "name": "mobile",
+        "width": 390,
+        "height": 844
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-haishoku.html",
+      "viewport": {
+        "name": "desktop",
+        "width": 1440,
+        "height": 1000
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-haishoku.html",
+      "viewport": {
+        "name": "laptop",
+        "width": 1024,
+        "height": 900
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-haishoku.html",
+      "viewport": {
+        "name": "mobile",
+        "width": 390,
+        "height": 844
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-homecare.html",
+      "viewport": {
+        "name": "desktop",
+        "width": 1440,
+        "height": 1000
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-homecare.html",
+      "viewport": {
+        "name": "laptop",
+        "width": 1024,
+        "height": 900
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-homecare.html",
+      "viewport": {
+        "name": "mobile",
+        "width": 390,
+        "height": 844
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-homenursing.html",
+      "viewport": {
+        "name": "desktop",
+        "width": 1440,
+        "height": 1000
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-homenursing.html",
+      "viewport": {
+        "name": "laptop",
+        "width": 1024,
+        "height": 900
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-homenursing.html",
+      "viewport": {
+        "name": "mobile",
+        "width": 390,
+        "height": 844
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-houkago.html",
+      "viewport": {
+        "name": "desktop",
+        "width": 1440,
+        "height": 1000
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-houkago.html",
+      "viewport": {
+        "name": "laptop",
+        "width": 1024,
+        "height": 900
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-houkago.html",
+      "viewport": {
+        "name": "mobile",
+        "width": 390,
+        "height": 844
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-housekeep.html",
+      "viewport": {
+        "name": "desktop",
+        "width": 1440,
+        "height": 1000
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-housekeep.html",
+      "viewport": {
+        "name": "laptop",
+        "width": 1024,
+        "height": 900
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-housekeep.html",
+      "viewport": {
+        "name": "mobile",
+        "width": 390,
+        "height": 844
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-izakaya.html",
+      "viewport": {
+        "name": "desktop",
+        "width": 1440,
+        "height": 1000
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [
+        {
+          "tag": "H1",
+          "text": "予約受付から、営業中の確認まで一つにつなぐ。",
+          "lines": [],
+          "counts": [],
+          "width": 0,
+          "font": 0,
+          "reasons": [
+            "element-audit-error"
+          ],
+          "error": "uniq is not defined"
+        },
+        {
+          "tag": "H2",
+          "text": "LINEだけでも、HPだけでもない。3つの運用を月額5,500円（税込）で。",
+          "lines": [],
+          "counts": [],
+          "width": 0,
+          "font": 0,
+          "reasons": [
+            "element-audit-error"
+          ],
+          "error": "uniq is not defined"
+        }
+      ],
+      "high": true
+    },
+    {
+      "file": "lp-izakaya.html",
+      "viewport": {
+        "name": "laptop",
+        "width": 1024,
+        "height": 900
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [
+        {
+          "tag": "H1",
+          "text": "予約受付から、営業中の確認まで一つにつなぐ。",
+          "lines": [],
+          "counts": [],
+          "width": 0,
+          "font": 0,
+          "reasons": [
+            "element-audit-error"
+          ],
+          "error": "uniq is not defined"
+        },
+        {
+          "tag": "H2",
+          "text": "お客様・管理PC・営業iPad・LINE通知をひとつの流れに。",
+          "lines": [],
+          "counts": [],
+          "width": 0,
+          "font": 0,
+          "reasons": [
+            "element-audit-error"
+          ],
+          "error": "uniq is not defined"
+        }
+      ],
+      "high": true
+    },
+    {
+      "file": "lp-izakaya.html",
+      "viewport": {
+        "name": "mobile",
+        "width": 390,
+        "height": 844
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-nail.html",
+      "viewport": {
+        "name": "desktop",
+        "width": 1440,
+        "height": 1000
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [
+        {
+          "tag": "H1",
+          "text": "予約だけで終わらない。次の来店までつながる。",
+          "lines": [],
+          "counts": [],
+          "width": 0,
+          "font": 0,
+          "reasons": [
+            "element-audit-error"
+          ],
+          "error": "uniq is not defined"
+        }
+      ],
+      "high": true
+    },
+    {
+      "file": "lp-nail.html",
+      "viewport": {
+        "name": "laptop",
+        "width": 1024,
+        "height": 900
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-nail.html",
+      "viewport": {
+        "name": "mobile",
+        "width": 390,
+        "height": 844
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-pet-salon.html",
+      "viewport": {
+        "name": "desktop",
+        "width": 1440,
+        "height": 1000
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-pet-salon.html",
+      "viewport": {
+        "name": "laptop",
+        "width": 1024,
+        "height": 900
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-pet-salon.html",
+      "viewport": {
+        "name": "mobile",
+        "width": 390,
+        "height": 844
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [
+        {
+          "tag": "H2",
+          "text": "今のサロン運用に、DPROが合うか確認してみませんか？",
+          "lines": [],
+          "counts": [],
+          "width": 0,
+          "font": 0,
+          "reasons": [
+            "element-audit-error"
+          ],
+          "error": "uniq is not defined"
+        },
+        {
+          "tag": "A",
+          "text": "DPRO公式LINEで相談する",
+          "lines": [],
+          "counts": [],
+          "width": 0,
+          "font": 0,
+          "reasons": [
+            "element-audit-error"
+          ],
+          "error": "uniq is not defined"
+        },
+        {
+          "tag": "A",
+          "text": "もう一度DEMOを見る",
+          "lines": [],
+          "counts": [],
+          "width": 0,
+          "font": 0,
+          "reasons": [
+            "element-audit-error"
+          ],
+          "error": "uniq is not defined"
+        }
+      ],
+      "high": true
+    },
+    {
+      "file": "lp-photo.html",
+      "viewport": {
+        "name": "desktop",
+        "width": 1440,
+        "height": 1000
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-photo.html",
+      "viewport": {
+        "name": "laptop",
+        "width": 1024,
+        "height": 900
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-photo.html",
+      "viewport": {
+        "name": "mobile",
+        "width": 390,
+        "height": 844
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-reform.html",
+      "viewport": {
+        "name": "desktop",
+        "width": 1440,
+        "height": 1000
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-reform.html",
+      "viewport": {
+        "name": "laptop",
+        "width": 1024,
+        "height": 900
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-reform.html",
+      "viewport": {
+        "name": "mobile",
+        "width": 390,
+        "height": 844
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-repair.html",
+      "viewport": {
+        "name": "desktop",
+        "width": 1440,
+        "height": 1000
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-repair.html",
+      "viewport": {
+        "name": "laptop",
+        "width": 1024,
+        "height": 900
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-repair.html",
+      "viewport": {
+        "name": "mobile",
+        "width": 390,
+        "height": 844
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-salesnavi.html",
+      "viewport": {
+        "name": "desktop",
+        "width": 1440,
+        "height": 1000
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-salesnavi.html",
+      "viewport": {
+        "name": "laptop",
+        "width": 1024,
+        "height": 900
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-salesnavi.html",
+      "viewport": {
+        "name": "mobile",
+        "width": 390,
+        "height": 844
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-salon.html",
+      "viewport": {
+        "name": "desktop",
+        "width": 1440,
+        "height": 1000
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-salon.html",
+      "viewport": {
+        "name": "laptop",
+        "width": 1024,
+        "height": 900
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-salon.html",
+      "viewport": {
+        "name": "mobile",
+        "width": 390,
+        "height": 844
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-school.html",
+      "viewport": {
+        "name": "desktop",
+        "width": 1440,
+        "height": 1000
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-school.html",
+      "viewport": {
+        "name": "laptop",
+        "width": 1024,
+        "height": 900
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-school.html",
+      "viewport": {
+        "name": "mobile",
+        "width": 390,
+        "height": 844
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-seitai.html",
+      "viewport": {
+        "name": "desktop",
+        "width": 1440,
+        "height": 1000
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-seitai.html",
+      "viewport": {
+        "name": "laptop",
+        "width": 1024,
+        "height": 900
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-seitai.html",
+      "viewport": {
+        "name": "mobile",
+        "width": 390,
+        "height": 844
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-sharoushi.html",
+      "viewport": {
+        "name": "desktop",
+        "width": 1440,
+        "height": 1000
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-sharoushi.html",
+      "viewport": {
+        "name": "laptop",
+        "width": 1024,
+        "height": 900
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-sharoushi.html",
+      "viewport": {
+        "name": "mobile",
+        "width": 390,
+        "height": 844
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-shiho.html",
+      "viewport": {
+        "name": "desktop",
+        "width": 1440,
+        "height": 1000
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-shiho.html",
+      "viewport": {
+        "name": "laptop",
+        "width": 1024,
+        "height": 900
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-shiho.html",
+      "viewport": {
+        "name": "mobile",
+        "width": 390,
+        "height": 844
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-sodan.html",
+      "viewport": {
+        "name": "desktop",
+        "width": 1440,
+        "height": 1000
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-sodan.html",
+      "viewport": {
+        "name": "laptop",
+        "width": 1024,
+        "height": 900
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-sodan.html",
+      "viewport": {
+        "name": "mobile",
+        "width": 390,
+        "height": 844
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-stay.html",
+      "viewport": {
+        "name": "desktop",
+        "width": 1440,
+        "height": 1000
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-stay.html",
+      "viewport": {
+        "name": "laptop",
+        "width": 1024,
+        "height": 900
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [
+        {
+          "tag": "H3",
+          "text": "アクセス・駐車場など同じ案内を繰り返す",
+          "lines": [],
+          "counts": [],
+          "width": 0,
+          "font": 0,
+          "reasons": [
+            "element-audit-error"
+          ],
+          "error": "uniq is not defined"
+        }
+      ],
+      "high": true
+    },
+    {
+      "file": "lp-stay.html",
+      "viewport": {
+        "name": "mobile",
+        "width": 390,
+        "height": 844
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-takeout.html",
+      "viewport": {
+        "name": "desktop",
+        "width": 1440,
+        "height": 1000
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [
+        {
+          "tag": "H1",
+          "text": "「注文を受ける」から「次の注文」まで、ひとつにつなぐ。",
+          "lines": [],
+          "counts": [],
+          "width": 0,
+          "font": 0,
+          "reasons": [
+            "element-audit-error"
+          ],
+          "error": "uniq is not defined"
+        }
+      ],
+      "high": true
+    },
+    {
+      "file": "lp-takeout.html",
+      "viewport": {
+        "name": "laptop",
+        "width": 1024,
+        "height": 900
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [
+        {
+          "tag": "H1",
+          "text": "「注文を受ける」から「次の注文」まで、ひとつにつなぐ。",
+          "lines": [],
+          "counts": [],
+          "width": 0,
+          "font": 0,
+          "reasons": [
+            "element-audit-error"
+          ],
+          "error": "uniq is not defined"
+        }
+      ],
+      "high": true
+    },
+    {
+      "file": "lp-takeout.html",
+      "viewport": {
+        "name": "mobile",
+        "width": 390,
+        "height": 844
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-tax.html",
+      "viewport": {
+        "name": "desktop",
+        "width": 1440,
+        "height": 1000
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-tax.html",
+      "viewport": {
+        "name": "laptop",
+        "width": 1024,
+        "height": 900
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-tax.html",
+      "viewport": {
+        "name": "mobile",
+        "width": 390,
+        "height": 844
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-vet.html",
+      "viewport": {
+        "name": "desktop",
+        "width": 1440,
+        "height": 1000
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-vet.html",
+      "viewport": {
+        "name": "laptop",
+        "width": 1024,
+        "height": 900
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-vet.html",
+      "viewport": {
+        "name": "mobile",
+        "width": 390,
+        "height": 844
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [
+        {
+          "tag": "H1",
+          "text": "診察券だけじゃない。予約・受付・診察・会計待ちまで、ひとつにつなぐ。",
+          "lines": [],
+          "counts": [],
+          "width": 0,
+          "font": 0,
+          "reasons": [
+            "element-audit-error"
+          ],
+          "error": "uniq is not defined"
+        },
+        {
+          "tag": "A",
+          "text": "実画面DEMOを見る",
+          "lines": [],
+          "counts": [],
+          "width": 0,
+          "font": 0,
+          "reasons": [
+            "element-audit-error"
+          ],
+          "error": "uniq is not defined"
+        },
+        {
+          "tag": "A",
+          "text": "LINEで無料相談",
+          "lines": [],
+          "counts": [],
+          "width": 0,
+          "font": 0,
+          "reasons": [
+            "element-audit-error"
+          ],
+          "error": "uniq is not defined"
+        }
+      ],
+      "high": true
+    },
+    {
+      "file": "lp-welfare-shuttle.html",
+      "viewport": {
+        "name": "desktop",
+        "width": 1440,
+        "height": 1000
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-welfare-shuttle.html",
+      "viewport": {
+        "name": "laptop",
+        "width": 1024,
+        "height": 900
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-welfare-shuttle.html",
+      "viewport": {
+        "name": "mobile",
+        "width": 390,
+        "height": 844
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-welfare.html",
+      "viewport": {
+        "name": "desktop",
+        "width": 1440,
+        "height": 1000
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-welfare.html",
+      "viewport": {
+        "name": "laptop",
+        "width": 1024,
+        "height": 900
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-welfare.html",
+      "viewport": {
+        "name": "mobile",
+        "width": 390,
+        "height": 844
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-yakiniku.html",
+      "viewport": {
+        "name": "desktop",
+        "width": 1440,
+        "height": 1000
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-yakiniku.html",
+      "viewport": {
+        "name": "laptop",
+        "width": 1024,
+        "height": 900
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-yakiniku.html",
+      "viewport": {
+        "name": "mobile",
+        "width": 390,
+        "height": 844
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [
+        {
+          "tag": "BUTTON",
+          "text": "オーナーPC",
+          "lines": [],
+          "counts": [],
+          "width": 0,
+          "font": 0,
+          "reasons": [
+            "element-audit-error"
+          ],
+          "error": "uniq is not defined"
+        }
+      ],
+      "high": true
+    },
+    {
+      "file": "lp-yoga.html",
+      "viewport": {
+        "name": "desktop",
+        "width": 1440,
+        "height": 1000
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-yoga.html",
+      "viewport": {
+        "name": "laptop",
+        "width": 1024,
+        "height": 900
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-yoga.html",
+      "viewport": {
+        "name": "mobile",
+        "width": 390,
+        "height": 844
+      },
+      "loadError": "",
+      "auditError": "",
+      "horizontalOverflow": false,
+      "issues": [],
+      "high": false
+    }
+  ]
+}
