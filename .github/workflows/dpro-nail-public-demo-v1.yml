@@ -1,0 +1,122 @@
+name: DPRO NAIL public demo guide V1.0
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/dpro-nail-public-demo-v1.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout current main
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Switch NAIL LIVE DEMO entry to demo guide
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+
+          OLD = 'https://dpromstk2000-lab.github.io/liff-nail-reserve/index.html'
+          NEW = 'https://dpromstk2000-lab.github.io/liff-nail-reserve/demo-guide.html'
+
+          required = [
+              Path('systems-data.js'),
+              Path('systems.html'),
+              Path('systems/nail.html'),
+          ]
+          missing = [str(p) for p in required if not p.exists()]
+          if missing:
+              raise SystemExit('Required files missing: ' + ', '.join(missing))
+
+          # 1) Canonical 50-system data: NAIL object only.
+          p = Path('systems-data.js')
+          text = p.read_text(encoding='utf-8')
+          m = re.search(r'\{\s*"code"\s*:\s*"NAIL".*?\n\s{2}\},', text, flags=re.S)
+          if not m:
+              raise SystemExit('NAIL block not found in systems-data.js')
+          block = m.group(0)
+          if NEW not in block:
+              if block.count(OLD) != 1:
+                  raise SystemExit(f'Expected exactly one old NAIL demoUrl in systems-data.js, found {block.count(OLD)}')
+              block = block.replace(OLD, NEW, 1)
+              text = text[:m.start()] + block + text[m.end():]
+              p.write_text(text, encoding='utf-8')
+
+          # 2) Static catalog: NAIL card only.
+          p = Path('systems.html')
+          text = p.read_text(encoding='utf-8')
+          m = re.search(r'<article\b[^>]*\bdata-code="NAIL"[^>]*>.*?</article>', text, flags=re.S | re.I)
+          if not m:
+              raise SystemExit('NAIL card not found in systems.html')
+          block = m.group(0)
+          if NEW not in block:
+              if OLD not in block:
+                  raise SystemExit('Old NAIL LIVE DEMO URL not found inside systems.html NAIL card')
+              block = block.replace(OLD, NEW)
+              text = text[:m.start()] + block + text[m.end():]
+              p.write_text(text, encoding='utf-8')
+
+          # 3) NAIL detail page: every LIVE-DEMO entry/preview should start at the guide.
+          p = Path('systems/nail.html')
+          text = p.read_text(encoding='utf-8')
+          if NEW not in text:
+              count = text.count(OLD)
+              if count < 1:
+                  raise SystemExit('No NAIL direct demo URL found in systems/nail.html')
+              text = text.replace(OLD, NEW)
+              p.write_text(text, encoding='utf-8')
+
+          # 4) Keep TEXT mirrors synchronized when present.
+          mirrors = [
+              (Path('systems-data.js'), Path('systems-data.js.txt')),
+              (Path('systems.html'), Path('systems.html.txt')),
+              (Path('systems/nail.html'), Path('systems/nail.html.txt')),
+          ]
+          for src, dst in mirrors:
+              if dst.exists():
+                  dst.write_text(src.read_text(encoding='utf-8'), encoding='utf-8')
+
+          # 5) Safety QA.
+          data = Path('systems-data.js').read_text(encoding='utf-8')
+          nail = re.search(r'\{\s*"code"\s*:\s*"NAIL".*?\n\s{2}\},', data, flags=re.S)
+          assert nail and NEW in nail.group(0), 'systems-data.js NAIL demoUrl did not switch'
+
+          catalog = Path('systems.html').read_text(encoding='utf-8')
+          nail_card = re.search(r'<article\b[^>]*\bdata-code="NAIL"[^>]*>.*?</article>', catalog, flags=re.S | re.I)
+          assert nail_card and NEW in nail_card.group(0), 'systems.html NAIL card did not switch'
+
+          detail = Path('systems/nail.html').read_text(encoding='utf-8')
+          assert NEW in detail, 'systems/nail.html did not switch'
+          assert OLD not in detail, 'systems/nail.html still contains direct booking entry URL'
+
+          # Do not touch lp-nail.html / flyer-nail.html: their individual screen links remain useful.
+          print('NAIL PUBLIC DEMO GUIDE V1.0 PATCH: PASS')
+          print('ENTRY:', NEW)
+          PY
+
+      - name: Remove one-shot workflow and commit
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git rm -f .github/workflows/dpro-nail-public-demo-v1.yml
+          git add systems-data.js systems.html systems/nail.html
+          for f in systems-data.js.txt systems.html.txt systems/nail.html.txt; do
+            [ -f "$f" ] && git add "$f"
+          done
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+            exit 0
+          fi
+          git commit -m "NAIL LIVE DEMOを公開操作ガイドV1.0へ切替"
+          git push origin HEAD:main
