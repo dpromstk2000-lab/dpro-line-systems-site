@@ -144,3 +144,32 @@
     else runAddon();
   });
 })();
+/* DPRO PRODUCT 51 SEO GUARD V1.2.1 */
+(() => {
+  "use strict";
+  const patch = () => {
+    document.querySelectorAll('script[type="application/ld+json"]').forEach(script => {
+      try {
+        const data = JSON.parse(script.textContent || "");
+        const visit = node => {
+          if (!node || typeof node !== "object") return;
+          if (typeof node.name === "string") {
+            node.name = node.name
+              .replaceAll("DPRO LINE SYSTEMS 50製品", "DPRO LINE SYSTEMS 51製品")
+              .replaceAll("50システム", "51システム");
+          }
+          if (node.numberOfItems === 50) node.numberOfItems = 51;
+          Object.values(node).forEach(value => {
+            if (Array.isArray(value)) value.forEach(visit);
+            else if (value && typeof value === "object") visit(value);
+          });
+        };
+        visit(data);
+        script.textContent = JSON.stringify(data);
+      } catch (_) {}
+    });
+  };
+  patch();
+  document.addEventListener("DOMContentLoaded", patch, {once:true});
+  window.setTimeout(patch, 700);
+})();

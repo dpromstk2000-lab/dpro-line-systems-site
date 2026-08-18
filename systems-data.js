@@ -1,6 +1,6 @@
-/* DPRO PRODUCT SITE / DPRO MEDICAL CATALOG ADDON V1.1
- * Keeps the current 50-system catalog pinned to commit d8ac2578c4b713493dd80315f8ba7e6d3bfcc269,
- * adds DPRO MEDICAL as the 51st product, and normalizes visible/SEO counts to 51.
+/* DPRO PRODUCT SITE / DPRO MEDICAL CATALOG ADDON V1.2.1
+ * Loads the locked 50-system baseline synchronously during document parsing,
+ * then adds DPRO MEDICAL as product 51 before PRODUCT SITE rendering starts.
  */
 (() => {
   "use strict";
@@ -28,12 +28,14 @@
           if (typeof node.name === "string") {
             node.name = node.name
               .replaceAll("50システム", "51システム")
-              .replaceAll("50の業種別", "51の業種別");
+              .replaceAll("50の業種別", "51の業種別")
+              .replaceAll("DPRO LINE SYSTEMS 50製品", "DPRO LINE SYSTEMS 51製品");
           }
           if (typeof node.description === "string") {
             node.description = node.description
               .replaceAll("50システム", "51システム")
               .replaceAll("50の業種別", "51の業種別")
+              .replaceAll("50の業種専用", "51の業種専用")
               .replaceAll("50の完成", "51の完成");
           }
           if (Object.prototype.hasOwnProperty.call(node, "numberOfItems") && node.numberOfItems === 50) {
@@ -52,7 +54,6 @@
 
   function patch51Copy() {
     if (typeof document === "undefined") return;
-
     document.title = String(document.title || "")
       .replaceAll("50システム", "51システム")
       .replaceAll("50の業種別", "51の業種別");
@@ -63,6 +64,7 @@
       meta.content = String(meta.content || "")
         .replaceAll("50システム", "51システム")
         .replaceAll("50の業種別", "51の業種別")
+        .replaceAll("50の業種専用", "51の業種専用")
         .replaceAll("50の完成", "51の完成");
     });
 
@@ -71,18 +73,18 @@
         ["50の業種別システム", "51の業種別システム"],
         ["50の業種専用DPROシステム", "51の業種専用DPROシステム"],
         ["50製品データを読み込み中", "51製品データを読み込み中"],
-        ["50システム一覧", "51システム一覧"]
+        ["50システム一覧", "51システム一覧"],
+        ["50システムをすべて見る", "51システムをすべて見る"]
       ].forEach(([from,to]) => replaceText(document.body, from, to));
     }
-
     patchStructuredData();
   }
 
   function addMedical(global) {
     const base = global.DPROSystemsData;
     if (!base || !Array.isArray(base.systems)) {
-      console.error("DPRO MEDICAL addon: base systems data unavailable.");
-      return;
+      console.error("DPRO MEDICAL addon: locked baseline unavailable.");
+      return false;
     }
 
     if (!(typeof base.getByCode === "function" && base.getByCode("MEDICAL"))) {
@@ -116,10 +118,9 @@
 
       const frozenSystems = Object.freeze(systems);
       const byCode = new Map(frozenSystems.map(item => [String(item.code || "").toUpperCase(), item]));
-      const categories = base.categories;
 
       global.DPROSystemsData = Object.freeze({
-        categories,
+        categories: base.categories,
         systems: frozenSystems,
         systemCount: frozenSystems.length,
         getByCode(code) {
@@ -133,20 +134,26 @@
     }
 
     patch51Copy();
+    return global.DPROSystemsData?.systems?.length === 51;
   }
 
-  if (typeof document !== "undefined" && document.readyState === "loading") {
-    const inline = "(" + addMedical.toString() + ")(window);";
+  window.__DPRO_MEDICAL_51_BOOT__ = () => {
+    const ok = addMedical(window);
+    if (!ok) console.error("DPRO MEDICAL addon: expected 51 systems after bootstrap.");
+    try { delete window.__DPRO_MEDICAL_51_BOOT__; } catch (_) {}
+  };
+
+  if (document.readyState === "loading") {
     document.write(
-      '<script src="' + CORE + '"><\\/script>' +
-      '<script>' + inline + '<\\/script>'
+      '<script src="' + CORE + '"><\/script>' +
+      '<script>window.__DPRO_MEDICAL_51_BOOT__();<\/script>'
     );
-  } else if (typeof document !== "undefined") {
+  } else {
     const script = document.createElement("script");
     script.src = CORE;
     script.async = false;
-    script.onload = () => addMedical(window);
-    script.onerror = () => console.error("DPRO MEDICAL addon: pinned catalog could not be loaded.");
+    script.onload = () => window.__DPRO_MEDICAL_51_BOOT__?.();
+    script.onerror = () => console.error("DPRO MEDICAL addon: locked baseline could not be loaded.");
     (document.head || document.documentElement).appendChild(script);
   }
 })();
