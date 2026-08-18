@@ -1,0 +1,147 @@
+name: DPRO LP HAIR Wrap Fix V1.2
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/dpro-lp-hair-wrap-fix-v1-2.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Guard current baselines
+        shell: bash
+        run: |
+          hair_blob="$(git hash-object lp-hair.html)"
+          systems_blob="$(git hash-object systems-data.js)"
+          echo "lp-hair.html: $hair_blob"
+          echo "systems-data.js: $systems_blob"
+          test "$hair_blob" = "4a1af3e646c058a466aa9b3e652689ed9b110479" || {
+            echo "BLOCKER: lp-hair.html changed after V1.1."
+            exit 1
+          }
+          test "$systems_blob" = "1388eb84fe70b15a9ee365b990662ee48b725cf2" || {
+            echo "BLOCKER: ALL49 LIVE DEMO routing changed."
+            exit 1
+          }
+
+      - name: Apply V1.2 root-cause fix
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          TARGET = Path("lp-hair.html")
+          MARKER = "DPRO LP HAIR WRAP FIX V1.2 CENTRAL"
+          OLD_H1 = '<h1>予約から美容カルテ、<span>次回来店までをひとつに。</span></h1>'
+          NEW_H1 = '<h1 class="hair-hero-title"><span class="hair-hero-line1">予約から美容カルテ、</span><span class="hair-hero-line2">次回来店までをひとつに。</span></h1>'
+          ANCHOR = '<script defer src="japanese-wrap-v1.js?v=1.0"></script>'
+
+          text = TARGET.read_text(encoding="utf-8")
+
+          if MARKER in text:
+              raise SystemExit("BLOCKER: V1.2 marker already exists")
+          if OLD_H1 not in text:
+              raise SystemExit("BLOCKER: expected HAIR hero H1 source not found")
+          if ANCHOR not in text:
+              raise SystemExit("BLOCKER: Japanese wrap script anchor missing")
+
+          text = text.replace(OLD_H1, NEW_H1, 1)
+
+          late_style = r'''<style id="dpro-hair-wrap-v1-2">
+          /* DPRO LP HAIR WRAP FIX V1.2 CENTRAL
+             Screenshot QA root-cause fix:
+             japanese-wrap-v1.css/js is loaded after the LP inline CSS and adds
+             text-wrap:balance plus nowrap phrase spans. Width-only fixes therefore
+             could still fragment the Japanese headline. V1.2 defines the intended
+             two semantic headline lines after the shared wrap layer. */
+          .hero-copy .hair-hero-title{
+            text-wrap:wrap!important;
+          }
+          .hero-copy .hair-hero-title .hair-hero-line1,
+          .hero-copy .hair-hero-title .hair-hero-line2{
+            display:block!important;
+          }
+          .hero-copy .hair-hero-title .hair-hero-line1{
+            margin-top:0!important;
+            color:var(--brand)!important;
+            font-size:1em!important;
+            line-height:1.08!important;
+          }
+          .hero-copy .hair-hero-title .hair-hero-line2{
+            margin-top:10px!important;
+            color:#293b34!important;
+            font-size:.52em!important;
+            line-height:1.28!important;
+          }
+          .hero-copy .hair-hero-title .dpro-jp-keep,
+          .hero-copy .hair-hero-title .dpro-jp-v11-keep{
+            white-space:inherit!important;
+          }
+
+          @media (min-width:700px){
+            .hero-copy .hair-hero-title .hair-hero-line1,
+            .hero-copy .hair-hero-title .hair-hero-line2{
+              white-space:nowrap!important;
+            }
+          }
+
+          @media (max-width:699px){
+            .hero-copy .hair-hero-title .hair-hero-line1,
+            .hero-copy .hair-hero-title .hair-hero-line2{
+              white-space:normal!important;
+            }
+          }
+          </style>'''
+
+          text = text.replace(ANCHOR, ANCHOR + late_style, 1)
+          TARGET.write_text(text, encoding="utf-8", newline="\n")
+
+          check = TARGET.read_text(encoding="utf-8")
+          if check.count(MARKER) != 1:
+              raise SystemExit("BLOCKER: V1.2 marker count invalid")
+          if NEW_H1 not in check:
+              raise SystemExit("BLOCKER: semantic H1 lines missing")
+          if 'white-space:nowrap!important;' not in check:
+              raise SystemExit("BLOCKER: desktop line lock missing")
+          if check.index(MARKER) < check.index(ANCHOR):
+              raise SystemExit("BLOCKER: V1.2 style is not after shared wrap layer")
+
+          print("PASS: HAIR hero V1.2 root-cause wrap fix applied")
+
+          PY
+
+      - name: Validate scope
+        shell: bash
+        run: |
+          git diff --check -- lp-hair.html
+          changed="$(git diff --name-only)"
+          test "$changed" = "lp-hair.html" || {
+            echo "BLOCKER: unexpected modified files"
+            echo "$changed"
+            exit 1
+          }
+          grep -q "DPRO LP HAIR WRAP FIX V1.2 CENTRAL" lp-hair.html
+          grep -q 'class="hair-hero-title"' lp-hair.html
+          test "$(git hash-object systems-data.js)" = "1388eb84fe70b15a9ee365b990662ee48b725cf2"
+
+      - name: Commit and remove one-shot workflow
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add lp-hair.html
+          git rm --ignore-unmatch ".github/workflows/dpro-lp-hair-wrap-fix-v1-2.yml"
+          git commit -m "Fix HAIR LP hero line wrapping V1.2"
+          git push origin HEAD:main
