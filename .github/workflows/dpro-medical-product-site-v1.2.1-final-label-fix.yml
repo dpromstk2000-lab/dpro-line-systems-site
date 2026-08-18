@@ -1,0 +1,67 @@
+name: DPRO MEDICAL PRODUCT SITE V1.2.1 FINAL LABEL FIX
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/dpro-medical-product-site-v1.2.1-final-label-fix.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  fix:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Align DPRO MEDICAL visible version
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          p = Path("systems/medical.html")
+          text = p.read_text(encoding="utf-8")
+
+          old = '<span class="chip">DPRO MEDICAL / PRODUCT SITE V1.2</span>'
+          new = '<span class="chip">DPRO MEDICAL / PRODUCT SITE V1.2.1</span>'
+
+          if old in text:
+              text = text.replace(old, new, 1)
+          elif new not in text:
+              raise SystemExit("QA FAILED: visible version chip not found")
+
+          p.write_text(text, encoding="utf-8")
+
+          check = p.read_text(encoding="utf-8")
+          assert 'DPRO MEDICAL / PRODUCT SITE V1.2.1' in check
+          assert 'PRODUCT SITE V1.2.1 / PUBLIC DEMO SALES FINAL V1.1' in check
+
+          # Cleanup one-shot MEDICAL product-site workflows after success.
+          for name in (
+              "dpro-medical-product-site-v1.2-apply.yml",
+              "dpro-medical-product-site-v1.2.1-hotfix-r1.yml",
+          ):
+              q = Path(".github/workflows") / name
+              if q.exists():
+                  q.unlink()
+
+          print("QA PASS: PRODUCT SITE V1.2.1 FINAL LABEL FIX")
+          PY
+
+      - name: Commit final label fix
+        shell: bash
+        run: |
+          if git diff --quiet; then
+            echo "No changes to commit."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "DPRO MEDICAL PRODUCT SITE V1.2.1 final label fix"
+          git push
