@@ -1,0 +1,971 @@
+[
+  {
+    "flyer": "flyer-bakery",
+    "status": "PASS",
+    "failReasons": [],
+    "navigationError": "",
+    "pageBox": {
+      "width": 793.7,
+      "height": 1122.5
+    },
+    "footerFound": true,
+    "pageOverflow": false,
+    "collisionCount": 0,
+    "collisions": [],
+    "clippedCount": 0,
+    "clipped": [],
+    "qrCandidateCount": 4,
+    "qrIssueCount": 0,
+    "qrIssues": []
+  },
+  {
+    "flyer": "flyer-btype",
+    "status": "PASS",
+    "failReasons": [],
+    "navigationError": "",
+    "pageBox": {
+      "width": 793.7,
+      "height": 1122.5
+    },
+    "footerFound": true,
+    "pageOverflow": false,
+    "collisionCount": 0,
+    "collisions": [],
+    "clippedCount": 0,
+    "clipped": [],
+    "qrCandidateCount": 4,
+    "qrIssueCount": 0,
+    "qrIssues": []
+  },
+  {
+    "flyer": "flyer-buyback",
+    "status": "PASS",
+    "failReasons": [],
+    "navigationError": "",
+    "pageBox": {
+      "width": 793.7,
+      "height": 1122.5
+    },
+    "footerFound": true,
+    "pageOverflow": false,
+    "collisionCount": 0,
+    "collisions": [],
+    "clippedCount": 0,
+    "clipped": [],
+    "qrCandidateCount": 4,
+    "qrIssueCount": 0,
+    "qrIssues": []
+  },
+  {
+    "flyer": "flyer-cake",
+    "status": "PASS",
+    "failReasons": [],
+    "navigationError": "",
+    "pageBox": {
+      "width": 793.7,
+      "height": 1122.5
+    },
+    "footerFound": true,
+    "pageOverflow": false,
+    "collisionCount": 0,
+    "collisions": [],
+    "clippedCount": 0,
+    "clipped": [],
+    "qrCandidateCount": 4,
+    "qrIssueCount": 0,
+    "qrIssues": []
+  },
+  {
+    "flyer": "flyer-car-service",
+    "status": "PASS",
+    "failReasons": [],
+    "navigationError": "",
+    "pageBox": {
+      "width": 793.7,
+      "height": 1122.5
+    },
+    "footerFound": true,
+    "pageOverflow": false,
+    "collisionCount": 0,
+    "collisions": [],
+    "clippedCount": 0,
+    "clipped": [],
+    "qrCandidateCount": 4,
+    "qrIssueCount": 0,
+    "qrIssues": []
+  },
+  {
+    "flyer": "flyer-car",
+    "status": "PASS",
+    "failReasons": [],
+    "navigationError": "",
+    "pageBox": {
+      "width": 793.7,
+      "height": 1122.5
+    },
+    "footerFound": true,
+    "pageOverflow": false,
+    "collisionCount": 0,
+    "collisions": [],
+    "clippedCount": 0,
+    "clipped": [],
+    "qrCandidateCount": 4,
+    "qrIssueCount": 0,
+    "qrIssues": []
+  },
+  {
+    "flyer": "flyer-careplan",
+    "status": "PASS",
+    "failReasons": [],
+    "navigationError": "",
+    "pageBox": {
+      "width": 793.7,
+      "height": 1122.5
+    },
+    "footerFound": true,
+    "pageOverflow": false,
+    "collisionCount": 0,
+    "collisions": [],
+    "clippedCount": 0,
+    "clipped": [],
+    "qrCandidateCount": 4,
+    "qrIssueCount": 0,
+    "qrIssues": []
+  },
+  {
+    "flyer": "flyer-caretaxi",
+    "status": "PASS",
+    "failReasons": [],
+    "navigationError": "",
+    "pageBox": {
+      "width": 793.7,
+      "height": 1122.5
+    },
+    "footerFound": true,
+    "pageOverflow": false,
+    "collisionCount": 0,
+    "collisions": [],
+    "clippedCount": 0,
+    "clipped": [],
+    "qrCandidateCount": 4,
+    "qrIssueCount": 0,
+    "qrIssues": []
+  },
+  {
+    "flyer": "flyer-chosashi",
+    "status": "PASS",
+    "failReasons": [],
+    "navigationError": "",
+    "pageBox": {
+      "width": 793.7,
+      "height": 1122.5
+    },
+    "footerFound": true,
+    "pageOverflow": false,
+    "collisionCount": 0,
+    "collisions": [],
+    "clippedCount": 0,
+    "clipped": [],
+    "qrCandidateCount": 4,
+    "qrIssueCount": 0,
+    "qrIssues": []
+  },
+  {
+    "flyer": "flyer-cleaning",
+    "status": "PASS",
+    "failReasons": [],
+    "navigationError": "",
+    "pageBox": {
+      "width": 793.7,
+      "height": 1122.5
+    },
+    "footerFound": true,
+    "pageOverflow": false,
+    "collisionCount": 0,
+    "collisions": [],
+    "clippedCount": 0,
+    "clipped": [],
+    "qrCandidateCount": 4,
+    "qrIssueCount": 0,
+    "qrIssues": []
+  },
+  {
+    "flyer": "flyer-cosmetics",
+    "status": "PASS",
+    "failReasons": [],
+    "navigationError": "",
+    "pageBox": {
+      "width": 793.7,
+      "height": 1122.5
+    },
+    "footerFound": true,
+    "pageOverflow": false,
+    "collisionCount": 0,
+    "collisions": [],
+    "clippedCount": 0,
+    "clipped": [],
+    "qrCandidateCount": 4,
+    "qrIssueCount": 0,
+    "qrIssues": []
+  },
+  {
+    "flyer": "flyer-daycare",
+    "status": "PASS",
+    "failReasons": [],
+    "navigationError": "",
+    "pageBox": {
+      "width": 793.7,
+      "height": 1122.5
+    },
+    "footerFound": true,
+    "pageOverflow": false,
+    "collisionCount": 0,
+    "collisions": [],
+    "clippedCount": 0,
+    "clipped": [],
+    "qrCandidateCount": 4,
+    "qrIssueCount": 0,
+    "qrIssues": []
+  },
+  {
+    "flyer": "flyer-dental",
+    "status": "PASS",
+    "failReasons": [],
+    "navigationError": "",
+    "pageBox": {
+      "width": 793.7,
+      "height": 1122.5
+    },
+    "footerFound": true,
+    "pageOverflow": false,
+    "collisionCount": 0,
+    "collisions": [],
+    "clippedCount": 0,
+    "clipped": [],
+    "qrCandidateCount": 4,
+    "qrIssueCount": 0,
+    "qrIssues": []
+  },
+  {
+    "flyer": "flyer-disposal",
+    "status": "PASS",
+    "failReasons": [],
+    "navigationError": "",
+    "pageBox": {
+      "width": 793.7,
+      "height": 1122.5
+    },
+    "footerFound": true,
+    "pageOverflow": false,
+    "collisionCount": 0,
+    "collisions": [],
+    "clippedCount": 0,
+    "clipped": [],
+    "qrCandidateCount": 4,
+    "qrIssueCount": 0,
+    "qrIssues": []
+  },
+  {
+    "flyer": "flyer-estate",
+    "status": "PASS",
+    "failReasons": [],
+    "navigationError": "",
+    "pageBox": {
+      "width": 793.7,
+      "height": 1122.5
+    },
+    "footerFound": true,
+    "pageOverflow": false,
+    "collisionCount": 0,
+    "collisions": [],
+    "clippedCount": 0,
+    "clipped": [],
+    "qrCandidateCount": 4,
+    "qrIssueCount": 0,
+    "qrIssues": []
+  },
+  {
+    "flyer": "flyer-esthe",
+    "status": "PASS",
+    "failReasons": [],
+    "navigationError": "",
+    "pageBox": {
+      "width": 793.7,
+      "height": 1122.5
+    },
+    "footerFound": true,
+    "pageOverflow": false,
+    "collisionCount": 0,
+    "collisions": [],
+    "clippedCount": 0,
+    "clipped": [],
+    "qrCandidateCount": 4,
+    "qrIssueCount": 0,
+    "qrIssues": []
+  },
+  {
+    "flyer": "flyer-eye",
+    "status": "PASS",
+    "failReasons": [],
+    "navigationError": "",
+    "pageBox": {
+      "width": 793.7,
+      "height": 1122.5
+    },
+    "footerFound": true,
+    "pageOverflow": false,
+    "collisionCount": 0,
+    "collisions": [],
+    "clippedCount": 0,
+    "clipped": [],
+    "qrCandidateCount": 4,
+    "qrIssueCount": 0,
+    "qrIssues": []
+  },
+  {
+    "flyer": "flyer-flower",
+    "status": "PASS",
+    "failReasons": [],
+    "navigationError": "",
+    "pageBox": {
+      "width": 793.7,
+      "height": 1122.5
+    },
+    "footerFound": true,
+    "pageOverflow": false,
+    "collisionCount": 0,
+    "collisions": [],
+    "clippedCount": 0,
+    "clipped": [],
+    "qrCandidateCount": 4,
+    "qrIssueCount": 0,
+    "qrIssues": []
+  },
+  {
+    "flyer": "flyer-funeral",
+    "status": "PASS",
+    "failReasons": [],
+    "navigationError": "",
+    "pageBox": {
+      "width": 793.7,
+      "height": 1122.5
+    },
+    "footerFound": true,
+    "pageOverflow": false,
+    "collisionCount": 0,
+    "collisions": [],
+    "clippedCount": 0,
+    "clipped": [],
+    "qrCandidateCount": 4,
+    "qrIssueCount": 0,
+    "qrIssues": []
+  },
+  {
+    "flyer": "flyer-gakudo",
+    "status": "PASS",
+    "failReasons": [],
+    "navigationError": "",
+    "pageBox": {
+      "width": 793.7,
+      "height": 1122.5
+    },
+    "footerFound": true,
+    "pageOverflow": false,
+    "collisionCount": 0,
+    "collisions": [],
+    "clippedCount": 0,
+    "clipped": [],
+    "qrCandidateCount": 4,
+    "qrIssueCount": 0,
+    "qrIssues": []
+  },
+  {
+    "flyer": "flyer-green-rental",
+    "status": "PASS",
+    "failReasons": [],
+    "navigationError": "",
+    "pageBox": {
+      "width": 793.7,
+      "height": 1122.5
+    },
+    "footerFound": true,
+    "pageOverflow": false,
+    "collisionCount": 0,
+    "collisions": [],
+    "clippedCount": 0,
+    "clipped": [],
+    "qrCandidateCount": 4,
+    "qrIssueCount": 0,
+    "qrIssues": []
+  },
+  {
+    "flyer": "flyer-gym",
+    "status": "PASS",
+    "failReasons": [],
+    "navigationError": "",
+    "pageBox": {
+      "width": 793.7,
+      "height": 1122.5
+    },
+    "footerFound": true,
+    "pageOverflow": false,
+    "collisionCount": 0,
+    "collisions": [],
+    "clippedCount": 0,
+    "clipped": [],
+    "qrCandidateCount": 4,
+    "qrIssueCount": 0,
+    "qrIssues": []
+  },
+  {
+    "flyer": "flyer-gyosei",
+    "status": "PASS",
+    "failReasons": [],
+    "navigationError": "",
+    "pageBox": {
+      "width": 793.7,
+      "height": 1122.5
+    },
+    "footerFound": true,
+    "pageOverflow": false,
+    "collisionCount": 0,
+    "collisions": [],
+    "clippedCount": 0,
+    "clipped": [],
+    "qrCandidateCount": 4,
+    "qrIssueCount": 0,
+    "qrIssues": []
+  },
+  {
+    "flyer": "flyer-hair",
+    "status": "PASS",
+    "failReasons": [],
+    "navigationError": "",
+    "pageBox": {
+      "width": 793.7,
+      "height": 1122.5
+    },
+    "footerFound": true,
+    "pageOverflow": false,
+    "collisionCount": 0,
+    "collisions": [],
+    "clippedCount": 0,
+    "clipped": [],
+    "qrCandidateCount": 4,
+    "qrIssueCount": 0,
+    "qrIssues": []
+  },
+  {
+    "flyer": "flyer-haishoku",
+    "status": "PASS",
+    "failReasons": [],
+    "navigationError": "",
+    "pageBox": {
+      "width": 793.7,
+      "height": 1122.5
+    },
+    "footerFound": true,
+    "pageOverflow": false,
+    "collisionCount": 0,
+    "collisions": [],
+    "clippedCount": 0,
+    "clipped": [],
+    "qrCandidateCount": 4,
+    "qrIssueCount": 0,
+    "qrIssues": []
+  },
+  {
+    "flyer": "flyer-homecare",
+    "status": "PASS",
+    "failReasons": [],
+    "navigationError": "",
+    "pageBox": {
+      "width": 793.7,
+      "height": 1122.5
+    },
+    "footerFound": true,
+    "pageOverflow": false,
+    "collisionCount": 0,
+    "collisions": [],
+    "clippedCount": 0,
+    "clipped": [],
+    "qrCandidateCount": 4,
+    "qrIssueCount": 0,
+    "qrIssues": []
+  },
+  {
+    "flyer": "flyer-homenursing",
+    "status": "PASS",
+    "failReasons": [],
+    "navigationError": "",
+    "pageBox": {
+      "width": 793.7,
+      "height": 1122.5
+    },
+    "footerFound": true,
+    "pageOverflow": false,
+    "collisionCount": 0,
+    "collisions": [],
+    "clippedCount": 0,
+    "clipped": [],
+    "qrCandidateCount": 4,
+    "qrIssueCount": 0,
+    "qrIssues": []
+  },
+  {
+    "flyer": "flyer-houkago",
+    "status": "PASS",
+    "failReasons": [],
+    "navigationError": "",
+    "pageBox": {
+      "width": 793.7,
+      "height": 1122.5
+    },
+    "footerFound": true,
+    "pageOverflow": false,
+    "collisionCount": 0,
+    "collisions": [],
+    "clippedCount": 0,
+    "clipped": [],
+    "qrCandidateCount": 4,
+    "qrIssueCount": 0,
+    "qrIssues": []
+  },
+  {
+    "flyer": "flyer-housekeep",
+    "status": "PASS",
+    "failReasons": [],
+    "navigationError": "",
+    "pageBox": {
+      "width": 793.7,
+      "height": 1122.5
+    },
+    "footerFound": true,
+    "pageOverflow": false,
+    "collisionCount": 0,
+    "collisions": [],
+    "clippedCount": 0,
+    "clipped": [],
+    "qrCandidateCount": 4,
+    "qrIssueCount": 0,
+    "qrIssues": []
+  },
+  {
+    "flyer": "flyer-izakaya",
+    "status": "PASS",
+    "failReasons": [],
+    "navigationError": "",
+    "pageBox": {
+      "width": 793.7,
+      "height": 1122.5
+    },
+    "footerFound": true,
+    "pageOverflow": false,
+    "collisionCount": 0,
+    "collisions": [],
+    "clippedCount": 0,
+    "clipped": [],
+    "qrCandidateCount": 4,
+    "qrIssueCount": 0,
+    "qrIssues": []
+  },
+  {
+    "flyer": "flyer-medical",
+    "status": "PASS",
+    "failReasons": [],
+    "navigationError": "",
+    "pageBox": {
+      "width": 793.7,
+      "height": 1122.5
+    },
+    "footerFound": true,
+    "pageOverflow": false,
+    "collisionCount": 0,
+    "collisions": [],
+    "clippedCount": 0,
+    "clipped": [],
+    "qrCandidateCount": 3,
+    "qrIssueCount": 0,
+    "qrIssues": []
+  },
+  {
+    "flyer": "flyer-nail",
+    "status": "PASS",
+    "failReasons": [],
+    "navigationError": "",
+    "pageBox": {
+      "width": 793.7,
+      "height": 1122.5
+    },
+    "footerFound": true,
+    "pageOverflow": false,
+    "collisionCount": 0,
+    "collisions": [],
+    "clippedCount": 0,
+    "clipped": [],
+    "qrCandidateCount": 4,
+    "qrIssueCount": 0,
+    "qrIssues": []
+  },
+  {
+    "flyer": "flyer-pet-salon",
+    "status": "PASS",
+    "failReasons": [],
+    "navigationError": "",
+    "pageBox": {
+      "width": 793.7,
+      "height": 1122.5
+    },
+    "footerFound": true,
+    "pageOverflow": false,
+    "collisionCount": 0,
+    "collisions": [],
+    "clippedCount": 0,
+    "clipped": [],
+    "qrCandidateCount": 4,
+    "qrIssueCount": 0,
+    "qrIssues": []
+  },
+  {
+    "flyer": "flyer-photo",
+    "status": "PASS",
+    "failReasons": [],
+    "navigationError": "",
+    "pageBox": {
+      "width": 793.7,
+      "height": 1122.5
+    },
+    "footerFound": true,
+    "pageOverflow": false,
+    "collisionCount": 0,
+    "collisions": [],
+    "clippedCount": 0,
+    "clipped": [],
+    "qrCandidateCount": 4,
+    "qrIssueCount": 0,
+    "qrIssues": []
+  },
+  {
+    "flyer": "flyer-reform",
+    "status": "PASS",
+    "failReasons": [],
+    "navigationError": "",
+    "pageBox": {
+      "width": 793.7,
+      "height": 1122.5
+    },
+    "footerFound": true,
+    "pageOverflow": false,
+    "collisionCount": 0,
+    "collisions": [],
+    "clippedCount": 0,
+    "clipped": [],
+    "qrCandidateCount": 4,
+    "qrIssueCount": 0,
+    "qrIssues": []
+  },
+  {
+    "flyer": "flyer-repair",
+    "status": "PASS",
+    "failReasons": [],
+    "navigationError": "",
+    "pageBox": {
+      "width": 793.7,
+      "height": 1122.5
+    },
+    "footerFound": true,
+    "pageOverflow": false,
+    "collisionCount": 0,
+    "collisions": [],
+    "clippedCount": 0,
+    "clipped": [],
+    "qrCandidateCount": 4,
+    "qrIssueCount": 0,
+    "qrIssues": []
+  },
+  {
+    "flyer": "flyer-salesnavi",
+    "status": "PASS",
+    "failReasons": [],
+    "navigationError": "",
+    "pageBox": {
+      "width": 793.7,
+      "height": 1122.5
+    },
+    "footerFound": true,
+    "pageOverflow": false,
+    "collisionCount": 0,
+    "collisions": [],
+    "clippedCount": 0,
+    "clipped": [],
+    "qrCandidateCount": 4,
+    "qrIssueCount": 0,
+    "qrIssues": []
+  },
+  {
+    "flyer": "flyer-salon",
+    "status": "PASS",
+    "failReasons": [],
+    "navigationError": "",
+    "pageBox": {
+      "width": 793.7,
+      "height": 1122.5
+    },
+    "footerFound": true,
+    "pageOverflow": false,
+    "collisionCount": 0,
+    "collisions": [],
+    "clippedCount": 0,
+    "clipped": [],
+    "qrCandidateCount": 4,
+    "qrIssueCount": 0,
+    "qrIssues": []
+  },
+  {
+    "flyer": "flyer-school",
+    "status": "PASS",
+    "failReasons": [],
+    "navigationError": "",
+    "pageBox": {
+      "width": 793.7,
+      "height": 1122.5
+    },
+    "footerFound": true,
+    "pageOverflow": false,
+    "collisionCount": 0,
+    "collisions": [],
+    "clippedCount": 0,
+    "clipped": [],
+    "qrCandidateCount": 4,
+    "qrIssueCount": 0,
+    "qrIssues": []
+  },
+  {
+    "flyer": "flyer-seitai",
+    "status": "PASS",
+    "failReasons": [],
+    "navigationError": "",
+    "pageBox": {
+      "width": 793.7,
+      "height": 1122.5
+    },
+    "footerFound": true,
+    "pageOverflow": false,
+    "collisionCount": 0,
+    "collisions": [],
+    "clippedCount": 0,
+    "clipped": [],
+    "qrCandidateCount": 4,
+    "qrIssueCount": 0,
+    "qrIssues": []
+  },
+  {
+    "flyer": "flyer-sharoushi",
+    "status": "PASS",
+    "failReasons": [],
+    "navigationError": "",
+    "pageBox": {
+      "width": 793.7,
+      "height": 1122.5
+    },
+    "footerFound": true,
+    "pageOverflow": false,
+    "collisionCount": 0,
+    "collisions": [],
+    "clippedCount": 0,
+    "clipped": [],
+    "qrCandidateCount": 4,
+    "qrIssueCount": 0,
+    "qrIssues": []
+  },
+  {
+    "flyer": "flyer-shiho",
+    "status": "PASS",
+    "failReasons": [],
+    "navigationError": "",
+    "pageBox": {
+      "width": 793.7,
+      "height": 1122.5
+    },
+    "footerFound": true,
+    "pageOverflow": false,
+    "collisionCount": 0,
+    "collisions": [],
+    "clippedCount": 0,
+    "clipped": [],
+    "qrCandidateCount": 4,
+    "qrIssueCount": 0,
+    "qrIssues": []
+  },
+  {
+    "flyer": "flyer-sodan",
+    "status": "PASS",
+    "failReasons": [],
+    "navigationError": "",
+    "pageBox": {
+      "width": 793.7,
+      "height": 1122.5
+    },
+    "footerFound": true,
+    "pageOverflow": false,
+    "collisionCount": 0,
+    "collisions": [],
+    "clippedCount": 0,
+    "clipped": [],
+    "qrCandidateCount": 4,
+    "qrIssueCount": 0,
+    "qrIssues": []
+  },
+  {
+    "flyer": "flyer-stay",
+    "status": "PASS",
+    "failReasons": [],
+    "navigationError": "",
+    "pageBox": {
+      "width": 793.7,
+      "height": 1122.5
+    },
+    "footerFound": true,
+    "pageOverflow": false,
+    "collisionCount": 0,
+    "collisions": [],
+    "clippedCount": 0,
+    "clipped": [],
+    "qrCandidateCount": 4,
+    "qrIssueCount": 0,
+    "qrIssues": []
+  },
+  {
+    "flyer": "flyer-takeout",
+    "status": "PASS",
+    "failReasons": [],
+    "navigationError": "",
+    "pageBox": {
+      "width": 793.7,
+      "height": 1122.5
+    },
+    "footerFound": true,
+    "pageOverflow": false,
+    "collisionCount": 0,
+    "collisions": [],
+    "clippedCount": 0,
+    "clipped": [],
+    "qrCandidateCount": 4,
+    "qrIssueCount": 0,
+    "qrIssues": []
+  },
+  {
+    "flyer": "flyer-tax",
+    "status": "PASS",
+    "failReasons": [],
+    "navigationError": "",
+    "pageBox": {
+      "width": 793.7,
+      "height": 1122.5
+    },
+    "footerFound": true,
+    "pageOverflow": false,
+    "collisionCount": 0,
+    "collisions": [],
+    "clippedCount": 0,
+    "clipped": [],
+    "qrCandidateCount": 4,
+    "qrIssueCount": 0,
+    "qrIssues": []
+  },
+  {
+    "flyer": "flyer-vet",
+    "status": "PASS",
+    "failReasons": [],
+    "navigationError": "",
+    "pageBox": {
+      "width": 793.7,
+      "height": 1122.5
+    },
+    "footerFound": true,
+    "pageOverflow": false,
+    "collisionCount": 0,
+    "collisions": [],
+    "clippedCount": 0,
+    "clipped": [],
+    "qrCandidateCount": 4,
+    "qrIssueCount": 0,
+    "qrIssues": []
+  },
+  {
+    "flyer": "flyer-welfare-shuttle",
+    "status": "PASS",
+    "failReasons": [],
+    "navigationError": "",
+    "pageBox": {
+      "width": 793.7,
+      "height": 1122.5
+    },
+    "footerFound": true,
+    "pageOverflow": false,
+    "collisionCount": 0,
+    "collisions": [],
+    "clippedCount": 0,
+    "clipped": [],
+    "qrCandidateCount": 4,
+    "qrIssueCount": 0,
+    "qrIssues": []
+  },
+  {
+    "flyer": "flyer-welfare",
+    "status": "PASS",
+    "failReasons": [],
+    "navigationError": "",
+    "pageBox": {
+      "width": 793.7,
+      "height": 1122.5
+    },
+    "footerFound": true,
+    "pageOverflow": false,
+    "collisionCount": 0,
+    "collisions": [],
+    "clippedCount": 0,
+    "clipped": [],
+    "qrCandidateCount": 4,
+    "qrIssueCount": 0,
+    "qrIssues": []
+  },
+  {
+    "flyer": "flyer-yakiniku",
+    "status": "PASS",
+    "failReasons": [],
+    "navigationError": "",
+    "pageBox": {
+      "width": 793.7,
+      "height": 1122.5
+    },
+    "footerFound": true,
+    "pageOverflow": false,
+    "collisionCount": 0,
+    "collisions": [],
+    "clippedCount": 0,
+    "clipped": [],
+    "qrCandidateCount": 4,
+    "qrIssueCount": 0,
+    "qrIssues": []
+  },
+  {
+    "flyer": "flyer-yoga",
+    "status": "PASS",
+    "failReasons": [],
+    "navigationError": "",
+    "pageBox": {
+      "width": 793.7,
+      "height": 1122.5
+    },
+    "footerFound": true,
+    "pageOverflow": false,
+    "collisionCount": 0,
+    "collisions": [],
+    "clippedCount": 0,
+    "clipped": [],
+    "qrCandidateCount": 4,
+    "qrIssueCount": 0,
+    "qrIssues": []
+  }
+]

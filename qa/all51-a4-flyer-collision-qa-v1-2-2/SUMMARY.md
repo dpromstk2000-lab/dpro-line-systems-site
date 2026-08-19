@@ -1,0 +1,67 @@
+# DPRO ALL51 A4 FLYER COLLISION QA V1.2.2
+
+- HTML flyers: 51
+- expected: 51
+- PASS: 51
+- FAIL: 0
+- navigation errors: 0
+- footer collisions: 0
+- page overflow: 0
+- clipped content: 0
+- QR layout issues: 0
+
+## FAIL
+- NONE
+
+## DETAILS
+- flyer-bakery: PASS / collision=0 / overflow=false / clipped=0 / qrCandidates=4 / qrIssues=0
+- flyer-btype: PASS / collision=0 / overflow=false / clipped=0 / qrCandidates=4 / qrIssues=0
+- flyer-buyback: PASS / collision=0 / overflow=false / clipped=0 / qrCandidates=4 / qrIssues=0
+- flyer-cake: PASS / collision=0 / overflow=false / clipped=0 / qrCandidates=4 / qrIssues=0
+- flyer-car-service: PASS / collision=0 / overflow=false / clipped=0 / qrCandidates=4 / qrIssues=0
+- flyer-car: PASS / collision=0 / overflow=false / clipped=0 / qrCandidates=4 / qrIssues=0
+- flyer-careplan: PASS / collision=0 / overflow=false / clipped=0 / qrCandidates=4 / qrIssues=0
+- flyer-caretaxi: PASS / collision=0 / overflow=false / clipped=0 / qrCandidates=4 / qrIssues=0
+- flyer-chosashi: PASS / collision=0 / overflow=false / clipped=0 / qrCandidates=4 / qrIssues=0
+- flyer-cleaning: PASS / collision=0 / overflow=false / clipped=0 / qrCandidates=4 / qrIssues=0
+- flyer-cosmetics: PASS / collision=0 / overflow=false / clipped=0 / qrCandidates=4 / qrIssues=0
+- flyer-daycare: PASS / collision=0 / overflow=false / clipped=0 / qrCandidates=4 / qrIssues=0
+- flyer-dental: PASS / collision=0 / overflow=false / clipped=0 / qrCandidates=4 / qrIssues=0
+- flyer-disposal: PASS / collision=0 / overflow=false / clipped=0 / qrCandidates=4 / qrIssues=0
+- flyer-estate: PASS / collision=0 / overflow=false / clipped=0 / qrCandidates=4 / qrIssues=0
+- flyer-esthe: PASS / collision=0 / overflow=false / clipped=0 / qrCandidates=4 / qrIssues=0
+- flyer-eye: PASS / collision=0 / overflow=false / clipped=0 / qrCandidates=4 / qrIssues=0
+- flyer-flower: PASS / collision=0 / overflow=false / clipped=0 / qrCandidates=4 / qrIssues=0
+- flyer-funeral: PASS / collision=0 / overflow=false / clipped=0 / qrCandidates=4 / qrIssues=0
+- flyer-gakudo: PASS / collision=0 / overflow=false / clipped=0 / qrCandidates=4 / qrIssues=0
+- flyer-green-rental: PASS / collision=0 / overflow=false / clipped=0 / qrCandidates=4 / qrIssues=0
+- flyer-gym: PASS / collision=0 / overflow=false / clipped=0 / qrCandidates=4 / qrIssues=0
+- flyer-gyosei: PASS / collision=0 / overflow=false / clipped=0 / qrCandidates=4 / qrIssues=0
+- flyer-hair: PASS / collision=0 / overflow=false / clipped=0 / qrCandidates=4 / qrIssues=0
+- flyer-haishoku: PASS / collision=0 / overflow=false / clipped=0 / qrCandidates=4 / qrIssues=0
+- flyer-homecare: PASS / collision=0 / overflow=false / clipped=0 / qrCandidates=4 / qrIssues=0
+- flyer-homenursing: PASS / collision=0 / overflow=false / clipped=0 / qrCandidates=4 / qrIssues=0
+- flyer-houkago: PASS / collision=0 / overflow=false / clipped=0 / qrCandidates=4 / qrIssues=0
+- flyer-housekeep: PASS / collision=0 / overflow=false / clipped=0 / qrCandidates=4 / qrIssues=0
+- flyer-izakaya: PASS / collision=0 / overflow=false / clipped=0 / qrCandidates=4 / qrIssues=0
+- flyer-medical: PASS / collision=0 / overflow=false / clipped=0 / qrCandidates=3 / qrIssues=0
+- flyer-nail: PASS / collision=0 / overflow=false / clipped=0 / qrCandidates=4 / qrIssues=0
+- flyer-pet-salon: PASS / collision=0 / overflow=false / clipped=0 / qrCandidates=4 / qrIssues=0
+- flyer-photo: PASS / collision=0 / overflow=false / clipped=0 / qrCandidates=4 / qrIssues=0
+- flyer-reform: PASS / collision=0 / overflow=false / clipped=0 / qrCandidates=4 / qrIssues=0
+- flyer-repair: PASS / collision=0 / overflow=false / clipped=0 / qrCandidates=4 / qrIssues=0
+- flyer-salesnavi: PASS / collision=0 / overflow=false / clipped=0 / qrCandidates=4 / qrIssues=0
+- flyer-salon: PASS / collision=0 / overflow=false / clipped=0 / qrCandidates=4 / qrIssues=0
+- flyer-school: PASS / collision=0 / overflow=false / clipped=0 / qrCandidates=4 / qrIssues=0
+- flyer-seitai: PASS / collision=0 / overflow=false / clipped=0 / qrCandidates=4 / qrIssues=0
+- flyer-sharoushi: PASS / collision=0 / overflow=false / clipped=0 / qrCandidates=4 / qrIssues=0
+- flyer-shiho: PASS / collision=0 / overflow=false / clipped=0 / qrCandidates=4 / qrIssues=0
+- flyer-sodan: PASS / collision=0 / overflow=false / clipped=0 / qrCandidates=4 / qrIssues=0
+- flyer-stay: PASS / collision=0 / overflow=false / clipped=0 / qrCandidates=4 / qrIssues=0
+- flyer-takeout: PASS / collision=0 / overflow=false / clipped=0 / qrCandidates=4 / qrIssues=0
+- flyer-tax: PASS / collision=0 / overflow=false / clipped=0 / qrCandidates=4 / qrIssues=0
+- flyer-vet: PASS / collision=0 / overflow=false / clipped=0 / qrCandidates=4 / qrIssues=0
+- flyer-welfare-shuttle: PASS / collision=0 / overflow=false / clipped=0 / qrCandidates=4 / qrIssues=0
+- flyer-welfare: PASS / collision=0 / overflow=false / clipped=0 / qrCandidates=4 / qrIssues=0
+- flyer-yakiniku: PASS / collision=0 / overflow=false / clipped=0 / qrCandidates=4 / qrIssues=0
+- flyer-yoga: PASS / collision=0 / overflow=false / clipped=0 / qrCandidates=4 / qrIssues=0
