@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>DPRO MEDICAL A4 FLYER V1.2 / MASTER FORMAT CONFORMANCE</title>
+<title>DPRO MEDICAL A4 FLYER V1.2.1 / OVERLAP & QR FIX</title>
 <style>
 @page{size:A4 portrait;margin:0}
 *{box-sizing:border-box}
@@ -13,21 +13,21 @@ html,body{margin:0;background:#dce7ed;color:var(--ink);font-family:"Noto Sans JP
 .toolbar button{border:0;border-radius:999px;padding:10px 18px;font-weight:900;cursor:pointer}
 .toolbar .print{background:#1ed79b;color:#042d23} .toolbar .topbtn{background:#fff;color:#183b35}
 .stage{padding:28px 0 46px}
-.page{width:210mm;height:297mm;margin:0 auto;background:#fff;box-shadow:0 22px 55px rgba(15,45,65,.18);position:relative;overflow:hidden}
-.hero{height:75mm;background:linear-gradient(135deg,#062b43 0%,#0a4260 56%,#107598 100%);color:#fff;display:grid;grid-template-columns:1.12fr .88fr;position:relative;overflow:hidden}
+.page{width:210mm;height:297mm;margin:0 auto;background:#fff;box-shadow:0 22px 55px rgba(15,45,65,.18);display:grid;grid-template-rows:72mm 1fr 9mm;overflow:hidden}
+.hero{height:72mm;background:linear-gradient(135deg,#062b43 0%,#0a4260 56%,#107598 100%);color:#fff;display:grid;grid-template-columns:1.12fr .88fr;position:relative;overflow:hidden}
 .hero:after{content:"";position:absolute;width:96mm;height:96mm;border-radius:50%;right:-26mm;top:-46mm;background:rgba(74,203,219,.15)}
-.hero-copy{padding:9mm 8mm 6mm 13mm;position:relative;z-index:2}
+.hero-copy{padding:8mm 7mm 5mm 12mm;position:relative;z-index:2}
 .brandrow{display:flex;align-items:center;gap:3mm;font-weight:950;font-size:11.5pt}
 .logo{width:9mm;height:9mm;border-radius:2.6mm;background:#1498d0;display:grid;place-items:center;font-size:15pt}
 .brandrow small{display:block;font-size:5.6pt;letter-spacing:.15em;color:#a7ddec;margin-top:.4mm}
-.eyebrow{font-size:6.2pt;font-weight:950;letter-spacing:.14em;color:#77e2d1;margin:7mm 0 2mm}
-.hero h1{font-size:25pt;line-height:1.12;letter-spacing:-.045em;margin:0 0 2.5mm;font-weight:950}
+.eyebrow{font-size:6pt;font-weight:950;letter-spacing:.14em;color:#77e2d1;margin:5.6mm 0 1.7mm}
+.hero h1{font-size:23pt;line-height:1.1;letter-spacing:-.045em;margin:0 0 2mm;font-weight:950}
 .hero h1 em{font-style:normal;color:#7ee4ff}
-.hero .lead{font-size:7.2pt;line-height:1.55;color:#d9edf5;margin:0;max-width:104mm}
-.hero .chips{display:flex;gap:1.5mm;flex-wrap:wrap;margin-top:3mm}
+.hero .lead{font-size:6.8pt;line-height:1.5;color:#d9edf5;margin:0;max-width:102mm}
+.hero .chips{display:flex;gap:1.3mm;flex-wrap:wrap;margin-top:2.4mm}
 .hero .chip{border:1px solid rgba(255,255,255,.25);border-radius:99px;padding:1.3mm 2mm;font-size:5.6pt;font-weight:900;background:rgba(255,255,255,.07)}
-.hero-visual{padding:8mm 10mm 7mm 3mm;position:relative;z-index:2;display:flex;align-items:center}
-.visual-card{width:100%;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.10);border-radius:5mm;padding:4mm;box-shadow:0 4mm 12mm rgba(0,0,0,.12)}
+.hero-visual{padding:7mm 9mm 6mm 3mm;position:relative;z-index:2;display:flex;align-items:center}
+.visual-card{width:100%;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.10);border-radius:5mm;padding:3.5mm;box-shadow:0 4mm 12mm rgba(0,0,0,.12)}
 .visual-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:3mm}
 .visual-top strong{font-size:10pt} .live{font-size:5.5pt;background:#16ad78;border-radius:99px;padding:1mm 1.8mm;font-weight:950}
 .scene{display:grid;grid-template-columns:1fr auto 1fr;gap:2mm;align-items:stretch}
@@ -39,41 +39,41 @@ html,body{margin:0;background:#dce7ed;color:var(--ink);font-family:"Noto Sans JP
 .arrow{display:grid;place-items:center;color:#bdebf4;font-size:14pt;font-weight:950}
 .screen .mini{display:grid;grid-template-columns:repeat(2,1fr);gap:1mm;margin-top:1.6mm}
 .screen .mini i{height:7mm;border-radius:1.4mm;background:#eef6f9;border:1px solid #d3e6ed;display:grid;place-items:center;font-style:normal;font-size:5pt;color:#0f6385;font-weight:900}
-.main{padding:4.5mm 12mm 0}
+.main{padding:4mm 11mm 0;overflow:hidden}
 .section-title small{font-size:5.8pt;font-weight:950;letter-spacing:.14em;color:#0f7fa8}
-.section-title h2{font-size:13.8pt;line-height:1.25;letter-spacing:-.025em;margin:.7mm 0 2.4mm}
-.features{display:grid;grid-template-columns:repeat(3,1fr);gap:2mm}
-.feature{border:1px solid var(--line);border-radius:3mm;padding:2.3mm;background:#fff;min-height:22mm}
-.feature .num{font-size:5.2pt;color:#188462;font-weight:950} .feature b{display:block;font-size:7.2pt;margin:.8mm 0} .feature p{font-size:5.5pt;line-height:1.42;color:var(--muted);margin:0}
-.connected{margin-top:3mm;border-radius:4.5mm;background:linear-gradient(135deg,#082f3d,#0b513f);color:#fff;padding:3.6mm}
-.connected-head{display:flex;align-items:end;justify-content:space-between;gap:4mm;margin-bottom:2.2mm}
-.connected-head small{font-size:5.2pt;color:#55dfb5;font-weight:950;letter-spacing:.13em} .connected-head h3{font-size:11.2pt;margin:.7mm 0 0}
+.section-title h2{font-size:13pt;line-height:1.22;letter-spacing:-.025em;margin:.5mm 0 2mm}
+.features{display:grid;grid-template-columns:repeat(3,1fr);gap:1.6mm}
+.feature{border:1px solid var(--line);border-radius:3mm;padding:2mm;background:#fff;min-height:19mm}
+.feature .num{font-size:5pt;color:#188462;font-weight:950} .feature b{display:block;font-size:6.8pt;margin:.6mm 0} .feature p{font-size:5.1pt;line-height:1.35;color:var(--muted);margin:0}
+.connected{margin-top:2.4mm;border-radius:4.2mm;background:linear-gradient(135deg,#082f3d,#0b513f);color:#fff;padding:3mm}
+.connected-head{display:flex;align-items:end;justify-content:space-between;gap:3mm;margin-bottom:1.8mm}
+.connected-head small{font-size:5.2pt;color:#55dfb5;font-weight:950;letter-spacing:.13em} .connected-head h3{font-size:10.5pt;margin:.5mm 0 0}
 .connected-head p{font-size:5.3pt;line-height:1.4;color:#cae8dd;text-align:right;margin:0}
-.conn-grid{display:grid;grid-template-columns:33mm 6mm 1fr 6mm 44mm;gap:1.4mm;align-items:stretch}
-.conn-box{border:1px solid rgba(255,255,255,.17);border-radius:2.5mm;background:rgba(255,255,255,.07);padding:2mm}
-.conn-box small{font-size:5pt;color:#71e7c3;font-weight:950} .conn-box b{display:block;font-size:6.8pt;margin:.8mm 0} .conn-box p{font-size:5.1pt;line-height:1.35;margin:0;color:#d9eee7}
+.conn-grid{display:grid;grid-template-columns:32mm 5.4mm 1fr 5.4mm 42mm;gap:1.2mm;align-items:stretch}
+.conn-box{border:1px solid rgba(255,255,255,.17);border-radius:2.5mm;background:rgba(255,255,255,.07);padding:1.7mm}
+.conn-box small{font-size:4.8pt;color:#71e7c3;font-weight:950} .conn-box b{display:block;font-size:6.5pt;margin:.6mm 0} .conn-box p{font-size:4.9pt;line-height:1.28;margin:0;color:#d9eee7}
 .core{background:#12b77b;color:#062d25;display:grid;place-items:center;text-align:center}
-.core b{font-size:10.5pt} .core span{font-size:5.2pt;font-weight:900;margin-top:.7mm}
+.core b{font-size:9.8pt} .core span{font-size:5pt;font-weight:900;margin-top:.6mm}
 .conn-arrow{display:grid;place-items:center;font-size:13pt;color:#79e3c1}
 .screen-list{display:grid;grid-template-columns:repeat(2,1fr);gap:1mm;margin-top:1.4mm}
-.screen-list i{font-style:normal;background:#fff;color:#124658;border-radius:1.4mm;padding:1mm;font-size:4.8pt;font-weight:900;text-align:center}
-.pricecheck{margin-top:3mm;border:1px solid #eadfcd;border-radius:4mm;background:#fffaf3;padding:3mm}
+.screen-list i{font-style:normal;background:#fff;color:#124658;border-radius:1.4mm;padding:.9mm;font-size:4.7pt;font-weight:900;text-align:center}
+.pricecheck{margin-top:2.4mm;border:1px solid #eadfcd;border-radius:4mm;background:#fffaf3;padding:2.5mm}
 .price-top{display:flex;justify-content:space-between;align-items:end;gap:3mm}
-.price-top small{font-size:5.2pt;color:#a56e24;font-weight:950;letter-spacing:.12em} .price-top h3{font-size:9.8pt;margin:.5mm 0 0}
+.price-top small{font-size:5.2pt;color:#a56e24;font-weight:950;letter-spacing:.12em} .price-top h3{font-size:9.2pt;margin:.4mm 0 0}
 .price-top p{font-size:5.2pt;color:#806c55;margin:0;text-align:right}
-.price-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.6mm;margin-top:2mm}
-.price-card{background:#fff;border:1px solid #eadfcd;border-radius:2.5mm;padding:2mm}
-.price-card b{font-size:6pt} .price-card span{display:block;font-size:5pt;color:#816d58;margin-top:.8mm;line-height:1.35}
-.totalbox{margin-top:2mm;border:1px solid #bfe0d2;background:#f4fffb;border-radius:3mm;padding:2.6mm;display:grid;grid-template-columns:1.2fr .8fr;gap:3mm;align-items:center}
-.totalbox strong{font-size:11pt;color:#0a8d65} .totalbox b{display:block;font-size:7pt;margin-bottom:.5mm} .totalbox p{font-size:5.2pt;color:#557367;margin:0;line-height:1.4}
-.ctas{margin-top:3mm}
-.cta-head small{font-size:5.1pt;color:#15856e;font-weight:950;letter-spacing:.11em} .cta-head h3{font-size:10pt;margin:.5mm 0 2mm}
-.cta-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.8mm}
-.cta{border:1px solid var(--line);border-radius:3mm;padding:2.1mm;background:#fff;display:grid;grid-template-columns:1fr 21mm;gap:2mm;align-items:center;min-height:31mm}
-.cta small{font-size:4.8pt;color:#167a69;font-weight:950} .cta b{display:block;font-size:6.7pt;margin:.6mm 0} .cta p{font-size:4.8pt;color:#657884;line-height:1.35;margin:0}
-.cta img{width:20mm;height:20mm;border:1px solid #d7e1e7;border-radius:1.6mm;padding:.7mm;background:#fff}
-.url{font-size:4.7pt;color:#1372a2;font-weight:900;word-break:break-all;margin-top:1mm}
-.footer{position:absolute;left:0;right:0;bottom:0;height:9mm;background:#082d23;color:#c8e5dc;display:flex;align-items:center;justify-content:space-between;padding:0 12mm;font-size:5.1pt}
+.price-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.4mm;margin-top:1.6mm}
+.price-card{background:#fff;border:1px solid #eadfcd;border-radius:2.5mm;padding:1.8mm}
+.price-card b{font-size:5.7pt} .price-card span{display:block;font-size:4.8pt;color:#816d58;margin-top:.6mm;line-height:1.3}
+.totalbox{margin-top:1.6mm;border:1px solid #bfe0d2;background:#f4fffb;border-radius:3mm;padding:2.2mm;display:grid;grid-template-columns:1.18fr .82fr;gap:2.5mm;align-items:center}
+.totalbox strong{font-size:10.4pt;color:#0a8d65} .totalbox b{display:block;font-size:6.6pt;margin-bottom:.4mm} .totalbox p{font-size:5pt;color:#557367;margin:0;line-height:1.34}
+.ctas{margin-top:2.4mm}
+.cta-head small{font-size:5.1pt;color:#15856e;font-weight:950;letter-spacing:.11em} .cta-head h3{font-size:9.4pt;margin:.4mm 0 1.6mm}
+.cta-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5mm}
+.cta{border:1px solid var(--line);border-radius:3mm;padding:2mm;background:#fff;display:grid;grid-template-columns:1fr 23mm;gap:1.8mm;align-items:center;min-height:28.5mm}
+.cta small{font-size:4.7pt;color:#167a69;font-weight:950} .cta b{display:block;font-size:6.4pt;margin:.5mm 0} .cta p{font-size:4.6pt;color:#657884;line-height:1.28;margin:0}
+.cta img{width:21.5mm;height:21.5mm;border:1px solid #d7e1e7;border-radius:1.6mm;padding:.7mm;background:#fff}
+.url{font-size:4.4pt;color:#1372a2;font-weight:900;word-break:break-all;margin-top:.8mm}
+.footer{height:9mm;background:#082d23;color:#c8e5dc;display:flex;align-items:center;justify-content:space-between;padding:0 12mm;font-size:5.1pt}
 .footer b{color:#58ddb4}
 @media print{html,body{background:#fff}.toolbar{display:none}.stage{padding:0}.page{box-shadow:none;margin:0}}
 </style>
