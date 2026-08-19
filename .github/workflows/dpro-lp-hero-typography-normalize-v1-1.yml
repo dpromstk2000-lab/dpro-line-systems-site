@@ -1,0 +1,155 @@
+name: DPRO LP Hero Typography Normalize V1.1
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/dpro-lp-hero-typography-normalize-v1-1.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: dpro-lp-hero-typography-normalize-v1-1
+  cancel-in-progress: false
+
+jobs:
+  normalize:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Checkout current Product Site
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Guard protected state
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object systems-data.js)" = "e676cb5a559c3f89bdd9e86f3074756df8479dfa"
+          test "$(git hash-object lp-hair.html)" = "baf040122e6c1086b2af77e4eb8eaf0f5bf8f352"
+          grep -Fq 'HIGH pages: 0' qa/lp-native-wrap-final-v1.1/SUMMARY.md
+          grep -Fq 'DPRO LIVE DEMO ALL49 CENTRAL OVERRIDES START' systems-data.js
+          grep -Fq 'flyerHtml: "flyer-medical.html"' systems-data.js
+          echo "PASS: protected state present"
+
+      - name: Apply screenshot-driven H1 normalization to 49 LPs
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          import base64
+          style=base64.b64decode('PHN0eWxlIGlkPSJkcHJvLWxwLWhlcm8tdHlwb2dyYXBoeS1ub3JtYWxpemUtdjEtMSI+Ci8qIERQUk8gTFAgSEVSTyBUWVBPR1JBUEhZIE5PUk1BTElaRSBWMS4xCiAgIFNjcmVlbnNob3QtZHJpdmVuIEphcGFuZXNlIHJlYWRhYmlsaXR5IGZpeC4KICAgUHJlc2VydmUgY29weSBhbmQgZXhwbGljaXQgPGJyPjsgcmVkdWNlIG92ZXJzaXplZCBkZXNrdG9wIEgxIGFuZCBsZXQKICAgQ2hyb21pdW0gdXNlIG5hdGl2ZSBKYXBhbmVzZSBwaHJhc2UgYnJlYWtpbmcuICovCmgxewogIG1heC13aWR0aDoxMDAlIWltcG9ydGFudDsKICBtaW4td2lkdGg6MCFpbXBvcnRhbnQ7CiAgZm9udC1zaXplOmNsYW1wKDM0cHgsMy4wNXZ3LDQ2cHgpIWltcG9ydGFudDsKICBsaW5lLWhlaWdodDoxLjEzIWltcG9ydGFudDsKICBsZXR0ZXItc3BhY2luZzotLjAzNWVtIWltcG9ydGFudDsKICB3aGl0ZS1zcGFjZTpub3JtYWwhaW1wb3J0YW50OwogIG92ZXJmbG93LXdyYXA6bm9ybWFsIWltcG9ydGFudDsKICB3b3JkLWJyZWFrOm5vcm1hbCFpbXBvcnRhbnQ7CiAgbGluZS1icmVhazpzdHJpY3QhaW1wb3J0YW50OwogIHRleHQtd3JhcDpwcmV0dHkhaW1wb3J0YW50Owp9CmgxIHNwYW4saDEgc3Ryb25nLGgxIGVtewogIG1heC13aWR0aDoxMDAlIWltcG9ydGFudDsKICB3aGl0ZS1zcGFjZTpub3JtYWwhaW1wb3J0YW50OwogIG92ZXJmbG93LXdyYXA6bm9ybWFsIWltcG9ydGFudDsKICB3b3JkLWJyZWFrOm5vcm1hbCFpbXBvcnRhbnQ7CiAgbGluZS1icmVhazpzdHJpY3QhaW1wb3J0YW50Owp9CkBzdXBwb3J0cyAod29yZC1icmVhazphdXRvLXBocmFzZSl7CiAgaDEsaDEgc3BhbixoMSBzdHJvbmcsaDEgZW17d29yZC1icmVhazphdXRvLXBocmFzZSFpbXBvcnRhbnQ7fQp9Ci5oZXJvLWdyaWQsLmhlcm8tZ3JpZD4qe21pbi13aWR0aDowIWltcG9ydGFudDt9CkBtZWRpYSAobWluLXdpZHRoOjc2MXB4KSBhbmQgKG1heC13aWR0aDoxMTIwcHgpewogIGgxe2ZvbnQtc2l6ZTpjbGFtcCgzM3B4LDR2dyw0MnB4KSFpbXBvcnRhbnQ7bGluZS1oZWlnaHQ6MS4xNSFpbXBvcnRhbnQ7fQp9CkBtZWRpYSAobWF4LXdpZHRoOjc2MHB4KXsKICBoMXtmb250LXNpemU6Y2xhbXAoMzBweCw4LjN2dywzOXB4KSFpbXBvcnRhbnQ7bGluZS1oZWlnaHQ6MS4xNCFpbXBvcnRhbnQ7b3ZlcmZsb3ctd3JhcDphbnl3aGVyZSFpbXBvcnRhbnQ7fQogIGgxIHNwYW4saDEgc3Ryb25nLGgxIGVte292ZXJmbG93LXdyYXA6YW55d2hlcmUhaW1wb3J0YW50O30KfQo8L3N0eWxlPg==').decode('utf-8')
+          pages=sorted(Path('.').glob('lp-*.html'))
+          if len(pages)!=50: raise SystemExit(f'BLOCKER expected 50 LPs, found {len(pages)}')
+          changed=[]
+          for p in pages:
+              if p.name=='lp-hair.html':
+                  continue
+              text=p.read_text(encoding='utf-8')
+              if 'dpro-lp-hero-typography-normalize-v1-1' in text:
+                  raise SystemExit(f'BLOCKER already normalized {p.name}')
+              pos=text.lower().rfind('</head>')
+              if pos<0: raise SystemExit(f'BLOCKER </head> missing {p.name}')
+              text=text[:pos]+style+'\n'+text[pos:]
+              p.write_text(text,encoding='utf-8',newline='\n')
+              changed.append(p.name)
+          if len(changed)!=49: raise SystemExit(f'BLOCKER expected 49 changes, got {len(changed)}')
+          print('PASS: 49 LPs normalized; HAIR V1.3 preserved')
+          PY
+
+      - name: Verify isolated scope
+        shell: bash
+        run: |
+          set -euo pipefail
+          git diff --check
+          test "$(git hash-object systems-data.js)" = "e676cb5a559c3f89bdd9e86f3074756df8479dfa"
+          test "$(git hash-object lp-hair.html)" = "baf040122e6c1086b2af77e4eb8eaf0f5bf8f352"
+          python3 - <<'PY'
+          import subprocess,re
+          changed=set(subprocess.check_output(['git','diff','--name-only'],text=True).splitlines())
+          illegal={p for p in changed if not re.fullmatch(r'lp-[a-z0-9-]+\.html',p)}
+          if illegal: raise SystemExit(f'BLOCKER non-LP changes: {sorted(illegal)}')
+          if 'lp-hair.html' in changed: raise SystemExit('BLOCKER HAIR changed')
+          if len(changed)!=49: raise SystemExit(f'BLOCKER changed LP count {len(changed)}')
+          print('PASS isolated 49-LP scope')
+          PY
+
+      - name: Install Chromium QA
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm init -y >/dev/null 2>&1
+          npm install playwright@1.55.0 --silent
+          npx playwright install --with-deps chromium
+
+      - name: Create semantic line-break audit runner
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import base64
+          Path('dpro-lp-hero-typography-audit-v11.js').write_bytes(base64.b64decode('Y29uc3QgZnM9cmVxdWlyZSgnZnMnKTsKY29uc3QgeyBjaHJvbWl1bSB9PXJlcXVpcmUoJ3BsYXl3cmlnaHQnKTsKY29uc3QgcGFnZXM9ZnMucmVhZGRpclN5bmMoJy4nKS5maWx0ZXIobj0+L15scC1bYS16MC05LV0rXC5odG1sJC9pLnRlc3QobikpLnNvcnQoKTsKY29uc3QgdnBzPVt7bmFtZTonZGVza3RvcCcsd2lkdGg6MTQ0MCxoZWlnaHQ6MTAwMH0se25hbWU6J2xhcHRvcCcsd2lkdGg6MTAyNCxoZWlnaHQ6OTAwfSx7bmFtZTonbW9iaWxlJyx3aWR0aDozOTAsaGVpZ2h0Ojg0NH1dOwpmdW5jdGlvbiB1bmlxKGEpe3JldHVybiBbLi4ubmV3IFNldChhKV07fQooYXN5bmMoKT0+ewogaWYocGFnZXMubGVuZ3RoIT09NTApIHRocm93IG5ldyBFcnJvcihgZXhwZWN0ZWQgNTAgTFBzLCBmb3VuZCAke3BhZ2VzLmxlbmd0aH1gKTsKIGNvbnN0IGJyb3dzZXI9YXdhaXQgY2hyb21pdW0ubGF1bmNoKHtoZWFkbGVzczp0cnVlfSk7CiBjb25zdCByb3dzPVtdOwogZm9yKGNvbnN0IGZpbGUgb2YgcGFnZXMpewogIGZvcihjb25zdCB2cCBvZiB2cHMpewogICBjb25zdCBjdHg9YXdhaXQgYnJvd3Nlci5uZXdDb250ZXh0KHt2aWV3cG9ydDp7d2lkdGg6dnAud2lkdGgsaGVpZ2h0OnZwLmhlaWdodH0sZGV2aWNlU2NhbGVGYWN0b3I6MX0pOwogICBjb25zdCBwYWdlPWF3YWl0IGN0eC5uZXdQYWdlKCk7CiAgIGxldCBlcnI9Jyc7bGV0IGRhdGE9e3BhZ2VPdmVyZmxvdzpmYWxzZSxpc3N1ZXM6W119OwogICB0cnl7CiAgICBhd2FpdCBwYWdlLmdvdG8oYGh0dHA6Ly8xMjcuMC4wLjE6ODc2NS8ke2ZpbGV9YCx7d2FpdFVudGlsOidkb21jb250ZW50bG9hZGVkJyx0aW1lb3V0OjIwMDAwfSk7CiAgICB0cnl7YXdhaXQgcGFnZS5ldmFsdWF0ZShhc3luYygpPT57aWYoZG9jdW1lbnQuZm9udHMmJmRvY3VtZW50LmZvbnRzLnJlYWR5KWF3YWl0IGRvY3VtZW50LmZvbnRzLnJlYWR5O30pO31jYXRjaChfKXt9CiAgICBhd2FpdCBwYWdlLndhaXRGb3JUaW1lb3V0KDkwMCk7CiAgICBkYXRhPWF3YWl0IHBhZ2UuZXZhbHVhdGUoKHt2cE5hbWUsdnd9KT0+ewogICAgICBjb25zdCByb290PWRvY3VtZW50LmRvY3VtZW50RWxlbWVudDsKICAgICAgY29uc3QgaXNzdWVzPVtdOwogICAgICBmdW5jdGlvbiBjb21wYWN0KHMpe3JldHVybiBTdHJpbmcoc3x8JycpLnJlcGxhY2UoL1xzKy9nLCcnKS50cmltKCk7fQogICAgICBmdW5jdGlvbiBsaW5lVGV4dHMoZWwpewogICAgICAgIGNvbnN0IGNoYXJzPVtdOwogICAgICAgIGNvbnN0IHdhbGtlcj1kb2N1bWVudC5jcmVhdGVUcmVlV2Fsa2VyKGVsLE5vZGVGaWx0ZXIuU0hPV19URVhULHthY2NlcHROb2RlKG4pe2NvbnN0IHA9bi5wYXJlbnRFbGVtZW50O2lmKCFwfHxwLmNsb3Nlc3QoJ3NjcmlwdCxzdHlsZSxub3NjcmlwdCcpKXJldHVybiBOb2RlRmlsdGVyLkZJTFRFUl9SRUpFQ1Q7cmV0dXJuIGNvbXBhY3Qobi5ub2RlVmFsdWUpP05vZGVGaWx0ZXIuRklMVEVSX0FDQ0VQVDpOb2RlRmlsdGVyLkZJTFRFUl9SRUpFQ1Q7fX0pOwogICAgICAgIGNvbnN0IG5vZGVzPVtdO2xldCBuO3doaWxlKChuPXdhbGtlci5uZXh0Tm9kZSgpKSlub2Rlcy5wdXNoKG4pOwogICAgICAgIGZvcihjb25zdCBub2RlIG9mIG5vZGVzKXtjb25zdCB0PW5vZGUubm9kZVZhbHVlfHwnJztmb3IobGV0IGk9MDtpPHQubGVuZ3RoO2krKyl7Y29uc3QgY2g9dFtpXTtpZigvXHMvLnRlc3QoY2gpKWNvbnRpbnVlO3RyeXtjb25zdCByYW5nZT1kb2N1bWVudC5jcmVhdGVSYW5nZSgpO3JhbmdlLnNldFN0YXJ0KG5vZGUsaSk7cmFuZ2Uuc2V0RW5kKG5vZGUsaSsxKTtjb25zdCByPXJhbmdlLmdldEJvdW5kaW5nQ2xpZW50UmVjdCgpO2lmKHIud2lkdGg+LjImJnIuaGVpZ2h0Pi4yKWNoYXJzLnB1c2goe2NoLHRvcDpyLnRvcCxsZWZ0OnIubGVmdH0pO31jYXRjaChfKXt9fX0KICAgICAgICBjaGFycy5zb3J0KChhLGIpPT5NYXRoLmFicyhhLnRvcC1iLnRvcCk+Mj9hLnRvcC1iLnRvcDphLmxlZnQtYi5sZWZ0KTsKICAgICAgICBjb25zdCBsaW5lcz1bXTtmb3IoY29uc3QgYyBvZiBjaGFycyl7bGV0IGxpbmU9bGluZXMuZmluZCh4PT5NYXRoLmFicyh4LnRvcC1jLnRvcCk8PTMpO2lmKCFsaW5lKXtsaW5lPXt0b3A6Yy50b3AsY2hhcnM6W119O2xpbmVzLnB1c2gobGluZSk7fWxpbmUuY2hhcnMucHVzaChjLmNoKTt9bGluZXMuc29ydCgoYSxiKT0+YS50b3AtYi50b3ApO3JldHVybiBsaW5lcy5tYXAobD0+bC5jaGFycy5qb2luKCcnKSk7CiAgICAgIH0KICAgICAgY29uc3QgaDE9ZG9jdW1lbnQucXVlcnlTZWxlY3RvcignaDEnKTsKICAgICAgaWYoaDEpewogICAgICAgIGNvbnN0IHI9aDEuZ2V0Qm91bmRpbmdDbGllbnRSZWN0KCk7CiAgICAgICAgY29uc3QgbGluZXM9bGluZVRleHRzKGgxKTsKICAgICAgICBjb25zdCBqb2luZWQ9bGluZXMuam9pbignJyk7CiAgICAgICAgY29uc3QgYnJlYWtzPVtdO2xldCBjPTA7Zm9yKGxldCBpPTA7aTxsaW5lcy5sZW5ndGgtMTtpKyspe2MgKz0gWy4uLmxpbmVzW2ldXS5sZW5ndGg7YnJlYWtzLnB1c2goYyk7fQogICAgICAgIGlmKHIucmlnaHQ+dncrNHx8ci5sZWZ0PC00fHxoMS5zY3JvbGxXaWR0aD5oMS5jbGllbnRXaWR0aCs0KWlzc3Vlcy5wdXNoKHt0eXBlOidoMS1vdmVyZmxvdycsbGluZXN9KTsKICAgICAgICBpZih2cE5hbWU9PT0nZGVza3RvcCcmJmxpbmVzLmxlbmd0aD40KWlzc3Vlcy5wdXNoKHt0eXBlOidoMS10b28tbWFueS1saW5lcycsbGluZXN9KTsKICAgICAgICBpZih2cE5hbWU9PT0nbGFwdG9wJyYmbGluZXMubGVuZ3RoPjUpaXNzdWVzLnB1c2goe3R5cGU6J2gxLXRvby1tYW55LWxpbmVzJyxsaW5lc30pOwogICAgICAgIGlmKHZwTmFtZSE9PSdtb2JpbGUnJiZsaW5lcy5zb21lKHg9PlsuLi54XS5sZW5ndGg8PTIpKWlzc3Vlcy5wdXNoKHt0eXBlOidoMS1zaG9ydC1vcnBoYW4tbGluZScsbGluZXN9KTsKCiAgICAgICAgLy8gRGV0ZWN0IHZpc3VhbCBsaW5lIGJyZWFrcyBpbnNpZGUgSmFwYW5lc2Ugd29yZCBzZWdtZW50cyBzdWNoIGFzCiAgICAgICAgLy8g44G+44GnIC8g5LqI57SEIC8g5pKu5b2xIC8g5YWl5LyaIC8g44Gk44Gq44GQLiBUaGlzIGNhdGNoZXMgdGhlIHNjcmVlbnNob3RzCiAgICAgICAgLy8gdGhhdCBvdmVyZmxvdy1vbmx5IFFBIG1pc3NlZC4KICAgICAgICB0cnl7CiAgICAgICAgICBjb25zdCBzZWc9bmV3IEludGwuU2VnbWVudGVyKCdqYScse2dyYW51bGFyaXR5Oid3b3JkJ30pOwogICAgICAgICAgZm9yKGNvbnN0IHBhcnQgb2Ygc2VnLnNlZ21lbnQoam9pbmVkKSl7CiAgICAgICAgICAgIGNvbnN0IHRleHQ9cGFydC5zZWdtZW50OwogICAgICAgICAgICBjb25zdCBsZW49Wy4uLnRleHRdLmxlbmd0aDsKICAgICAgICAgICAgaWYoIXBhcnQuaXNXb3JkTGlrZSB8fCBsZW48MikgY29udGludWU7CiAgICAgICAgICAgIGNvbnN0IHN0YXJ0PVsuLi5qb2luZWQuc2xpY2UoMCxwYXJ0LmluZGV4KV0ubGVuZ3RoOwogICAgICAgICAgICBjb25zdCBlbmQ9c3RhcnQrbGVuOwogICAgICAgICAgICBpZihicmVha3Muc29tZShiPT5iPnN0YXJ0JiZiPGVuZCkpaXNzdWVzLnB1c2goe3R5cGU6J2gxLXdvcmQtc2VnbWVudC1zcGxpdCcsc2VnbWVudDp0ZXh0LGxpbmVzfSk7CiAgICAgICAgICB9CiAgICAgICAgfWNhdGNoKGUpe2lzc3Vlcy5wdXNoKHt0eXBlOidzZWdtZW50ZXItZXJyb3InLG1lc3NhZ2U6U3RyaW5nKGUmJmUubWVzc2FnZXx8ZSksbGluZXN9KTt9CiAgICAgIH0KICAgICAgcmV0dXJuIHtwYWdlT3ZlcmZsb3c6cm9vdC5zY3JvbGxXaWR0aD5yb290LmNsaWVudFdpZHRoKzQsaXNzdWVzfTsKICAgIH0se3ZwTmFtZTp2cC5uYW1lLHZ3OnZwLndpZHRofSk7CiAgIH1jYXRjaChlKXtlcnI9U3RyaW5nKGUmJmUubWVzc2FnZXx8ZSk7fQogICByb3dzLnB1c2goe2ZpbGUsdmlld3BvcnQ6dnAubmFtZSxlcnJvcjplcnIscGFnZU92ZXJmbG93OmRhdGEucGFnZU92ZXJmbG93LGlzc3VlczpkYXRhLmlzc3VlcyxoaWdoOkJvb2xlYW4oZXJyfHxkYXRhLnBhZ2VPdmVyZmxvd3x8ZGF0YS5pc3N1ZXMubGVuZ3RoKX0pOwogICBhd2FpdCBjdHguY2xvc2UoKTsKICB9CiB9CiBhd2FpdCBicm93c2VyLmNsb3NlKCk7CiBjb25zdCBoaWdoPXJvd3MuZmlsdGVyKHI9PnIuaGlnaCk7Y29uc3QgaGlnaFBhZ2VzPXVuaXEoaGlnaC5tYXAocj0+ci5maWxlKSk7CiBjb25zdCBzdW1tYXJ5PXt2ZXJzaW9uOidEUFJPIExQIEhFUk8gVFlQT0dSQVBIWSBOT1JNQUxJWkUgVjEuMScscGFnZXM6cGFnZXMubGVuZ3RoLGNoZWNrczpyb3dzLmxlbmd0aCxoaWdoQ2hlY2tzOmhpZ2gubGVuZ3RoLGhpZ2hQYWdlczpoaWdoUGFnZXMubGVuZ3RoLGVycm9yczpyb3dzLmZpbHRlcihyPT5yLmVycm9yKS5sZW5ndGgscGFnZU92ZXJmbG93Q2hlY2tzOnJvd3MuZmlsdGVyKHI9PnIucGFnZU92ZXJmbG93KS5sZW5ndGh9OwogZnMubWtkaXJTeW5jKCdxYS9scC1oZXJvLXR5cG9ncmFwaHktdjEtMScse3JlY3Vyc2l2ZTp0cnVlfSk7CiBmcy53cml0ZUZpbGVTeW5jKCdxYS9scC1oZXJvLXR5cG9ncmFwaHktdjEtMS9BVURJVC5qc29uJyxKU09OLnN0cmluZ2lmeSh7c3VtbWFyeSxoaWdoUGFnZXMscm93c30sbnVsbCwyKSk7CiBjb25zdCBtZD1bJyMgRFBSTyBMUCBIRVJPIFRZUE9HUkFQSFkgTk9STUFMSVpFIFYxLjEnLCcnLGAtIExQIHBhZ2VzOiAke3N1bW1hcnkucGFnZXN9YCxgLSBDaGVja3M6ICR7c3VtbWFyeS5jaGVja3N9YCxgLSBISUdIIHBhZ2VzOiAke3N1bW1hcnkuaGlnaFBhZ2VzfWAsYC0gSElHSCBjaGVja3M6ICR7c3VtbWFyeS5oaWdoQ2hlY2tzfWAsYC0gUGFnZSBvdmVyZmxvdyBjaGVja3M6ICR7c3VtbWFyeS5wYWdlT3ZlcmZsb3dDaGVja3N9YCxgLSBFcnJvcnM6ICR7c3VtbWFyeS5lcnJvcnN9YCwnJywnIyMgSElHSCBwYWdlcycsJyddOwogaWYoaGlnaFBhZ2VzLmxlbmd0aCl7Zm9yKGNvbnN0IGYgb2YgaGlnaFBhZ2VzKXttZC5wdXNoKGAtICR7Zn1gKTtmb3IoY29uc3QgciBvZiBoaWdoLmZpbHRlcih4PT54LmZpbGU9PT1mKSl7Y29uc3QgdGFncz1bXTtpZihyLmVycm9yKXRhZ3MucHVzaCgnRVJST1InKTtpZihyLnBhZ2VPdmVyZmxvdyl0YWdzLnB1c2goJ1BBR0VfT1ZFUkZMT1cnKTtmb3IoY29uc3QgaSBvZiByLmlzc3Vlcyl0YWdzLnB1c2goaS50eXBlKyhpLnNlZ21lbnQ/JzonK2kuc2VnbWVudDonJykpO21kLnB1c2goYCAgLSAke3Iudmlld3BvcnR9OiAke3VuaXEodGFncykuam9pbignLCAnKX1gKTt9fX1lbHNlIG1kLnB1c2goJy0gTk9ORScpOwogZnMud3JpdGVGaWxlU3luYygncWEvbHAtaGVyby10eXBvZ3JhcGh5LXYxLTEvU1VNTUFSWS5tZCcsbWQuam9pbignXG4nKSsnXG4nKTsKIGNvbnNvbGUubG9nKEpTT04uc3RyaW5naWZ5KHN1bW1hcnksbnVsbCwyKSk7CiBpZihzdW1tYXJ5LmVycm9yc3x8c3VtbWFyeS5wYWdlT3ZlcmZsb3dDaGVja3N8fHN1bW1hcnkuaGlnaFBhZ2VzKXByb2Nlc3MuZXhpdCgyKTsKfSkoKS5jYXRjaChlPT57Y29uc29sZS5lcnJvcihlKTtwcm9jZXNzLmV4aXQoMSk7fSk7Cg=='))
+          PY
+          node --check dpro-lp-hero-typography-audit-v11.js
+
+      - name: Start local Product Site
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m http.server 8765 --bind 127.0.0.1 >/tmp/dpro-http.log 2>&1 &
+          for i in $(seq 1 30); do curl -fsS http://127.0.0.1:8765/ >/dev/null && exit 0; sleep 1; done
+          exit 1
+
+      - name: Audit all 50 LPs semantically
+        id: audit
+        shell: bash
+        continue-on-error: true
+        run: |
+          set -euo pipefail
+          node dpro-lp-hero-typography-audit-v11.js
+
+      - name: Commit successful visual state
+        if: steps.audit.outcome == 'success'
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -f dpro-lp-hero-typography-audit-v11.js
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add lp-*.html qa/lp-hero-typography-v1-1/AUDIT.json qa/lp-hero-typography-v1-1/SUMMARY.md
+          git rm --ignore-unmatch ".github/workflows/dpro-lp-hero-typography-normalize-v1.yml"
+          git rm --ignore-unmatch ".github/workflows/dpro-lp-hero-typography-normalize-v1-1.yml"
+          git commit -m "Normalize LP hero Japanese line breaks V1.1"
+          git push origin HEAD:main
+
+      - name: Publish diagnostics only if visual gate fails
+        if: steps.audit.outcome != 'success'
+        shell: bash
+        run: |
+          set -euo pipefail
+          cp qa/lp-hero-typography-v1-1/AUDIT.json /tmp/AUDIT.json
+          cp qa/lp-hero-typography-v1-1/SUMMARY.md /tmp/SUMMARY.md
+          git restore lp-*.html
+          rm -f dpro-lp-hero-typography-audit-v11.js
+          mkdir -p qa/lp-hero-typography-v1-1-diagnostic
+          cp /tmp/AUDIT.json qa/lp-hero-typography-v1-1-diagnostic/AUDIT.json
+          cp /tmp/SUMMARY.md qa/lp-hero-typography-v1-1-diagnostic/SUMMARY.md
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add qa/lp-hero-typography-v1-1-diagnostic/AUDIT.json qa/lp-hero-typography-v1-1-diagnostic/SUMMARY.md
+          git rm --ignore-unmatch ".github/workflows/dpro-lp-hero-typography-normalize-v1.yml"
+          git rm --ignore-unmatch ".github/workflows/dpro-lp-hero-typography-normalize-v1-1.yml"
+          git commit -m "Publish LP hero typography V1.1 diagnostics"
+          git push origin HEAD:main
+
+      - name: Fail visibly if semantic issues remain
+        if: steps.audit.outcome != 'success'
+        shell: bash
+        run: |
+          echo "BLOCKER: semantic Japanese line-break issues remain; diagnostics published for CENTRAL."
+          exit 1
