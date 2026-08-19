@@ -1,0 +1,286 @@
+name: DPRO ALL51 A4 Flyer Collision QA V1.2.1
+
+on:
+  push:
+    paths:
+      - '.github/workflows/dpro-all51-a4-flyer-collision-qa-v1-2-1.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  collision-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Playwright Chromium
+        run: |
+          npm init -y >/dev/null 2>&1
+          npm install playwright@1.55.0
+          npx playwright install --with-deps chromium
+
+      - name: Run real DOM collision QA on all 51 flyers
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf qa/all51-a4-flyer-collision-qa-v1-2-1
+          mkdir -p qa/all51-a4-flyer-collision-qa-v1-2-1/full qa/all51-a4-flyer-collision-qa-v1-2-1/bottom
+
+          python3 -m http.server 8000 >/tmp/dpro-flyer-http.log 2>&1 &
+          SERVER_PID=$!
+          trap 'kill $SERVER_PID || true; rm -f .collision-audit-v1-2-1.mjs' EXIT
+          sleep 2
+
+          cat > .collision-audit-v1-2-1.mjs <<'NODE'
+          import fs from 'fs';
+          import { chromium } from 'playwright';
+
+          const EXPECTED = 51;
+          const files = fs.readdirSync('.')
+            .filter(n => /^flyer-.*\.html$/i.test(n))
+            .sort();
+
+          const out = 'qa/all51-a4-flyer-collision-qa-v1-2-1';
+          const browser = await chromium.launch({headless:true});
+          const page = await browser.newPage({
+            viewport: { width: 1400, height: 1800 },
+            deviceScaleFactor: 1
+          });
+
+          const results = [];
+
+          for (const file of files) {
+            const url = `http://127.0.0.1:8000/${encodeURIComponent(file)}`;
+            await page.goto(url, {waitUntil:'networkidle', timeout:30000});
+            await page.waitForTimeout(200);
+
+            const data = await page.evaluate(() => {
+              const visible = (el) => {
+                const cs = getComputedStyle(el);
+                const r = el.getBoundingClientRect();
+                return cs.display !== 'none' &&
+                       cs.visibility !== 'hidden' &&
+                       parseFloat(cs.opacity || '1') > 0.02 &&
+                       r.width > 1 && r.height > 1;
+              };
+
+              const pageEl =
+                document.querySelector('.sheet') ||
+                document.querySelector('.page') ||
+                document.querySelector('article[aria-label*="A4"]') ||
+                document.querySelector('article');
+
+              if (!pageEl) return { error:'page-container-not-found' };
+
+              const footer = pageEl.querySelector('.footer') || pageEl.querySelector('footer');
+              const pr = pageEl.getBoundingClientRect();
+              const fr = footer ? footer.getBoundingClientRect() : null;
+
+              const ownText = (el) =>
+                [...el.childNodes]
+                  .filter(n => n.nodeType === Node.TEXT_NODE)
+                  .map(n => n.textContent || '')
+                  .join(' ')
+                  .replace(/\s+/g,' ')
+                  .trim();
+
+              const intersection = (a,b) => {
+                const x = Math.max(0, Math.min(a.right,b.right) - Math.max(a.left,b.left));
+                const y = Math.max(0, Math.min(a.bottom,b.bottom) - Math.max(a.top,b.top));
+                return {x,y,hit:x > 2 && y > 2};
+              };
+
+              const leafs = [...pageEl.querySelectorAll('*')].filter(el => {
+                if (!visible(el)) return false;
+                if (footer && (el === footer || footer.contains(el) || el.contains(footer))) return false;
+                if (['IMG','SVG','CANVAS'].includes(el.tagName)) return true;
+                return ownText(el).length > 0;
+              });
+
+              const collisions = [];
+              const clipped = [];
+              let maxContentBottom = pr.top;
+
+              for (const el of leafs) {
+                const r = el.getBoundingClientRect();
+                maxContentBottom = Math.max(maxContentBottom, r.bottom);
+
+                if (fr) {
+                  const inter = intersection(r, fr);
+                  if (inter.hit) {
+                    collisions.push({
+                      tag: el.tagName,
+                      cls: (el.className || '').toString().slice(0,100),
+                      text: ownText(el).slice(0,120),
+                      overlapY: Math.round(inter.y * 10) / 10
+                    });
+                  }
+                }
+
+                if (r.left < pr.left - 2 || r.right > pr.right + 2 ||
+                    r.top < pr.top - 2 || r.bottom > pr.bottom + 2) {
+                  clipped.push({
+                    tag: el.tagName,
+                    cls: (el.className || '').toString().slice(0,100),
+                    text: ownText(el).slice(0,100)
+                  });
+                }
+              }
+
+              const imgs = [...pageEl.querySelectorAll('img')].filter(visible);
+              const qrCandidates = imgs.filter(img => {
+                const r = img.getBoundingClientRect();
+                const key = `${img.alt||''} ${img.src||''} ${img.className||''}`.toLowerCase();
+                const aspect = r.width / Math.max(1,r.height);
+                return key.includes('qr') ||
+                       (aspect > .88 && aspect < 1.12 &&
+                        r.width >= 45 && r.width <= 190 &&
+                        r.height >= 45 && r.height <= 190);
+              });
+
+              const qrIssues = [];
+              for (const img of qrCandidates) {
+                const r = img.getBoundingClientRect();
+                const inside =
+                  r.left >= pr.left - 1 && r.right <= pr.right + 1 &&
+                  r.top >= pr.top - 1 && r.bottom <= pr.bottom + 1;
+                const footerHit = fr ? intersection(r,fr).hit : false;
+                const tooSmall = r.width < 56 || r.height < 56;
+                if (!inside || footerHit || tooSmall) {
+                  qrIssues.push({
+                    alt:(img.alt||'').slice(0,80),
+                    width:Math.round(r.width),
+                    height:Math.round(r.height),
+                    insidePage:inside,
+                    footerOverlap:footerHit,
+                    tooSmall
+                  });
+                }
+              }
+
+              const pageOverflow =
+                pageEl.scrollHeight > pageEl.clientHeight + 2 ||
+                pageEl.scrollWidth > pageEl.clientWidth + 2;
+
+              const footerGap = fr ? Math.round((fr.top - maxContentBottom) * 10) / 10 : null;
+
+              return {
+                pageBox: {
+                  width:Math.round(pr.width*10)/10,
+                  height:Math.round(pr.height*10)/10
+                },
+                footerFound: !!footer,
+                footerGap,
+                pageOverflow,
+                collisionCount: collisions.length,
+                collisions: collisions.slice(0,25),
+                clippedCount: clipped.length,
+                clipped: clipped.slice(0,25),
+                qrCandidateCount: qrCandidates.length,
+                qrIssueCount: qrIssues.length,
+                qrIssues
+              };
+            });
+
+            const stem = file.replace(/\.html$/i,'');
+            const locator = page.locator('.sheet, .page, article[aria-label*="A4"], article').first();
+            if (await locator.count()) {
+              await locator.screenshot({path:`${out}/full/${stem}.png`});
+            }
+
+            const failReasons = [];
+            if (data.error) failReasons.push(data.error);
+            if (!data.footerFound) failReasons.push('footer-not-found');
+            if (data.pageOverflow) failReasons.push('page-overflow');
+            if (data.collisionCount > 0) failReasons.push(`footer-collision=${data.collisionCount}`);
+            if (data.clippedCount > 0) failReasons.push(`page-clipped=${data.clippedCount}`);
+            if (data.qrIssueCount > 0) failReasons.push(`qr-layout-issue=${data.qrIssueCount}`);
+
+            results.push({
+              flyer:stem,
+              status: failReasons.length ? 'FAIL' : 'PASS',
+              failReasons,
+              ...data
+            });
+          }
+
+          await browser.close();
+
+          fs.writeFileSync(`${out}/AUDIT.json`, JSON.stringify(results,null,2));
+
+          const fails = results.filter(r => r.status === 'FAIL');
+          const lines = [
+            '# DPRO ALL51 A4 FLYER COLLISION QA V1.2.1',
+            '',
+            `- HTML flyers: ${files.length}`,
+            `- expected: ${EXPECTED}`,
+            `- PASS: ${results.filter(r=>r.status==='PASS').length}`,
+            `- FAIL: ${fails.length}`,
+            `- footer collisions: ${results.filter(r=>r.collisionCount>0).length}`,
+            `- page overflow: ${results.filter(r=>r.pageOverflow).length}`,
+            `- clipped content: ${results.filter(r=>r.clippedCount>0).length}`,
+            `- QR layout issues: ${results.filter(r=>r.qrIssueCount>0).length}`,
+            '',
+            '## FAIL',
+            ...(fails.length ? fails.map(r => `- ${r.flyer}: ${r.failReasons.join(', ')}`) : ['- NONE']),
+            '',
+            '## DETAILS',
+            ...results.map(r =>
+              `- ${r.flyer}: ${r.status} / collision=${r.collisionCount||0} / overflow=${!!r.pageOverflow} / clipped=${r.clippedCount||0} / qrCandidates=${r.qrCandidateCount||0} / qrIssues=${r.qrIssueCount||0}`
+            )
+          ];
+
+          fs.writeFileSync(`${out}/SUMMARY.md`, lines.join('\n')+'\n');
+          console.log(lines.join('\n'));
+
+          if (files.length !== EXPECTED || fails.length) process.exit(2);
+          NODE
+
+          node ./.collision-audit-v1-2-1.mjs
+
+          python3 - <<'PY'
+          from pathlib import Path
+          from PIL import Image
+          out = Path('qa/all51-a4-flyer-collision-qa-v1-2-1')
+          for p in sorted((out/'full').glob('*.png')):
+              im = Image.open(p).convert('RGB')
+              y = int(im.height * 0.62)
+              im.crop((0,y,im.width,im.height)).save(out/'bottom'/f'{p.stem}.jpg', quality=90)
+          PY
+
+      - name: Commit QA result
+        if: always()
+        shell: bash
+        run: |
+          rm -f .collision-audit-v1-2-1.mjs
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add qa/all51-a4-flyer-collision-qa-v1-2-1 || true
+          if git diff --cached --quiet; then
+            echo "No QA changes."
+          else
+            git commit -m "Add ALL51 A4 flyer collision QA V1.2.1"
+            git push origin HEAD:main
+          fi
+        continue-on-error: true
+
+      - name: Upload QA artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: DPRO_ALL51_A4_FLYER_COLLISION_QA_V1.2.1
+          path: qa/all51-a4-flyer-collision-qa-v1-2-1/
+          if-no-files-found: error
+          retention-days: 14
