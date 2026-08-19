@@ -281,6 +281,51 @@
 
 <!-- DPRO PRODUCT JAPANESE MOBILE WRAP V1.0 -->
 <!-- DPRO LP NATIVE JAPANESE WRAP V1.0: generic runtime wrap disabled; page-native CSS controls wrapping. -->
+<style id="dpro-lp-hero-typography-normalize-v1-2">
+/* DPRO LP HERO TYPOGRAPHY NORMALIZE V1.2
+   Final screenshot-driven base:
+   - smaller H1 on desktop/laptop/mobile
+   - native Japanese phrase breaking
+   - no runtime DOM mutation
+   - explicit source <br> is preserved */
+h1{
+  max-width:100%!important;
+  min-width:0!important;
+  font-size:clamp(34px,2.95vw,44px)!important;
+  line-height:1.14!important;
+  letter-spacing:-.032em!important;
+  white-space:normal!important;
+  overflow-wrap:normal!important;
+  word-break:normal!important;
+  line-break:strict!important;
+  text-wrap:pretty!important;
+}
+h1 span,h1 strong,h1 em{
+  max-width:100%!important;
+  white-space:normal!important;
+  overflow-wrap:normal!important;
+  word-break:normal!important;
+  line-break:strict!important;
+}
+@supports (word-break:auto-phrase){
+  h1,h1 span,h1 strong,h1 em{word-break:auto-phrase!important}
+}
+.hero-grid,.hero-grid>*,.heroGrid,.heroGrid>*{min-width:0!important}
+@media (min-width:761px) and (max-width:1120px){
+  h1{font-size:clamp(32px,3.8vw,40px)!important;line-height:1.16!important}
+}
+@media (max-width:760px){
+  h1{font-size:clamp(29px,7.9vw,37px)!important;line-height:1.15!important;overflow-wrap:anywhere!important}
+  h1 span,h1 strong,h1 em{overflow-wrap:anywhere!important}
+}
+/* Build-time phrase protection. Only short diagnosed Japanese words use this. */
+h1 .dpro-h1-keep{
+  display:inline!important;
+  white-space:nowrap!important;
+  overflow-wrap:normal!important;
+  word-break:keep-all!important;
+}
+</style>
 </head>
 <body>
   <noscript><div class="noscript">JavaScriptが無効でも本文・料金・相談リンクはご覧いただけます。実画面DEMOは各リンクを新しいタブで開いてください。</div></noscript>
