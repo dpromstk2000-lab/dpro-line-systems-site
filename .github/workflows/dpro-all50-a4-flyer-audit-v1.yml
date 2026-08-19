@@ -1,0 +1,296 @@
+name: DPRO ALL50 A4 Flyer Audit V1.0
+
+on:
+  push:
+    paths:
+      - '.github/workflows/dpro-all50-a4-flyer-audit-v1.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install PDF and image tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y poppler-utils
+          python -m pip install --upgrade pip
+          python -m pip install Pillow opencv-python-headless pypdf
+
+      - name: Audit all 50 A4 flyer pairs
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf qa/all50-a4-flyer-audit-v1
+          mkdir -p qa/all50-a4-flyer-audit-v1/renders qa/all50-a4-flyer-audit-v1/bottom-crops
+
+          python - <<'PY'
+          import re, csv, json, subprocess, math
+          from pathlib import Path
+          from PIL import Image, ImageDraw, ImageFont
+          from pypdf import PdfReader
+          import cv2
+
+          ROOT = Path('.')
+          OUT = Path('qa/all50-a4-flyer-audit-v1')
+          REND = OUT / 'renders'
+          BOTTOM = OUT / 'bottom-crops'
+          EXPECTED = 50
+
+          pdfs = sorted(ROOT.glob('flyer-*.pdf'))
+          htmls = sorted(ROOT.glob('flyer-*.html'))
+          pdf_stems = {p.stem for p in pdfs}
+          html_stems = {p.stem for p in htmls}
+          stems = sorted(pdf_stems | html_stems)
+
+          def run(cmd):
+              return subprocess.run(cmd, text=True, capture_output=True, check=False)
+
+          def pdf_info(pdf_path):
+              try:
+                  reader = PdfReader(str(pdf_path))
+                  pages = len(reader.pages)
+                  if pages < 1:
+                      return pages, 0.0, 0.0
+                  page = reader.pages[0]
+                  return pages, float(page.mediabox.width), float(page.mediabox.height)
+              except Exception:
+                  return -1, 0.0, 0.0
+
+          def is_a4_portrait(w, h):
+              return bool(w and h and h > w and abs(w - 595.28) <= 8 and abs(h - 841.89) <= 8)
+
+          def qr_values(image_path):
+              image = cv2.imread(str(image_path))
+              if image is None:
+                  return []
+              det = cv2.QRCodeDetector()
+              values = []
+              try:
+                  ok, decoded, points, _ = det.detectAndDecodeMulti(image)
+                  if ok and decoded:
+                      values.extend(v.strip() for v in decoded if v and v.strip())
+              except Exception:
+                  pass
+              if not values:
+                  try:
+                      value, points, _ = det.detectAndDecode(image)
+                      if value and value.strip():
+                          values.append(value.strip())
+                  except Exception:
+                      pass
+              unique = []
+              for v in values:
+                  if v not in unique:
+                      unique.append(v)
+              return unique
+
+          rows = []
+          for stem in stems:
+              pdf = ROOT / f'{stem}.pdf'
+              html = ROOT / f'{stem}.html'
+
+              pair_ok = pdf.exists() and html.exists()
+              pages = -1
+              w = h = 0.0
+              a4 = False
+              render_ok = False
+              qr = []
+              html_a4 = False
+              fixed_height_risk = False
+              absolute_footer_risk = False
+              html_bytes = pdf_bytes = 0
+
+              if html.exists():
+                  html_bytes = html.stat().st_size
+                  text = html.read_text(encoding='utf-8', errors='ignore')
+                  html_a4 = bool(
+                      re.search(r'@page\s*\{[^}]*size\s*:\s*A4\s+portrait', text, re.I | re.S)
+                      or ('width:210mm' in text and ('height:297mm' in text or 'min-height:297mm' in text))
+                  )
+                  fixed_height_risk = bool(
+                      re.search(r'(?:\.sheet|\.page)\s*\{[^}]*height\s*:\s*297mm[^}]*overflow\s*:\s*hidden', text, re.I | re.S)
+                  )
+                  absolute_footer_risk = bool(
+                      re.search(r'\.footer\s*\{[^}]*position\s*:\s*absolute[^}]*bottom\s*:\s*0', text, re.I | re.S)
+                  )
+
+              if pdf.exists():
+                  pdf_bytes = pdf.stat().st_size
+                  pages, w, h = pdf_info(pdf)
+                  a4 = is_a4_portrait(w, h)
+
+                  png = REND / f'{stem}.png'
+                  proc = run([
+                      'pdftoppm', '-f', '1', '-singlefile', '-r', '180', '-png',
+                      str(pdf), str(png.with_suffix(''))
+                  ])
+                  render_ok = proc.returncode == 0 and png.exists() and png.stat().st_size > 0
+
+                  if render_ok:
+                      qr = qr_values(png)
+
+                      if not qr:
+                          hi = OUT / f'_qr_{stem}.png'
+                          proc2 = run([
+                              'pdftoppm', '-f', '1', '-singlefile', '-r', '300', '-png',
+                              str(pdf), str(hi.with_suffix(''))
+                          ])
+                          if proc2.returncode == 0 and hi.exists():
+                              qr = qr_values(hi)
+                              hi.unlink(missing_ok=True)
+
+                      try:
+                          im = Image.open(png).convert('RGB')
+                          y0 = int(im.height * 0.64)
+                          im.crop((0, y0, im.width, im.height)).save(
+                              BOTTOM / f'{stem}.jpg', quality=90
+                          )
+                      except Exception:
+                          pass
+
+              auto_status = 'PASS'
+              notes = []
+
+              if not pair_ok:
+                  auto_status = 'FAIL'
+                  notes.append('HTML/PDF pair missing')
+              if pages != 1:
+                  auto_status = 'FAIL'
+                  notes.append(f'page_count={pages}')
+              if not a4:
+                  auto_status = 'FAIL'
+                  notes.append('not A4 portrait')
+              if not render_ok:
+                  auto_status = 'FAIL'
+                  notes.append('render failed')
+              if auto_status != 'FAIL' and not html_a4:
+                  auto_status = 'WARN'
+                  notes.append('HTML A4 declaration unclear')
+              if auto_status != 'FAIL' and not qr:
+                  auto_status = 'WARN'
+                  notes.append('QR not machine-decoded')
+              if fixed_height_risk and absolute_footer_risk:
+                  notes.append('fixed-height + absolute-footer overlap risk')
+
+              rows.append({
+                  'flyer': stem,
+                  'html_exists': html.exists(),
+                  'pdf_exists': pdf.exists(),
+                  'html_bytes': html_bytes,
+                  'pdf_bytes': pdf_bytes,
+                  'pdf_pages': pages,
+                  'page_width_pt': round(w, 2),
+                  'page_height_pt': round(h, 2),
+                  'a4_portrait': a4,
+                  'render_ok': render_ok,
+                  'html_a4': html_a4,
+                  'fixed_height_risk': fixed_height_risk,
+                  'absolute_footer_risk': absolute_footer_risk,
+                  'qr_decoded_count': len(qr),
+                  'qr_values': ' | '.join(qr),
+                  'auto_status': auto_status,
+                  'notes': '; '.join(notes),
+              })
+
+          if rows:
+              fields = list(rows[0].keys())
+              with (OUT / 'AUDIT.csv').open('w', encoding='utf-8-sig', newline='') as f:
+                  writer = csv.DictWriter(f, fieldnames=fields)
+                  writer.writeheader()
+                  writer.writerows(rows)
+
+          (OUT / 'AUDIT.json').write_text(
+              json.dumps(rows, ensure_ascii=False, indent=2), encoding='utf-8'
+          )
+
+          def contact_sheets(paths, prefix, thumb, cols, rows_per):
+              paths = [p for p in paths if p.exists()]
+              per = cols * rows_per
+              font = ImageFont.load_default()
+              for si in range(math.ceil(len(paths) / per)):
+                  batch = paths[si * per:(si + 1) * per]
+                  cell_w, cell_h = thumb[0] + 24, thumb[1] + 48
+                  sheet = Image.new('RGB', (cell_w * cols, cell_h * rows_per), 'white')
+                  draw = ImageDraw.Draw(sheet)
+
+                  for i, p in enumerate(batch):
+                      im = Image.open(p).convert('RGB')
+                      im.thumbnail(thumb)
+                      col = i % cols
+                      row = i // cols
+                      x = col * cell_w + (cell_w - im.width) // 2
+                      y = row * cell_h + 4
+                      sheet.paste(im, (x, y))
+                      label = p.stem.replace('flyer-', '')
+                      draw.text(
+                          (col * cell_w + 8, row * cell_h + thumb[1] + 10),
+                          label, fill='black', font=font
+                      )
+
+                  sheet.save(OUT / f'{prefix}_{si + 1:02d}.jpg', quality=91)
+
+          contact_sheets(
+              [REND / f'{s}.png' for s in stems],
+              'CONTACT_FULL', (350, 495), 5, 2
+          )
+          contact_sheets(
+              [BOTTOM / f'{s}.jpg' for s in stems],
+              'CONTACT_BOTTOM', (350, 195), 5, 5
+          )
+
+          fails = [r for r in rows if r['auto_status'] == 'FAIL']
+          warns = [r for r in rows if r['auto_status'] == 'WARN']
+          risks = [r for r in rows if r['fixed_height_risk'] and r['absolute_footer_risk']]
+          qr0 = [r for r in rows if r['qr_decoded_count'] == 0]
+
+          summary = [
+              '# DPRO ALL50 A4 FLYER AUDIT V1.0',
+              '',
+              f'- flyer stems discovered: {len(stems)}',
+              f'- HTML count: {len(htmls)}',
+              f'- PDF count: {len(pdfs)}',
+              f'- expected: {EXPECTED}',
+              f'- AUTO PASS: {sum(r["auto_status"] == "PASS" for r in rows)}',
+              f'- AUTO WARN: {len(warns)}',
+              f'- AUTO FAIL: {len(fails)}',
+              f'- fixed-height + absolute-footer structural risk: {len(risks)}',
+              f'- QR machine-decode zero: {len(qr0)}',
+              '',
+              '## AUTO FAIL',
+          ]
+          summary += [f'- {r["flyer"]}: {r["notes"]}' for r in fails] or ['- NONE']
+          summary += ['', '## AUTO WARN']
+          summary += [f'- {r["flyer"]}: {r["notes"]}' for r in warns] or ['- NONE']
+          summary += ['', '## STRUCTURAL OVERLAP RISK']
+          summary += [f'- {r["flyer"]}' for r in risks] or ['- NONE']
+          summary += [
+              '',
+              'Automatic status is not the final visual verdict.',
+              'Final PASS / FIX REQUIRED is decided after reviewing CONTACT_FULL and CONTACT_BOTTOM.',
+          ]
+
+          (OUT / 'SUMMARY.md').write_text('\n'.join(summary) + '\n', encoding='utf-8')
+          print((OUT / 'SUMMARY.md').read_text(encoding='utf-8'))
+
+          # Hard gate: inventory, one-page A4 format and render integrity only.
+          if len(stems) != EXPECTED or len(htmls) != EXPECTED or len(pdfs) != EXPECTED or fails:
+              raise SystemExit(2)
+          PY
+
+      - name: Upload audit artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: DPRO_ALL50_A4_FLYER_AUDIT_V1.0
+          path: qa/all50-a4-flyer-audit-v1/
+          if-no-files-found: error
+          retention-days: 14
