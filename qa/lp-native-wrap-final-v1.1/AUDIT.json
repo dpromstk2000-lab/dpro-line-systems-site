@@ -3,25 +3,14 @@
     "version": "DPRO LP NATIVE WRAP FINAL AUDIT V1.1",
     "pages": 50,
     "checks": 150,
-    "highChecks": 14,
-    "highPages": 10,
+    "highChecks": 0,
+    "highPages": 0,
     "horizontalOverflowChecks": 0,
     "loadErrors": 0,
     "auditErrors": 0,
     "elementAuditErrors": 0
   },
-  "highPages": [
-    "lp-btype.html",
-    "lp-car.html",
-    "lp-caretaxi.html",
-    "lp-funeral.html",
-    "lp-green-rental.html",
-    "lp-izakaya.html",
-    "lp-nail.html",
-    "lp-stay.html",
-    "lp-takeout.html",
-    "lp-yakiniku.html"
-  ],
+  "highPages": [],
   "results": [
     {
       "file": "lp-bakery.html",
@@ -72,34 +61,8 @@
       "loadError": "",
       "auditError": "",
       "horizontalOverflow": false,
-      "issues": [
-        {
-          "tag": "H1",
-          "text": "相談から通所、作業、支援、工賃まで。 B型事業所の毎日を、ひとつにつなぐ。",
-          "lines": [
-            "相談から通所、作",
-            "業、支援、工賃ま",
-            "で。",
-            "B型事業所の毎日",
-            "を、ひとつにつな",
-            "ぐ。"
-          ],
-          "counts": [
-            8,
-            8,
-            2,
-            8,
-            8,
-            2
-          ],
-          "width": 595.3,
-          "font": 68,
-          "reasons": [
-            "fragmented-heading"
-          ]
-        }
-      ],
-      "high": true
+      "issues": [],
+      "high": false
     },
     {
       "file": "lp-btype.html",
@@ -111,34 +74,8 @@
       "loadError": "",
       "auditError": "",
       "horizontalOverflow": false,
-      "issues": [
-        {
-          "tag": "H1",
-          "text": "相談から通所、作業、支援、工賃まで。 B型事業所の毎日を、ひとつにつなぐ。",
-          "lines": [
-            "相談から通所、作",
-            "業、支援、工賃ま",
-            "で。",
-            "B型事業所の毎日",
-            "を、ひとつにつな",
-            "ぐ。"
-          ],
-          "counts": [
-            8,
-            8,
-            2,
-            8,
-            8,
-            2
-          ],
-          "width": 496.6,
-          "font": 61.4,
-          "reasons": [
-            "fragmented-heading"
-          ]
-        }
-      ],
-      "high": true
+      "issues": [],
+      "high": false
     },
     {
       "file": "lp-btype.html",
@@ -293,36 +230,8 @@
       "loadError": "",
       "auditError": "",
       "horizontalOverflow": false,
-      "issues": [
-        {
-          "tag": "H1",
-          "text": "査定・買取から、販売・納車、その後のフォローまで。 車とお客様を、ひとつの流れでつなぐ。",
-          "lines": [
-            "査定・買取から、",
-            "販売・納車、その",
-            "後のフォローま",
-            "で。",
-            "車とお客様を、ひ",
-            "とつの流れでつな",
-            "ぐ。"
-          ],
-          "counts": [
-            8,
-            8,
-            7,
-            2,
-            8,
-            8,
-            2
-          ],
-          "width": 439,
-          "font": 51.2,
-          "reasons": [
-            "fragmented-heading"
-          ]
-        }
-      ],
-      "high": true
+      "issues": [],
+      "high": false
     },
     {
       "file": "lp-car.html",
@@ -399,30 +308,8 @@
       "loadError": "",
       "auditError": "",
       "horizontalOverflow": false,
-      "issues": [
-        {
-          "tag": "H1",
-          "text": "送迎依頼から、配車・運行・料金管理まで。 DPRO介護タクシーシステム",
-          "lines": [
-            "送迎依頼から、配車・運",
-            "行・料金管理まで。",
-            "DPRO介護タクシーシステ",
-            "ム"
-          ],
-          "counts": [
-            11,
-            9,
-            13,
-            1
-          ],
-          "width": 527.5,
-          "font": 43,
-          "reasons": [
-            "singleton-line"
-          ]
-        }
-      ],
-      "high": true
+      "issues": [],
+      "high": false
     },
     {
       "file": "lp-caretaxi.html",
@@ -837,36 +724,8 @@
       "loadError": "",
       "auditError": "",
       "horizontalOverflow": false,
-      "issues": [
-        {
-          "tag": "H1",
-          "text": "葬儀前の相談から、 葬儀後・法要まで。 ご家族との対応を、ひとつにつなぐ。",
-          "lines": [
-            "葬儀前の相談か",
-            "ら、",
-            "葬儀後・法要ま",
-            "で。",
-            "ご家族との対応",
-            "を、ひとつにつ",
-            "なぐ。"
-          ],
-          "counts": [
-            7,
-            2,
-            7,
-            2,
-            7,
-            7,
-            3
-          ],
-          "width": 577.3,
-          "font": 74,
-          "reasons": [
-            "fragmented-heading"
-          ]
-        }
-      ],
-      "high": true
+      "issues": [],
+      "high": false
     },
     {
       "file": "lp-funeral.html",
@@ -878,36 +737,8 @@
       "loadError": "",
       "auditError": "",
       "horizontalOverflow": false,
-      "issues": [
-        {
-          "tag": "H1",
-          "text": "葬儀前の相談から、 葬儀後・法要まで。 ご家族との対応を、ひとつにつなぐ。",
-          "lines": [
-            "葬儀前の相談か",
-            "ら、",
-            "葬儀後・法要ま",
-            "で。",
-            "ご家族との対応",
-            "を、ひとつにつな",
-            "ぐ。"
-          ],
-          "counts": [
-            7,
-            2,
-            7,
-            2,
-            7,
-            8,
-            2
-          ],
-          "width": 473.3,
-          "font": 58.4,
-          "reasons": [
-            "fragmented-heading"
-          ]
-        }
-      ],
-      "high": true
+      "issues": [],
+      "high": false
     },
     {
       "file": "lp-funeral.html",
@@ -971,30 +802,8 @@
       "loadError": "",
       "auditError": "",
       "horizontalOverflow": false,
-      "issues": [
-        {
-          "tag": "H2",
-          "text": "今の巡回方法に合わせて、 使う画面から整理できます。",
-          "lines": [
-            "今の巡回方法に合わせ",
-            "て、",
-            "使う画面から整理できま",
-            "す。"
-          ],
-          "counts": [
-            10,
-            2,
-            11,
-            2
-          ],
-          "width": 596.4,
-          "font": 52,
-          "reasons": [
-            "fragmented-heading"
-          ]
-        }
-      ],
-      "high": true
+      "issues": [],
+      "high": false
     },
     {
       "file": "lp-green-rental.html",
@@ -1344,51 +1153,8 @@
       "loadError": "",
       "auditError": "",
       "horizontalOverflow": false,
-      "issues": [
-        {
-          "tag": "H1",
-          "text": "予約受付から、 営業中の確認まで 一つにつなぐ。",
-          "lines": [
-            "予約受付から、",
-            "営業中の確認ま",
-            "で",
-            "一つにつなぐ。"
-          ],
-          "counts": [
-            7,
-            7,
-            1,
-            7
-          ],
-          "width": 566.1,
-          "font": 78,
-          "reasons": [
-            "singleton-line"
-          ]
-        },
-        {
-          "tag": "H2",
-          "text": "LINEだけでも、HPだけでもない。 3つの運用を月額5,500円（税込）で。",
-          "lines": [
-            "LINEだけでも、HPだけでもな",
-            "い。",
-            "3つの運用を月額5,500円（税込）",
-            "で。"
-          ],
-          "counts": [
-            16,
-            2,
-            18,
-            2
-          ],
-          "width": 800,
-          "font": 52,
-          "reasons": [
-            "fragmented-heading"
-          ]
-        }
-      ],
-      "high": true
+      "issues": [],
+      "high": false
     },
     {
       "file": "lp-izakaya.html",
@@ -1400,53 +1166,8 @@
       "loadError": "",
       "auditError": "",
       "horizontalOverflow": false,
-      "issues": [
-        {
-          "tag": "H1",
-          "text": "予約受付から、 営業中の確認まで 一つにつなぐ。",
-          "lines": [
-            "予約受付か",
-            "ら、",
-            "営業中の確認",
-            "まで",
-            "一つにつな",
-            "ぐ。"
-          ],
-          "counts": [
-            5,
-            2,
-            6,
-            2,
-            5,
-            2
-          ],
-          "width": 476.3,
-          "font": 71.7,
-          "reasons": [
-            "fragmented-heading"
-          ]
-        },
-        {
-          "tag": "H2",
-          "text": "お客様・管理PC・営業iPad・LINE通知を ひとつの流れに。",
-          "lines": [
-            "お客様・管理PC・営業iPad・LINE通知",
-            "を",
-            "ひとつの流れに。"
-          ],
-          "counts": [
-            22,
-            1,
-            8
-          ],
-          "width": 800,
-          "font": 46.1,
-          "reasons": [
-            "singleton-line"
-          ]
-        }
-      ],
-      "high": true
+      "issues": [],
+      "high": false
     },
     {
       "file": "lp-izakaya.html",
@@ -1471,30 +1192,8 @@
       "loadError": "",
       "auditError": "",
       "horizontalOverflow": false,
-      "issues": [
-        {
-          "tag": "H1",
-          "text": "予約だけで終わらない。 次の来店までつながる。",
-          "lines": [
-            "予約だけで終わらな",
-            "い。",
-            "次の来店までつなが",
-            "る。"
-          ],
-          "counts": [
-            9,
-            2,
-            9,
-            2
-          ],
-          "width": 548,
-          "font": 62,
-          "reasons": [
-            "fragmented-heading"
-          ]
-        }
-      ],
-      "high": true
+      "issues": [],
+      "high": false
     },
     {
       "file": "lp-nail.html",
@@ -1974,28 +1673,8 @@
       "loadError": "",
       "auditError": "",
       "horizontalOverflow": false,
-      "issues": [
-        {
-          "tag": "H3",
-          "text": "アクセス・駐車場など同じ案内を繰り返す",
-          "lines": [
-            "アクセス・駐車場な",
-            "ど同じ案内を繰り返",
-            "す"
-          ],
-          "counts": [
-            9,
-            9,
-            1
-          ],
-          "width": 146.8,
-          "font": 16,
-          "reasons": [
-            "singleton-line"
-          ]
-        }
-      ],
-      "high": true
+      "issues": [],
+      "high": false
     },
     {
       "file": "lp-stay.html",
@@ -2020,30 +1699,8 @@
       "loadError": "",
       "auditError": "",
       "horizontalOverflow": false,
-      "issues": [
-        {
-          "tag": "H1",
-          "text": "「注文を受ける」から 「次の注文」まで、 ひとつにつなぐ。",
-          "lines": [
-            "「注文を受ける」か",
-            "ら",
-            "「次の注文」まで、",
-            "ひとつにつなぐ。"
-          ],
-          "counts": [
-            9,
-            1,
-            9,
-            8
-          ],
-          "width": 599.5,
-          "font": 62,
-          "reasons": [
-            "singleton-line"
-          ]
-        }
-      ],
-      "high": true
+      "issues": [],
+      "high": false
     },
     {
       "file": "lp-takeout.html",
@@ -2055,30 +1712,8 @@
       "loadError": "",
       "auditError": "",
       "horizontalOverflow": false,
-      "issues": [
-        {
-          "tag": "H1",
-          "text": "「注文を受ける」から 「次の注文」まで、 ひとつにつなぐ。",
-          "lines": [
-            "「注文を受ける」か",
-            "ら",
-            "「次の注文」まで、",
-            "ひとつにつなぐ。"
-          ],
-          "counts": [
-            9,
-            1,
-            9,
-            8
-          ],
-          "width": 529.1,
-          "font": 55.3,
-          "reasons": [
-            "singleton-line"
-          ]
-        }
-      ],
-      "high": true
+      "issues": [],
+      "high": false
     },
     {
       "file": "lp-takeout.html",
@@ -2285,24 +1920,8 @@
       "loadError": "",
       "auditError": "",
       "horizontalOverflow": false,
-      "issues": [
-        {
-          "tag": "BUTTON",
-          "text": "オーナーPC",
-          "lines": [
-            "オーナーPC"
-          ],
-          "counts": [
-            6
-          ],
-          "width": 117.5,
-          "font": 16,
-          "reasons": [
-            "overflow"
-          ]
-        }
-      ],
-      "high": true
+      "issues": [],
+      "high": false
     },
     {
       "file": "lp-yoga.html",

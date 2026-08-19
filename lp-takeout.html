@@ -260,6 +260,80 @@
 
 <!-- DPRO PRODUCT JAPANESE MOBILE WRAP V1.0 -->
 <!-- DPRO LP NATIVE JAPANESE WRAP V1.0: generic runtime wrap disabled; page-native CSS controls wrapping. -->
+<style id="dpro-lp-native-phrase-fix-v1-1">
+/* DPRO LP NATIVE PHRASE FIX V1.1
+   Residual fix after valid 50 LP x 3 viewport audit.
+   Browser-native Japanese wrapping only; no DOM text mutation. */
+h1,h2,h3,h4{
+  max-width:100%!important;
+  min-width:0!important;
+  overflow-wrap:normal!important;
+  word-break:normal!important;
+  line-break:strict!important;
+  text-wrap:pretty!important;
+}
+.hero-grid,
+.hero-grid>*{
+  min-width:0!important;
+}
+@media (min-width:761px){
+  @supports (word-break:auto-phrase){
+    h1,h2,h3,h4{word-break:auto-phrase!important}
+  }
+}
+@media (min-width:761px) and (max-width:1120px){
+  .hero-grid{
+    grid-template-columns:minmax(0,1fr)!important;
+    gap:30px!important;
+  }
+  h1{
+    font-size:clamp(36px,5vw,52px)!important;
+    line-height:1.14!important;
+  }
+  h2{
+    font-size:clamp(28px,4vw,42px)!important;
+    line-height:1.22!important;
+  }
+  h3{
+    font-size:clamp(17px,2.1vw,20px)!important;
+  }
+}
+@media (min-width:1121px){
+  h1{
+    font-size:clamp(38px,4.1vw,58px)!important;
+    line-height:1.13!important;
+  }
+  h2{
+    font-size:clamp(29px,3.25vw,46px)!important;
+    line-height:1.22!important;
+  }
+}
+@media (max-width:760px){
+  h1,h2,h3,h4{
+    max-width:100%!important;
+    white-space:normal!important;
+    word-break:normal!important;
+    overflow-wrap:anywhere!important;
+    text-wrap:pretty!important;
+  }
+  button,
+  a.btn,
+  a.dpro-button,
+  a[class*="btn"],
+  [class*="cta"] a{
+    box-sizing:border-box!important;
+    min-width:0!important;
+    max-width:100%!important;
+    white-space:normal!important;
+    word-break:normal!important;
+    overflow-wrap:anywhere!important;
+  }
+}
+</style><style id="dpro-lp-takeout-phrase-tune-v1-1">
+@media (min-width:1121px){
+  .hero h1,h1{font-size:clamp(38px,3.7vw,54px)!important}
+}
+</style>
 </head>
 <body>
   <header class="header">
