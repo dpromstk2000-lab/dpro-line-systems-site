@@ -1,0 +1,1499 @@
+{
+  "summary": {
+    "version": "DPRO LP HERO TYPOGRAPHY NORMALIZE V1.1",
+    "pages": 50,
+    "checks": 150,
+    "highChecks": 23,
+    "highPages": 16,
+    "errors": 0,
+    "pageOverflowChecks": 0
+  },
+  "highPages": [
+    "lp-bakery.html",
+    "lp-btype.html",
+    "lp-car.html",
+    "lp-caretaxi.html",
+    "lp-cosmetics.html",
+    "lp-disposal.html",
+    "lp-flower.html",
+    "lp-funeral.html",
+    "lp-gakudo.html",
+    "lp-gym.html",
+    "lp-haishoku.html",
+    "lp-shiho.html",
+    "lp-tax.html",
+    "lp-vet.html",
+    "lp-welfare.html",
+    "lp-yoga.html"
+  ],
+  "rows": [
+    {
+      "file": "lp-bakery.html",
+      "viewport": "desktop",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [
+        {
+          "type": "h1-too-many-lines",
+          "lines": [
+            "パンを写真で見せて、その",
+            "まま取り置きへ。",
+            "店頭の準備・受け渡しまで",
+            "つながる、",
+            "DPROベーカリーシステム。"
+          ]
+        },
+        {
+          "type": "h1-word-segment-split",
+          "segment": "そのまま",
+          "lines": [
+            "パンを写真で見せて、その",
+            "まま取り置きへ。",
+            "店頭の準備・受け渡しまで",
+            "つながる、",
+            "DPROベーカリーシステム。"
+          ]
+        }
+      ],
+      "high": true
+    },
+    {
+      "file": "lp-bakery.html",
+      "viewport": "laptop",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [
+        {
+          "type": "h1-word-segment-split",
+          "segment": "そのまま",
+          "lines": [
+            "パンを写真で見せて、その",
+            "まま取り置きへ。",
+            "店頭の準備・受け渡しまで",
+            "つながる、",
+            "DPROベーカリーシステム。"
+          ]
+        }
+      ],
+      "high": true
+    },
+    {
+      "file": "lp-bakery.html",
+      "viewport": "mobile",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [
+        {
+          "type": "h1-word-segment-split",
+          "segment": "システム",
+          "lines": [
+            "パンを写真で見せて、",
+            "そのまま取り置きへ。",
+            "店頭の準備・",
+            "受け渡しまでつながる、",
+            "DPROベーカリーシステ",
+            "ム。"
+          ]
+        }
+      ],
+      "high": true
+    },
+    {
+      "file": "lp-btype.html",
+      "viewport": "desktop",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [
+        {
+          "type": "h1-word-segment-split",
+          "segment": "ひとつ",
+          "lines": [
+            "相談から通所、作業、",
+            "支援、工賃まで。",
+            "B型事業所の毎日を、ひと",
+            "つにつなぐ。"
+          ]
+        }
+      ],
+      "high": true
+    },
+    {
+      "file": "lp-btype.html",
+      "viewport": "laptop",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-btype.html",
+      "viewport": "mobile",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [
+        {
+          "type": "h1-word-segment-split",
+          "segment": "ひとつ",
+          "lines": [
+            "相談から通所、作業、",
+            "支援、工賃まで。",
+            "B型事業所の毎日を、ひと",
+            "つにつなぐ。"
+          ]
+        }
+      ],
+      "high": true
+    },
+    {
+      "file": "lp-buyback.html",
+      "viewport": "desktop",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-buyback.html",
+      "viewport": "laptop",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-buyback.html",
+      "viewport": "mobile",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-cake.html",
+      "viewport": "desktop",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-cake.html",
+      "viewport": "laptop",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-cake.html",
+      "viewport": "mobile",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-car-service.html",
+      "viewport": "desktop",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-car-service.html",
+      "viewport": "laptop",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-car-service.html",
+      "viewport": "mobile",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-car.html",
+      "viewport": "desktop",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [
+        {
+          "type": "h1-too-many-lines",
+          "lines": [
+            "査定・買取から、販売・",
+            "納車、その後の",
+            "フォローまで。",
+            "車とお客様を、ひとつの",
+            "流れでつなぐ。"
+          ]
+        }
+      ],
+      "high": true
+    },
+    {
+      "file": "lp-car.html",
+      "viewport": "laptop",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [
+        {
+          "type": "h1-word-segment-split",
+          "segment": "ひとつ",
+          "lines": [
+            "査定・買取から、販売・",
+            "納車、その後の",
+            "フォローまで。",
+            "車とお客様を、ひと",
+            "つの流れでつなぐ。"
+          ]
+        }
+      ],
+      "high": true
+    },
+    {
+      "file": "lp-car.html",
+      "viewport": "mobile",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-careplan.html",
+      "viewport": "desktop",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-careplan.html",
+      "viewport": "laptop",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-careplan.html",
+      "viewport": "mobile",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-caretaxi.html",
+      "viewport": "desktop",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-caretaxi.html",
+      "viewport": "laptop",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-caretaxi.html",
+      "viewport": "mobile",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [
+        {
+          "type": "h1-word-segment-split",
+          "segment": "システム",
+          "lines": [
+            "送迎依頼から、配車・",
+            "運行・料金管理まで。",
+            "DPRO介護タクシーシス",
+            "テム"
+          ]
+        }
+      ],
+      "high": true
+    },
+    {
+      "file": "lp-chosashi.html",
+      "viewport": "desktop",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-chosashi.html",
+      "viewport": "laptop",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-chosashi.html",
+      "viewport": "mobile",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-cleaning.html",
+      "viewport": "desktop",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-cleaning.html",
+      "viewport": "laptop",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-cleaning.html",
+      "viewport": "mobile",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-cosmetics.html",
+      "viewport": "desktop",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-cosmetics.html",
+      "viewport": "laptop",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [
+        {
+          "type": "h1-short-orphan-line",
+          "lines": [
+            "相談も、購入後も。",
+            "LINEでつながる化粧品店",
+            "へ。"
+          ]
+        }
+      ],
+      "high": true
+    },
+    {
+      "file": "lp-cosmetics.html",
+      "viewport": "mobile",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-daycare.html",
+      "viewport": "desktop",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-daycare.html",
+      "viewport": "laptop",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-daycare.html",
+      "viewport": "mobile",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-dental.html",
+      "viewport": "desktop",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-dental.html",
+      "viewport": "laptop",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-dental.html",
+      "viewport": "mobile",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-disposal.html",
+      "viewport": "desktop",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-disposal.html",
+      "viewport": "laptop",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [
+        {
+          "type": "h1-word-segment-split",
+          "segment": "ひとつ",
+          "lines": [
+            "不用品回収の「受付」",
+            "から「現場」まで、ひと",
+            "つにつながる。"
+          ]
+        }
+      ],
+      "high": true
+    },
+    {
+      "file": "lp-disposal.html",
+      "viewport": "mobile",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [
+        {
+          "type": "h1-word-segment-split",
+          "segment": "ひとつ",
+          "lines": [
+            "不用品回収の「受付」",
+            "から「現場」まで、ひと",
+            "つにつながる。"
+          ]
+        }
+      ],
+      "high": true
+    },
+    {
+      "file": "lp-estate.html",
+      "viewport": "desktop",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-estate.html",
+      "viewport": "laptop",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-estate.html",
+      "viewport": "mobile",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-esthe.html",
+      "viewport": "desktop",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-esthe.html",
+      "viewport": "laptop",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-esthe.html",
+      "viewport": "mobile",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-eye.html",
+      "viewport": "desktop",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-eye.html",
+      "viewport": "laptop",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-eye.html",
+      "viewport": "mobile",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-flower.html",
+      "viewport": "desktop",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [
+        {
+          "type": "h1-word-segment-split",
+          "segment": "ひとつ",
+          "lines": [
+            "花の注文から、制作・",
+            "お渡しまで。",
+            "お客様とのやり取りを、ひと",
+            "つにつなぐ。"
+          ]
+        }
+      ],
+      "high": true
+    },
+    {
+      "file": "lp-flower.html",
+      "viewport": "laptop",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-flower.html",
+      "viewport": "mobile",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-funeral.html",
+      "viewport": "desktop",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [
+        {
+          "type": "h1-word-segment-split",
+          "segment": "ひとつ",
+          "lines": [
+            "葬儀前の相談から、",
+            "葬儀後・法要まで。",
+            "ご家族との対応を、ひと",
+            "つにつなぐ。"
+          ]
+        }
+      ],
+      "high": true
+    },
+    {
+      "file": "lp-funeral.html",
+      "viewport": "laptop",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-funeral.html",
+      "viewport": "mobile",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [
+        {
+          "type": "h1-word-segment-split",
+          "segment": "ひとつ",
+          "lines": [
+            "葬儀前の相談から、",
+            "葬儀後・法要まで。",
+            "ご家族との対応を、ひと",
+            "つにつなぐ。"
+          ]
+        }
+      ],
+      "high": true
+    },
+    {
+      "file": "lp-gakudo.html",
+      "viewport": "desktop",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [
+        {
+          "type": "h1-word-segment-split",
+          "segment": "ひとつ",
+          "lines": [
+            "欠席も、お迎え変更も。",
+            "その先の安全確認まで、ひと",
+            "つにつなぐ。"
+          ]
+        }
+      ],
+      "high": true
+    },
+    {
+      "file": "lp-gakudo.html",
+      "viewport": "laptop",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-gakudo.html",
+      "viewport": "mobile",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-green-rental.html",
+      "viewport": "desktop",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-green-rental.html",
+      "viewport": "laptop",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-green-rental.html",
+      "viewport": "mobile",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-gym.html",
+      "viewport": "desktop",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [
+        {
+          "type": "h1-word-segment-split",
+          "segment": "ひとつ",
+          "lines": [
+            "体験予約から、入会・",
+            "トレーニング・継続まで。",
+            "パーソナルジムの毎日を、ひと",
+            "つにつなぐ。"
+          ]
+        }
+      ],
+      "high": true
+    },
+    {
+      "file": "lp-gym.html",
+      "viewport": "laptop",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-gym.html",
+      "viewport": "mobile",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-gyosei.html",
+      "viewport": "desktop",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-gyosei.html",
+      "viewport": "laptop",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-gyosei.html",
+      "viewport": "mobile",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-hair.html",
+      "viewport": "desktop",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-hair.html",
+      "viewport": "laptop",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-hair.html",
+      "viewport": "mobile",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-haishoku.html",
+      "viewport": "desktop",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-haishoku.html",
+      "viewport": "laptop",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [
+        {
+          "type": "h1-short-orphan-line",
+          "lines": [
+            "DPRO",
+            "高齢者配食管理システ",
+            "ム"
+          ]
+        },
+        {
+          "type": "h1-word-segment-split",
+          "segment": "システム",
+          "lines": [
+            "DPRO",
+            "高齢者配食管理システ",
+            "ム"
+          ]
+        }
+      ],
+      "high": true
+    },
+    {
+      "file": "lp-haishoku.html",
+      "viewport": "mobile",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-homecare.html",
+      "viewport": "desktop",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-homecare.html",
+      "viewport": "laptop",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-homecare.html",
+      "viewport": "mobile",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-homenursing.html",
+      "viewport": "desktop",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-homenursing.html",
+      "viewport": "laptop",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-homenursing.html",
+      "viewport": "mobile",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-houkago.html",
+      "viewport": "desktop",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-houkago.html",
+      "viewport": "laptop",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-houkago.html",
+      "viewport": "mobile",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-housekeep.html",
+      "viewport": "desktop",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-housekeep.html",
+      "viewport": "laptop",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-housekeep.html",
+      "viewport": "mobile",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-izakaya.html",
+      "viewport": "desktop",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-izakaya.html",
+      "viewport": "laptop",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-izakaya.html",
+      "viewport": "mobile",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-nail.html",
+      "viewport": "desktop",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-nail.html",
+      "viewport": "laptop",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-nail.html",
+      "viewport": "mobile",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-pet-salon.html",
+      "viewport": "desktop",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-pet-salon.html",
+      "viewport": "laptop",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-pet-salon.html",
+      "viewport": "mobile",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-photo.html",
+      "viewport": "desktop",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-photo.html",
+      "viewport": "laptop",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-photo.html",
+      "viewport": "mobile",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-reform.html",
+      "viewport": "desktop",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-reform.html",
+      "viewport": "laptop",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-reform.html",
+      "viewport": "mobile",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-repair.html",
+      "viewport": "desktop",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-repair.html",
+      "viewport": "laptop",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-repair.html",
+      "viewport": "mobile",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-salesnavi.html",
+      "viewport": "desktop",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-salesnavi.html",
+      "viewport": "laptop",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-salesnavi.html",
+      "viewport": "mobile",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-salon.html",
+      "viewport": "desktop",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-salon.html",
+      "viewport": "laptop",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-salon.html",
+      "viewport": "mobile",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-school.html",
+      "viewport": "desktop",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-school.html",
+      "viewport": "laptop",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-school.html",
+      "viewport": "mobile",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-seitai.html",
+      "viewport": "desktop",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-seitai.html",
+      "viewport": "laptop",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-seitai.html",
+      "viewport": "mobile",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-sharoushi.html",
+      "viewport": "desktop",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-sharoushi.html",
+      "viewport": "laptop",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-sharoushi.html",
+      "viewport": "mobile",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-shiho.html",
+      "viewport": "desktop",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [
+        {
+          "type": "h1-word-segment-split",
+          "segment": "その後",
+          "lines": [
+            "相続・登記の相談から、その",
+            "後の案件管理まで。LINEと",
+            "ひとつの仕組みで整理。"
+          ]
+        }
+      ],
+      "high": true
+    },
+    {
+      "file": "lp-shiho.html",
+      "viewport": "laptop",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-shiho.html",
+      "viewport": "mobile",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-sodan.html",
+      "viewport": "desktop",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-sodan.html",
+      "viewport": "laptop",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-sodan.html",
+      "viewport": "mobile",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-stay.html",
+      "viewport": "desktop",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-stay.html",
+      "viewport": "laptop",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-stay.html",
+      "viewport": "mobile",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-takeout.html",
+      "viewport": "desktop",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-takeout.html",
+      "viewport": "laptop",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-takeout.html",
+      "viewport": "mobile",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-tax.html",
+      "viewport": "desktop",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-tax.html",
+      "viewport": "laptop",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-tax.html",
+      "viewport": "mobile",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [
+        {
+          "type": "h1-word-segment-split",
+          "segment": "ひとつ",
+          "lines": [
+            "資料回収も、",
+            "申告の進み具合も。",
+            "顧問先対応を、ひと",
+            "つに。"
+          ]
+        }
+      ],
+      "high": true
+    },
+    {
+      "file": "lp-vet.html",
+      "viewport": "desktop",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-vet.html",
+      "viewport": "laptop",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-vet.html",
+      "viewport": "mobile",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [
+        {
+          "type": "h1-word-segment-split",
+          "segment": "ひとつ",
+          "lines": [
+            "診察券だけじゃない。",
+            "予約・受付・診察・",
+            "会計待ちまで、ひと",
+            "つにつなぐ。"
+          ]
+        }
+      ],
+      "high": true
+    },
+    {
+      "file": "lp-welfare-shuttle.html",
+      "viewport": "desktop",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-welfare-shuttle.html",
+      "viewport": "laptop",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-welfare-shuttle.html",
+      "viewport": "mobile",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-welfare.html",
+      "viewport": "desktop",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [
+        {
+          "type": "h1-word-segment-split",
+          "segment": "ひとつ",
+          "lines": [
+            "福祉用具の相談から、",
+            "納品後のフォローまで。",
+            "利用者ごとの対応を、ひと",
+            "つにつなぐ。"
+          ]
+        }
+      ],
+      "high": true
+    },
+    {
+      "file": "lp-welfare.html",
+      "viewport": "laptop",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [
+        {
+          "type": "h1-word-segment-split",
+          "segment": "ひとつ",
+          "lines": [
+            "福祉用具の相談から、",
+            "納品後のフォローまで。",
+            "利用者ごとの対応を、ひと",
+            "つにつなぐ。"
+          ]
+        }
+      ],
+      "high": true
+    },
+    {
+      "file": "lp-welfare.html",
+      "viewport": "mobile",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-yakiniku.html",
+      "viewport": "desktop",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-yakiniku.html",
+      "viewport": "laptop",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-yakiniku.html",
+      "viewport": "mobile",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-yoga.html",
+      "viewport": "desktop",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [
+        {
+          "type": "h1-word-segment-split",
+          "segment": "ひとつ",
+          "lines": [
+            "体験予約から次回予約まで。",
+            "ヨガスタジオの運営を、ひと",
+            "つにつなぐ。"
+          ]
+        }
+      ],
+      "high": true
+    },
+    {
+      "file": "lp-yoga.html",
+      "viewport": "laptop",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [],
+      "high": false
+    },
+    {
+      "file": "lp-yoga.html",
+      "viewport": "mobile",
+      "error": "",
+      "pageOverflow": false,
+      "issues": [],
+      "high": false
+    }
+  ]
+}
