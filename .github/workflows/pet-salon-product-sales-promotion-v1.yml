@@ -1,0 +1,581 @@
+name: PET SALON PRODUCT SALES PROMOTION V1.0
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/pet-salon-product-sales-promotion-v1.yml'
+
+permissions:
+  contents: write
+  pages: write
+
+jobs:
+  apply:
+    if: "!contains(github.event.head_commit.message, '[PET-SALON-PRODUCT-SALES-V1-APPLIED]')"
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Apply PET SALON sales positioning without replacing existing pages
+        shell: python
+        run: |
+          from pathlib import Path
+
+          STYLE_MARKER = 'id="dpro-pet-product-sales-v1-style"'
+          SECTION_MARKER = 'data-dpro-pet-product-sales-v1="1"'
+
+          STYLE = r'''
+          <style id="dpro-pet-product-sales-v1-style">
+          /* DPRO PET SALON PRODUCT SALES PROMOTION V1.0 */
+          .dppetsales{
+            --dpp-ink:#14211b;
+            --dpp-deep:#101a15;
+            --dpp-green:#245540;
+            --dpp-lime:#b7ff24;
+            --dpp-gold:#d6b77c;
+            --dpp-paper:#f7f3ec;
+            --dpp-line:rgba(20,33,27,.14);
+            position:relative;
+            isolation:isolate;
+            overflow:hidden;
+            padding:clamp(64px,8vw,110px) 0;
+            background:
+              radial-gradient(circle at 88% 8%,rgba(183,255,36,.10),transparent 28%),
+              linear-gradient(180deg,#f7f3ec 0%,#fff 100%);
+            color:var(--dpp-ink);
+            font-family:"Noto Sans JP","Yu Gothic","Hiragino Kaku Gothic ProN",Meiryo,system-ui,sans-serif;
+            line-break:strict;
+            word-break:normal;
+          }
+          .dppetsales *{box-sizing:border-box}
+          .dppetsales__inner{
+            width:min(1180px,calc(100% - 40px));
+            margin-inline:auto;
+          }
+          .dppetsales__eyebrow{
+            display:inline-flex;
+            align-items:center;
+            gap:8px;
+            margin:0 0 14px;
+            color:#72592e;
+            font-size:12px;
+            font-weight:950;
+            letter-spacing:.14em;
+          }
+          .dppetsales__eyebrow::before{
+            content:"";
+            width:30px;
+            height:2px;
+            background:var(--dpp-gold);
+          }
+          .dppetsales__head{
+            display:grid;
+            grid-template-columns:minmax(0,1.12fr) minmax(300px,.88fr);
+            gap:clamp(28px,5vw,68px);
+            align-items:end;
+          }
+          .dppetsales h2{
+            margin:0;
+            max-width:780px;
+            color:var(--dpp-ink);
+            font-size:clamp(34px,5.2vw,68px);
+            line-height:1.18;
+            letter-spacing:-.045em;
+            font-weight:950;
+            text-wrap:balance;
+          }
+          .dppetsales__line{display:block}
+          .dppetsales__lead{
+            margin:0;
+            color:#58675f;
+            font-size:clamp(15px,1.6vw,18px);
+            line-height:1.95;
+          }
+          .dppetsales__promise{
+            display:grid;
+            grid-template-columns:repeat(5,minmax(0,1fr));
+            gap:8px;
+            margin:34px 0 0;
+            padding:10px;
+            border:1px solid var(--dpp-line);
+            border-radius:22px;
+            background:#fff;
+            box-shadow:0 20px 55px rgba(20,33,27,.08);
+          }
+          .dppetsales__promise div{
+            min-height:86px;
+            padding:15px 14px;
+            border-radius:15px;
+            background:#f5f8f6;
+          }
+          .dppetsales__promise small{
+            display:block;
+            color:#708078;
+            font-size:10px;
+            font-weight:900;
+            letter-spacing:.10em;
+          }
+          .dppetsales__promise strong{
+            display:block;
+            margin-top:5px;
+            color:var(--dpp-deep);
+            font-size:14px;
+            line-height:1.45;
+          }
+          .dppetsales__class-title{
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            gap:18px;
+            margin:56px 0 18px;
+          }
+          .dppetsales__class-title h3{
+            margin:0;
+            color:var(--dpp-ink);
+            font-size:clamp(24px,3vw,36px);
+            line-height:1.35;
+            letter-spacing:-.03em;
+          }
+          .dppetsales__class-title p{
+            margin:0;
+            color:#68756f;
+            font-size:13px;
+            font-weight:800;
+          }
+          .dppetsales__grid{
+            display:grid;
+            grid-template-columns:repeat(2,minmax(0,1fr));
+            gap:18px;
+          }
+          .dppetsales__card{
+            position:relative;
+            min-width:0;
+            min-height:420px;
+            display:flex;
+            flex-direction:column;
+            padding:clamp(26px,3.5vw,42px);
+            border:1px solid var(--dpp-line);
+            border-radius:28px;
+            background:#fff;
+            box-shadow:0 24px 65px rgba(20,33,27,.10);
+          }
+          .dppetsales__card--business{
+            border-color:#2c3a32;
+            background:
+              radial-gradient(circle at 84% 8%,rgba(214,183,124,.22),transparent 31%),
+              linear-gradient(145deg,#111914,#28372f);
+            color:#fff;
+          }
+          .dppetsales__badge{
+            align-self:flex-start;
+            display:inline-flex;
+            padding:7px 11px;
+            border-radius:999px;
+            background:#eef3ff;
+            color:#4458cb;
+            font-size:11px;
+            font-weight:950;
+            letter-spacing:.08em;
+          }
+          .dppetsales__card--business .dppetsales__badge{
+            background:rgba(214,183,124,.14);
+            color:#f0d59e;
+            border:1px solid rgba(214,183,124,.28);
+          }
+          .dppetsales__card h4{
+            margin:18px 0 8px;
+            color:var(--dpp-ink);
+            font-size:clamp(27px,3.1vw,40px);
+            line-height:1.28;
+            letter-spacing:-.035em;
+          }
+          .dppetsales__card--business h4{color:#fff}
+          .dppetsales__card p{
+            margin:0;
+            color:#64716a;
+            line-height:1.85;
+          }
+          .dppetsales__card--business p{color:rgba(255,255,255,.70)}
+          .dppetsales__features{
+            display:grid;
+            grid-template-columns:repeat(2,minmax(0,1fr));
+            gap:8px 14px;
+            margin:24px 0 28px;
+            padding:0;
+            list-style:none;
+          }
+          .dppetsales__features li{
+            position:relative;
+            padding-left:18px;
+            color:#36463e;
+            font-size:13px;
+            font-weight:800;
+            line-height:1.55;
+          }
+          .dppetsales__features li::before{
+            content:"✓";
+            position:absolute;
+            left:0;
+            color:#2c7a55;
+            font-weight:950;
+          }
+          .dppetsales__card--business .dppetsales__features li{color:#ebf0ed}
+          .dppetsales__card--business .dppetsales__features li::before{color:var(--dpp-lime)}
+          .dppetsales__actions{
+            display:flex;
+            flex-wrap:wrap;
+            gap:10px;
+            margin-top:auto;
+          }
+          .dppetsales__btn{
+            min-height:48px;
+            display:inline-flex;
+            align-items:center;
+            justify-content:center;
+            padding:11px 18px;
+            border-radius:999px;
+            border:1px solid #cad3ce;
+            background:#fff;
+            color:#17251e!important;
+            text-decoration:none!important;
+            font-size:13px;
+            font-weight:950;
+            line-height:1.35;
+          }
+          .dppetsales__btn--primary{
+            border-color:#173c2c;
+            background:#173c2c;
+            color:#fff!important;
+          }
+          .dppetsales__card--business .dppetsales__btn{
+            border-color:rgba(255,255,255,.24);
+            background:rgba(255,255,255,.08);
+            color:#fff!important;
+          }
+          .dppetsales__card--business .dppetsales__btn--primary{
+            border-color:var(--dpp-lime);
+            background:var(--dpp-lime);
+            color:#102014!important;
+          }
+          .dppetsales__common{
+            display:grid;
+            grid-template-columns:minmax(0,1fr) auto;
+            gap:22px;
+            align-items:center;
+            margin-top:18px;
+            padding:24px 26px;
+            border:1px solid #bed8ca;
+            border-radius:22px;
+            background:#edf7f1;
+          }
+          .dppetsales__common strong{
+            display:block;
+            color:#163c2d;
+            font-size:18px;
+            line-height:1.55;
+          }
+          .dppetsales__common span{
+            display:block;
+            margin-top:5px;
+            color:#587166;
+            font-size:13px;
+            line-height:1.7;
+          }
+          .dppetsales__common .dppetsales__btn{white-space:nowrap}
+          .dppetsales__close{
+            margin:36px 0 0;
+            padding:34px;
+            border-radius:26px;
+            background:#111914;
+            color:#fff;
+            text-align:center;
+          }
+          .dppetsales__close small{
+            display:block;
+            color:#d7bd88;
+            font-weight:950;
+            letter-spacing:.14em;
+          }
+          .dppetsales__close strong{
+            display:block;
+            margin-top:10px;
+            font-size:clamp(23px,3vw,34px);
+            line-height:1.45;
+          }
+          .dppetsales__close p{
+            max-width:760px;
+            margin:10px auto 20px;
+            color:rgba(255,255,255,.68);
+            line-height:1.8;
+          }
+          .dppetsales__close .dppetsales__actions{justify-content:center}
+          @media(max-width:900px){
+            .dppetsales__head{grid-template-columns:1fr;align-items:start}
+            .dppetsales__promise{grid-template-columns:repeat(2,minmax(0,1fr))}
+            .dppetsales__promise div:last-child{grid-column:1/-1}
+            .dppetsales__grid{grid-template-columns:1fr}
+            .dppetsales__class-title{display:block}
+            .dppetsales__class-title p{margin-top:7px}
+          }
+          @media(max-width:600px){
+            .dppetsales__inner{width:min(100% - 28px,1180px)}
+            .dppetsales h2{font-size:34px;line-height:1.3}
+            .dppetsales__promise{grid-template-columns:1fr}
+            .dppetsales__promise div:last-child{grid-column:auto}
+            .dppetsales__features{grid-template-columns:1fr}
+            .dppetsales__card{min-height:0;padding:24px 20px;border-radius:22px}
+            .dppetsales__common{grid-template-columns:1fr;padding:21px 18px}
+            .dppetsales__common .dppetsales__btn{width:100%;white-space:normal}
+            .dppetsales__actions{display:grid;grid-template-columns:1fr}
+            .dppetsales__btn{width:100%}
+            .dppetsales__close{padding:27px 18px}
+          }
+          </style>
+          '''
+
+          SECTION = r'''
+          <section class="dppetsales" id="pet-salon-hp-class" data-dpro-pet-product-sales-v1="1">
+            <div class="dppetsales__inner">
+              <div class="dppetsales__head">
+                <div>
+                  <p class="dppetsales__eyebrow">DPRO PET SALON / WEBSITE × SYSTEM</p>
+                  <h2>
+                    <span class="dppetsales__line">HPを作って終わりではなく、</span>
+                    <span class="dppetsales__line">予約・再来店まで一体で。</span>
+                  </h2>
+                </div>
+                <p class="dppetsales__lead">
+                  DPRO PET SALONは、ホームページ、WEB・LINE予約、顧客・ペット管理、
+                  施術履歴、ペットホテル、次回来店フォローまでを別々に考えません。
+                  お店に合うHPクラスを選び、その先を同じDPROシステムにつなげます。
+                </p>
+              </div>
+
+              <div class="dppetsales__promise" aria-label="DPRO PET SALONの一体運用">
+                <div><small>01 / WEBSITE</small><strong>店舗HP・ブランド</strong></div>
+                <div><small>02 / BOOKING</small><strong>WEB・LINE予約</strong></div>
+                <div><small>03 / CUSTOMER</small><strong>顧客・ペット管理</strong></div>
+                <div><small>04 / HOTEL</small><strong>ホテル・店舗設定</strong></div>
+                <div><small>05 / REPEAT</small><strong>次回来店・LINEフォロー</strong></div>
+              </div>
+
+              <div class="dppetsales__class-title">
+                <h3>ホームページは、店舗戦略に合わせて選べます。</h3>
+                <p>HPのクラスが違っても、裏側のDPRO PET SALON SYSTEMは共通。</p>
+              </div>
+
+              <div class="dppetsales__grid">
+                <article class="dppetsales__card">
+                  <span class="dppetsales__badge">MIDDLE CLASS / 実用重視</span>
+                  <h4>必要十分で、<br>毎日の運用につながるHP。</h4>
+                  <p>
+                    予約・LINE・ホテル・管理システムへの導線を分かりやすく整理。
+                    コストと運用性のバランスを重視した実用型です。
+                  </p>
+                  <ul class="dppetsales__features">
+                    <li>予約・LINE導線</li>
+                    <li>システム連携</li>
+                    <li>必要十分なページ構成</li>
+                    <li>導入しやすい実用型</li>
+                  </ul>
+                  <div class="dppetsales__actions">
+                    <a class="dppetsales__btn dppetsales__btn--primary"
+                       href="https://dpromstk2000-lab.github.io/DPRO-PET-SALON-HP-DEMO/"
+                       target="_blank" rel="noopener noreferrer">MIDDLE CLASSを見る ↗</a>
+                  </div>
+                </article>
+
+                <article class="dppetsales__card dppetsales__card--business">
+                  <span class="dppetsales__badge">BUSINESS CLASS / ブランド重視</span>
+                  <h4>店舗ブランドまで、<br>「選ばれる理由」として設計。</h4>
+                  <p>
+                    大判写真、CONCEPT、STYLE、STAFF、HOTELまで作り込み、
+                    サロンの世界観とサービス価値を多ページで伝えるブランド型です。
+                  </p>
+                  <ul class="dppetsales__features">
+                    <li>ブランド型HERO</li>
+                    <li>CONCEPT / STYLE / STAFF</li>
+                    <li>多ページ設計</li>
+                    <li>同じDPROシステムへ接続</li>
+                  </ul>
+                  <div class="dppetsales__actions">
+                    <a class="dppetsales__btn dppetsales__btn--primary"
+                       href="https://dpromstk2000-lab.github.io/DPRO-PET-SALON-HP-DEMO-BUSINESS/"
+                       target="_blank" rel="noopener noreferrer">BUSINESS CLASSを見る ↗</a>
+                  </div>
+                </article>
+              </div>
+
+              <div class="dppetsales__common">
+                <div>
+                  <strong>違うのはHPの「見せ方」。店舗運用の土台は共通です。</strong>
+                  <span>
+                    WEB・LINE予約、顧客／ペット情報、施術履歴、ホテル連携、次回来店。
+                    どちらのHPクラスでも同じDPRO PET SALON SYSTEMにつながります。
+                  </span>
+                </div>
+                <a class="dppetsales__btn dppetsales__btn--primary"
+                   href="https://dpromstk2000-lab.github.io/DPRO-PET-SALON-HP-DEMO-BUSINESS/compare.html"
+                   target="_blank" rel="noopener noreferrer">2クラスを実画面で比較 ↗</a>
+              </div>
+
+              <div class="dppetsales__close">
+                <small>OFFICIAL PRODUCT INFORMATION</small>
+                <strong>HP制作からLINE・予約・店舗運用まで、<br>DPRO SHOPでひとつにつなげます。</strong>
+                <p>
+                  機能だけでなく、店舗の見せ方・運用・再来店まで含めて、
+                  PET SALONに合う導入形を確認できます。
+                </p>
+                <div class="dppetsales__actions">
+                  <a class="dppetsales__btn"
+                     href="https://dpro-shop.com/systems/pet-salon"
+                     target="_blank" rel="noopener noreferrer">OFFICIAL SITEで詳しく見る ↗</a>
+                  <a class="dppetsales__btn"
+                     href="https://dpro-shop.com/website"
+                     target="_blank" rel="noopener noreferrer">HP制作プランを見る ↗</a>
+                </div>
+              </div>
+            </div>
+          </section>
+          '''
+
+          targets = [
+              (Path("lp-pet-salon.html"), 1_000_000),
+              (Path("systems/pet-salon.html"), 20_000),
+          ]
+
+          for path, minimum_size in targets:
+              if not path.exists():
+                  raise SystemExit(f"required file not found: {path}")
+
+              before_size = path.stat().st_size
+              if before_size < minimum_size:
+                  raise SystemExit(
+                      f"safety stop: {path} is unexpectedly small "
+                      f"({before_size} bytes; expected >= {minimum_size})"
+                  )
+
+              text = path.read_text(encoding="utf-8")
+              if SECTION_MARKER in text:
+                  print(f"{path}: section already present; keeping existing implementation")
+                  continue
+
+              lower = text.lower()
+
+              if STYLE_MARKER not in text:
+                  head_pos = lower.rfind("</head>")
+                  if head_pos < 0:
+                      raise SystemExit(f"safety stop: </head> not found in {path}")
+                  text = text[:head_pos] + STYLE + "\n" + text[head_pos:]
+                  lower = text.lower()
+
+              # Prefer adding the sales section at the end of MAIN so it remains
+              # inside the existing page structure but before the existing footer.
+              insert_pos = lower.rfind("</main>")
+              if insert_pos < 0:
+                  insert_pos = lower.rfind("</body>")
+              if insert_pos < 0:
+                  raise SystemExit(f"safety stop: neither </main> nor </body> found in {path}")
+
+              text = text[:insert_pos] + SECTION + "\n" + text[insert_pos:]
+              path.write_text(text, encoding="utf-8")
+
+              after_size = path.stat().st_size
+              if after_size <= before_size:
+                  raise SystemExit(f"safety stop: {path} did not grow after sales insertion")
+
+              print(f"{path}: {before_size} -> {after_size} bytes")
+
+      - name: QA PRODUCT PET SALON promotion
+        shell: python
+        run: |
+          from pathlib import Path
+
+          required_urls = [
+              "https://dpromstk2000-lab.github.io/DPRO-PET-SALON-HP-DEMO/",
+              "https://dpromstk2000-lab.github.io/DPRO-PET-SALON-HP-DEMO-BUSINESS/",
+              "https://dpromstk2000-lab.github.io/DPRO-PET-SALON-HP-DEMO-BUSINESS/compare.html",
+              "https://dpro-shop.com/systems/pet-salon",
+              "https://dpro-shop.com/website",
+          ]
+
+          checks = [
+              (Path("lp-pet-salon.html"), 1_000_000),
+              (Path("systems/pet-salon.html"), 20_000),
+          ]
+
+          errors = []
+          for path, minimum_size in checks:
+              text = path.read_text(encoding="utf-8")
+
+              if path.stat().st_size < minimum_size:
+                  errors.append(f"{path}: unexpectedly small after patch")
+
+              if text.count('data-dpro-pet-product-sales-v1="1"') != 1:
+                  errors.append(f"{path}: sales section marker count is not 1")
+
+              if text.count('id="dpro-pet-product-sales-v1-style"') != 1:
+                  errors.append(f"{path}: scoped style marker count is not 1")
+
+              if "</body>" not in text.lower():
+                  errors.append(f"{path}: closing body missing")
+
+              for url in required_urls:
+                  if url not in text:
+                      errors.append(f"{path}: required URL missing: {url}")
+
+              # Visual-safety assertions for the new section.
+              required_fragments = [
+                  "HPを作って終わりではなく、",
+                  "予約・再来店まで一体で。",
+                  "MIDDLE CLASS / 実用重視",
+                  "BUSINESS CLASS / ブランド重視",
+                  "color:#17251e!important",
+                  "color:#fff!important",
+                  "line-break:strict",
+                  "word-break:normal",
+              ]
+              for fragment in required_fragments:
+                  if fragment not in text:
+                      errors.append(f"{path}: required visual/sales fragment missing: {fragment}")
+
+          if errors:
+              print("\n".join(errors))
+              raise SystemExit(1)
+
+          print("PET SALON PRODUCT SALES PROMOTION V1.0 QA PASS")
+          print("Existing PRODUCT pages preserved; additive section inserted in both targets.")
+
+      - name: Commit PRODUCT PET SALON promotion
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+
+          git add lp-pet-salon.html systems/pet-salon.html
+          git diff --cached --quiet && exit 0
+
+          git commit -m 'feat: PET SALON product sales promotion [PET-SALON-PRODUCT-SALES-V1-APPLIED]'
+          git push
+
+      - name: Request GitHub Pages rebuild
+        continue-on-error: true
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set +e
+          code=$(curl -sS -o /tmp/pages-build.json -w '%{http_code}' \
+            -L -X POST \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer ${GH_TOKEN}" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            "https://api.github.com/repos/${GITHUB_REPOSITORY}/pages/builds")
+          echo "Pages rebuild request HTTP ${code}"
+          cat /tmp/pages-build.json || true
+          exit 0
