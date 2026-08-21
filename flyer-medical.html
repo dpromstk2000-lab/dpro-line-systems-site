@@ -3,154 +3,58 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>DPRO MEDICAL A4 FLYER V1.2.1 / OVERLAP & QR FIX</title>
+<meta name="robots" content="index,follow">
+<link rel="canonical" href="https://dpromstk2000-lab.github.io/dpro-line-systems-site/flyer-medical.html">
+<title>DPRO MEDICAL A4営業資料</title>
 <style>
-@page{size:A4 portrait;margin:0}
-*{box-sizing:border-box}
-:root{--navy:#082f4a;--navy2:#0f5977;--ink:#102f45;--muted:#5e7280;--line:#d8e4ea;--soft:#f3f8fb;--green:#18a96f;--blue:#1478b7;--aqua:#54c7d8}
-html,body{margin:0;background:#dce7ed;color:var(--ink);font-family:"Noto Sans JP","Yu Gothic UI","Meiryo",sans-serif;-webkit-print-color-adjust:exact;print-color-adjust:exact}
-.toolbar{position:sticky;top:0;z-index:50;height:49px;background:#082d23;display:flex;justify-content:center;align-items:center;gap:12px}
-.toolbar button{border:0;border-radius:999px;padding:10px 18px;font-weight:900;cursor:pointer}
-.toolbar .print{background:#1ed79b;color:#042d23} .toolbar .topbtn{background:#fff;color:#183b35}
-.stage{padding:28px 0 46px}
-.page{width:210mm;height:297mm;margin:0 auto;background:#fff;box-shadow:0 22px 55px rgba(15,45,65,.18);display:grid;grid-template-rows:72mm 1fr 9mm;overflow:hidden}
-.hero{height:72mm;background:linear-gradient(135deg,#062b43 0%,#0a4260 56%,#107598 100%);color:#fff;display:grid;grid-template-columns:1.12fr .88fr;position:relative;overflow:hidden}
-.hero:after{content:"";position:absolute;width:96mm;height:96mm;border-radius:50%;right:-26mm;top:-46mm;background:rgba(74,203,219,.15)}
-.hero-copy{padding:8mm 7mm 5mm 12mm;position:relative;z-index:2}
-.brandrow{display:flex;align-items:center;gap:3mm;font-weight:950;font-size:11.5pt}
-.logo{width:9mm;height:9mm;border-radius:2.6mm;background:#1498d0;display:grid;place-items:center;font-size:15pt}
-.brandrow small{display:block;font-size:5.6pt;letter-spacing:.15em;color:#a7ddec;margin-top:.4mm}
-.eyebrow{font-size:6pt;font-weight:950;letter-spacing:.14em;color:#77e2d1;margin:5.6mm 0 1.7mm}
-.hero h1{font-size:23pt;line-height:1.1;letter-spacing:-.045em;margin:0 0 2mm;font-weight:950}
-.hero h1 em{font-style:normal;color:#7ee4ff}
-.hero .lead{font-size:6.8pt;line-height:1.5;color:#d9edf5;margin:0;max-width:102mm}
-.hero .chips{display:flex;gap:1.3mm;flex-wrap:wrap;margin-top:2.4mm}
-.hero .chip{border:1px solid rgba(255,255,255,.25);border-radius:99px;padding:1.3mm 2mm;font-size:5.6pt;font-weight:900;background:rgba(255,255,255,.07)}
-.hero-visual{padding:7mm 9mm 6mm 3mm;position:relative;z-index:2;display:flex;align-items:center}
-.visual-card{width:100%;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.10);border-radius:5mm;padding:3.5mm;box-shadow:0 4mm 12mm rgba(0,0,0,.12)}
-.visual-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:3mm}
-.visual-top strong{font-size:10pt} .live{font-size:5.5pt;background:#16ad78;border-radius:99px;padding:1mm 1.8mm;font-weight:950}
-.scene{display:grid;grid-template-columns:1fr auto 1fr;gap:2mm;align-items:stretch}
-.person,.screen{background:#fff;color:var(--ink);border-radius:3mm;padding:2.6mm}
-.avatar{width:12mm;height:12mm;border-radius:50%;margin:0 auto 1.6mm;position:relative;background:linear-gradient(145deg,#d9eef6,#91cbdc)}
-.avatar:before{content:"";position:absolute;width:4.6mm;height:4.6mm;border-radius:50%;left:3.7mm;top:1.5mm;background:#17445e}
-.avatar:after{content:"";position:absolute;width:7.8mm;height:4.7mm;border-radius:4mm 4mm 2mm 2mm;left:2.1mm;bottom:1mm;background:#177eaa}
-.person b,.screen b{display:block;font-size:6.4pt;text-align:center} .person span,.screen span{display:block;font-size:5.1pt;line-height:1.4;color:#67808e;text-align:center;margin-top:.6mm}
-.arrow{display:grid;place-items:center;color:#bdebf4;font-size:14pt;font-weight:950}
-.screen .mini{display:grid;grid-template-columns:repeat(2,1fr);gap:1mm;margin-top:1.6mm}
-.screen .mini i{height:7mm;border-radius:1.4mm;background:#eef6f9;border:1px solid #d3e6ed;display:grid;place-items:center;font-style:normal;font-size:5pt;color:#0f6385;font-weight:900}
-.main{padding:4mm 11mm 0;overflow:hidden}
-.section-title small{font-size:5.8pt;font-weight:950;letter-spacing:.14em;color:#0f7fa8}
-.section-title h2{font-size:13pt;line-height:1.22;letter-spacing:-.025em;margin:.5mm 0 2mm}
-.features{display:grid;grid-template-columns:repeat(3,1fr);gap:1.6mm}
-.feature{border:1px solid var(--line);border-radius:3mm;padding:2mm;background:#fff;min-height:19mm}
-.feature .num{font-size:5pt;color:#188462;font-weight:950} .feature b{display:block;font-size:6.8pt;margin:.6mm 0} .feature p{font-size:5.1pt;line-height:1.35;color:var(--muted);margin:0}
-.connected{margin-top:2.4mm;border-radius:4.2mm;background:linear-gradient(135deg,#082f3d,#0b513f);color:#fff;padding:3mm}
-.connected-head{display:flex;align-items:end;justify-content:space-between;gap:3mm;margin-bottom:1.8mm}
-.connected-head small{font-size:5.2pt;color:#55dfb5;font-weight:950;letter-spacing:.13em} .connected-head h3{font-size:10.5pt;margin:.5mm 0 0}
-.connected-head p{font-size:5.3pt;line-height:1.4;color:#cae8dd;text-align:right;margin:0}
-.conn-grid{display:grid;grid-template-columns:32mm 5.4mm 1fr 5.4mm 42mm;gap:1.2mm;align-items:stretch}
-.conn-box{border:1px solid rgba(255,255,255,.17);border-radius:2.5mm;background:rgba(255,255,255,.07);padding:1.7mm}
-.conn-box small{font-size:4.8pt;color:#71e7c3;font-weight:950} .conn-box b{display:block;font-size:6.5pt;margin:.6mm 0} .conn-box p{font-size:4.9pt;line-height:1.28;margin:0;color:#d9eee7}
-.core{background:#12b77b;color:#062d25;display:grid;place-items:center;text-align:center}
-.core b{font-size:9.8pt} .core span{font-size:5pt;font-weight:900;margin-top:.6mm}
-.conn-arrow{display:grid;place-items:center;font-size:13pt;color:#79e3c1}
-.screen-list{display:grid;grid-template-columns:repeat(2,1fr);gap:1mm;margin-top:1.4mm}
-.screen-list i{font-style:normal;background:#fff;color:#124658;border-radius:1.4mm;padding:.9mm;font-size:4.7pt;font-weight:900;text-align:center}
-.pricecheck{margin-top:2.4mm;border:1px solid #eadfcd;border-radius:4mm;background:#fffaf3;padding:2.5mm}
-.price-top{display:flex;justify-content:space-between;align-items:end;gap:3mm}
-.price-top small{font-size:5.2pt;color:#a56e24;font-weight:950;letter-spacing:.12em} .price-top h3{font-size:9.2pt;margin:.4mm 0 0}
-.price-top p{font-size:5.2pt;color:#806c55;margin:0;text-align:right}
-.price-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.4mm;margin-top:1.6mm}
-.price-card{background:#fff;border:1px solid #eadfcd;border-radius:2.5mm;padding:1.8mm}
-.price-card b{font-size:5.7pt} .price-card span{display:block;font-size:4.8pt;color:#816d58;margin-top:.6mm;line-height:1.3}
-.totalbox{margin-top:1.6mm;border:1px solid #bfe0d2;background:#f4fffb;border-radius:3mm;padding:2.2mm;display:grid;grid-template-columns:1.18fr .82fr;gap:2.5mm;align-items:center}
-.totalbox strong{font-size:10.4pt;color:#0a8d65} .totalbox b{display:block;font-size:6.6pt;margin-bottom:.4mm} .totalbox p{font-size:5pt;color:#557367;margin:0;line-height:1.34}
-.ctas{margin-top:2.4mm}
-.cta-head small{font-size:5.1pt;color:#15856e;font-weight:950;letter-spacing:.11em} .cta-head h3{font-size:9.4pt;margin:.4mm 0 1.6mm}
-.cta-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5mm}
-.cta{border:1px solid var(--line);border-radius:3mm;padding:2mm;background:#fff;display:grid;grid-template-columns:1fr 23mm;gap:1.8mm;align-items:center;min-height:28.5mm}
-.cta small{font-size:4.7pt;color:#167a69;font-weight:950} .cta b{display:block;font-size:6.4pt;margin:.5mm 0} .cta p{font-size:4.6pt;color:#657884;line-height:1.28;margin:0}
-.cta img{width:21.5mm;height:21.5mm;border:1px solid #d7e1e7;border-radius:1.6mm;padding:.7mm;background:#fff}
-.url{font-size:4.4pt;color:#1372a2;font-weight:900;word-break:break-all;margin-top:.8mm}
-.footer{height:9mm;background:#082d23;color:#c8e5dc;display:flex;align-items:center;justify-content:space-between;padding:0 12mm;font-size:5.1pt}
-.footer b{color:#58ddb4}
-@media print{html,body{background:#fff}.toolbar{display:none}.stage{padding:0}.page{box-shadow:none;margin:0}}
+@page{size:A4 portrait;margin:0}*{box-sizing:border-box}body{margin:0;background:#eef4f8;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans JP",sans-serif;color:#15324a}
+.page{width:210mm;min-height:297mm;margin:auto;background:#fff;padding:13mm 14mm 11mm;position:relative}
+.kicker{font-size:9pt;font-weight:900;letter-spacing:.12em;color:#1769aa}h1{font-size:28pt;line-height:1.08;margin:4mm 0 3mm}h1 em{font-style:normal;color:#1769aa}
+.lead{font-size:11.5pt;line-height:1.65;color:#45677d;margin:0 0 5mm}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:3mm;margin-bottom:5mm}.stat{border:1px solid #d6e4ec;border-radius:3mm;padding:3.2mm;background:#f9fcfe}.stat small{display:block;color:#64798b;font-size:7.5pt}.stat strong{display:block;font-size:14pt;margin-top:1mm}
+.band{background:#102d45;color:#fff;border-radius:4mm;padding:4mm 5mm;margin:5mm 0}.band b{font-size:14pt}.band p{margin:1.5mm 0 0;font-size:9.2pt;line-height:1.55;color:#d4e2eb}
+.flow{display:grid;grid-template-columns:repeat(3,1fr);gap:2.5mm}.flow div{border:1px solid #d6e4ec;border-radius:3mm;padding:3mm;min-height:21mm}.flow b{font-size:9.5pt}.flow span{display:block;color:#64798b;font-size:7.8pt;line-height:1.45;margin-top:1mm}
+.models{display:grid;grid-template-columns:repeat(3,1fr);gap:2mm;margin-top:4mm}.model{background:#eef6fb;border-radius:2.5mm;padding:2.4mm}.model small{font-size:6.8pt;color:#1769aa;font-weight:900}.model b{display:block;font-size:9pt;margin-top:.7mm}
+.points{display:grid;grid-template-columns:repeat(3,1fr);gap:2.5mm;margin-top:4.5mm}.point{border-top:1.2mm solid #1769aa;background:#f9fcfe;padding:3mm;border-radius:0 0 3mm 3mm}.point b{font-size:9.5pt}.point p{font-size:7.8pt;line-height:1.45;color:#64798b;margin:1.2mm 0 0}
+.qrs{display:grid;grid-template-columns:repeat(3,1fr);gap:4mm;margin-top:5mm;border-top:1px solid #d6e4ec;padding-top:4mm}.qr{text-align:center}.qr img{width:28mm;height:28mm}.qr b{display:block;font-size:8.5pt;margin-top:1mm}.qr small{display:block;font-size:6.3pt;color:#64798b;word-break:break-all;line-height:1.35;margin-top:.8mm}
+.note{margin-top:4mm;padding:3mm 4mm;background:#f1fbf6;border:1px solid #c9e3d8;border-radius:3mm;color:#215f52;font-size:8pt;line-height:1.5}
+.footer{position:absolute;left:14mm;right:14mm;bottom:6mm;display:flex;justify-content:space-between;font-size:6.5pt;color:#6b7f8d}
+.actions{margin-top:3mm;text-align:right}.actions a{font-size:8pt;color:#1769aa;font-weight:800}
+@media screen and (max-width:900px){.page{width:100%;min-height:auto;padding:24px 18px}.stats,.flow,.models,.points,.qrs{grid-template-columns:1fr}.footer{position:static;margin-top:18px}}
 </style>
-</head>
-<body id="top">
-<div class="toolbar">
-  <button class="print" onclick="window.print()">A4で印刷 / PDF保存</button>
-  <button class="topbtn" onclick="window.scrollTo({top:0,behavior:'smooth'})">先頭へ</button>
+</head><body><main class="page">
+<div class="kicker">DPRO MEDICAL / A4 SALES SHEET V1.0</div>
+<h1>患者で受付すると、<br><em>医院側まで動く。</em></h1>
+<p class="lead">予約・WEB問診・来院受付・院内進行・待ち状況・次回フォローまで。患者側と医院側をひとつの共通基盤でつなぐ、医療機関向けDPROシステムです。</p>
+<div class="stats"><div class="stat"><small>診療科モデル</small><strong>6</strong></div><div class="stat"><small>利用画面</small><strong>5</strong></div><div class="stat"><small>システム基盤</small><strong>共通</strong></div></div>
+<div class="band"><b>予約だけで終わらない医療DX。</b><p>患者スマホ → 医院管理PC → 受付iPad → スタッフ → 医院HPまで、同じ流れで確認できます。</p></div>
+<div class="flow">
+<div><b>1. 来院前</b><span>予約・WEB問診で患者側の入力をまとめる。</span></div>
+<div><b>2. 来院受付</b><span>受付iPadや医院側で来院状況を確認。</span></div>
+<div><b>3. 院内進行</b><span>受付済・待ち・診察などの状態を共有。</span></div>
+<div><b>4. 患者確認</b><span>患者スマホ側でも待ち状況を確認。</span></div>
+<div><b>5. 医院運用</b><span>管理PC・スタッフ画面で日々の運用を整理。</span></div>
+<div><b>6. 次回フォロー</b><span>診療後の次回導線まで一連でつなぐ。</span></div>
 </div>
-<div class="stage">
-<div class="page">
-<section class="hero">
-  <div class="hero-copy">
-    <div class="brandrow"><div class="logo">D</div><div>DPRO MEDICAL<small>DPRO SHOP / MEDICAL OPERATIONS</small></div></div>
-    <div class="eyebrow">MEDICAL SALES / ONE CORE</div>
-    <h1>予約だけで終わらない。<br><em>医院運用を、ひとつに。</em></h1>
-    <p class="lead">LINE / WEBの予約・問診・来院受付から、院内進行、医院HP、次回フォローまで。患者側と医院側の流れを同じ医療COREへ。</p>
-    <div class="chips"><span class="chip">ONE CORE</span><span class="chip">5 SCREENS</span><span class="chip">6 PRESETS</span><span class="chip">PUBLIC LIVE DEMO</span></div>
-  </div>
-  <div class="hero-visual">
-    <div class="visual-card">
-      <div class="visual-top"><strong>患者 → 医院へ、同じ流れで。</strong><span class="live">LIVE DEMO</span></div>
-      <div class="scene">
-        <div class="person"><div class="avatar"></div><b>患者スマホ</b><span>予約・WEB問診・来院受付</span></div>
-        <div class="arrow">→</div>
-        <div class="screen"><b>医院側5画面</b><span>受付・院内進行・共有</span><div class="mini"><i>医院管理PC</i><i>受付iPad</i><i>スタッフ</i><i>医院HP</i></div></div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<main class="main">
-  <div class="section-title"><small>MEDICAL / SALES APPEAL</small><h2>医院運用の毎日を、6つの強みで整理。</h2></div>
-  <div class="features">
-    <div class="feature"><span class="num">01</span><b>予約・WEB問診</b><p>患者側の入口をLINE / WEBで整理。来院前の確認までつなぎます。</p></div>
-    <div class="feature"><span class="num">02</span><b>来院受付・待ち</b><p>受付済・待ち状況を医院側で確認。入口と院内を分断しません。</p></div>
-    <div class="feature"><span class="num">03</span><b>院内進行</b><p>受付後の状態をスタッフ間で共有し、必要な画面へ反映します。</p></div>
-    <div class="feature"><span class="num">04</span><b>5画面で共有</b><p>患者スマホ・医院管理PC・受付iPad・スタッフ・医院HPを連携。</p></div>
-    <div class="feature"><span class="num">05</span><b>6診療PRESET</b><p>一般・眼科・小児科・整形・美容医療・婦人科を同じCOREで構成。</p></div>
-    <div class="feature"><span class="num">06</span><b>再来・次回フォロー</b><p>予約で終わらず、次回案内までを一つの運用として整えます。</p></div>
-  </div>
-
-  <section class="connected">
-    <div class="connected-head">
-      <div><small>CONNECTED EXPERIENCE</small><h3>入口は自由。管理は、ひとつ。</h3></div>
-      <p>LINEでもWEBでも。受付・問診・院内・HPまで<br>同じ医療COREでつなぎます。</p>
-    </div>
-    <div class="conn-grid">
-      <div class="conn-box"><small>PATIENT ENTRY</small><b>LINE / WEB</b><p>予約・問診・来院前案内</p></div>
-      <div class="conn-arrow">→</div>
-      <div class="conn-box core"><div><b>DPRO MEDICAL</b><span>ONE CORE / 医院運用の中心</span></div></div>
-      <div class="conn-arrow">→</div>
-      <div class="conn-box"><small>CLINIC OPERATIONS</small><b>医院側へ共有</b><div class="screen-list"><i>医院管理PC</i><i>受付iPad</i><i>スタッフ</i><i>医院HP</i></div></div>
-    </div>
-  </section>
-
-  <section class="pricecheck">
-    <div class="price-top"><div><small>IMPLEMENTATION / MONTHLY COST CHECK</small><h3>必要な範囲を整理して、医院ごとに導入。</h3></div><p>価格を固定で見せるのではなく、<br>医院構成に合わせて正式見積をご案内します。</p></div>
-    <div class="price-grid">
-      <div class="price-card"><b>患者側入口</b><span>LINE / WEB予約、問診、来院前案内</span></div>
-      <div class="price-card"><b>医院運用CORE</b><span>受付・待ち・院内進行・権限・共有</span></div>
-      <div class="price-card"><b>医院HP・再来</b><span>公開情報、医院HP、次回フォロー</span></div>
-    </div>
-    <div class="totalbox"><div><b>DPRO MEDICAL / CUSTOM FIT</b><strong>料金は医院構成に合わせてご案内</strong></div><p>不要な機能を増やさず、診療PRESETと必要機能を整理。導入前に公開LIVE DEMOで操作イメージを確認できます。</p></div>
-  </section>
-
-  <section class="ctas">
-    <div class="cta-head"><small>DPRO SHOP / CHOOSE YOUR NEXT STEP</small><h3>相談する。知る。試す。DPRO MEDICALを、もっと近くに。</h3></div>
-    <div class="cta-grid">
-      <div class="cta"><div><small>01 / CONTACT</small><b>LINEで相談する。</b><p>導入構成・運用・見積について相談。</p><div class="url">lin.ee/YxJGXV6D</div></div><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAK4AAACuCAIAAAAgbqG5AAADF0lEQVR4nO3dQY4jJwBA0XaU+1+5s/m7kkaEAIWj99bdLo/7CxVTBj6/v78/8PPz19tvgFtIgUiBSIFIgUiBSIFIgUiBSIFIgfw98kOfz2f3+/iD51OS5/uZe5Iy8jr7fuakkc/HqECkQKRApECkQIZmEE/7vvs0cqe9b74wZ+513v0Mn4wKRApECkQKRApkcgbxNHfXevIuetV9/sk5zohVn6FRgUiBSIFIgUiBLJtBnDR3pz1357/vycVtjApECkQKRApECuQrZxBPq9YmjMwy9j2DeJdRgUiBSIFIgUiBLJtB3HbPPPJ+Vr3nVauk3/0MjQpECkQKRApECmRyBvHuzkIjTu6zNOe2z9CoQKRApECkQKRAhmYQtz1feNdta8ZXMSoQKRApECkQKZDPyJ3tu+cvjJj7V8y98v0nO8z9vYwKRApECkQKRArk6LeYbjuvbd/+rid3c111daMCkQKRApECkQJZ9gzi5LnM+66+79NYda251xlhVCBSIFIgUiBSIEMziHd94934iFXnU4z81gijApECkQKRApECmXwG8XTyucC7c4qT36o6uU+sUYFIgUiBSIFIgUyug9h32sK+WcbzZ969Y3+aW9FgHQSLSYFIgUiBSIEs+xbTvh2K7j+jYd9OUKuuPsKoQKRApECkQKRAjq6DePfOf9VM5LY14yO/NcKoQKRApECkQKRAvnIdxIjbdl7axzMIFpMCkQKRApEC+YK9mJ5Onr9w24l7+xgViBSIFIgUiBTI0Erq+/+Pfd+Tgv/H7GCEUYFIgUiBSIFIgWzci2nOyVMbTt7Dn3xKMjdbMSoQKRApECkQKZDJGcTTvl2M5q61au/Wfe9wlVXXMioQKRApECkQKZBlM4iTTp7gdtuJ2PvmJkYFIgUiBSIFIgXylTOIp1Xf5Hn3BOqnuavbzZX/RApECkQKRApk2QzitnXBI1adWz03F1i1snsVowKRApECkQKRAll2HsQ+t52/8PTuqXwjrKTmX5ACkQKRApEC+crzINjBqECkQKRApECkQKRApECkQKRApECkQP4BQAuWSFQzMHcAAAAASUVORK5CYII=" alt="LINE QR"></div>
-      <div class="cta"><div><small>02 / OFFICIAL SITE</small><b>詳しく見る。</b><p>製品内容・導入の考え方を確認。</p><div class="url">dpro-shop.com/systems/medical</div></div><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMYAAADGCAIAAAAG+WgKAAAD7klEQVR4nO3dUWojOxBA0efH7H/LmQU0DELcLsnhnO8Z20kugkJu6fPz8/MfdP4//QH4bSRFTFLEJEVMUsQkRUxSxCRFTFLEJEVMUsT+rPyjz+fz9uf4h8ldyOdPuvLu1f96er7O/X8LqxQxSRGTFDFJEZMUsaWJ7+m9KWxvoqmmp2rCmpzmbvtbWKWISYqYpIhJipikiG1OfE+T08p7k9rT3py44r3durOTo1WKmKSISYqYpIhJilg28Z21MuNMfh9ybyr8HafoWKWISYqYpIhJipikiP2Sie/pvd3D256tu41VipikiEmKmKSISYpYNvGd3Z86e77KyufZ+ybq3m/17N/CKkVMUsQkRUxSxCRFbHPiu39Xq5qwJp8Z3HPb38IqRUxSxCRFTFLEJEXs843Pjk2ezHn/3RC3sUoRkxQxSRGTFDFJEdu8j29yn2vySbq9V56cLid/z3usUsQkRUxSxCRFTFLENvf43puw9py9j+Ds7DZ5f4Qb2DlAUsQkRUxSxCRFLJv4JqensxPN2Ultb89xklWKmKSISYqYpIhJilj2HN97u2zVXPbebubZV548o2aFVYqYpIhJipikiEmK2NLE996zbNV7rZg8F+W2U2ImdwatUsQkRUxSxCRFTFLElk5umfyW4N73GKtvWk7OtivvXp1R4zk+vpikiEmKmKSISYrY4T2+s3fJnZ2nnu7/BukKqxQxSRGTFDFJEZMUsWziq9z/ear5d+V/PU3e++A5Pq4gKWKSIiYpYpIi9uIe39LbD94uNzmp3f/M4JM9Pi4lKWKSIiYpYpIitvQc34pqxjm7zzX5ed5TfR7P8XEFSRGTFDFJEZMUsc2Jr9oP2pvUqnlq8j6+yefv3rsxcIVVipikiEmKmKSISYrYi3t8e6qduOfnqabCytlTYtzHx9eQFDFJEZMUMUkR23yO7xtvHzj7U5z9nufk79kqRUxSxCRFTFLEJEVsaeK7zeR5lU/vTU/vzaQVEx8HSIqYpIhJipikiC19q/O2W/NW5o7JszH33n3y2cMVzurkUpIiJilikiImKWKHT2552jtD8mnyebfJV37vxNGKVYqYpIhJipikiEmK2OGTW26by267zXzy3Bh7fFxKUsQkRUxSxCRFLJv4blOdpjI53509D6faYbRKEZMUMUkRkxQxSRH7JRPf5N0Qk9PT2Rsl3M7AFSRFTFLEJEVMUsSyiW/ySbGzN7Dfdi5o9TxgNSdapYhJipikiEmKmKSIbU58Z0/vnNxBW5mwJm+7e3pvctxjlSImKWKSIiYpYpIi9pX38XEzqxQxSRGTFDFJEZMUMUkRkxQxSRGTFDFJEZMUsb/4Yi+bP04RhAAAAABJRU5ErkJggg==" alt="Official QR"></div>
-      <div class="cta"><div><small>03 / LIVE DEMO</small><b>30秒、実際に触る。</b><p>患者側→医院側の流れを体験。</p><div class="url">PUBLIC LIVE DEMO</div></div><img src="data:image/png;base64,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" alt="Demo QR"></div>
-    </div>
-  </section>
-</main>
-<div class="footer"><span>DPRO LINE SYSTEMS　<b>DPRO MEDICAL</b></span><span>LINE + WEB + MEDICAL OPERATIONS / ONE CORE</span></div>
+<div class="models">
+<div class="model"><small>STANDARD</small><b>一般・内科</b></div>
+<div class="model"><small>EYE</small><b>眼科</b></div>
+<div class="model"><small>PEDIATRIC</small><b>小児科</b></div>
+<div class="model"><small>ORTHO</small><b>整形外科</b></div>
+<div class="model"><small>BEAUTY</small><b>美容医療</b></div>
+<div class="model"><small>WOMEN</small><b>婦人科・女性医療</b></div>
 </div>
+<div class="points">
+<div class="point"><b>患者と医院がつながる</b><p>予約だけでなく、受付・待ち・院内進行まで一連で確認。</p></div>
+<div class="point"><b>診療科に合わせて構成</b><p>共通基盤を維持しながら、必要な機能だけを切り替え。</p></div>
+<div class="point"><b>公開DEMOで体験</b><p>架空データで患者・医院・iPadの実画面を確認。</p></div>
 </div>
-</body>
-</html>
+<div class="qrs">
+<div class="qr"><img src="data:image/png;base64,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" alt="公開DEMO QR"><b>公開DEMO</b><small>https://dpromstk2000-lab.github.io/dpro-medical-standard/medical-public-demo.html</small></div>
+<div class="qr"><img src="data:image/png;base64,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" alt="製品サイト QR"><b>製品サイト</b><small>https://dpromstk2000-lab.github.io/dpro-line-systems-site/systems/medical.html</small></div>
+<div class="qr"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAQgAAAEICAIAAAAslP2oAAAE40lEQVR4nO3dwWottxJA0edH/v+XbyaZBHYTBCokmbXmbjf22Qi6jlo/f/78+R/wb/8/fQNwI2FAEAYEYUAQBgRhQBAGBGFAEAYEYUAQBgRhQBAGBGFAEAaEv1Z/4OfnZ+I+trttn8nX3231Pqev8+Xr+r/182DFgCAMCMKAIAwIwoAgDAjCgLA8x/hyam6w6zn69HP96TnAbXOJ1z8PVgwIwoAgDAjCgCAMCMKAIAwI2+YYX257Ln5qzvBl1zxk1al9FLd9Hr5YMSAIA4IwIAgDgjAgCAOCMCCMzzFesfp8/bb3Ke2ae9z2Pq5TrBgQhAFBGBCEAUEYEIQBQRgQzDH+w6l9IK+fR/E6KwYEYUAQBgRhQBAGBGFAEAaE8TnGK9/vf+W87S/T53Xs+j++8nmwYkAQBgRhQBAGBGFAEAYEYUDYNsf4rfsEpucAt53Xscsr9/nFigFBGBCEAUEYEIQBQRgQhAHh55Xvx++y+nz9lX0Ou7xyn9OsGBCEAUEYEIQBQRgQhAFBGBCW92O8sn/gtnMndv3e2+Yqt/1/d7FiQBAGBGFAEAYEYUAQBgRhQNi2H+PUHGCX6XMqdnll/nBqX8qu61sxIAgDgjAgCAOCMCAIA4IwIIzPMW57rv/Kc/RX5gy79pPcxooBQRgQhAFBGBCEAUEYEIQBYfx8jFP7HKbnCaf2sbzye287H32VFQOCMCAIA4IwIAgDgjAgCAPC8hzj1HkO0/ez6rbzsG+bA6y6bV+HFQOCMCAIA4IwIAgDgjAgCAPC8jnft70XaNf7jqbf43Tb/OfLqXPcb5svWTEgCAOCMCAIA4IwIAgDgjAgPLMfY3rOsMsrz/u/3La/Zfr3frFiQBAGBGFAEAYEYUAQBgRhQBifY0z7rfc/PS9avc6XU++zcj4GHCAMCMKAIAwIwoAgDAjCgHBsP8aqU/OHV+YMr5x3cWressqKAUEYEIQBQRgQhAFBGBCEAWH5fIxV08/XX9k/8OXU/Z8yff/Ox4BBwoAgDAjCgCAMCMKAIAwI2+YY09+P3zVnmH7eP/3epFW3nV8xPVfxXikYJAwIwoAgDAjCgCAMCMKAcGw/xi7T+yK+7n967jHttjnJ6vWdjwEHCAOCMCAIA4IwIAgDgjAgbDsfY/p7/9Pf7/+tf4dX3jd12//XigFBGBCEAUEYEIQBQRgQhAFheY7xulPnY9z2XqZT+xxuO6/9ixUDgjAgCAOCMCAIA4IwIAgDwvJ7pW77Hv+X1fMxVq8zbdfcY9f1V69z6n1Tu1gxIAgDgjAgCAOCMCAIA4IwIDxzzveX1efx0/OBVbedh33q73PbviArBgRhQBAGBGFAEAYEYUAQBoRnzvl+fZ5w6r1Vr78P6tR+DysGBGFAEAYEYUAQBgRhQBAGhPE5xuumz9W+bV5x2znlq9f/4nwM2EAYEIQBQRgQhAFBGBCEAcEc4x+n3uP05bbn+tPnaeyyaw5jxYAgDAjCgCAMCMKAIAwIwoAwPse47dyD6fdH7dovcWpfx/T9TP/eXawYEIQBQRgQhAFBGBCEAUEYELbNMU6dn7Dqtn0Lq3OAU+d4rDo1J9nFigFBGBCEAUEYEIQBQRgQhAHh57b9EnADKwYEYUAQBgRhQBAGBGFAEAYEYUAQBgRhQBAGBGFAEAYEYUAQBoS/AUjZMB+K81qqAAAAAElFTkSuQmCC" alt="公式サイト QR"><b>導入・相談</b><small>https://dpro-shop.com/systems/medical</small></div>
+</div>
+<div class="note">公開DEMOは架空データのみを使用。本番患者情報・本番認証情報・秘密鍵は公開画面へ出しません。</div>
+<div class="actions"><a href="https://dpromstk2000-lab.github.io/dpro-line-systems-site/flyer-medical.pdf">PDF版を開く ↗</a></div>
+<div class="footer"><span>DPRO MEDICAL A4 SALES SHEET V1.0</span><span>2026-08-21</span></div>
+</main></body></html>
