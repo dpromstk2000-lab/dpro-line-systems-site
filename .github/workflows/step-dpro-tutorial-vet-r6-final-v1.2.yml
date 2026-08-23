@@ -1,0 +1,217 @@
+name: STEP DPRO TUTORIAL VET R6 FINAL V1.2
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/step-dpro-tutorial-vet-r6-final-v1.2.yml'
+
+permissions:
+  contents: write
+
+env:
+  PRODUCT_URL: https://dpromstk2000-lab.github.io/dpro-line-systems-site/systems/pet-care.html
+  QUICK_URL: https://dpromstk2000-lab.github.io/dpro-line-systems-site/assets/pdfs/dpro-vet-tutorial-quick-start-v1.0.pdf
+  DETAIL_URL: https://dpromstk2000-lab.github.io/dpro-line-systems-site/assets/pdfs/dpro-vet-tutorial-detailed-manual-v1.0.pdf
+  FIRST10_URL: https://dpromstk2000-lab.github.io/DPRO-VET-QR/tutorial-first10.html?clinic_code=dpro_vet_demo&demo=ready
+  GUIDE_URL: https://dpromstk2000-lab.github.io/DPRO-VET-QR/tutorial-guide-center.html?clinic_code=dpro_vet_demo&demo=ready
+  CONTENT_URL: https://dpromstk2000-lab.github.io/DPRO-VET-QR/CONTENT_PACKAGE.json
+
+concurrency:
+  group: dpro-tutorial-vet-r6-final
+  cancel-in-progress: false
+
+jobs:
+  deploy-and-live-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Guard VET source and R4 content clearance
+        shell: python
+        run: |
+          from pathlib import Path
+          import hashlib, json, subprocess, urllib.request
+          E=Path('evidence'); E.mkdir(exist_ok=True)
+          expected_commit='c92dfcbb8dabe2385492e60a73a291c5528e9d29'
+          expected_tree='168dbc76ae440e1b69432a0792c7e8e9762bba67'
+          expected_page_blob='3ea533f11359ffb2bc47d442e7e50b18890519c1'
+          marker='data-dpro-tutorial-r6="vet-v1"'
+          def get(url):
+              req=urllib.request.Request(url,headers={'User-Agent':'dpro-vet-r6-v12','Cache-Control':'no-cache'})
+              return urllib.request.urlopen(req,timeout=45).read()
+          vet=json.loads(get('https://api.github.com/repos/dpromstk2000-lab/DPRO-VET-QR/commits/main'))
+          if vet['sha'] != expected_commit or vet['commit']['tree']['sha'] != expected_tree:
+              raise SystemExit(f"VET source drift: {vet['sha']} / {vet['commit']['tree']['sha']}")
+          page=Path('systems/pet-care.html')
+          raw=page.read_bytes(); text=raw.decode('utf-8')
+          blob=hashlib.sha1(b'blob '+str(len(raw)).encode()+b'\0'+raw).hexdigest()
+          if marker not in text and blob != expected_page_blob:
+              raise SystemExit(f'pet-care source drift: {blob}')
+          content=json.loads(get('${{ env.CONTENT_URL }}').decode('utf-8'))
+          g=content['guide_center']; f=content['first10']
+          assert f['chapter_count']==7 and f['card_count']==16 and len(f['cards'])==16
+          assert len(g['categories'])==8 and len(g['articles'])==40 and len(g['faqs'])==15
+          assert len({a['id'] for a in g['articles']})==40
+          assert all(a.get('note','').strip() for a in g['articles'])
+          a38=next(a for a in g['articles'] if a['id']=='A038')
+          a39=next(a for a in g['articles'] if a['id']=='A039')
+          assert a38['feature_link']=='operation-guide.html'
+          assert 'system-check' not in (a38.get('feature_link','')+a38.get('note','')).lower()
+          assert a39['audience']=='clinic_owner_admin'
+          guide=get('${{ env.GUIDE_URL }}').decode('utf-8')
+          first=get('${{ env.FIRST10_URL }}').decode('utf-8')
+          canonical=json.dumps(content,ensure_ascii=False)
+          for term in ['system-check','demo_prepare','service_role','service role']:
+              assert term.lower() not in guide.lower(), term
+              assert term.lower() not in first.lower(), term
+              assert term.lower() not in canonical.lower(), term
+          assert 'fetch(' not in first and 'XMLHttpRequest' not in first
+          assert 'pointer-events:none' in first and 'class="shield"' in first
+          out={'status':'PASS','vet_commit':vet['sha'],'vet_tree':vet['commit']['tree']['sha'],'product_head_before':subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip(),'pet_care_blob_before':blob,'canonical':{'chapters':7,'cards':16,'categories':8,'articles':40,'faqs':15,'notes':'40/40','A038':'safe','A039':'clinic_owner_admin'}}
+          (E/'r4_content_clearance.json').write_text(json.dumps(out,ensure_ascii=False,indent=2),encoding='utf-8')
+          print(json.dumps(out,ensure_ascii=False,indent=2))
+
+      - name: Lock R5 PDFs and patch Product Site
+        shell: python
+        run: |
+          from pathlib import Path
+          import hashlib, json, shutil
+          E=Path('evidence')
+          src_q=Path('.github/workflows/DPRO_TUTORIAL_VET_QUICK_START_V1.0.pdf')
+          src_d=Path('.github/workflows/DPRO_TUTORIAL_VET_DETAILED_MANUAL_V1.0.pdf')
+          if not src_q.exists() or not src_d.exists():
+              raise SystemExit('staged R5 PDF files missing')
+          qsha='72a93e2ea48b7eedfbc80fa8a846dc973784f42e4292d3ab22035650bd2c6ebb'
+          dsha='f8c526b9d1842b76258531f60c8960209e0fdcd1ab0907ed3cf1b10a191e5094'
+          assert hashlib.sha256(src_q.read_bytes()).hexdigest()==qsha
+          assert hashlib.sha256(src_d.read_bytes()).hexdigest()==dsha
+          outq=Path('assets/pdfs/dpro-vet-tutorial-quick-start-v1.0.pdf')
+          outd=Path('assets/pdfs/dpro-vet-tutorial-detailed-manual-v1.0.pdf')
+          outq.parent.mkdir(parents=True,exist_ok=True)
+          shutil.copyfile(src_q,outq); shutil.copyfile(src_d,outd)
+          page=Path('systems/pet-care.html'); mirror=Path('systems/pet-care.html.txt')
+          text=page.read_text(encoding='utf-8')
+          marker='data-dpro-tutorial-r6="vet-v1"'
+          section='''<section id="tutorial-support" data-dpro-tutorial-r6="vet-v1" aria-labelledby="tutorial-title" style="padding:72px 20px;background:#f4f8f7"><div style="max-width:1120px;margin:0 auto"><p style="font-weight:800;letter-spacing:.08em;color:#397065;margin:0 0 10px">OWNER ONBOARDING / TUTORIAL</p><h2 id="tutorial-title" style="font-size:clamp(1.8rem,4vw,3rem);line-height:1.25;margin:0 0 16px">契約後すぐ始められる。<br>画面でも、印刷でも、迷わない。</h2><p style="max-width:760px;line-height:1.9;margin:0 0 30px">DPRO PET CAREは、契約後の説明を「最初の10分 → 操作ガイド → 印刷マニュアル」の順で確認できます。PC・スマートフォンで見直せて、PDFは印刷して院内に置けます。</p><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px"><article style="background:#fff;border:1px solid #dbe8e4;border-radius:18px;padding:24px"><strong>01 / 最初の10分</strong><p style="line-height:1.8">受付・診察・予約・患者検索・設定まで16カードで確認。途中から再開でき、いつでも再実行できます。</p><a href="https://dpromstk2000-lab.github.io/DPRO-VET-QR/tutorial-first10.html?clinic_code=dpro_vet_demo&amp;demo=ready&amp;mode=replay" target="_blank" rel="noopener">10分ガイドを開く</a></article><article style="background:#fff;border:1px solid #dbe8e4;border-radius:18px;padding:24px"><strong>02 / Guide Center</strong><p style="line-height:1.8">8カテゴリ・40記事・FAQ15から必要な操作を検索。実際の機能画面へのリンクも確認できます。</p><a href="https://dpromstk2000-lab.github.io/DPRO-VET-QR/tutorial-guide-center.html?clinic_code=dpro_vet_demo&amp;demo=ready" target="_blank" rel="noopener">操作ガイドを開く</a></article><article style="background:#fff;border:1px solid #dbe8e4;border-radius:18px;padding:24px"><strong>03 / 印刷マニュアル</strong><p style="line-height:1.8">まず使う内容はQuick Start、詳しい確認はDetailed Manual。院内で印刷して共有できます。</p><p><a href="../assets/pdfs/dpro-vet-tutorial-quick-start-v1.0.pdf" target="_blank" rel="noopener">Quick Start PDF</a></p><p><a href="../assets/pdfs/dpro-vet-tutorial-detailed-manual-v1.0.pdf" target="_blank" rel="noopener">Detailed Manual PDF</a></p></article></div></div></section>'''
+          if marker not in text:
+              if '</main>' not in text: raise SystemExit('pet-care </main> not found')
+              text=text.replace('</main>',section+'</main>',1)
+              page.write_text(text,encoding='utf-8')
+          mirror.write_text(page.read_text(encoding='utf-8'),encoding='utf-8')
+          qa={'status':'PASS','quick_sha256':qsha,'detail_sha256':dsha,'quick_bytes':outq.stat().st_size,'detail_bytes':outd.stat().st_size,'product_marker':marker in page.read_text(encoding='utf-8'),'mirror_identical':mirror.read_bytes()==page.read_bytes()}
+          assert qa['product_marker'] and qa['mirror_identical']
+          (E/'r5_r6_build_qa.json').write_text(json.dumps(qa,ensure_ascii=False,indent=2),encoding='utf-8')
+          print(json.dumps(qa,ensure_ascii=False,indent=2))
+
+      - name: Commit R6 Product Site and clean staging
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -f .github/workflows/step-dpro-tutorial-vet-r6-final-v1.0.yml
+          rm -f .github/workflows/step-dpro-tutorial-vet-r6-final-v1.1.yml
+          rm -f .github/workflows/step-dpro-tutorial-vet-r6-final-v1.1.payload.zip
+          rm -f .github/workflows/step-dpro-tutorial-vet-r6-final-v1.2.yml
+          rm -f .github/workflows/DPRO_TUTORIAL_VET_QUICK_START_V1.0.pdf
+          rm -f .github/workflows/DPRO_TUTORIAL_VET_DETAILED_MANUAL_V1.0.pdf
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Add VET tutorial support to product site [run $GITHUB_RUN_ID]"
+          git pull --rebase origin main
+          git push origin HEAD:main
+          mkdir -p evidence
+          printf '%s\n' "$(git rev-parse HEAD)" > evidence/r6_product_commit.txt
+          printf '%s\n' "$(git rev-parse HEAD^{tree})" > evidence/r6_product_tree.txt
+
+      - name: Wait for GitHub Pages publication
+        shell: python
+        run: |
+          import hashlib, json, time, urllib.request
+          from pathlib import Path
+          E=Path('evidence')
+          marker='data-dpro-tutorial-r6="vet-v1"'
+          expected={'${{ env.QUICK_URL }}':'72a93e2ea48b7eedfbc80fa8a846dc973784f42e4292d3ab22035650bd2c6ebb','${{ env.DETAIL_URL }}':'f8c526b9d1842b76258531f60c8960209e0fdcd1ab0907ed3cf1b10a191e5094'}
+          deadline=time.time()+720; last={}
+          while time.time()<deadline:
+              try:
+                  req=urllib.request.Request('${{ env.PRODUCT_URL }}?qa='+str(int(time.time())),headers={'User-Agent':'dpro-vet-r6-v12','Cache-Control':'no-cache'})
+                  html=urllib.request.urlopen(req,timeout=30).read().decode('utf-8')
+                  last={'product_marker':marker in html}
+                  ok=last['product_marker']
+                  for url,sha in expected.items():
+                      b=urllib.request.urlopen(urllib.request.Request(url+'?qa='+str(int(time.time())),headers={'User-Agent':'dpro-vet-r6-v12','Cache-Control':'no-cache'}),timeout=30).read()
+                      got=hashlib.sha256(b).hexdigest(); last[url]=got; ok=ok and got==sha
+                  if ok: break
+              except Exception as e: last={'error':repr(e)}
+              time.sleep(12)
+          else: raise SystemExit('Pages publication timeout: '+json.dumps(last))
+          last['status']='PASS'
+          (E/'pages_publication.json').write_text(json.dumps(last,ensure_ascii=False,indent=2),encoding='utf-8')
+          print(json.dumps(last,ensure_ascii=False,indent=2))
+
+      - name: Install FINAL QA browser
+        run: |
+          python -m pip install --quiet playwright pypdf
+          python -m playwright install --with-deps chromium
+
+      - name: R5 PDF and R6 FINAL LIVE QA
+        shell: python
+        run: |
+          from pathlib import Path
+          from playwright.sync_api import sync_playwright
+          from pypdf import PdfReader
+          import hashlib, json, urllib.request
+          E=Path('evidence')
+          def get(url):
+              req=urllib.request.Request(url,headers={'User-Agent':'dpro-vet-r6-v12','Cache-Control':'no-cache'})
+              return urllib.request.urlopen(req,timeout=45).read()
+          q=get('${{ env.QUICK_URL }}'); d=get('${{ env.DETAIL_URL }}')
+          assert hashlib.sha256(q).hexdigest()=='72a93e2ea48b7eedfbc80fa8a846dc973784f42e4292d3ab22035650bd2c6ebb'
+          assert hashlib.sha256(d).hexdigest()=='f8c526b9d1842b76258531f60c8960209e0fdcd1ab0907ed3cf1b10a191e5094'
+          Path('/tmp/q.pdf').write_bytes(q); Path('/tmp/d.pdf').write_bytes(d)
+          qr=PdfReader('/tmp/q.pdf'); dr=PdfReader('/tmp/d.pdf')
+          assert len(qr.pages)==9 and len(dr.pages)==22
+          for p in list(qr.pages)+list(dr.pages):
+              w=float(p.mediabox.width); h=float(p.mediabox.height); assert h>w and 580<w<610 and 830<h<860
+          out={'status':'PASS','r5':{'quick_pages':9,'detail_pages':22,'quick_sha256':hashlib.sha256(q).hexdigest(),'detail_sha256':hashlib.sha256(d).hexdigest()},'browser':{}}
+          with sync_playwright() as pw:
+              browser=pw.chromium.launch(headless=True)
+              for label,vp in [('desktop',{'width':1440,'height':900}),('mobile390',{'width':390,'height':844})]:
+                  p=browser.new_page(viewport=vp); errs=[]; p.on('pageerror',lambda e: errs.append(str(e)))
+                  r=p.goto('${{ env.PRODUCT_URL }}',wait_until='domcontentloaded',timeout=60000); assert r and r.ok
+                  p.wait_for_selector('[data-dpro-tutorial-r6="vet-v1"]',timeout=20000)
+                  overflow=p.evaluate('document.documentElement.scrollWidth > document.documentElement.clientWidth + 1'); assert not overflow
+                  sec=p.locator('[data-dpro-tutorial-r6="vet-v1"]'); links=sec.locator('a'); assert links.count()==4
+                  hrefs=[links.nth(i).get_attribute('href') for i in range(links.count())]
+                  assert any('tutorial-first10.html' in h for h in hrefs) and any('tutorial-guide-center.html' in h for h in hrefs)
+                  assert any('quick-start' in h for h in hrefs) and any('detailed-manual' in h for h in hrefs)
+                  p.screenshot(path=str(E/f'r6_product_{label}.png'),full_page=True)
+                  out['browser'][f'product_{label}']={'http':r.status,'overflow':overflow,'links':hrefs,'errors':errs}; assert not errs
+                  p.close()
+              p=browser.new_page(viewport={'width':390,'height':844}); errs=[]; p.on('pageerror',lambda e: errs.append(str(e)))
+              r=p.goto('${{ env.GUIDE_URL }}',wait_until='domcontentloaded',timeout=60000); assert r and r.ok
+              p.wait_for_selector('.articleCard',timeout=20000); assert p.locator('.articleCard').count()==40 and p.locator('details').count()==15 and p.locator('.catBtn').count()==9
+              assert not p.evaluate('document.documentElement.scrollWidth > document.documentElement.clientWidth + 1'); assert not errs
+              p.screenshot(path=str(E/'r6_guide_mobile390.png'),full_page=True); p.close()
+              p=browser.new_page(viewport={'width':1440,'height':900}); errs=[]; p.on('pageerror',lambda e: errs.append(str(e)))
+              r=p.goto('${{ env.FIRST10_URL }}&mode=replay',wait_until='domcontentloaded',timeout=60000); assert r and r.ok
+              p.wait_for_selector('#counter',timeout=20000); assert p.locator('#counter').inner_text()=='1 / 16'
+              for _ in range(15): p.locator('#nextBtn').click(); p.wait_for_timeout(180)
+              assert p.locator('#counter').inner_text()=='16 / 16'; assert not errs
+              p.screenshot(path=str(E/'r6_first10_desktop.png'),full_page=True); p.close(); browser.close()
+          out['product_commit']=Path(E/'r6_product_commit.txt').read_text().strip(); out['product_tree']=Path(E/'r6_product_tree.txt').read_text().strip()
+          (E/'final_live_qa.json').write_text(json.dumps(out,ensure_ascii=False,indent=2),encoding='utf-8')
+          print(json.dumps(out,ensure_ascii=False,indent=2))
+
+      - name: Upload R6 FINAL evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: DPRO_TUTORIAL_VET_R6_FINAL_EVIDENCE_${{ github.run_id }}
+          path: evidence/
+          if-no-files-found: warn
+          retention-days: 30
