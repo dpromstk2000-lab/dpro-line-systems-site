@@ -1,0 +1,17 @@
+{
+  "status": "PASS",
+  "vet_commit": "c92dfcbb8dabe2385492e60a73a291c5528e9d29",
+  "vet_tree": "168dbc76ae440e1b69432a0792c7e8e9762bba67",
+  "product_head_before": "07f288c1d358a8d19301e059649fe1b5b8f97729",
+  "pet_care_blob_before": "3ea533f11359ffb2bc47d442e7e50b18890519c1",
+  "canonical": {
+    "chapters": 7,
+    "cards": 16,
+    "categories": 8,
+    "articles": 40,
+    "faqs": 15,
+    "notes": "40/40",
+    "A038": "safe",
+    "A039": "clinic_owner_admin"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "status": "PASS",
+  "quick_sha256": "72a93e2ea48b7eedfbc80fa8a846dc973784f42e4292d3ab22035650bd2c6ebb",
+  "detail_sha256": "f8c526b9d1842b76258531f60c8960209e0fdcd1ab0907ed3cf1b10a191e5094",
+  "quick_bytes": 320637,
+  "detail_bytes": 510275,
+  "product_marker": true,
+  "mirror_identical": true
+}
