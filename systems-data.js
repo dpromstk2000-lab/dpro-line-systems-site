@@ -151,7 +151,7 @@
         "SALON": "https://dpromstk2000-lab.github.io/liff-salon-reserve/demo-guide.html",
         "SCHOOL": "https://dpromstk2000-lab.github.io/dpro-school-line/demo-guide.html",
         "SEITAI": "https://dpromstk2000-lab.github.io/dpro-seitai-line/demo-guide.html",
-        "SHIHO": "https://dpromstk2000-lab.github.io/dpro-shiho-inheritance-line-liff/demo-guide.html",
+        "SHIHO": "https://dpromstk2000-lab.github.io/dpro-shiho-inheritance-line-liff/owner.html?demo=1",
         "SHUTTLE": "https://dpromstk2000-lab.github.io/dpro-welfare-shuttle-line/demo-guide.html",
         "SODAN": "https://dpromstk2000-lab.github.io/dpro-sodan-line/demo-guide.html",
         "STAY": "https://dpromstk2000-lab.github.io/dpro-stay-line/demo-guide.html",
