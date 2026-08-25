@@ -1,0 +1,210 @@
+name: DPRO COSMETICS R4 External Final QA Rerun
+
+on:
+  push:
+    paths:
+      - '.github/workflows/dpro-product-ready-cosmetics-r4-final-qa-rerun-20260825.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  final-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install Playwright Chromium
+        shell: bash
+        run: |
+          mkdir -p /tmp/cosmetics-r4/evidence
+          cd /tmp/cosmetics-r4
+          npm init -y
+          npm install playwright@1.55.0
+          npx playwright install --with-deps chromium
+
+      - name: Run fresh browser + staff runtime E2E
+        shell: bash
+        run: |
+          cd /tmp/cosmetics-r4
+          cat > qa.mjs <<'NODE'
+          import { chromium } from 'playwright';
+          import fs from 'node:fs';
+
+          const APP='https://dpromstk2000-lab.github.io/dpro-cosmetics-line-liff';
+          const API='https://dpro-cosmetics-line-api.dpromstk2000.workers.dev';
+          const PRODUCT='https://dpromstk2000-lab.github.io/dpro-line-systems-site/systems/cosmetics.html';
+          const OFFICIAL='https://dpro-shop.com/systems/cosmetics';
+          const SOURCE='d802ae1d32a31abd5a3a507e3c8d4d1a0862754c';
+          const EXPECTED={
+            worker:'COSMETICS-R3-PRODUCT-READY-WORKER-20260825',
+            database:'COSMETICS-1-R2-REPURCHASE-FUNCTION-FIX-20260719',
+            frontend:'COSMETICS-R3-FRONTEND-READY-20260825',
+            adapter:'COSMETICS-R3-PRODUCT-READY-ADAPTER-20260825',
+            product_release:'COSMETICS-16-FINAL-RELEASE-20260722'
+          };
+          const report={checked_at:new Date().toISOString(),source_lock:SOURCE,expected:EXPECTED,http:{},browser:[],staff_e2e:{},all_pass:false};
+
+          async function httpCheck(name,url,options={}){
+            try{
+              const r=await fetch(url,{redirect:'follow',...options});
+              const text=await r.text();
+              let json=null; try{json=JSON.parse(text)}catch{}
+              report.http[name]={url,status:r.status,ok:r.ok,final_url:r.url,json,body_preview:text.slice(0,240)};
+              return report.http[name];
+            }catch(e){
+              report.http[name]={url,status:0,ok:false,error:String(e)};
+              return report.http[name];
+            }
+          }
+
+          const health=await httpCheck('worker_health',`${API}/health`);
+          await httpCheck('app_demo',`${APP}/catalog.html?demo=1&v=COSMETICS-16`);
+          await httpCheck('system_check_page',`${APP}/system-check.html?demo=1&v=COSMETICS-16`);
+          await httpCheck('product_site',PRODUCT);
+          await httpCheck('official_site',OFFICIAL);
+          await httpCheck('cors_negative',`${API}/health`,{headers:{Origin:'https://not-allowed.invalid'}});
+
+          report.version_alignment=health.json?.runtime
+            ? Object.fromEntries(Object.entries(EXPECTED).map(([k,v])=>[k,{expected:v,actual:health.json.runtime[k],ok:health.json.runtime[k]===v}]))
+            : {missing_runtime:true};
+
+          try{
+            const ownerResp=await fetch(`${API}/owner/auth`,{
+              method:'POST',
+              headers:{'content-type':'application/json'},
+              body:JSON.stringify({management_code:'1234'})
+            });
+            const owner=await ownerResp.json().catch(()=>null);
+            report.staff_e2e.owner_login={status:ownerResp.status,ok:ownerResp.ok&&owner?.ok===true,session_id:owner?.session_id||null};
+
+            if(owner?.admin_token){
+              const ownerHeaders={Authorization:`Bearer ${owner.admin_token}`,'content-type':'application/json'};
+              const opsResp=await fetch(`${API}/admin/operations/bootstrap`,{method:'POST',headers:ownerHeaders,body:'{}'});
+              const ops=await opsResp.json().catch(()=>null);
+              const list=ops?.operations?.staff || ops?.operations?.staff_list || ops?.staff || [];
+              const staff=Array.isArray(list)?list.find(x=>x?.is_active!==false && x?.id && String(x?.role||'').toLowerCase()!=='owner'):null;
+              report.staff_e2e.owner_bootstrap={status:opsResp.status,ok:opsResp.ok&&ops?.ok===true,staff_found:Boolean(staff?.id),staff_id:staff?.id||null};
+
+              if(staff?.id){
+                const issueResp=await fetch(`${API}/admin/staff/session/issue`,{
+                  method:'POST',headers:ownerHeaders,body:JSON.stringify({staff_id:staff.id})
+                });
+                const issue=await issueResp.json().catch(()=>null);
+                report.staff_e2e.staff_issue={status:issueResp.status,ok:issueResp.ok&&issue?.ok===true,session_id:issue?.session_id||null,capabilities:issue?.capabilities||[]};
+
+                if(issue?.token && issue?.session_id){
+                  const staffHeaders={Authorization:`Bearer ${issue.token}`,'content-type':'application/json'};
+
+                  const allowResp=await fetch(`${API}/admin/ipad/bootstrap`,{method:'POST',headers:staffHeaders,body:'{}'});
+                  const allow=await allowResp.json().catch(()=>null);
+                  report.staff_e2e.ipad_allow={status:allowResp.status,ok:allowResp.ok&&allow?.ok===true};
+
+                  const denyResp=await fetch(`${API}/admin/operations/bootstrap`,{method:'POST',headers:staffHeaders,body:'{}'});
+                  const deny=await denyResp.json().catch(()=>null);
+                  report.staff_e2e.owner_only_deny={status:denyResp.status,code:deny?.code||null,ok:denyResp.status===403};
+
+                  const revokeResp=await fetch(`${API}/admin/auth/revoke`,{
+                    method:'POST',headers:ownerHeaders,body:JSON.stringify({session_id:issue.session_id,reason:'PRODUCT_READY_R4_QA'})
+                  });
+                  const revoke=await revokeResp.json().catch(()=>null);
+                  report.staff_e2e.revoke={status:revokeResp.status,ok:revokeResp.ok&&revoke?.revoked===true};
+
+                  const afterResp=await fetch(`${API}/auth/session`,{headers:{Authorization:`Bearer ${issue.token}`}});
+                  const after=await afterResp.json().catch(()=>null);
+                  report.staff_e2e.after_revoke_rejected={status:afterResp.status,code:after?.code||null,ok:afterResp.status===401};
+                }
+              }
+            }
+          }catch(e){
+            report.staff_e2e.error=String(e);
+          }
+
+          const cases=[
+            ['READY-018','PC_1440',`${APP}/owner.html?demo=1&v=COSMETICS-16`,1440,1000],
+            ['READY-019','MOBILE_390',`${APP}/catalog.html?demo=1&v=COSMETICS-16`,390,844],
+            ['READY-020','MOBILE_320',`${APP}/index.html?demo=1&v=COSMETICS-16`,320,720],
+            ['READY-021','IPAD_1024',`${APP}/owner-ipad-care.html?demo=1&v=COSMETICS-16`,1024,768]
+          ];
+
+          const browser=await chromium.launch({headless:true});
+          for(const [item,name,url,width,height] of cases){
+            const ctx=await browser.newContext({viewport:{width,height}});
+            const page=await ctx.newPage();
+            const consoleErrors=[],pageErrors=[],failedRequests=[];
+            page.on('console',m=>{if(m.type()==='error')consoleErrors.push(m.text())});
+            page.on('pageerror',e=>pageErrors.push(String(e)));
+            page.on('requestfailed',r=>failedRequests.push({url:r.url(),error:r.failure()?.errorText||''}));
+
+            let status=0,navError=null;
+            try{
+              const r=await page.goto(url,{waitUntil:'networkidle',timeout:45000});
+              status=r?.status()||0;
+            }catch(e){navError=String(e)}
+
+            const metrics=await page.evaluate(()=>({
+              innerWidth,
+              innerHeight,
+              documentScrollWidth:document.documentElement.scrollWidth,
+              bodyScrollWidth:document.body?.scrollWidth||0,
+              title:document.title,
+              text:(document.body?.innerText||'').slice(0,100000)
+            })).catch(()=>null);
+
+            const blockingText=metrics
+              ? ['Internal Server Error','Failed to fetch','サーバーエラー','システムエラー','技術的なエラー'].filter(s=>metrics.text.includes(s))
+              : [];
+            const overflow=metrics?Math.max(metrics.documentScrollWidth,metrics.bodyScrollWidth)>metrics.innerWidth:true;
+            const screenshot=`evidence/${item}_${width}x${height}.png`;
+            await page.screenshot({path:screenshot,fullPage:true}).catch(()=>{});
+
+            const pass=!navError&&status===200&&!overflow&&consoleErrors.length===0&&pageErrors.length===0&&failedRequests.length===0&&blockingText.length===0;
+            report.browser.push({
+              item_code:item,name,url,viewport:{width,height},http_status:status,nav_error:navError,
+              metrics:metrics&&{innerWidth:metrics.innerWidth,innerHeight:metrics.innerHeight,documentScrollWidth:metrics.documentScrollWidth,bodyScrollWidth:metrics.bodyScrollWidth},
+              horizontal_overflow:overflow,console_errors:consoleErrors,page_errors:pageErrors,failed_requests:failedRequests,blocking_technical_text:blockingText,pass
+            });
+            await ctx.close();
+          }
+          await browser.close();
+
+          const versionOk=!report.version_alignment.missing_runtime&&Object.values(report.version_alignment).every(x=>x.ok);
+          const httpOk=['worker_health','app_demo','system_check_page','product_site','official_site'].every(k=>report.http[k]?.ok);
+          const corsOk=report.http.cors_negative?.status===403;
+          const browserOk=report.browser.every(x=>x.pass);
+          const staffOk=
+            report.staff_e2e.owner_login?.ok &&
+            report.staff_e2e.owner_bootstrap?.ok &&
+            report.staff_e2e.staff_issue?.ok &&
+            report.staff_e2e.ipad_allow?.ok &&
+            report.staff_e2e.owner_only_deny?.ok &&
+            report.staff_e2e.revoke?.ok &&
+            report.staff_e2e.after_revoke_rejected?.ok;
+
+          report.gates={version_ok:Boolean(versionOk),http_ok:Boolean(httpOk),cors_ok:Boolean(corsOk),browser_ok:Boolean(browserOk),staff_e2e_ok:Boolean(staffOk)};
+          report.all_pass=Object.values(report.gates).every(Boolean);
+
+          fs.writeFileSync('evidence/COSMETICS_R4_QA_REPORT.json',JSON.stringify(report,null,2));
+          fs.writeFileSync('evidence/COSMETICS_R4_QA_SUMMARY.txt',
+            report.browser.map(x=>`${x.item_code} ${x.pass?'PASS':'FAIL'} HTTP=${x.http_status} overflow=${x.horizontal_overflow} console=${x.console_errors.length} pageerror=${x.page_errors.length} failed=${x.failed_requests.length}`).join('\n')+
+            `\nREADY-041 ${staffOk?'PASS':'FAIL'} owner=${!!report.staff_e2e.owner_login?.ok} issue=${!!report.staff_e2e.staff_issue?.ok} allow=${!!report.staff_e2e.ipad_allow?.ok} deny=${!!report.staff_e2e.owner_only_deny?.ok} revoke=${!!report.staff_e2e.revoke?.ok} after_revoke=${!!report.staff_e2e.after_revoke_rejected?.ok}\n`+
+            `ALL_PASS=${report.all_pass}\n`
+          );
+          console.log(JSON.stringify(report,null,2));
+          if(!report.all_pass)process.exit(1);
+          NODE
+          node qa.mjs
+
+      - name: Upload COSMETICS R4 evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cosmetics-r4-final-qa-rerun-20260825
+          path: /tmp/cosmetics-r4/evidence/
+          if-no-files-found: error
+          retention-days: 30
