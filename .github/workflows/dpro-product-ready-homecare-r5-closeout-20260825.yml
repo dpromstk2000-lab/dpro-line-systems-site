@@ -1,0 +1,235 @@
+name: DPRO Product Ready Homecare R5 Closeout
+
+on:
+  push:
+    paths:
+      - '.github/workflows/dpro-product-ready-homecare-r5-closeout-20260825.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  closeout:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout Product Site
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Patch HOMECARE explicit LIVE DEMO URL
+        shell: bash
+        run: |
+          mkdir -p /tmp/dpro-homecare-r5/evidence
+          python - <<'PY'
+          from pathlib import Path
+          p=Path("systems/homecare.html")
+          old="https://dpromstk2000-lab.github.io/dpro-homecare-family-line/"
+          new="https://dpromstk2000-lab.github.io/dpro-homecare-family-line/demo-guide.html"
+          text=p.read_text(encoding="utf-8")
+          count=text.count(old)
+          if count < 1:
+              if new in text:
+                  print("Already patched; no root-only LIVE DEMO URL remains.")
+              else:
+                  raise SystemExit("HOMECARE root LIVE DEMO URL not found and explicit demo-guide URL absent.")
+          else:
+              p.write_text(text.replace(old,new),encoding="utf-8")
+              print(f"Replaced {count} HOMECARE LIVE DEMO root URL occurrence(s).")
+          final=p.read_text(encoding="utf-8")
+          if 'dpro-homecare-family-line/"' in final:
+              raise SystemExit("Root-only HOMECARE LIVE DEMO URL still remains.")
+          if "dpro-homecare-family-line/demo-guide.html" not in final:
+              raise SystemExit("Explicit demo-guide URL not present after patch.")
+          PY
+
+          if git diff --quiet -- systems/homecare.html; then
+            echo "HOMECARE Product Site already explicit."
+          else
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add systems/homecare.html
+            git commit -m "HOMECARE Product Ready explicit live demo URL"
+            git push origin HEAD:main
+          fi
+
+          PATCH_SHA="$(git rev-parse HEAD)"
+          echo "PATCH_SHA=$PATCH_SHA" >> "$GITHUB_ENV"
+          git show --stat --oneline HEAD > /tmp/dpro-homecare-r5/evidence/PRODUCT_SITE_COMMIT.txt
+          git diff HEAD^..HEAD -- systems/homecare.html > /tmp/dpro-homecare-r5/evidence/PRODUCT_SITE_PATCH.diff || true
+          printf 'product_site_commit=%s\n' "$PATCH_SHA" > /tmp/dpro-homecare-r5/evidence/PRODUCT_SITE_RESULT.txt
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install Playwright Chromium
+        shell: bash
+        run: |
+          cd /tmp/dpro-homecare-r5
+          npm init -y
+          npm install playwright@1.55.0
+          npx playwright install --with-deps chromium
+
+      - name: Run four fresh HOMECARE Chromium checks
+        shell: bash
+        run: |
+          cd /tmp/dpro-homecare-r5
+          cat > qa.cjs <<'NODE'
+          const fs=require('fs');
+          const {chromium}=require('playwright');
+
+          const targets=[
+            {item:'READY-018',url:'https://dpromstk2000-lab.github.io/dpro-homecare-family-line/owner.html?demo=1',width:1440,height:1000},
+            {item:'READY-019',url:'https://dpromstk2000-lab.github.io/dpro-homecare-family-line/family.html?demo=1',width:390,height:844},
+            {item:'READY-020',url:'https://dpromstk2000-lab.github.io/dpro-homecare-family-line/staff.html?demo=1',width:320,height:720},
+            {item:'READY-021',url:'https://dpromstk2000-lab.github.io/dpro-homecare-family-line/owner-ipad.html?demo=1',width:1024,height:768},
+          ];
+
+          (async()=>{
+            const browser=await chromium.launch({headless:true});
+            const results=[];
+            for(const t of targets){
+              const ctx=await browser.newContext({viewport:{width:t.width,height:t.height}});
+              const page=await ctx.newPage();
+              const pageerrors=[],consoleErrors=[],failedRequests=[];
+              page.on('pageerror',e=>pageerrors.push(String(e)));
+              page.on('console',m=>{if(m.type()==='error')consoleErrors.push(m.text())});
+              page.on('requestfailed',r=>failedRequests.push({url:r.url(),error:r.failure()?.errorText||''}));
+
+              let status=null,navError=null;
+              try{
+                const res=await page.goto(t.url,{waitUntil:'domcontentloaded',timeout:45000});
+                status=res?.status()??null;
+                await page.waitForTimeout(1800);
+              }catch(e){navError=String(e)}
+
+              let metrics=null,blockingText=[];
+              if(!navError){
+                metrics=await page.evaluate(()=>({
+                  innerWidth:window.innerWidth,
+                  innerHeight:window.innerHeight,
+                  documentScrollWidth:document.documentElement.scrollWidth,
+                  bodyScrollWidth:document.body?.scrollWidth||0,
+                  text:(document.body?.innerText||'').slice(0,200000)
+                }));
+                blockingText=['Internal Server Error','Failed to fetch','サーバーエラー','システムエラー','技術的なエラー']
+                  .filter(s=>metrics.text.includes(s));
+                await page.screenshot({path:`evidence/${t.item}_${t.width}x${t.height}.png`,fullPage:true});
+              }
+
+              const overflow=metrics?Math.max(metrics.documentScrollWidth,metrics.bodyScrollWidth)>metrics.innerWidth:true;
+              const pass=!navError&&status===200&&!overflow&&pageerrors.length===0&&consoleErrors.length===0&&failedRequests.length===0&&blockingText.length===0;
+
+              results.push({
+                item_code:t.item,url:t.url,viewport:{width:t.width,height:t.height},
+                http_status:status,nav_error:navError,
+                metrics:metrics&&{
+                  innerWidth:metrics.innerWidth,innerHeight:metrics.innerHeight,
+                  documentScrollWidth:metrics.documentScrollWidth,bodyScrollWidth:metrics.bodyScrollWidth
+                },
+                horizontal_overflow:overflow,
+                pageerrors,console_errors:consoleErrors,failed_requests:failedRequests,
+                blocking_technical_text:blockingText,pass
+              });
+              await ctx.close();
+            }
+            await browser.close();
+
+            const report={
+              generated_at:new Date().toISOString(),
+              browser:'Playwright Chromium on GitHub-hosted ubuntu-latest',
+              product:'#40 HOMECARE',
+              source_lock:'7c2e62f497bf537ca7abee161958216046cfbb68',
+              results,
+              all_pass:results.every(r=>r.pass)
+            };
+            fs.writeFileSync('evidence/BROWSER_QA_REPORT.json',JSON.stringify(report,null,2));
+            fs.writeFileSync('evidence/BROWSER_QA_SUMMARY.txt',
+              results.map(r=>`${r.item_code} ${r.pass?'PASS':'FAIL'} HTTP=${r.http_status} overflow=${r.horizontal_overflow} pageerror=${r.pageerrors.length} console=${r.console_errors.length} failed_requests=${r.failed_requests.length} blocking_text=${r.blocking_technical_text.length}`).join('\n')+'\n');
+            console.log(JSON.stringify(report,null,2));
+            if(!report.all_pass) process.exit(1);
+          })().catch(e=>{console.error(e);process.exit(2)});
+          NODE
+          node qa.cjs
+
+      - name: Fresh public READY-033 verification
+        shell: bash
+        run: |
+          cd /tmp/dpro-homecare-r5
+          cat > public-check.cjs <<'NODE'
+          const fs=require('fs');
+          const page='https://dpromstk2000-lab.github.io/dpro-line-systems-site/systems/homecare.html';
+          const demo='https://dpromstk2000-lab.github.io/dpro-homecare-family-line/demo-guide.html';
+
+          const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+
+          (async()=>{
+            let product=null;
+            for(let i=0;i<18;i++){
+              const u=`${page}?r5=${Date.now()}-${i}`;
+              try{
+                const r=await fetch(u,{redirect:'follow',headers:{'cache-control':'no-cache'}});
+                const text=await r.text();
+                product={
+                  status:r.status,
+                  ok:r.ok,
+                  explicit:text.includes('dpro-homecare-family-line/demo-guide.html'),
+                  root_only:text.includes('dpro-homecare-family-line/"')
+                };
+                if(product.ok&&product.explicit&&!product.root_only)break;
+              }catch(e){
+                product={status:0,ok:false,error:String(e),explicit:false,root_only:true};
+              }
+              await sleep(10000);
+            }
+
+            let demoResult;
+            try{
+              const r=await fetch(`${demo}?r5=${Date.now()}`,{redirect:'follow',headers:{'cache-control':'no-cache'}});
+              demoResult={status:r.status,ok:r.ok,final_url:r.url};
+            }catch(e){
+              demoResult={status:0,ok:false,error:String(e)};
+            }
+
+            const report={
+              generated_at:new Date().toISOString(),
+              product_site_commit:process.env.PATCH_SHA||null,
+              product_page:page,
+              product_result:product,
+              explicit_demo_url:demo,
+              demo_result:demoResult,
+              pass:!!(product?.ok&&product.explicit&&!product.root_only&&demoResult.ok&&demoResult.status===200)
+            };
+            fs.writeFileSync('evidence/PUBLIC_URL_REPORT.json',JSON.stringify(report,null,2));
+            fs.writeFileSync('evidence/PUBLIC_URL_SUMMARY.txt',
+              `READY-033 ${report.pass?'PASS':'FAIL'} product_http=${product?.status} explicit=${product?.explicit} root_only=${product?.root_only} demo_http=${demoResult.status} commit=${report.product_site_commit}\n`);
+            console.log(JSON.stringify(report,null,2));
+            if(!report.pass)process.exit(1);
+          })().catch(e=>{console.error(e);process.exit(2)});
+          NODE
+          node public-check.cjs
+
+      - name: Create closeout summary
+        if: always()
+        shell: bash
+        run: |
+          {
+            echo "DPRO HOMECARE R5 CLOSEOUT"
+            echo "HOMECARE_SOURCE=7c2e62f497bf537ca7abee161958216046cfbb68"
+            echo "PRODUCT_SITE_COMMIT=${PATCH_SHA:-UNKNOWN}"
+            echo "Workflow run=${GITHUB_RUN_ID}"
+            echo "Workflow SHA=${GITHUB_SHA}"
+          } > /tmp/dpro-homecare-r5/evidence/CLOSEOUT_META.txt
+
+      - name: Upload HOMECARE R5 evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: homecare-r5-closeout-20260825
+          path: /tmp/dpro-homecare-r5/evidence/
+          if-no-files-found: error
+          retention-days: 30
