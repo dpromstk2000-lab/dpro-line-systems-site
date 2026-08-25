@@ -1,0 +1,111 @@
+name: DPRO Product Ready Welfare Browser QA
+
+on:
+  push:
+    paths:
+      - '.github/workflows/dpro-product-ready-welfare-browser-qa-20260825.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  browser-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install Chromium
+        run: |
+          mkdir -p /tmp/dpro-welfare-qa
+          cd /tmp/dpro-welfare-qa
+          npm init -y
+          npm install playwright@1.55.0
+          npx playwright install --with-deps chromium
+
+      - name: Run fresh HTTP Chromium QA
+        shell: bash
+        run: |
+          cd /tmp/dpro-welfare-qa
+          mkdir -p evidence
+          cat > qa.cjs <<'NODE'
+          const fs = require('fs');
+          const { chromium } = require('playwright');
+          const targets = [
+            {item:'READY-018',url:'https://dpromstk2000-lab.github.io/dpro-welfare-equipment-line/owner.html?demo=1',width:1440,height:1000},
+            {item:'READY-019',url:'https://dpromstk2000-lab.github.io/dpro-welfare-equipment-line/member.html?demo=1',width:390,height:844},
+            {item:'READY-020',url:'https://dpromstk2000-lab.github.io/dpro-welfare-equipment-line/staff-login.html?demo=1',width:320,height:720},
+            {item:'READY-021',url:'https://dpromstk2000-lab.github.io/dpro-welfare-equipment-line/owner-ipad.html?demo=1',width:1024,height:768},
+          ];
+          (async()=>{
+            const browser=await chromium.launch({headless:true});
+            const results=[];
+            for(const t of targets){
+              const ctx=await browser.newContext({viewport:{width:t.width,height:t.height}});
+              const page=await ctx.newPage();
+              const pageerrors=[], consoleErrors=[], failedRequests=[];
+              page.on('pageerror',e=>pageerrors.push(String(e)));
+              page.on('console',m=>{if(m.type()==='error') consoleErrors.push(m.text())});
+              page.on('requestfailed',r=>failedRequests.push({url:r.url(),error:r.failure()?.errorText||''}));
+              let status=null,navError=null;
+              try{
+                const res=await page.goto(t.url,{waitUntil:'domcontentloaded',timeout:45000});
+                status=res?.status()??null;
+                await page.waitForTimeout(1800);
+              }catch(e){navError=String(e)}
+              let metrics=null,blockingText=[];
+              if(!navError){
+                metrics=await page.evaluate(()=>({
+                  innerWidth:innerWidth,
+                  innerHeight:innerHeight,
+                  documentScrollWidth:document.documentElement.scrollWidth,
+                  bodyScrollWidth:document.body?.scrollWidth||0,
+                  text:(document.body?.innerText||'').slice(0,200000)
+                }));
+                blockingText=['Internal Server Error','Failed to fetch','サーバーエラー','システムエラー','技術的なエラー'].filter(s=>metrics.text.includes(s));
+                await page.screenshot({path:`evidence/${t.item}_${t.width}x${t.height}.png`,fullPage:true});
+              }
+              const overflow=metrics?Math.max(metrics.documentScrollWidth,metrics.bodyScrollWidth)>metrics.innerWidth:true;
+              const pass=!navError&&status===200&&!overflow&&pageerrors.length===0&&consoleErrors.length===0&&failedRequests.length===0&&blockingText.length===0;
+              results.push({
+                item_code:t.item,url:t.url,viewport:{width:t.width,height:t.height},
+                http_status:status,nav_error:navError,
+                metrics:metrics&&{
+                  innerWidth:metrics.innerWidth,innerHeight:metrics.innerHeight,
+                  documentScrollWidth:metrics.documentScrollWidth,bodyScrollWidth:metrics.bodyScrollWidth
+                },
+                horizontal_overflow:overflow,pageerrors,console_errors:consoleErrors,
+                failed_requests:failedRequests,blocking_technical_text:blockingText,pass
+              });
+              await ctx.close();
+            }
+            await browser.close();
+            const report={
+              generated_at:new Date().toISOString(),
+              browser:'Playwright Chromium on GitHub-hosted ubuntu-latest',
+              product:'#41 WELFARE_EQUIPMENT',
+              source_lock:'89304111ef123e004b7c10f28e26567bfefb82f9',
+              results,
+              all_pass:results.every(r=>r.pass)
+            };
+            fs.writeFileSync('evidence/BROWSER_QA_REPORT.json',JSON.stringify(report,null,2));
+            fs.writeFileSync('evidence/BROWSER_QA_SUMMARY.txt',
+              results.map(r=>`${r.item_code} ${r.pass?'PASS':'FAIL'} HTTP=${r.http_status} overflow=${r.horizontal_overflow} pageerror=${r.pageerrors.length} console=${r.console_errors.length} failed_requests=${r.failed_requests.length} blocking_text=${r.blocking_technical_text.length}`).join('\n')+'\n');
+            console.log(JSON.stringify(report,null,2));
+            if(!report.all_pass) process.exit(1);
+          })().catch(e=>{console.error(e);process.exit(2)});
+          NODE
+          node qa.cjs
+
+      - name: Upload evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: welfare-equipment-browser-qa-20260825
+          path: /tmp/dpro-welfare-qa/evidence/
+          if-no-files-found: error
+          retention-days: 30
