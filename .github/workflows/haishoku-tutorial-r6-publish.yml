@@ -1,0 +1,101 @@
+name: HAISHOKU Tutorial R6 Publish
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/haishoku-tutorial-r6-publish.yml'
+      - 'DPRO_TUTORIAL_HAISHOKU_QUICK_START_V1.0.pdf'
+      - 'DPRO_TUTORIAL_HAISHOKU_DETAILED_MANUAL_V1.0.pdf'
+      - 'DPRO_TUTORIAL_HAISHOKU_QUICK_START_V1.0_COVER.png'
+      - 'DPRO_TUTORIAL_HAISHOKU_DETAILED_MANUAL_V1.0_COVER.png'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: haishoku-tutorial-r6-publish
+  cancel-in-progress: false
+
+jobs:
+  publish-links:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Verify required uploaded manuals
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -s DPRO_TUTORIAL_HAISHOKU_QUICK_START_V1.0.pdf
+          test -s DPRO_TUTORIAL_HAISHOKU_DETAILED_MANUAL_V1.0.pdf
+          test -s DPRO_TUTORIAL_HAISHOKU_QUICK_START_V1.0_COVER.png
+          test -s DPRO_TUTORIAL_HAISHOKU_DETAILED_MANUAL_V1.0_COVER.png
+          test -s systems/senior-meal-delivery.html
+          test -s systems/senior-meal-delivery.html.txt
+
+      - name: Add minimal Tutorial and manual links
+        shell: python
+        run: |
+          from pathlib import Path
+
+          targets = [
+              Path('systems/senior-meal-delivery.html'),
+              Path('systems/senior-meal-delivery.html.txt'),
+          ]
+          marker = '<div class="ps-doclinks" aria-label="関連資料">'
+          additions = [
+              ('https://dpromstk2000-lab.github.io/dpro-senior-meal-delivery-line/tutorial.html', '操作ガイド（First10）'),
+              ('https://dpromstk2000-lab.github.io/dpro-senior-meal-delivery-line/guide-center.html', 'Guide Center'),
+              ('../DPRO_TUTORIAL_HAISHOKU_QUICK_START_V1.0.pdf', 'クイックスタートPDF'),
+              ('../DPRO_TUTORIAL_HAISHOKU_DETAILED_MANUAL_V1.0.pdf', '詳細操作マニュアルPDF'),
+          ]
+
+          def patch(path: Path) -> str:
+              text = path.read_text(encoding='utf-8')
+              if marker not in text:
+                  raise SystemExit(f'product docs marker missing: {path}')
+              start = text.index(marker) + len(marker)
+              end = text.index('</div>', start)
+              inner = text[start:end]
+              for href, label in additions:
+                  if f'href="{href}"' not in inner:
+                      inner += f'<a href="{href}">{label}</a>'
+              updated = text[:start] + inner + text[end:]
+              path.write_text(updated, encoding='utf-8')
+              return updated
+
+          html = patch(targets[0])
+          txt = patch(targets[1])
+          if html != txt:
+              raise SystemExit('HTML/TXT mirror mismatch after patch')
+
+          required = [
+              '5,500円',
+              'https://dpromstk2000-lab.github.io/dpro-senior-meal-delivery-line/owner.html?demo=1',
+              'https://dpromstk2000-lab.github.io/dpro-senior-meal-delivery-line/tutorial.html',
+              'https://dpromstk2000-lab.github.io/dpro-senior-meal-delivery-line/guide-center.html',
+              '../DPRO_TUTORIAL_HAISHOKU_QUICK_START_V1.0.pdf',
+              '../DPRO_TUTORIAL_HAISHOKU_DETAILED_MANUAL_V1.0.pdf',
+          ]
+          for token in required:
+              if token not in html:
+                  raise SystemExit(f'required product token missing after patch: {token}')
+
+      - name: Commit product page links
+        shell: bash
+        run: |
+          set -euo pipefail
+          git add systems/senior-meal-delivery.html systems/senior-meal-delivery.html.txt
+          if git diff --cached --quiet; then
+            echo 'Tutorial/manual links already current; no follow-up commit needed.'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'Add HAISHOKU tutorial and manuals'
+          git push origin HEAD:main
