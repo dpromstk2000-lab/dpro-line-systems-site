@@ -1,0 +1,44 @@
+name: CARETAXI R6 CENTRAL Assets Export
+
+on:
+  push:
+    paths:
+      - '.github/workflows/caretaxi-r6-central-assets-export.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Fetch locked CARETAXI R5 manual assets
+        shell: bash
+        run: |
+          set -euo pipefail
+          git clone --quiet --depth 1 https://github.com/dpromstk2000-lab/dpro-caretaxi-line.git caretaxi
+          cd caretaxi/manuals
+          printf '%s  %s\n' '29e3ed6fdaed2444bc1b1fbcbd34d68fcfe935b8d658112e8e13e812ca1d9413' 'DPRO_TUTORIAL_CARETAXI_QUICK_START_V1.0.pdf' | sha256sum -c -
+          printf '%s  %s\n' '81be7e2e0384844f936c2114017c26c7f1617e18375cf466286cf814151c5e54' 'DPRO_TUTORIAL_CARETAXI_DETAILED_MANUAL_V1.0.pdf' | sha256sum -c -
+          printf '%s  %s\n' 'ad2a49de59bd933d8e9b66f2ff14e656d6c4b944155b26808b426789f874c693' 'DPRO_TUTORIAL_CARETAXI_QUICK_START_V1.0.png' | sha256sum -c -
+          printf '%s  %s\n' '10e002ccffb44eca300975226e4e9a3873f7a58979fc952858a1f485f4d9357b' 'DPRO_TUTORIAL_CARETAXI_DETAILED_MANUAL_V1.0.png' | sha256sum -c -
+          grep -q 'OVERALL PASS' R5_QA.txt
+          grep -q 'businessMutation=0' R5_QA.txt
+          echo 'Locked R5 manual assets: PASS'
+
+      - name: Upload locked manual assets for CENTRAL return
+        uses: actions/upload-artifact@v4
+        with:
+          name: caretaxi-r6-central-manual-assets
+          path: |
+            caretaxi/manuals/DPRO_TUTORIAL_CARETAXI_QUICK_START_V1.0.pdf
+            caretaxi/manuals/DPRO_TUTORIAL_CARETAXI_DETAILED_MANUAL_V1.0.pdf
+            caretaxi/manuals/DPRO_TUTORIAL_CARETAXI_QUICK_START_V1.0.png
+            caretaxi/manuals/DPRO_TUTORIAL_CARETAXI_DETAILED_MANUAL_V1.0.png
+            caretaxi/manuals/R5_PRINT_MANUALS.txt
+            caretaxi/manuals/R5_QA.txt
+            caretaxi/manuals/MANUAL_ASSET_MANIFEST.txt
+          if-no-files-found: error
+          retention-days: 7
