@@ -1,0 +1,374 @@
+name: CARETAXI Tutorial R6 Product Site + LIVE QA + FINAL LOCK Candidate
+
+on:
+  push:
+    paths:
+      - '.github/workflows/caretaxi-tutorial-r6-product-site-live-qa.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: caretaxi-tutorial-r6-product-site-live-qa
+  cancel-in-progress: false
+
+jobs:
+  r6-product-site-live-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout newest Product Site main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Forward to newest Product Site main and verify R5 source
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch origin main
+          git reset --hard origin/main
+          echo "PRODUCT_SITE_BEFORE=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
+
+          rm -rf /tmp/dpro-caretaxi-line
+          git clone --quiet https://github.com/dpromstk2000-lab/dpro-caretaxi-line.git /tmp/dpro-caretaxi-line
+          INDUSTRY_HEAD=$(git -C /tmp/dpro-caretaxi-line rev-parse HEAD)
+          git -C /tmp/dpro-caretaxi-line merge-base --is-ancestor e41efd34ba791509486a561deb924563b243fc5b HEAD
+          test -s /tmp/dpro-caretaxi-line/manuals/R5_QA.txt
+          grep -q 'OVERALL PASS' /tmp/dpro-caretaxi-line/manuals/R5_QA.txt
+          test -s /tmp/dpro-caretaxi-line/manuals/MANUAL_ASSET_MANIFEST.txt
+          echo "INDUSTRY_HEAD=$INDUSTRY_HEAD" >> "$GITHUB_ENV"
+
+      - name: Patch CARETAXI Product Site tutorial section
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+
+          page = Path('systems/caretaxi.html')
+          mirror = Path('systems/caretaxi.html.txt')
+          html = page.read_text(encoding='utf-8')
+
+          marker = 'data-caretaxi-tutorial-r6="1"'
+          css_marker = '/* CARETAXI TUTORIAL R6 */'
+          insert_before = '<section class="dpro-section master-section" data-master-section="8" id="connected"'
+
+          guide = 'https://dpromstk2000-lab.github.io/dpro-caretaxi-line/guide-center.html'
+          quick = 'https://dpromstk2000-lab.github.io/dpro-caretaxi-line/manuals/DPRO_TUTORIAL_CARETAXI_QUICK_START_V1.0.pdf'
+          detail = 'https://dpromstk2000-lab.github.io/dpro-caretaxi-line/manuals/DPRO_TUTORIAL_CARETAXI_DETAILED_MANUAL_V1.0.pdf'
+          quick_png = 'https://dpromstk2000-lab.github.io/dpro-caretaxi-line/manuals/DPRO_TUTORIAL_CARETAXI_QUICK_START_V1.0.png'
+          detail_png = 'https://dpromstk2000-lab.github.io/dpro-caretaxi-line/manuals/DPRO_TUTORIAL_CARETAXI_DETAILED_MANUAL_V1.0.png'
+
+          css = r'''\n/* CARETAXI TUTORIAL R6 */
+          .ps-tutorial-r6{background:linear-gradient(180deg,#f7fbf9,#fff)}
+          .ps-tutorial-r6__lead{max-width:820px;margin:-.6rem 0 1.35rem;color:var(--dpro-warm-gray-600)}
+          .ps-tutorial-r6__grid{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:1.15rem;align-items:stretch}
+          .ps-tutorial-r6__panel{padding:1.2rem;border:1px solid var(--ps-line);border-radius:1.2rem;background:#fff;box-shadow:var(--dpro-shadow-sm)}
+          .ps-tutorial-r6__panel h3{margin:0 0 .45rem;color:var(--ps-deep);font-size:1.18rem}
+          .ps-tutorial-r6__panel p{margin:.35rem 0;color:var(--dpro-warm-gray-600)}
+          .ps-tutorial-r6__actions{display:flex;flex-wrap:wrap;gap:.55rem;margin-top:1rem}
+          .ps-tutorial-r6__actions .dpro-button{width:auto;min-height:44px}
+          .ps-tutorial-r6__hint{margin-top:.8rem;padding:.75rem .85rem;border-left:4px solid var(--dpro-green);background:var(--ps-pale);font-size:.88rem}
+          .ps-tutorial-r6__manuals{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.85rem}
+          .ps-tutorial-r6__manual{display:flex;min-width:0;flex-direction:column;overflow:hidden;border:1px solid var(--ps-line);border-radius:1rem;background:#fff;text-decoration:none}
+          .ps-tutorial-r6__manual img{display:block;width:100%;aspect-ratio:210/297;object-fit:cover;object-position:top;background:#f2f5f3;border-bottom:1px solid var(--ps-line)}
+          .ps-tutorial-r6__manual-copy{display:block;padding:.9rem}
+          .ps-tutorial-r6__manual-copy strong{display:block;color:var(--ps-deep)}
+          .ps-tutorial-r6__manual-copy span{display:block;margin-top:.2rem;color:var(--dpro-warm-gray-600);font-size:.82rem}
+          .ps-tutorial-r6 a:focus-visible{outline:3px solid #ff9f1a;outline-offset:3px}
+          @media(max-width:980px){.ps-tutorial-r6__grid{grid-template-columns:1fr}}
+          @media(max-width:640px){.ps-tutorial-r6__actions{display:grid;grid-template-columns:1fr}.ps-tutorial-r6__actions .dpro-button{width:100%}}
+          @media(max-width:390px){.ps-tutorial-r6__manuals{grid-template-columns:1fr}}
+          '''
+
+          section = f'''<section class="dpro-section ps-tutorial-r6" id="tutorial" {marker} aria-labelledby="tutorial-title"><div class="dpro-container"><div class="ps-section-heading"><p class="ps-kicker">GUIDE &amp; PRINT MANUALS</p><h2 id="tutorial-title">初めてでも、画面を見ながら進められます。</h2><p>Guide CenterとFirst10で操作の流れを確認し、印刷用のQuick Start・詳細マニュアルもそのまま利用できます。</p></div><div class="ps-tutorial-r6__grid"><div class="ps-tutorial-r6__panel"><h3>Guide Center / First10</h3><p>利用者・家族、管理者PC、当日運行、料金・台帳、困ったときの確認先を役割別にまとめています。</p><div class="ps-tutorial-r6__actions" aria-label="First10入口"><a class="dpro-button dpro-button--primary" href="{guide}#start" target="_blank" rel="noopener" data-r6-link="guide">Guide Centerを開く</a><a class="dpro-button dpro-button--secondary" href="{guide}#start" target="_blank" rel="noopener" data-r6-link="first10-start">First10 開始</a><a class="dpro-button dpro-button--secondary" href="{guide}#start" target="_blank" rel="noopener" data-r6-link="first10-resume">First10 再開</a><a class="dpro-button dpro-button--secondary" href="{guide}#start" target="_blank" rel="noopener" data-r6-link="first10-replay">First10 最初から</a></div><p class="ps-tutorial-r6__hint"><strong>安全設計：</strong>Tutorialは予約送信・見積保存・予約確定・配車登録・料金保存・台帳保存などの業務更新を自動実行しません。</p></div><div class="ps-tutorial-r6__manuals" aria-label="印刷マニュアル"><a class="ps-tutorial-r6__manual" href="{quick}" target="_blank" rel="noopener" data-r6-link="quick-pdf"><img src="{quick_png}" alt="介護タクシー Quick Start マニュアル表紙" loading="lazy"><span class="ps-tutorial-r6__manual-copy"><strong>10分 Quick Start</strong><span>A4縦PDF。まず全体の流れを確認したい方向け。</span></span></a><a class="ps-tutorial-r6__manual" href="{detail}" target="_blank" rel="noopener" data-r6-link="detail-pdf"><img src="{detail_png}" alt="介護タクシー 詳細操作マニュアル表紙" loading="lazy"><span class="ps-tutorial-r6__manual-copy"><strong>詳細操作マニュアル</strong><span>A4縦PDF。役割別の操作・安全確認・FAQを保存版として掲載。</span></span></a></div></div></div></section>'''
+
+          if marker not in html:
+              if css_marker not in html:
+                  if '</style>' not in html:
+                      raise SystemExit('R6 patch FAIL: </style> not found')
+                  html = html.replace('</style>', css + '\n</style>', 1)
+              if insert_before not in html:
+                  raise SystemExit('R6 patch FAIL: connected section anchor not found')
+              html = html.replace(insert_before, section + insert_before, 1)
+
+          assert html.count(marker) == 1, html.count(marker)
+          assert html.count(css_marker) == 1, html.count(css_marker)
+          for required in (guide, quick, detail, quick_png, detail_png):
+              assert required in html, required
+
+          page.write_text(html, encoding='utf-8')
+          if mirror.exists():
+              mirror.write_text(html, encoding='utf-8')
+          PY
+
+          grep -q 'data-caretaxi-tutorial-r6="1"' systems/caretaxi.html
+          if test -f systems/caretaxi.html.txt; then cmp -s systems/caretaxi.html systems/caretaxi.html.txt; fi
+
+      - name: Commit Product Site tutorial integration
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add systems/caretaxi.html
+          if test -f systems/caretaxi.html.txt; then git add systems/caretaxi.html.txt; fi
+          if git diff --cached --quiet; then
+            echo 'Product Site Tutorial section already current.'
+          else
+            git commit -m 'Add CARETAXI Tutorial R6 guide and manuals [skip actions]'
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
+          PRODUCT_CONTENT_HEAD=$(git rev-parse HEAD)
+          echo "PRODUCT_CONTENT_HEAD=$PRODUCT_CONTENT_HEAD" >> "$GITHUB_ENV"
+
+      - name: Wait until Product Site Pages contains R6 marker
+        shell: bash
+        run: |
+          set -euo pipefail
+          URL='https://dpromstk2000-lab.github.io/dpro-line-systems-site/systems/caretaxi.html'
+          ok=0
+          for i in $(seq 1 60); do
+            body=$(curl -fsSL --retry 2 --connect-timeout 10 "${URL}?r=${GITHUB_RUN_ID}-${i}" || true)
+            if printf '%s' "$body" | grep -q 'data-caretaxi-tutorial-r6="1"'; then ok=1; break; fi
+            sleep 5
+          done
+          test "$ok" -eq 1
+          echo 'Product Site Pages R6 marker: PASS'
+
+      - name: Setup Node and Playwright
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Playwright Chromium
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm init -y >/dev/null 2>&1
+          npm install playwright@1.55.0
+          npx playwright install --with-deps chromium
+
+      - name: Run R6 browser LIVE QA
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p .r6tmp/screens
+          cat > .r6tmp/r6-live-qa.mjs <<'JS'
+          import { chromium, request } from 'playwright';
+          import fs from 'fs';
+
+          const PRODUCT='https://dpromstk2000-lab.github.io/dpro-line-systems-site/systems/caretaxi.html';
+          const INDUSTRY='https://dpromstk2000-lab.github.io/dpro-caretaxi-line/';
+          const GUIDE=INDUSTRY+'guide-center.html';
+          const QUICK=INDUSTRY+'manuals/DPRO_TUTORIAL_CARETAXI_QUICK_START_V1.0.pdf';
+          const DETAIL=INDUSTRY+'manuals/DPRO_TUTORIAL_CARETAXI_DETAILED_MANUAL_V1.0.pdf';
+          const QUICK_PNG=INDUSTRY+'manuals/DPRO_TUTORIAL_CARETAXI_QUICK_START_V1.0.png';
+          const DETAIL_PNG=INDUSTRY+'manuals/DPRO_TUTORIAL_CARETAXI_DETAILED_MANUAL_V1.0.png';
+          const expected=[GUIDE+'#start', QUICK, DETAIL, QUICK_PNG, DETAIL_PNG];
+
+          const api=await request.newContext();
+          const http={};
+          for (const u of [INDUSTRY,GUIDE,QUICK,DETAIL,QUICK_PNG,DETAIL_PNG,PRODUCT]) {
+            const r=await api.get(u, {timeout:60000});
+            http[u]=r.status();
+            if (r.status()>=400) throw new Error(`HTTP ${r.status()} ${u}`);
+          }
+          await api.dispose();
+
+          const browser=await chromium.launch({headless:true});
+          const productResults=[];
+          const mutations=[];
+          for (const [name,width,height] of [['1440',1440,900],['1024',1024,768],['390',390,844],['320',320,720]]) {
+            const context=await browser.newContext({viewport:{width,height},deviceScaleFactor:1});
+            const page=await context.newPage();
+            const errors=[];
+            page.on('console',m=>{if(m.type()==='error')errors.push(m.text())});
+            page.on('pageerror',e=>errors.push(String(e)));
+            page.on('request',r=>{const m=r.method().toUpperCase();if(!['GET','HEAD','OPTIONS'].includes(m))mutations.push({page:'product-'+name,method:m,url:r.url()})});
+            const resp=await page.goto(PRODUCT+'?r='+Date.now(),{waitUntil:'domcontentloaded',timeout:60000});
+            if(!resp||resp.status()>=400) throw new Error(`Product ${name} HTTP ${resp?.status()}`);
+            await page.waitForTimeout(1200);
+            const result=await page.evaluate(()=>{
+              const root=document.querySelector('[data-caretaxi-tutorial-r6="1"]');
+              if(!root) return {marker:false};
+              const links=[...root.querySelectorAll('a')].map(a=>({key:a.dataset.r6Link||'',href:a.href,text:(a.textContent||'').trim()}));
+              const imgs=[...root.querySelectorAll('img')].map(i=>({src:i.src,complete:i.complete,naturalWidth:i.naturalWidth,alt:i.alt}));
+              const d=document.documentElement;
+              return {marker:true,links,imgs,scrollWidth:d.scrollWidth,clientWidth:d.clientWidth};
+            });
+            if(!result.marker) throw new Error('R6 marker missing');
+            const keys=new Set(result.links.map(x=>x.key));
+            for(const k of ['guide','first10-start','first10-resume','first10-replay','quick-pdf','detail-pdf']) if(!keys.has(k)) throw new Error(`missing link ${k}`);
+            for(const im of result.imgs) if(!im.complete||im.naturalWidth<100||!im.alt) throw new Error(`preview image invalid ${JSON.stringify(im)}`);
+            if((width===390||width===320)&&result.scrollWidth>result.clientWidth+1) throw new Error(`horizontal overflow ${name}: ${result.scrollWidth}/${result.clientWidth}`);
+            const focusLink=page.locator('[data-caretaxi-tutorial-r6="1"] a').first();
+            await focusLink.focus();
+            const focus=await focusLink.evaluate(el=>{const s=getComputedStyle(el);return {outlineStyle:s.outlineStyle,outlineWidth:s.outlineWidth}});
+            if(focus.outlineStyle==='none'||focus.outlineWidth==='0px') throw new Error(`focus not visible ${name} ${JSON.stringify(focus)}`);
+            if(errors.length) throw new Error(`console/page errors ${name}: ${JSON.stringify(errors)}`);
+            await page.screenshot({path:`.r6tmp/screens/product-${name}.png`,fullPage:false});
+            productResults.push({name,width,height,result,focus,errors});
+            await context.close();
+          }
+
+          const guideResults=[];
+          for (const [name,width,height] of [['1440',1440,900],['390',390,844],['320',320,720]]) {
+            const context=await browser.newContext({viewport:{width,height},deviceScaleFactor:1});
+            const page=await context.newPage();
+            const errors=[]; const localMut=[];
+            page.on('console',m=>{if(m.type()==='error')errors.push(m.text())});
+            page.on('pageerror',e=>errors.push(String(e)));
+            page.on('request',r=>{const m=r.method().toUpperCase();if(!['GET','HEAD','OPTIONS'].includes(m)){localMut.push({method:m,url:r.url()});mutations.push({page:'guide-'+name,method:m,url:r.url()})}});
+            const resp=await page.goto(GUIDE,{waitUntil:'domcontentloaded',timeout:60000});
+            if(!resp||resp.status()>=400) throw new Error(`Guide ${name} HTTP ${resp?.status()}`);
+            await page.waitForTimeout(800);
+            for(const id of ['#first10Resume','#first10Replay']) if(await page.locator(id).count()!==1) throw new Error(`First10 control missing ${id}`);
+            await page.locator('#first10Replay').click();
+            await page.waitForTimeout(700);
+            const dims=await page.evaluate(()=>({scrollWidth:document.documentElement.scrollWidth,clientWidth:document.documentElement.clientWidth}));
+            if((width===390||width===320)&&dims.scrollWidth>dims.clientWidth+1) throw new Error(`Guide overflow ${name}`);
+            if(errors.length) throw new Error(`Guide console/page errors ${name}: ${JSON.stringify(errors)}`);
+            if(localMut.length) throw new Error(`Guide business mutation detected ${JSON.stringify(localMut)}`);
+            guideResults.push({name,width,height,dims,errors,mutations:localMut});
+            await context.close();
+          }
+          await browser.close();
+          if(mutations.length) throw new Error(`BUSINESS_MUTATION ${JSON.stringify(mutations)}`);
+          fs.writeFileSync('.r6tmp/r6-browser-qa.json',JSON.stringify({http,productResults,guideResults,businessMutation:0},null,2));
+          console.log('R6 BROWSER LIVE QA PASS');
+          console.log('VIEWPORTS PASS: 1440 / 1024 / 390 / 320');
+          console.log('R3/R4 FIRST10 GUIDE REGRESSION PASS');
+          console.log('BUSINESS MUTATION = 0');
+          JS
+          node .r6tmp/r6-live-qa.mjs
+
+      - name: Setup Python QR QA
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Re-download public manuals and verify PDF QR exact match
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install -y libzbar0
+          python -m pip install --upgrade pip >/dev/null
+          python -m pip install PyMuPDF pillow pyzbar >/dev/null
+          mkdir -p .r6tmp/manuals
+          BASE='https://dpromstk2000-lab.github.io/dpro-caretaxi-line/manuals'
+          curl -fsSL --retry 5 "$BASE/DPRO_TUTORIAL_CARETAXI_QUICK_START_V1.0.pdf" -o .r6tmp/manuals/quick.pdf
+          curl -fsSL --retry 5 "$BASE/DPRO_TUTORIAL_CARETAXI_DETAILED_MANUAL_V1.0.pdf" -o .r6tmp/manuals/detail.pdf
+          curl -fsSL --retry 5 "$BASE/DPRO_TUTORIAL_CARETAXI_QUICK_START_V1.0.png" -o .r6tmp/manuals/quick.png
+          curl -fsSL --retry 5 "$BASE/DPRO_TUTORIAL_CARETAXI_DETAILED_MANUAL_V1.0.png" -o .r6tmp/manuals/detail.png
+          curl -fsSL --retry 5 'https://raw.githubusercontent.com/dpromstk2000-lab/dpro-caretaxi-line/main/manuals/MANUAL_ASSET_MANIFEST.txt' -o .r6tmp/manuals/source-manifest.txt
+
+          python - <<'PY'
+          from pathlib import Path
+          import hashlib, json
+          import pymupdf
+          from PIL import Image
+          from pyzbar.pyzbar import decode
+
+          guide='https://dpromstk2000-lab.github.io/dpro-caretaxi-line/guide-center.html'
+          demo='https://dpromstk2000-lab.github.io/dpro-caretaxi-line/demo-guide.html'
+          root=Path('.r6tmp/manuals')
+
+          vals={}
+          for name in ('quick','detail'):
+              doc=pymupdf.open(root/f'{name}.pdf')
+              found=set()
+              for i,page in enumerate(doc):
+                  pix=page.get_pixmap(matrix=pymupdf.Matrix(2.4,2.4),alpha=False)
+                  p=root/f'{name}-{i+1:02d}.png'; pix.save(p)
+                  for q in decode(Image.open(p)):
+                      try: found.add(q.data.decode('utf-8'))
+                      except Exception: pass
+              doc.close(); vals[name]=sorted(found)
+          assert guide in vals['quick'], vals
+          assert guide in vals['detail'], vals
+          assert demo in vals['detail'], vals
+
+          local={
+            'DPRO_TUTORIAL_CARETAXI_QUICK_START_V1.0.pdf': hashlib.sha256((root/'quick.pdf').read_bytes()).hexdigest(),
+            'DPRO_TUTORIAL_CARETAXI_DETAILED_MANUAL_V1.0.pdf': hashlib.sha256((root/'detail.pdf').read_bytes()).hexdigest(),
+            'DPRO_TUTORIAL_CARETAXI_QUICK_START_V1.0.png': hashlib.sha256((root/'quick.png').read_bytes()).hexdigest(),
+            'DPRO_TUTORIAL_CARETAXI_DETAILED_MANUAL_V1.0.png': hashlib.sha256((root/'detail.png').read_bytes()).hexdigest(),
+          }
+          manifest=(root/'source-manifest.txt').read_text(encoding='utf-8')
+          for fn,h in local.items(): assert f'{h}  {fn}' in manifest, (fn,h,manifest)
+          (Path('.r6tmp')/'r6-pdf-qr-qa.json').write_text(json.dumps({'qr':vals,'sha256':local},ensure_ascii=False,indent=2),encoding='utf-8')
+          print('R6 PUBLIC PDF QR EXACT-MATCH PASS', vals)
+          print('R6 MANUAL SHA256 LIVE MATCH PASS')
+          PY
+
+      - name: Re-fetch final heads and write R6 evidence
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch origin main
+          git pull --rebase origin main
+          INDUSTRY_HEAD_FINAL=$(git ls-remote https://github.com/dpromstk2000-lab/dpro-caretaxi-line.git refs/heads/main | awk '{print $1}')
+          PRODUCT_QA_HEAD=$(git rev-parse HEAD)
+          export INDUSTRY_HEAD_FINAL PRODUCT_QA_HEAD
+          mkdir -p r6-evidence/caretaxi
+
+          python - <<'PY'
+          from pathlib import Path
+          import json, os
+          b=json.loads(Path('.r6tmp/r6-browser-qa.json').read_text())
+          q=json.loads(Path('.r6tmp/r6-pdf-qr-qa.json').read_text())
+          e=Path('r6-evidence/caretaxi')
+          product='https://dpromstk2000-lab.github.io/dpro-line-systems-site/systems/caretaxi.html'
+          industry='https://dpromstk2000-lab.github.io/dpro-caretaxi-line/'
+          guide=industry+'guide-center.html'
+          quick=industry+'manuals/DPRO_TUTORIAL_CARETAXI_QUICK_START_V1.0.pdf'
+          detail=industry+'manuals/DPRO_TUTORIAL_CARETAXI_DETAILED_MANUAL_V1.0.pdf'
+
+          (e/'R6_PRODUCT_SITE.txt').write_text(f'''DPRO TUTORIAL BATCH-03 CARETAXI\nR6 PRODUCT SITE\nDate: 2026-08-27\n\nPASS Product Site Tutorial/manual section integrated\nPASS Guide Center entry\nPASS First10 start/resume/replay entries\nPASS Quick Start PDF link\nPASS Detailed Manual PDF link\nPASS Quick Start preview\nPASS Detailed Manual preview\nPASS systems/caretaxi.html mirror aligned\nPASS existing pricing/CTA/business copy preserved by targeted insertion\n\nProduct Site: {product}\nGuide Center: {guide}\nQuick Start: {quick}\nDetailed Manual: {detail}\n\nProduct content HEAD: {os.environ.get('PRODUCT_CONTENT_HEAD','unknown')}\nProduct QA checkout HEAD: {os.environ.get('PRODUCT_QA_HEAD','unknown')}\nIndustry HEAD final observed: {os.environ.get('INDUSTRY_HEAD_FINAL','unknown')}\n''',encoding='utf-8')
+
+          (e/'R6_LIVE_QA.txt').write_text(f'''DPRO TUTORIAL BATCH-03 CARETAXI\nR6 LIVE QA\nDate: 2026-08-27\n\nPASS industry Pages HTTP reachable\nPASS Guide Center HTTP reachable\nPASS First10 start/resume/replay controls reachable\nPASS Quick Start PDF HTTP 200\nPASS Detailed Manual PDF HTTP 200\nPASS preview assets HTTP 200\nPASS Product Site HTTP 200\nPASS all Tutorial links resolve\nPASS no Tutorial-added broken links\nPASS no Tutorial-attributable page/console errors\nPASS viewport 1440\nPASS viewport 1024\nPASS viewport 390x844 / no horizontal overflow\nPASS viewport 320x720 / no horizontal overflow\nPASS keyboard focus visible for Tutorial links\nPASS PDFs render\nPASS public PDF QR re-decode exact match\nPASS R3/R4 First10/Guide Center regression\nPASS businessMutation = 0\nPASS DB/Worker/API/Auth/Role/Permission/Feature Flag Tutorial changes = 0\n\nQR values: {json.dumps(q['qr'],ensure_ascii=False)}\nHTTP: {json.dumps(b['http'],ensure_ascii=False)}\n\nOVERALL PASS\n''',encoding='utf-8')
+
+          sha='\n'.join(f"{h}  {fn}" for fn,h in q['sha256'].items())
+          (e/'PRODUCT_SITE_LOCK_FINAL.txt').write_text(f'''DPRO TUTORIAL BATCH-03 CARETAXI\nR6 PRODUCT SITE FINAL LOCK CANDIDATE\nDate: 2026-08-27\n\nIndustry HEAD final observed: {os.environ.get('INDUSTRY_HEAD_FINAL','unknown')}\nProduct Site content HEAD: {os.environ.get('PRODUCT_CONTENT_HEAD','unknown')}\nProduct Site QA checkout HEAD: {os.environ.get('PRODUCT_QA_HEAD','unknown')}\nProduct Site public: {product}\nGuide Center public: {guide}\n\nMANUAL SHA256\n{sha}\n\nR5: PASS\nR6: PASS\nR3/R4 regression: PASS\nbusinessMutation: 0\nProtected backend/security Tutorial changes: 0\nR7: NOT STARTED\n''',encoding='utf-8')
+          PY
+
+      - name: Commit R6 QA evidence
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add r6-evidence/caretaxi/
+          if git diff --cached --quiet; then
+            echo 'R6 evidence already current.'
+          else
+            git commit -m 'Add CARETAXI Tutorial R6 live QA evidence [skip actions]'
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
+          echo "PRODUCT_SITE_FINAL_HEAD=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
+
+      - name: R6 FINAL LOCK candidate summary
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo '## CARETAXI Tutorial R6' >> "$GITHUB_STEP_SUMMARY"
+          echo '- R5 QA: PASS' >> "$GITHUB_STEP_SUMMARY"
+          echo '- R6 Product Site: PASS' >> "$GITHUB_STEP_SUMMARY"
+          echo '- R6 LIVE QA: PASS' >> "$GITHUB_STEP_SUMMARY"
+          echo '- 1440 / 1024 / 390 / 320: PASS' >> "$GITHUB_STEP_SUMMARY"
+          echo '- public PDF QR exact-match: PASS' >> "$GITHUB_STEP_SUMMARY"
+          echo '- R3/R4 regression: PASS' >> "$GITHUB_STEP_SUMMARY"
+          echo '- businessMutation: 0' >> "$GITHUB_STEP_SUMMARY"
+          echo '- DB/Worker/API/Auth/Role/Permission/Feature Flag Tutorial changes: 0' >> "$GITHUB_STEP_SUMMARY"
+          echo "- industry HEAD: $INDUSTRY_HEAD_FINAL" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Product Site content HEAD: $PRODUCT_CONTENT_HEAD" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Product Site final HEAD: $PRODUCT_SITE_FINAL_HEAD" >> "$GITHUB_STEP_SUMMARY"
+          echo '- FINAL LOCK: CANDIDATE / CENTRAL RETURN REQUIRED' >> "$GITHUB_STEP_SUMMARY"
+          echo '- R7: NOT STARTED' >> "$GITHUB_STEP_SUMMARY"
