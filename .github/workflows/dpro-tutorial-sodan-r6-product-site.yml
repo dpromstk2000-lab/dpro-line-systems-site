@@ -1,4 +1,4 @@
-name: DPRO Tutorial SODAN R6 Product Site + LIVE QA
+name: DPRO Tutorial SODAN R6 Product Site + LIVE QA V1.1
 
 on:
   workflow_dispatch:
@@ -11,7 +11,7 @@ permissions:
 
 concurrency:
   group: dpro-tutorial-sodan-r6-product-site
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 env:
   INDUSTRY_BASE: https://dpromstk2000-lab.github.io/dpro-sodan-line
@@ -79,11 +79,16 @@ jobs:
           live_blob=subprocess.check_output(['git','hash-object','systems/sodan.html'],text=True).strip()
           mirror_blob=subprocess.check_output(['git','hash-object','systems/sodan.html.txt'],text=True).strip()
           expected=os.environ['SODAN_SOURCE_BLOB_SHA']
-          if live_blob!=expected or mirror_blob!=expected: raise SystemExit(f'SODAN source advanced: html={live_blob}, mirror={mirror_blob}, expected={expected}')
+          # V1.1 recovery rule: the first R6 run may already have committed the Tutorial section.
+          # Only require the original locked blob when R6 is not present yet; otherwise validate
+          # the already-committed R6 content and mirror without rolling it back.
+          r6_present='DPRO_TUTORIAL_SODAN_R6' in original
+          if not r6_present and (live_blob!=expected or mirror_blob!=expected):
+              raise SystemExit(f'SODAN source advanced before R6: html={live_blob}, mirror={mirror_blob}, expected={expected}')
           critical={'price':'5,500円','line_cta':'https://lin.ee/YxJGXV6D','root_demo_href':'href="https://dpromstk2000-lab.github.io/dpro-sodan-line/"'}
           before={k:original.count(v) for k,v in critical.items()}
           patched=original
-          if 'DPRO_TUTORIAL_SODAN_R6' not in patched:
+          if not r6_present:
               nav_old='<a href="#functions">6機能</a><a href="#live">実画面</a><a href="#price">料金</a>'
               nav_new='<a href="#functions">6機能</a><a href="#live">実画面</a><a href="#tutorial">ガイド</a><a href="#price">料金</a>'
               if nav_old not in patched: raise SystemExit('Header anchor advanced; forward review required')
@@ -197,9 +202,18 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          mkdir -p qa-r6/public
           ok=0
           for i in $(seq 1 60); do
-            if curl -fsSL --retry 2 --connect-timeout 10 "$PRODUCT_PAGE?qa=$(date +%s)" | grep -q 'DPRO_TUTORIAL_SODAN_R6'; then ok=1; break; fi
+            marker_file="qa-r6/public/pages-marker-$i.html"
+            if curl -fsSL --retry 2 --connect-timeout 10 --max-time 30 "$PRODUCT_PAGE?qa=$(date +%s)-$i" -o "$marker_file"; then
+              if grep -q 'DPRO_TUTORIAL_SODAN_R6' "$marker_file"; then
+                ok=1
+                echo "GitHub Pages R6 marker confirmed on attempt $i"
+                cp "$marker_file" qa-r6/public/sodan-pages-marker-confirmed.html
+                break
+              fi
+            fi
             sleep 10
           done
           test "$ok" = 1
