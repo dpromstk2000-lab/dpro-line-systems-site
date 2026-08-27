@@ -1,0 +1,27 @@
+DPRO TUTORIAL BATCH-03 WELFARE_EQUIPMENT
+R6 PRODUCT SITE FINAL LOCK CANDIDATE
+Date: 2026-08-27
+
+Industry HEAD final observed: 1be35ccc5163aac31288cefbfd6bcd323c3294c6
+Product Site content HEAD: 5f092068e7457129d43c83cc36bbcf6008a3a16c
+Product Site QA checkout HEAD: 5f092068e7457129d43c83cc36bbcf6008a3a16c
+Product Site public: https://dpromstk2000-lab.github.io/dpro-line-systems-site/systems/welfare-equipment.html
+Industry public: https://dpromstk2000-lab.github.io/dpro-welfare-equipment-line/
+Guide Center public: https://dpromstk2000-lab.github.io/dpro-welfare-equipment-line/guide-center.html
+Quick Start public: https://dpromstk2000-lab.github.io/dpro-welfare-equipment-line/manuals/DPRO_TUTORIAL_WELFARE_EQUIPMENT_QUICK_START_V1.0.pdf
+Detailed Manual public: https://dpromstk2000-lab.github.io/dpro-welfare-equipment-line/manuals/DPRO_TUTORIAL_WELFARE_EQUIPMENT_DETAILED_MANUAL_V1.0.pdf
+Quick preview public: https://dpromstk2000-lab.github.io/dpro-welfare-equipment-line/manuals/DPRO_TUTORIAL_WELFARE_EQUIPMENT_QUICK_START_V1.0.png
+Detailed preview public: https://dpromstk2000-lab.github.io/dpro-welfare-equipment-line/manuals/DPRO_TUTORIAL_WELFARE_EQUIPMENT_DETAILED_MANUAL_V1.0.png
+
+MANUAL SHA256
+8ef0358e08073e1bef2a94311e07efc2f59c75eaf4ce40d938563e105b259485  DPRO_TUTORIAL_WELFARE_EQUIPMENT_QUICK_START_V1.0.pdf
+6066a836f277956feea2df6d39acc7d44cd23a8d50b209258462ed0034ca7f14  DPRO_TUTORIAL_WELFARE_EQUIPMENT_DETAILED_MANUAL_V1.0.pdf
+06bb9de52b604f5b2dc0243da54829bba10a0673d0a218d53cc2aa89ea6ebc45  DPRO_TUTORIAL_WELFARE_EQUIPMENT_QUICK_START_V1.0.png
+d6a256a4aba641828d570d3c4c804a29fc2c50fcf105dab638ba9c024d003a69  DPRO_TUTORIAL_WELFARE_EQUIPMENT_DETAILED_MANUAL_V1.0.png
+
+R5: PASS
+R6: PASS
+R3/R4 regression: PASS
+businessMutation: 0
+Protected backend/security Tutorial changes: 0
+R7: NOT STARTED

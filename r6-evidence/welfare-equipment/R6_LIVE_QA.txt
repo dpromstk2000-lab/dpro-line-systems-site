@@ -1,0 +1,30 @@
+DPRO TUTORIAL BATCH-03 WELFARE_EQUIPMENT
+R6 LIVE QA
+Date: 2026-08-27
+
+PASS industry Pages HTTP reachable
+PASS Guide Center HTTP reachable
+PASS First10 start/resume/replay controls reachable
+PASS Quick Start PDF HTTP 200
+PASS Detailed Manual PDF HTTP 200
+PASS preview assets HTTP 200
+PASS Product Site HTTP 200
+PASS all Tutorial links resolve
+PASS no Tutorial-added broken links
+PASS no Tutorial-attributable page/console errors
+PASS viewport 1440
+PASS viewport 1024
+PASS viewport 390x844 / no horizontal overflow
+PASS viewport 320x720 / no horizontal overflow
+PASS keyboard focus visible for Tutorial links
+PASS PDFs render / Quick 2 pages / Detailed 9 pages / A4
+PASS public PDF QR re-decode exact match
+PASS manual SHA256 live match R5 evidence
+PASS R3/R4 First10/Guide Center regression
+PASS businessMutation = 0
+PASS DB/Worker/API/Auth/Role/Permission/Feature Flag Tutorial changes = 0
+
+QR values: {"quick": ["https://dpromstk2000-lab.github.io/dpro-welfare-equipment-line/guide-center.html", "https://dpromstk2000-lab.github.io/dpro-welfare-equipment-line/member.html"], "detail": ["https://dpromstk2000-lab.github.io/dpro-welfare-equipment-line/guide-center.html"]}
+HTTP: {"https://dpromstk2000-lab.github.io/dpro-welfare-equipment-line/": 200, "https://dpromstk2000-lab.github.io/dpro-welfare-equipment-line/guide-center.html": 200, "https://dpromstk2000-lab.github.io/dpro-welfare-equipment-line/member.html": 200, "https://dpromstk2000-lab.github.io/dpro-welfare-equipment-line/manuals/DPRO_TUTORIAL_WELFARE_EQUIPMENT_QUICK_START_V1.0.pdf": 200, "https://dpromstk2000-lab.github.io/dpro-welfare-equipment-line/manuals/DPRO_TUTORIAL_WELFARE_EQUIPMENT_DETAILED_MANUAL_V1.0.pdf": 200, "https://dpromstk2000-lab.github.io/dpro-welfare-equipment-line/manuals/DPRO_TUTORIAL_WELFARE_EQUIPMENT_QUICK_START_V1.0.png": 200, "https://dpromstk2000-lab.github.io/dpro-welfare-equipment-line/manuals/DPRO_TUTORIAL_WELFARE_EQUIPMENT_DETAILED_MANUAL_V1.0.png": 200, "https://dpromstk2000-lab.github.io/dpro-line-systems-site/systems/welfare-equipment.html": 200}
+
+OVERALL PASS

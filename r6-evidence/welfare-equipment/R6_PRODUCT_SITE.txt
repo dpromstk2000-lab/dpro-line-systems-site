@@ -1,0 +1,22 @@
+DPRO TUTORIAL BATCH-03 WELFARE_EQUIPMENT
+R6 PRODUCT SITE
+Date: 2026-08-27
+
+PASS Product Site Tutorial/manual section integrated
+PASS Guide Center entry
+PASS First10 start/resume/replay entries
+PASS Quick Start PDF link
+PASS Detailed Manual PDF link
+PASS Quick Start preview
+PASS Detailed Manual preview
+PASS systems/welfare-equipment.html mirror aligned
+PASS existing pricing/CTA/business copy preserved by targeted insertion
+
+Product Site: https://dpromstk2000-lab.github.io/dpro-line-systems-site/systems/welfare-equipment.html
+Guide Center: https://dpromstk2000-lab.github.io/dpro-welfare-equipment-line/guide-center.html
+Quick Start: https://dpromstk2000-lab.github.io/dpro-welfare-equipment-line/manuals/DPRO_TUTORIAL_WELFARE_EQUIPMENT_QUICK_START_V1.0.pdf
+Detailed Manual: https://dpromstk2000-lab.github.io/dpro-welfare-equipment-line/manuals/DPRO_TUTORIAL_WELFARE_EQUIPMENT_DETAILED_MANUAL_V1.0.pdf
+
+Product content HEAD: 5f092068e7457129d43c83cc36bbcf6008a3a16c
+Product QA checkout HEAD: 5f092068e7457129d43c83cc36bbcf6008a3a16c
+Industry HEAD final observed: 1be35ccc5163aac31288cefbfd6bcd323c3294c6
