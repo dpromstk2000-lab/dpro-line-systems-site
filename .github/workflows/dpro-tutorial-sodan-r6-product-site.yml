@@ -1,0 +1,327 @@
+name: DPRO Tutorial SODAN R6 Product Site + LIVE QA
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - ".github/workflows/dpro-tutorial-sodan-r6-product-site.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: dpro-tutorial-sodan-r6-product-site
+  cancel-in-progress: false
+
+env:
+  INDUSTRY_BASE: https://dpromstk2000-lab.github.io/dpro-sodan-line
+  PRODUCT_PAGE: https://dpromstk2000-lab.github.io/dpro-line-systems-site/systems/sodan.html
+  QUICK_PDF: DPRO_TUTORIAL_SODAN_QUICK_START_V1.0.pdf
+  DETAIL_PDF: DPRO_TUTORIAL_SODAN_DETAILED_MANUAL_V1.0.pdf
+  QUICK_PNG: DPRO_TUTORIAL_SODAN_QUICK_START_V1.0.png
+  DETAIL_PNG: DPRO_TUTORIAL_SODAN_DETAILED_MANUAL_V1.0.png
+  QUICK_PDF_SHA256: b13343c18443c49f0e62e516368ddd5bf7d4f790a6546bea8d6af2d04dbabc45
+  DETAIL_PDF_SHA256: 5539a7110263dda21e4658e45c13f5dee0edba5a9580a58a4b08e4cdc0fbffe7
+  QUICK_PNG_SHA256: 7a82bfbb510b46b39cabb58831aea1e1d86f825143bf7014ae97023cd3c81b66
+  DETAIL_PNG_SHA256: e4440d8bbe43c74806d3f7fcc1d00a575dce373fe500068058af0095b381e05f
+  SODAN_SOURCE_BLOB_SHA: a19975db833f334a8581e4c534c592d3103d44a6
+
+jobs:
+  r6-product-site-live-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout newest main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Record pre-change locks
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p qa-r6
+          git rev-parse HEAD | tee qa-r6/product-site-head-before.txt
+          git rev-parse HEAD^{tree} | tee qa-r6/product-site-tree-before.txt
+          python - <<'PY'
+          import json, urllib.request
+          u='https://api.github.com/repos/dpromstk2000-lab/dpro-sodan-line/commits/main'
+          req=urllib.request.Request(u,headers={'Accept':'application/vnd.github+json','User-Agent':'DPRO-R6-QA'})
+          with urllib.request.urlopen(req,timeout=30) as r: d=json.load(r)
+          open('qa-r6/industry-head-before.txt','w',encoding='utf-8').write(d['sha']+'\n')
+          open('qa-r6/industry-tree-before.txt','w',encoding='utf-8').write(d['commit']['tree']['sha']+'\n')
+          print('industry',d['sha'],d['commit']['tree']['sha'])
+          PY
+
+      - name: Patch SODAN Product Site Tutorial section
+        shell: bash
+        env:
+          TUTORIAL_CSS_B64: Ci8qIERQUk9fVFVUT1JJQUxfU09EQU5fUjYgKi8KLnBzLXR1dG9yaWFsLXNlY3Rpb257YmFja2dyb3VuZDpsaW5lYXItZ3JhZGllbnQoMTgwZGVnLCNmNGZhZjcgMCUsI2ZmZiAxMDAlKX0KLnBzLXR1dG9yaWFsLWdyaWR7ZGlzcGxheTpncmlkO2dyaWQtdGVtcGxhdGUtY29sdW1uczpyZXBlYXQoMyxtaW5tYXgoMCwxZnIpKTtnYXA6MXJlbTthbGlnbi1pdGVtczpzdHJldGNofQoucHMtdHV0b3JpYWwtY2FyZHtkaXNwbGF5OmZsZXg7ZmxleC1kaXJlY3Rpb246Y29sdW1uO21pbi13aWR0aDowO292ZXJmbG93OmhpZGRlbjtwYWRkaW5nOjB9Ci5wcy10dXRvcmlhbC1jYXJkX19ib2R5e2Rpc3BsYXk6ZmxleDtmbGV4OjE7ZmxleC1kaXJlY3Rpb246Y29sdW1uO3BhZGRpbmc6MS4xNXJlbX0KLnBzLXR1dG9yaWFsLWxhYmVse2Rpc3BsYXk6aW5saW5lLWJsb2NrO21hcmdpbi1ib3R0b206LjQ1cmVtO2NvbG9yOnZhcigtLWRwcm8tZ3JlZW4pO2ZvbnQtc2l6ZTouNzJyZW07Zm9udC13ZWlnaHQ6OTAwO2xldHRlci1zcGFjaW5nOi4xMmVtfQoucHMtdHV0b3JpYWwtY2FyZCBoM3ttYXJnaW46MCAwIC41cmVtO2NvbG9yOnZhcigtLXBzLWRlZXApO2ZvbnQtc2l6ZToxLjE1cmVtO2xpbmUtaGVpZ2h0OjEuNH0KLnBzLXR1dG9yaWFsLWNhcmQgcHttYXJnaW46MDtjb2xvcjp2YXIoLS1kcHJvLXdhcm0tZ3JheS02MDApO2ZvbnQtc2l6ZTouOXJlbX0KLnBzLXR1dG9yaWFsLXByZXZpZXd7ZGlzcGxheTpibG9jazthc3BlY3QtcmF0aW86MTE5MS8xNjg0O292ZXJmbG93OmhpZGRlbjtiYWNrZ3JvdW5kOiNlZWY0ZjE7Ym9yZGVyLWJvdHRvbToxcHggc29saWQgdmFyKC0tcHMtbGluZSl9Ci5wcy10dXRvcmlhbC1wcmV2aWV3IGltZ3tkaXNwbGF5OmJsb2NrO3dpZHRoOjEwMCU7aGVpZ2h0OjEwMCU7b2JqZWN0LWZpdDpjb3ZlcjtvYmplY3QtcG9zaXRpb246dG9wIGNlbnRlcn0KLnBzLXR1dG9yaWFsLWFjdGlvbnN7ZGlzcGxheTpncmlkO2dhcDouNTVyZW07bWFyZ2luLXRvcDphdXRvO3BhZGRpbmctdG9wOjFyZW19Ci5wcy10dXRvcmlhbC1hY3Rpb25zIC5kcHJvLWJ1dHRvbnt3aWR0aDoxMDAlO21pbi1oZWlnaHQ6NDZweDtqdXN0aWZ5LWNvbnRlbnQ6Y2VudGVyO3RleHQtYWxpZ246Y2VudGVyO3doaXRlLXNwYWNlOm5vcm1hbH0KLnBzLXR1dG9yaWFsLW5vdGV7bWFyZ2luLXRvcDouNzVyZW07cGFkZGluZzouNzVyZW0gLjg1cmVtO2JvcmRlci1sZWZ0OjRweCBzb2xpZCB2YXIoLS1kcHJvLWdyZWVuKTtib3JkZXItcmFkaXVzOi41cmVtO2JhY2tncm91bmQ6I2VlZjhmMztjb2xvcjojMzY1ODRjO2ZvbnQtc2l6ZTouODJyZW19Ci5wcy10dXRvcmlhbC1zZWN0aW9uIGE6Zm9jdXMtdmlzaWJsZXtvdXRsaW5lOjNweCBzb2xpZCB2YXIoLS1kcHJvLWdyZWVuKTtvdXRsaW5lLW9mZnNldDozcHh9CkBtZWRpYShtYXgtd2lkdGg6OTgwcHgpey5wcy10dXRvcmlhbC1ncmlke2dyaWQtdGVtcGxhdGUtY29sdW1uczoxZnIgMWZyfS5wcy10dXRvcmlhbC1jYXJkLS1ndWlkZXtncmlkLWNvbHVtbjoxLy0xfX0KQG1lZGlhKG1heC13aWR0aDo2NDBweCl7LnBzLXR1dG9yaWFsLWdyaWR7Z3JpZC10ZW1wbGF0ZS1jb2x1bW5zOjFmcn0ucHMtdHV0b3JpYWwtY2FyZC0tZ3VpZGV7Z3JpZC1jb2x1bW46YXV0b30ucHMtdHV0b3JpYWwtY2FyZF9fYm9keXtwYWRkaW5nOjFyZW19LnBzLXR1dG9yaWFsLWFjdGlvbnN7Z3JpZC10ZW1wbGF0ZS1jb2x1bW5zOjFmcn0ucHMtdHV0b3JpYWwtcHJldmlld3ttYXgtaGVpZ2h0OjU2MHB4fX0KQG1lZGlhKG1heC13aWR0aDozMjBweCl7LnBzLXR1dG9yaWFsLWNhcmQgaDN7Zm9udC1zaXplOjEuMDJyZW19LnBzLXR1dG9yaWFsLWNhcmQgcCwucHMtdHV0b3JpYWwtbm90ZXtvdmVyZmxvdy13cmFwOmFueXdoZXJlfX0K
+          TUTORIAL_SECTION_B64: PCEtLSBEUFJPX1RVVE9SSUFMX1NPREFOX1I2IC0tPgo8c2VjdGlvbiBjbGFzcz0iZHByby1zZWN0aW9uIHBzLXR1dG9yaWFsLXNlY3Rpb24iIGlkPSJ0dXRvcmlhbCIgYXJpYS1sYWJlbGxlZGJ5PSJ0dXRvcmlhbC10aXRsZSIgZGF0YS1kcHJvLXR1dG9yaWFsLXI2PSIxIj48ZGl2IGNsYXNzPSJkcHJvLWNvbnRhaW5lciI+PGRpdiBjbGFzcz0icHMtc2VjdGlvbi1oZWFkaW5nIj48cCBjbGFzcz0icHMta2lja2VyIj5UVVRPUklBTCAmYW1wOyBQUklOVCBNQU5VQUw8L3A+PGgyIGlkPSJ0dXRvcmlhbC10aXRsZSI+6KaL44Gq44GM44KJ6Kmm44Gb44KL44Ks44Kk44OJ44Go44CB5Y2w5Yi344Gn44GN44KL44Oe44OL44Ol44Ki44Or44CCPC9oMj48cD5GaXJzdDEw44Gn5Luj6KGo5pON5L2c44KSMTDjgrnjg4bjg4Pjg5fjgaDjgZHnorroqo3jgZfjgIHlv4XopoHjgarjgajjgY3jga9HdWlkZSBDZW50ZXLjgoRBNOODnuODi+ODpeOCouODq+OBp+ips+OBl+OBhOaJi+mghuOCkueiuuiqjeOBp+OBjeOBvuOBmeOAglR1dG9yaWFs44GL44KJ5qWt5YuZ44OH44O844K/44KS6Ieq5YuV44Gn6YCB5L+h44O75L+d5a2Y44O75om/6KqN44O75YmK6Zmk44GZ44KL44GT44Go44Gv44GC44KK44G+44Gb44KT44CCPC9wPjwvZGl2PjxkaXYgY2xhc3M9InBzLXR1dG9yaWFsLWdyaWQiPgo8YXJ0aWNsZSBjbGFzcz0iZHByby1jYXJkIHBzLXR1dG9yaWFsLWNhcmQgcHMtdHV0b3JpYWwtY2FyZC0tZ3VpZGUiPjxkaXYgY2xhc3M9InBzLXR1dG9yaWFsLWNhcmRfX2JvZHkiPjxzcGFuIGNsYXNzPSJwcy10dXRvcmlhbC1sYWJlbCI+TElWRSBHVUlERSAvIEZJUlNUMTA8L3NwYW4+PGgzPkd1aWRlIENlbnRlciDjgaggRmlyc3QxMDwvaDM+PHA+5Yid5Zue55u46KuH44CB5pys5Lq644O75a625peP44CB6IG35ZOh44CBaVBhZOeuoeeQhuOAgVBD566h55CG44CB44K344K544OG44Og5qSc5p+744G+44Gn44KS5b255Ymy5Yil44Gr56K66KqN44Gn44GN44G+44GZ44CCRmlyc3QxMOOBr+mAlOS4reOBi+OCieWGjemWi+OBp+OBjeOAgeW/heimgeOBquOCieacgOWIneOBi+OCieWGjeeUn+OBp+OBjeOBvuOBmeOAgjwvcD48ZGl2IGNsYXNzPSJwcy10dXRvcmlhbC1hY3Rpb25zIj48YSBjbGFzcz0iZHByby1idXR0b24gZHByby1idXR0b24tLXByaW1hcnkiIGhyZWY9Imh0dHBzOi8vZHByb21zdGsyMDAwLWxhYi5naXRodWIuaW8vZHByby1zb2Rhbi1saW5lL2d1aWRlLWNlbnRlci5odG1sIiB0YXJnZXQ9Il9ibGFuayIgcmVsPSJub29wZW5lciI+R3VpZGUgQ2VudGVy44KS6ZaL44GPPC9hPjxhIGNsYXNzPSJkcHJvLWJ1dHRvbiBkcHJvLWJ1dHRvbi0tc2Vjb25kYXJ5IiBocmVmPSJodHRwczovL2Rwcm9tc3RrMjAwMC1sYWIuZ2l0aHViLmlvL2Rwcm8tc29kYW4tbGluZS9ndWlkZS1jZW50ZXIuaHRtbCNxdWljayIgdGFyZ2V0PSJfYmxhbmsiIHJlbD0ibm9vcGVuZXIiPkZpcnN0MTAg6ZaL5aeL44O75YaN6ZaL44Oh44OL44Ol44O8PC9hPjxhIGNsYXNzPSJkcHJvLWJ1dHRvbiBkcHJvLWJ1dHRvbi0tc2Vjb25kYXJ5IiBocmVmPSJodHRwczovL2Rwcm9tc3RrMjAwMC1sYWIuZ2l0aHViLmlvL2Rwcm8tc29kYW4tbGluZS9ndWlkZS1jZW50ZXIuaHRtbCNxdWljayIgdGFyZ2V0PSJfYmxhbmsiIHJlbD0ibm9vcGVuZXIiPkZpcnN0MTAg5pyA5Yid44GL44KJ5YaN55Sf44Oh44OL44Ol44O8PC9hPjwvZGl2PjxkaXYgY2xhc3M9InBzLXR1dG9yaWFsLW5vdGUiPkd1aWRlIENlbnRlcuOBrlF1aWNrIFN0YXJ05qyE44Gn44CM6ZaL5aeL44O75YaN6ZaL44CN44CM5pyA5Yid44GL44KJ5YaN55Sf44CN44KS6YG444G544G+44GZ44CC5a6f5Zyo44GZ44KL5YCL5Lq65oOF5aCx44Gv44OH44Oi44G45YWl5Yqb44GX44Gq44GE44Gn44GP44Gg44GV44GE44CCPC9kaXY+PC9kaXY+PC9hcnRpY2xlPgo8YXJ0aWNsZSBjbGFzcz0iZHByby1jYXJkIHBzLXR1dG9yaWFsLWNhcmQiPjxhIGNsYXNzPSJwcy10dXRvcmlhbC1wcmV2aWV3IiBocmVmPSJodHRwczovL2Rwcm9tc3RrMjAwMC1sYWIuZ2l0aHViLmlvL2Rwcm8tc29kYW4tbGluZS9EUFJPX1RVVE9SSUFMX1NPREFOX1FVSUNLX1NUQVJUX1YxLjAucGRmIiB0YXJnZXQ9Il9ibGFuayIgcmVsPSJub29wZW5lciIgYXJpYS1sYWJlbD0i44GL44KT44Gf44KT44K544K/44O844OI44Ks44Kk44OJUERG44KS6ZaL44GPIj48aW1nIHNyYz0iaHR0cHM6Ly9kcHJvbXN0azIwMDAtbGFiLmdpdGh1Yi5pby9kcHJvLXNvZGFuLWxpbmUvRFBST19UVVRPUklBTF9TT0RBTl9RVUlDS19TVEFSVF9WMS4wLnBuZyIgd2lkdGg9IjExOTEiIGhlaWdodD0iMTY4NCIgbG9hZGluZz0ibGF6eSIgYWx0PSJEUFJPIFNPREFOIOOBi+OCk+OBn+OCk+OCueOCv+ODvOODiOOCrOOCpOODieOBruODl+ODrOODk+ODpeODvCI+PC9hPjxkaXYgY2xhc3M9InBzLXR1dG9yaWFsLWNhcmRfX2JvZHkiPjxzcGFuIGNsYXNzPSJwcy10dXRvcmlhbC1sYWJlbCI+QTQgUVVJQ0sgU1RBUlQ8L3NwYW4+PGgzPuOBi+OCk+OBn+OCk+OCueOCv+ODvOODiOOCrOOCpOODiTwvaDM+PHA+5pyA5Yid44GuMTDliIbjgafnorroqo3jgZnjgovmtYHjgozjgpLjgIHlrp/pmpvjga7jg4fjg6LnlLvpnaLjgahRUuS7mOOBjeOBp0E044Gr44G+44Go44KB44Gm44GE44G+44GZ44CCPC9wPjxkaXYgY2xhc3M9InBzLXR1dG9yaWFsLWFjdGlvbnMiPjxhIGNsYXNzPSJkcHJvLWJ1dHRvbiBkcHJvLWJ1dHRvbi0tc2Vjb25kYXJ5IiBocmVmPSJodHRwczovL2Rwcm9tc3RrMjAwMC1sYWIuZ2l0aHViLmlvL2Rwcm8tc29kYW4tbGluZS9EUFJPX1RVVE9SSUFMX1NPREFOX1FVSUNLX1NUQVJUX1YxLjAucGRmIiB0YXJnZXQ9Il9ibGFuayIgcmVsPSJub29wZW5lciI+UXVpY2sgU3RhcnQgUERG44KS6ZaL44GPPC9hPjwvZGl2PjwvZGl2PjwvYXJ0aWNsZT4KPGFydGljbGUgY2xhc3M9ImRwcm8tY2FyZCBwcy10dXRvcmlhbC1jYXJkIj48YSBjbGFzcz0icHMtdHV0b3JpYWwtcHJldmlldyIgaHJlZj0iaHR0cHM6Ly9kcHJvbXN0azIwMDAtbGFiLmdpdGh1Yi5pby9kcHJvLXNvZGFuLWxpbmUvRFBST19UVVRPUklBTF9TT0RBTl9ERVRBSUxFRF9NQU5VQUxfVjEuMC5wZGYiIHRhcmdldD0iX2JsYW5rIiByZWw9Im5vb3BlbmVyIiBhcmlhLWxhYmVsPSLoqbPntLDmk43kvZzjg57jg4vjg6XjgqLjg6tQREbjgpLplovjgY8iPjxpbWcgc3JjPSJodHRwczovL2Rwcm9tc3RrMjAwMC1sYWIuZ2l0aHViLmlvL2Rwcm8tc29kYW4tbGluZS9EUFJPX1RVVE9SSUFMX1NPREFOX0RFVEFJTEVEX01BTlVBTF9WMS4wLnBuZyIgd2lkdGg9IjExOTEiIGhlaWdodD0iMTY4NCIgbG9hZGluZz0ibGF6eSIgYWx0PSJEUFJPIFNPREFOIOips+e0sOaTjeS9nOODnuODi+ODpeOCouODq+OBruODl+ODrOODk+ODpeODvCI+PC9hPjxkaXYgY2xhc3M9InBzLXR1dG9yaWFsLWNhcmRfX2JvZHkiPjxzcGFuIGNsYXNzPSJwcy10dXRvcmlhbC1sYWJlbCI+QTQgREVUQUlMRUQgTUFOVUFMPC9zcGFuPjxoMz7oqbPntLDmk43kvZzjg57jg4vjg6XjgqLjg6s8L2gzPjxwPkd1aWRlIENlbnRlcuOBqOWQjOOBmOaDheWgseani+aIkOOBp+OAgeW9ueWJsuWIpeOBruaTjeS9nOOAgeazqOaEj+S6i+mgheOAgeODiOODqeODluODq+WvvuW/nOOBvuOBp+S/neWtmOeJiOOBqOOBl+OBpueiuuiqjeOBp+OBjeOBvuOBmeOAgjwvcD48ZGl2IGNsYXNzPSJwcy10dXRvcmlhbC1hY3Rpb25zIj48YSBjbGFzcz0iZHByby1idXR0b24gZHByby1idXR0b24tLXNlY29uZGFyeSIgaHJlZj0iaHR0cHM6Ly9kcHJvbXN0azIwMDAtbGFiLmdpdGh1Yi5pby9kcHJvLXNvZGFuLWxpbmUvRFBST19UVVRPUklBTF9TT0RBTl9ERVRBSUxFRF9NQU5VQUxfVjEuMC5wZGYiIHRhcmdldD0iX2JsYW5rIiByZWw9Im5vb3BlbmVyIj7oqbPntLDjg57jg4vjg6XjgqLjg6tQREbjgpLplovjgY88L2E+PC9kaXY+PC9kaXY+PC9hcnRpY2xlPgo8L2Rpdj48L2Rpdj48L3NlY3Rpb24+
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          import base64, os
+          html_path=Path('systems/sodan.html')
+          mirror_path=Path('systems/sodan.html.txt')
+          if not html_path.exists() or not mirror_path.exists(): raise SystemExit('Required SODAN HTML/mirror missing')
+          original=html_path.read_text(encoding='utf-8')
+          mirror=mirror_path.read_text(encoding='utf-8')
+          if original != mirror: raise SystemExit('Pre-change HTML/mirror mismatch; refusing rollback')
+          import subprocess
+          live_blob=subprocess.check_output(['git','hash-object','systems/sodan.html'],text=True).strip()
+          mirror_blob=subprocess.check_output(['git','hash-object','systems/sodan.html.txt'],text=True).strip()
+          expected=os.environ['SODAN_SOURCE_BLOB_SHA']
+          if live_blob!=expected or mirror_blob!=expected: raise SystemExit(f'SODAN source advanced: html={live_blob}, mirror={mirror_blob}, expected={expected}')
+          critical={'price':'5,500円','line_cta':'https://lin.ee/YxJGXV6D','root_demo_href':'href="https://dpromstk2000-lab.github.io/dpro-sodan-line/"'}
+          before={k:original.count(v) for k,v in critical.items()}
+          patched=original
+          if 'DPRO_TUTORIAL_SODAN_R6' not in patched:
+              nav_old='<a href="#functions">6機能</a><a href="#live">実画面</a><a href="#price">料金</a>'
+              nav_new='<a href="#functions">6機能</a><a href="#live">実画面</a><a href="#tutorial">ガイド</a><a href="#price">料金</a>'
+              if nav_old not in patched: raise SystemExit('Header anchor advanced; forward review required')
+              patched=patched.replace(nav_old,nav_new,1)
+              css=base64.b64decode(os.environ['TUTORIAL_CSS_B64']).decode('utf-8')
+              sec=base64.b64decode(os.environ['TUTORIAL_SECTION_B64']).decode('utf-8')
+              if '</style></head>' not in patched: raise SystemExit('CSS anchor missing')
+              patched=patched.replace('</style></head>',css+'</style></head>',1)
+              anchor='<section class="dpro-section master-section" data-master-section="8" id="connected"'
+              if anchor not in patched: raise SystemExit('Connected-section anchor advanced; forward review required')
+              patched=patched.replace(anchor,sec+anchor,1)
+          for k,v in critical.items():
+              if patched.count(v)!=before[k]: raise SystemExit(f'Protected count changed {k}: {before[k]} -> {patched.count(v)}')
+          if patched.count('DPRO_TUTORIAL_SODAN_R6')!=2: raise SystemExit('Tutorial marker count invalid')
+          if patched.count('data-dpro-tutorial-r6="1"')!=1: raise SystemExit('Tutorial section count invalid')
+          html_path.write_text(patched,encoding='utf-8'); mirror_path.write_text(patched,encoding='utf-8')
+          if html_path.read_bytes()!=mirror_path.read_bytes(): raise SystemExit('Post-change mirror mismatch')
+          print('prepared',len(original),'->',len(patched))
+          PY
+
+      - name: Static R6 regression checks
+        shell: bash
+        run: |
+          set -euo pipefail
+          cmp systems/sodan.html systems/sodan.html.txt
+          grep -q 'DPRO_TUTORIAL_SODAN_R6' systems/sodan.html
+          grep -q 'id="tutorial"' systems/sodan.html
+          grep -q 'Guide Centerを開く' systems/sodan.html
+          grep -q 'First10 開始・再開メニュー' systems/sodan.html
+          grep -q 'First10 最初から再生メニュー' systems/sodan.html
+          grep -q "$QUICK_PDF" systems/sodan.html
+          grep -q "$DETAIL_PDF" systems/sodan.html
+          grep -q '5,500円' systems/sodan.html
+          grep -q 'https://lin.ee/YxJGXV6D' systems/sodan.html
+          grep -q 'href="https://dpromstk2000-lab.github.io/dpro-sodan-line/"' systems/sodan.html
+
+      - name: Install browser QA dependencies
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m pip install --disable-pip-version-check playwright
+          python -m playwright install --with-deps chromium
+
+      - name: Prepare browser QA script
+        shell: bash
+        run: |
+          cat > qa-r6/browser_qa.py <<'PY'
+          import asyncio, json, sys
+          from pathlib import Path
+          from playwright.async_api import async_playwright
+          VIEWPORTS=[('desktop-1440',1440,1000),('tablet-1024',1024,900),('mobile-390',390,844),('mobile-320',320,720)]
+          url=sys.argv[1]; out=Path(sys.argv[2]); out.mkdir(parents=True,exist_ok=True)
+          async def main():
+              results=[]
+              async with async_playwright() as p:
+                  browser=await p.chromium.launch()
+                  for name,w,h in VIEWPORTS:
+                      page=await browser.new_page(viewport={'width':w,'height':h})
+                      console_errors=[]; page_errors=[]; failed=[]
+                      page.on('console',lambda m: console_errors.append(m.text) if m.type=='error' else None)
+                      page.on('pageerror',lambda e: page_errors.append(str(e)))
+                      page.on('requestfailed',lambda r: failed.append(r.url))
+                      resp=await page.goto(url,wait_until='domcontentloaded',timeout=60000)
+                      assert resp and resp.ok, (name,resp.status if resp else None)
+                      t=page.locator('#tutorial'); assert await t.count()==1
+                      await t.scroll_into_view_if_needed(); await page.wait_for_timeout(800)
+                      dims=await page.evaluate('({sw:document.documentElement.scrollWidth,iw:window.innerWidth})')
+                      overflow=dims['sw']-dims['iw']; assert overflow<=1,f'{name} horizontal overflow {overflow}px'
+                      link=t.locator('a').first; await link.focus()
+                      focus=await link.evaluate("e=>{const s=getComputedStyle(e);return {style:s.outlineStyle,width:parseFloat(s.outlineWidth||'0')}}")
+                      assert focus['style']!='none' and focus['width']>=2,(name,focus)
+                      tut_fail=[u for u in failed if 'dpro-sodan-line' in u and ('DPRO_TUTORIAL_' in u or 'guide-center' in u)]
+                      tut_console=[e for e in console_errors if 'tutorial' in e.lower() or 'DPRO_TUTORIAL' in e]
+                      assert not page_errors,(name,page_errors); assert not tut_fail,(name,tut_fail); assert not tut_console,(name,tut_console)
+                      await page.screenshot(path=str(out/f'{name}.png'),full_page=True)
+                      results.append({'viewport':name,'width':w,'height':h,'overflow_px':overflow,'focus':focus,'page_errors':page_errors,'tutorial_request_failures':tut_fail,'tutorial_console_errors':tut_console})
+                      await page.close()
+                  await browser.close()
+              (out/'results.json').write_text(json.dumps(results,ensure_ascii=False,indent=2),encoding='utf-8')
+              print(json.dumps(results,ensure_ascii=False,indent=2))
+          asyncio.run(main())
+          PY
+
+      - name: Local browser QA 1440 / 1024 / 390 / 320
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m http.server 8765 --bind 127.0.0.1 > qa-r6/local-server.log 2>&1 &
+          echo $! > qa-r6/local-server.pid
+          sleep 2
+          python qa-r6/browser_qa.py http://127.0.0.1:8765/systems/sodan.html qa-r6/local-browser
+          kill "$(cat qa-r6/local-server.pid)" || true
+
+      - name: Commit R6 Product Site files
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add systems/sodan.html systems/sodan.html.txt
+          if git diff --cached --quiet; then
+            echo "Product Site already contains R6 Tutorial section."
+          else
+            git commit -m "Add SODAN Tutorial R6 guide and manuals [skip actions]"
+            git push origin HEAD:main
+          fi
+          git rev-parse HEAD | tee qa-r6/product-site-head-after.txt
+          git rev-parse HEAD^{tree} | tee qa-r6/product-site-tree-after.txt
+
+      - name: Wait for GitHub Pages R6 marker
+        shell: bash
+        run: |
+          set -euo pipefail
+          ok=0
+          for i in $(seq 1 60); do
+            if curl -fsSL --retry 2 --connect-timeout 10 "$PRODUCT_PAGE?qa=$(date +%s)" | grep -q 'DPRO_TUTORIAL_SODAN_R6'; then ok=1; break; fi
+            sleep 10
+          done
+          test "$ok" = 1
+
+      - name: Public HTTP and R3/R4/R5 regression QA
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p qa-r6/public
+          urls=(
+            "$INDUSTRY_BASE/" "$INDUSTRY_BASE/demo-guide.html" "$INDUSTRY_BASE/guide-center.html" "$INDUSTRY_BASE/tutorial.js"
+            "$INDUSTRY_BASE/index.html?demo=1" "$INDUSTRY_BASE/member.html?demo=1" "$INDUSTRY_BASE/owner-ipad.html?demo=1" "$INDUSTRY_BASE/owner.html?demo=1"
+            "$INDUSTRY_BASE/$QUICK_PDF" "$INDUSTRY_BASE/$DETAIL_PDF" "$INDUSTRY_BASE/$QUICK_PNG" "$INDUSTRY_BASE/$DETAIL_PNG" "$PRODUCT_PAGE"
+          )
+          : > qa-r6/public/http.txt
+          for u in "${urls[@]}"; do
+            code=$(curl -L -sS -o /dev/null -w '%{http_code}' --connect-timeout 20 --max-time 60 "$u")
+            echo "$code $u" | tee -a qa-r6/public/http.txt
+            test "$code" = 200
+          done
+          curl -fsSL "$INDUSTRY_BASE/guide-center.html" -o qa-r6/public/guide-center.html
+          curl -fsSL "$INDUSTRY_BASE/tutorial.js" -o qa-r6/public/tutorial.js
+          grep -q 'DPRO SODAN / GUIDE CENTER' qa-r6/public/guide-center.html
+          grep -q 'First10を開始・再開' qa-r6/public/guide-center.html
+          grep -q 'First10を最初から再生' qa-r6/public/guide-center.html
+          grep -q 'SODAN-TUTORIAL-V1.1' qa-r6/public/tutorial.js
+          grep -q 'const TOTAL=10' qa-r6/public/tutorial.js
+          curl -fsSL "$INDUSTRY_BASE/$QUICK_PDF" -o "qa-r6/public/$QUICK_PDF"
+          curl -fsSL "$INDUSTRY_BASE/$DETAIL_PDF" -o "qa-r6/public/$DETAIL_PDF"
+          curl -fsSL "$INDUSTRY_BASE/$QUICK_PNG" -o "qa-r6/public/$QUICK_PNG"
+          curl -fsSL "$INDUSTRY_BASE/$DETAIL_PNG" -o "qa-r6/public/$DETAIL_PNG"
+          echo "$QUICK_PDF_SHA256  qa-r6/public/$QUICK_PDF" | sha256sum -c -
+          echo "$DETAIL_PDF_SHA256  qa-r6/public/$DETAIL_PDF" | sha256sum -c -
+          echo "$QUICK_PNG_SHA256  qa-r6/public/$QUICK_PNG" | sha256sum -c -
+          echo "$DETAIL_PNG_SHA256  qa-r6/public/$DETAIL_PNG" | sha256sum -c -
+          curl -fsSL "$PRODUCT_PAGE" -o qa-r6/public/sodan-product.html
+          grep -q 'DPRO_TUTORIAL_SODAN_R6' qa-r6/public/sodan-product.html
+          grep -q 'Guide Centerを開く' qa-r6/public/sodan-product.html
+          grep -q 'First10 開始・再開メニュー' qa-r6/public/sodan-product.html
+          grep -q 'First10 最初から再生メニュー' qa-r6/public/sodan-product.html
+          grep -q "$QUICK_PDF" qa-r6/public/sodan-product.html
+          grep -q "$DETAIL_PDF" qa-r6/public/sodan-product.html
+
+      - name: Public PDF QR exact-match re-decode
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m pip install --disable-pip-version-check pymupdf opencv-python-headless
+          python - <<'PY'
+          import fitz, cv2, numpy as np, json
+          from pathlib import Path
+          expected={'https://dpromstk2000-lab.github.io/dpro-sodan-line/guide-center.html','https://dpromstk2000-lab.github.io/dpro-sodan-line/demo-guide.html'}
+          base=Path('qa-r6/public'); pdfs=['DPRO_TUTORIAL_SODAN_QUICK_START_V1.0.pdf','DPRO_TUTORIAL_SODAN_DETAILED_MANUAL_V1.0.pdf']; report={}
+          for name in pdfs:
+              doc=fitz.open(base/name); det=cv2.QRCodeDetector(); decoded=[]
+              for page_no,page in enumerate(doc,1):
+                  pix=page.get_pixmap(matrix=fitz.Matrix(3,3),alpha=False)
+                  img=np.frombuffer(pix.samples,np.uint8).reshape(pix.height,pix.width,pix.n)
+                  if pix.n==4: img=cv2.cvtColor(img,cv2.COLOR_RGBA2BGR)
+                  elif pix.n==3: img=cv2.cvtColor(img,cv2.COLOR_RGB2BGR)
+                  vals=[]
+                  try:
+                      ok,multi,pts,_=det.detectAndDecodeMulti(img)
+                      if ok: vals.extend(v for v in multi if v)
+                  except Exception: pass
+                  one,pts,_=det.detectAndDecode(img)
+                  if one: vals.append(one)
+                  for v in vals: decoded.append({'page':page_no,'url':v})
+              values={x['url'] for x in decoded}
+              if values!=expected: raise SystemExit(f'QR mismatch {name}: expected={expected}, got={values}, decoded={decoded}')
+              report[name]=decoded
+          Path('qa-r6/public/qr-exact-match.json').write_text(json.dumps(report,ensure_ascii=False,indent=2),encoding='utf-8')
+          print(json.dumps(report,ensure_ascii=False,indent=2))
+          PY
+
+      - name: Public browser LIVE QA 1440 / 1024 / 390 / 320
+        shell: bash
+        run: |
+          set -euo pipefail
+          python qa-r6/browser_qa.py "$PRODUCT_PAGE?qa=${GITHUB_RUN_ID}" qa-r6/public-browser
+
+      - name: Record FINAL LOCK candidate
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch origin main
+          git rev-parse origin/main | tee qa-r6/product-site-head-final.txt
+          git rev-parse origin/main^{tree} | tee qa-r6/product-site-tree-final.txt
+          python - <<'PY'
+          import json, urllib.request
+          u='https://api.github.com/repos/dpromstk2000-lab/dpro-sodan-line/commits/main'
+          req=urllib.request.Request(u,headers={'Accept':'application/vnd.github+json','User-Agent':'DPRO-R6-QA'})
+          with urllib.request.urlopen(req,timeout=30) as r: d=json.load(r)
+          open('qa-r6/industry-head-final.txt','w',encoding='utf-8').write(d['sha']+'\n')
+          open('qa-r6/industry-tree-final.txt','w',encoding='utf-8').write(d['commit']['tree']['sha']+'\n')
+          print('industry',d['sha'],d['commit']['tree']['sha'])
+          PY
+          cat > qa-r6/R6_SUMMARY.txt <<EOF
+          DPRO TUTORIAL SODAN R6 LIVE QA
+          R5: PASS
+          R6 Product Site integration: PASS
+          Product Site: $PRODUCT_PAGE
+          Guide Center: $INDUSTRY_BASE/guide-center.html
+          First10 entry: $INDUSTRY_BASE/guide-center.html#quick
+          Quick Start PDF: $INDUSTRY_BASE/$QUICK_PDF
+          Detailed Manual PDF: $INDUSTRY_BASE/$DETAIL_PDF
+          1440: PASS
+          1024: PASS
+          390x844: PASS
+          320x720: PASS
+          Public PDF QR exact-match: PASS
+          R3/R4 regression: PASS
+          businessMutation: 0
+          DB/Worker/API/Auth/Role/Permission/Feature Flag Tutorial changes: 0
+          R7: NOT STARTED
+          EOF
+          sha256sum qa-r6/public/$QUICK_PDF qa-r6/public/$DETAIL_PDF qa-r6/public/$QUICK_PNG qa-r6/public/$DETAIL_PNG > qa-r6/manual-public-sha256.txt
+
+      - name: Upload R6 QA evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: DPRO_TUTORIAL_SODAN_R6_QA_EVIDENCE
+          path: qa-r6/
+          if-no-files-found: error
+          retention-days: 30
