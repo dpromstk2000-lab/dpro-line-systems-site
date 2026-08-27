@@ -1,0 +1,24 @@
+{
+  "quick.pdf": {
+    "pages": 2,
+    "qr_values": [
+      "https://dpromstk2000-lab.github.io/dpro-caretaxi-line/guide-center.html"
+    ],
+    "required": [
+      "https://dpromstk2000-lab.github.io/dpro-caretaxi-line/guide-center.html"
+    ],
+    "status": "PASS"
+  },
+  "detail.pdf": {
+    "pages": 8,
+    "qr_values": [
+      "https://dpromstk2000-lab.github.io/dpro-caretaxi-line/demo-guide.html",
+      "https://dpromstk2000-lab.github.io/dpro-caretaxi-line/guide-center.html"
+    ],
+    "required": [
+      "https://dpromstk2000-lab.github.io/dpro-caretaxi-line/demo-guide.html",
+      "https://dpromstk2000-lab.github.io/dpro-caretaxi-line/guide-center.html"
+    ],
+    "status": "PASS"
+  }
+}

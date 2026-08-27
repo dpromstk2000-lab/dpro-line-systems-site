@@ -1,0 +1,32 @@
+DPRO TUTORIAL BATCH-03 CARETAXI
+R6 PRODUCT SITE + LIVE QA
+Date: 2026-08-27
+
+RESULT
+PASS Product Site R6 Tutorial section published
+PASS Product Site Pages R6 marker
+PASS Guide Center / First10 links
+PASS Quick Start PDF link
+PASS Detailed Manual PDF link
+PASS Quick / Detailed preview images after lazy-load wait
+PASS 1440 / 1024 / 390 / 320 viewport QA
+PASS 390 / 320 horizontal overflow = 0
+PASS focus visible
+PASS console/page errors = 0
+PASS R3/R4 First10 regression
+PASS public PDF SHA256 exact match to R5
+PASS public PDF rendered QR exact match
+PASS businessMutation = 0
+PASS DB/Worker/API/Auth/Role/Permission/Feature Flag Tutorial changes = 0
+
+PUBLIC URL
+https://dpromstk2000-lab.github.io/dpro-line-systems-site/systems/caretaxi.html
+
+GUIDE URL
+https://dpromstk2000-lab.github.io/dpro-caretaxi-line/guide-center.html
+
+SOURCE
+industry HEAD: e41efd34ba791509486a561deb924563b243fc5b
+Product Site HEAD before evidence: 2f29e1d711e9969e7fece339b3ec4141f995a30f
+
+OVERALL PASS
