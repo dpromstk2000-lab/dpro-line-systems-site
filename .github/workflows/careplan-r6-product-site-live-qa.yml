@@ -215,6 +215,13 @@ jobs:
                   assert overflow<=1,(label,'product overflow',overflow)
                   hrefs=page.eval_on_selector_all('#tutorial-guide a','els=>els.map(e=>e.href)')
                   for u in [env['GUIDE_URL'],env['TUTORIAL_URL'],env['REPLAY_URL'],env['QUICK_PDF_URL'],env['DETAIL_PDF_URL']]: assert u in hrefs,(label,u)
+                  # Preview images use loading="lazy". Scroll the section into view and
+                  # wait for Chromium to finish loading them before checking naturalWidth.
+                  page.locator('#tutorial-guide').scroll_into_view_if_needed()
+                  page.wait_for_function(
+                      "() => { const imgs=[...document.querySelectorAll('#tutorial-guide img')]; return imgs.length>0 && imgs.every(img=>img.complete && img.naturalWidth>0); }",
+                      timeout=30000
+                  )
                   imgs=page.eval_on_selector_all('#tutorial-guide img','els=>els.map(e=>({complete:e.complete,w:e.naturalWidth,h:e.naturalHeight}))')
                   assert imgs and all(x['complete'] and x['w']>0 for x in imgs),(label,imgs)
                   first=page.locator('#tutorial-guide a').first; first.focus()
