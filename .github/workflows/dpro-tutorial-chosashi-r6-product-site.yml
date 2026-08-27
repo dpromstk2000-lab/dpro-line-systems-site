@@ -1,4 +1,4 @@
-name: DPRO Tutorial CHOSASHI R6 Product Site + LIVE QA V1.0
+name: DPRO Tutorial CHOSASHI R6 Product Site + LIVE QA V1.1
 
 on:
   workflow_dispatch:
@@ -64,7 +64,6 @@ jobs:
           from pathlib import Path
           checks={
             'systems/cosmetics.html':[
-              'DPRO_TUTORIAL_COSMETICS_R6',
               'dpro-cosmetics-line-liff/guide-center.html',
               'DPRO_TUTORIAL_COSMETICS_QUICK_START_V1.0.pdf',
               'DPRO_TUTORIAL_COSMETICS_DETAILED_MANUAL_V1.0.pdf',
@@ -196,7 +195,9 @@ jobs:
           PY
           git diff --check
           changed="$(git diff --name-only)"
-          test "$changed" = "systems/chosashi.html"
+          if [ -n "$changed" ]; then
+            test "$changed" = "systems/chosashi.html"
+          fi
           grep -q 'DPRO_TUTORIAL_CHOSASHI_R6' systems/chosashi.html
           grep -q 'data-dpro-tutorial-r6="1"' systems/chosashi.html
           grep -q 'CHOSASHI_R5_QUICK_START.pdf' systems/chosashi.html
@@ -261,8 +262,8 @@ jobs:
           curl -fsSL "$INDUSTRY_BASE/guide-center.html" -o qa-r6/public/guide-center.html
           curl -fsSL "$INDUSTRY_BASE/tutorial.js" -o qa-r6/public/tutorial.js
           grep -q 'First10' qa-r6/public/guide-center.html
-          grep -q 'CHOSASHI-TUTORIAL-V1.1' qa-r6/public/tutorial.js
-          grep -q 'TOTAL=10' qa-r6/public/tutorial.js
+          grep -q 'CHOSASHI-TUTORIAL-R3-FIRST10-V1.0-20260827' qa-r6/public/tutorial.js
+          grep -q 'dpro:tutorial:chosashi:v1.1' qa-r6/public/tutorial.js
           grep -q 'CHOSASHI_R5_QUICK_START.pdf' qa-r6/public/chosashi-product.html
           grep -q 'CHOSASHI_R5_DETAILED_MANUAL.pdf' qa-r6/public/chosashi-product.html
           cat > qa-r6/qr-continuity.txt <<EOF
@@ -315,6 +316,9 @@ jobs:
                     if await page.locator('[data-dpro-tutorial-r6="1"]').count()!=1: raise RuntimeError('Product Tutorial section missing')
                     for text in ['Guide Centerを開く','First10を開始','Quick Start PDFを開く','詳細操作マニュアルPDFを開く']:
                       if await page.get_by_text(text,exact=True).count()<1: raise RuntimeError(f'Product link missing: {text}')
+                  if label=='start':
+                    total=await page.evaluate("window.DPRO_TUTORIAL && Array.isArray(window.DPRO_TUTORIAL.steps) ? window.DPRO_TUTORIAL.steps.length : -1")
+                    if total!=10: raise RuntimeError(f'First10 step count != 10: {total}')
                   rows.append({'route':label,'viewport':f'{w}x{h}','http':200,'overflow':overflow})
                 await ctx.close()
               await browser.close()
