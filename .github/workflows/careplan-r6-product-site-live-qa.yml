@@ -1,0 +1,266 @@
+name: CAREPLAN R6 Product Site + LIVE QA
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/careplan-r6-product-site-live-qa.yml'
+      - 'systems/careplan.html'
+      - 'systems/careplan.html.txt'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+env:
+  PRODUCT_URL: https://dpromstk2000-lab.github.io/dpro-line-systems-site/systems/careplan.html
+  GUIDE_URL: https://dpromstk2000-lab.github.io/dpro-careplan-line/guide-center.html
+  TUTORIAL_URL: https://dpromstk2000-lab.github.io/dpro-careplan-line/tutorial.html
+  REPLAY_URL: https://dpromstk2000-lab.github.io/dpro-careplan-line/tutorial.html?mode=replay
+  QUICK_PDF_URL: https://dpromstk2000-lab.github.io/dpro-careplan-line/DPRO_TUTORIAL_CAREPLAN_QUICK_START_V1.0.pdf
+  DETAIL_PDF_URL: https://dpromstk2000-lab.github.io/dpro-careplan-line/DPRO_TUTORIAL_CAREPLAN_DETAILED_MANUAL_V1.0.pdf
+  QUICK_PNG_URL: https://dpromstk2000-lab.github.io/dpro-careplan-line/DPRO_TUTORIAL_CAREPLAN_QUICK_START_V1.0.png
+  DETAIL_PNG_URL: https://dpromstk2000-lab.github.io/dpro-careplan-line/DPRO_TUTORIAL_CAREPLAN_DETAILED_MANUAL_V1.0.png
+
+jobs:
+  patch-and-live-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Patch CAREPLAN product page only
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          targets=[Path('systems/careplan.html'),Path('systems/careplan.html.txt')]
+          if not all(p.exists() for p in targets):
+              raise SystemExit('CAREPLAN product page or .txt mirror missing')
+          if targets[0].read_bytes()!=targets[1].read_bytes():
+              raise SystemExit('careplan.html and careplan.html.txt are not aligned; stop rather than overwrite newer work')
+
+          css=r'''
+          /* CAREPLAN TUTORIAL R6 START */
+          .ps-tutorial-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem}
+          .ps-tutorial-card{display:flex;flex-direction:column;gap:.8rem;padding:1.15rem;border:1px solid var(--ps-line);border-radius:1rem;background:#fff;box-shadow:var(--dpro-shadow-sm)}
+          .ps-tutorial-card h3{margin:0;color:var(--ps-deep);font-size:1.12rem}.ps-tutorial-card p{margin:0;color:var(--dpro-warm-gray-600)}
+          .ps-tutorial-links{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.55rem;margin-top:.2rem}
+          .ps-tutorial-link{min-height:48px;display:flex;align-items:center;justify-content:space-between;gap:.6rem;padding:.7rem .8rem;border:1px solid var(--ps-line);border-radius:.75rem;background:var(--ps-pale);text-decoration:none;font-weight:850;color:var(--ps-deep)}
+          .ps-tutorial-link::after{content:"→";color:var(--dpro-green);font-weight:900}.ps-tutorial-link:focus,.ps-tutorial-link:focus-visible{outline:3px solid #0f766e;outline-offset:3px}
+          .ps-manual-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem;margin-top:1rem}
+          .ps-manual{overflow:hidden;padding:0}.ps-manual img{display:block;width:100%;aspect-ratio:210/297;object-fit:cover;object-position:top;border-bottom:1px solid var(--ps-line);background:#fff}.ps-manual__body{padding:1rem}.ps-manual h3{margin:0;color:var(--ps-deep)}.ps-manual p{margin:.45rem 0 .85rem;color:var(--dpro-warm-gray-600);font-size:.9rem}.ps-manual .dpro-button{width:100%}
+          .ps-tutorial-safe{margin:1rem 0 0;padding:1rem 1.1rem;border-left:4px solid var(--dpro-green);background:#edf8f4;color:#395149}
+          @media(max-width:700px){.ps-tutorial-grid,.ps-manual-grid,.ps-tutorial-links{grid-template-columns:1fr}}
+          /* CAREPLAN TUTORIAL R6 END */
+          '''
+
+          section=r'''
+          <section class="dpro-section ps-section-soft master-section" data-master-section="11.5" id="tutorial-guide" aria-labelledby="tutorial-guide-title"><div class="dpro-container"><div class="ps-section-heading"><p class="ps-kicker">GUIDE / FIRST10 / MANUALS</p><h2 id="tutorial-guide-title">操作ガイド・First10・PDFマニュアル。</h2><p>初めての方はFirst10で画面を見る順番を確認し、詳しい操作はGuide CenterとPDFマニュアルからいつでも確認できます。</p></div><div class="ps-tutorial-grid"><article class="ps-tutorial-card"><h3>画面を見ながら覚える</h3><p>First10は既存画面を案内するだけで、保存・承認・送信・削除・支払い・DEMO PREPAREなどの業務操作を自動実行しません。</p><div class="ps-tutorial-links"><a class="ps-tutorial-link" href="https://dpromstk2000-lab.github.io/dpro-careplan-line/guide-center.html" target="_blank" rel="noopener">Guide Center</a><a class="ps-tutorial-link" href="https://dpromstk2000-lab.github.io/dpro-careplan-line/tutorial.html?mode=replay" target="_blank" rel="noopener">First10を開始</a><a class="ps-tutorial-link" href="https://dpromstk2000-lab.github.io/dpro-careplan-line/tutorial.html" target="_blank" rel="noopener">First10を再開</a><a class="ps-tutorial-link" href="https://dpromstk2000-lab.github.io/dpro-careplan-line/tutorial.html?mode=replay" target="_blank" rel="noopener">最初からReplay</a></div></article><article class="ps-tutorial-card"><h3>迷ったらこの順番</h3><p><strong>管理者：</strong>ダッシュボード → 利用者 → 担当/認定/計画 → 承認/書類/通知</p><p><strong>ケアマネ：</strong>今日 → 担当利用者 → モニタリング → 連絡調整/申し送り</p><p><strong>本人・家族：</strong>予定 → 提出書類 → 事業所からの連絡 → 必要時のみ送信</p><p><strong>管理者iPad：</strong>今日 → 承認 → 期限 → 担当状況 → システム検査</p></article></div><div class="ps-manual-grid"><article class="dpro-card ps-manual"><img src="https://dpromstk2000-lab.github.io/dpro-careplan-line/DPRO_TUTORIAL_CAREPLAN_QUICK_START_V1.0.png" alt="DPRO CARE PLAN 10分スタートガイド プレビュー" loading="lazy"><div class="ps-manual__body"><h3>10分スタートガイド</h3><p>First10の10ステップを3ページにまとめた、初回向けA4縦PDFです。</p><a class="dpro-button dpro-button--secondary" href="https://dpromstk2000-lab.github.io/dpro-careplan-line/DPRO_TUTORIAL_CAREPLAN_QUICK_START_V1.0.pdf" target="_blank" rel="noopener">Quick Start PDFを開く</a></div></article><article class="dpro-card ps-manual"><img src="https://dpromstk2000-lab.github.io/dpro-careplan-line/DPRO_TUTORIAL_CAREPLAN_DETAILED_MANUAL_V1.0.png" alt="DPRO CARE PLAN 導入・操作マニュアル プレビュー" loading="lazy"><div class="ps-manual__body"><h3>導入・操作マニュアル（保存版）</h3><p>役割別フロー、安全、First10、管理者PC、ケアマネ、本人・家族、iPad、FAQを8ページに整理しています。</p><a class="dpro-button dpro-button--secondary" href="https://dpromstk2000-lab.github.io/dpro-careplan-line/DPRO_TUTORIAL_CAREPLAN_DETAILED_MANUAL_V1.0.pdf" target="_blank" rel="noopener">詳細マニュアルPDFを開く</a></div></article></div><div class="ps-tutorial-safe"><strong>安全：</strong>公開デモには実在する利用者・家族の個人情報、医療情報、書類を入力しないでください。Tutorialによる業務状態変更はありません。</div></div></section>
+          '''
+
+          final_marker='<section class="dpro-section ps-final master-section" data-master-section="12" id="final-cta"'
+          for path in targets:
+              s=path.read_text(encoding='utf-8')
+              before=s
+              must_keep=[
+                  '月額合計 5,500円（税込）。',
+                  'https://lin.ee/YxJGXV6D',
+                  'https://dpromstk2000-lab.github.io/dpro-careplan-line/owner.html?v=CAREPLAN-10',
+                  '../lp-careplan.html','../flyer-careplan.html','../flyer-careplan.pdf'
+              ]
+              for token in must_keep:
+                  if token not in before: raise SystemExit(f'{path}: required baseline token missing: {token}')
+              if 'id="tutorial-guide"' not in s:
+                  if '</style>' not in s or final_marker not in s:
+                      raise SystemExit(f'{path}: safe insertion marker missing')
+                  s=s.replace('</style>',css+'\n</style>',1)
+                  s=s.replace(final_marker,section+final_marker,1)
+              for token in must_keep:
+                  if token not in s: raise SystemExit(f'{path}: preserved baseline token lost: {token}')
+              required=[
+                  'id="tutorial-guide"',
+                  'guide-center.html',
+                  'tutorial.html?mode=replay',
+                  'DPRO_TUTORIAL_CAREPLAN_QUICK_START_V1.0.pdf',
+                  'DPRO_TUTORIAL_CAREPLAN_DETAILED_MANUAL_V1.0.pdf',
+                  'DPRO_TUTORIAL_CAREPLAN_QUICK_START_V1.0.png',
+                  'DPRO_TUTORIAL_CAREPLAN_DETAILED_MANUAL_V1.0.png'
+              ]
+              for token in required:
+                  if token not in s: raise SystemExit(f'{path}: R6 token missing: {token}')
+              path.write_text(s,encoding='utf-8')
+
+          if targets[0].read_bytes()!=targets[1].read_bytes():
+              raise SystemExit('R6 patch did not keep html/txt mirror aligned')
+          print('CAREPLAN R6 page patch: PASS')
+          PY
+
+      - name: Commit R6 page integration when changed
+        shell: bash
+        run: |
+          if git diff --quiet -- systems/careplan.html systems/careplan.html.txt; then
+            echo "No product-page patch needed."
+          else
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add systems/careplan.html systems/careplan.html.txt
+            git commit -m "Add CAREPLAN R6 tutorial manuals to product site"
+            git push
+          fi
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install LIVE QA tools
+        shell: bash
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install requests pillow pymupdf opencv-python-headless playwright
+          python -m playwright install --with-deps chromium
+
+      - name: Wait for Pages and run R6 LIVE QA
+        shell: bash
+        run: |
+          mkdir -p qa-evidence
+          cat > "$RUNNER_TEMP/careplan_r6_live_qa.py" <<'PY'
+          import os, time, json, hashlib
+          from pathlib import Path
+          import requests, fitz, cv2, numpy as np
+          from PIL import Image
+          from playwright.sync_api import sync_playwright
+
+          env=os.environ
+          URLS={
+            'product':env['PRODUCT_URL'],'guide':env['GUIDE_URL'],'tutorial':env['TUTORIAL_URL'],'replay':env['REPLAY_URL'],
+            'quick_pdf':env['QUICK_PDF_URL'],'detail_pdf':env['DETAIL_PDF_URL'],'quick_png':env['QUICK_PNG_URL'],'detail_png':env['DETAIL_PNG_URL']
+          }
+          expected_hash={
+            'quick_pdf':'555cc5dd5c6f55fec8054c366077b0d34ad93d68a9f301339f2e5e19fa8d2913',
+            'detail_pdf':'4c47cc7391862b6c9c83d2c58369687ece16c1e41f59fb02204bbf6b57fd29ba',
+            'quick_png':'c88c207014cae6286f129674cc0b8cfdd81548613f810a46afc33a5079be5214',
+            'detail_png':'370f6dd046751783b4a6f0bb03fe10db8f136384a3c160774b6879fb48444604'
+          }
+          allow_qr={env['GUIDE_URL'],env['REPLAY_URL'],env['PRODUCT_URL']}
+          session=requests.Session(); session.headers['Cache-Control']='no-cache'
+
+          def get(url):
+              return session.get(url,timeout=30,headers={'Pragma':'no-cache'})
+
+          # Wait until both repositories' GitHub Pages reflect R5/R6.
+          last={}
+          for attempt in range(60):
+              try:
+                  rp=get(env['PRODUCT_URL']); rq=get(env['QUICK_PDF_URL']); rd=get(env['DETAIL_PDF_URL'])
+                  last={'product':rp.status_code,'quick':rq.status_code,'detail':rd.status_code}
+                  if rp.status_code==200 and 'id="tutorial-guide"' in rp.text and rq.status_code==200 and rd.status_code==200:
+                      break
+              except Exception as e:
+                  last={'error':str(e)}
+              time.sleep(10)
+          else:
+              raise AssertionError(f'Pages did not publish R5/R6 in time: {last}')
+
+          evidence={'http':{},'hashes':{},'pdf':{},'browser':{},'businessMutation':0,'backendChanges':0}
+          downloaded={}
+          for name,url in URLS.items():
+              r=get(url); evidence['http'][name]=r.status_code
+              assert r.status_code==200,(name,r.status_code,url)
+              if name in expected_hash:
+                  h=hashlib.sha256(r.content).hexdigest(); evidence['hashes'][name]=h
+                  assert h==expected_hash[name],(name,h,expected_hash[name])
+                  p=Path('qa-evidence')/(name+'.bin'); p.write_bytes(r.content); downloaded[name]=p
+
+          # PDF A4/page-count and QR re-decode from the PUBLIC PDFs.
+          detector=cv2.QRCodeDetector()
+          for key,pages_expected in [('quick_pdf',3),('detail_pdf',8)]:
+              doc=fitz.open(downloaded[key]); assert doc.page_count==pages_expected,(key,doc.page_count)
+              decoded=[]
+              for i,page in enumerate(doc):
+                  rect=page.rect
+                  assert abs(rect.width-595)<2 and abs(rect.height-842)<2,(key,i,rect)
+                  pix=page.get_pixmap(matrix=fitz.Matrix(2.2,2.2),alpha=False)
+                  arr=np.frombuffer(pix.samples,dtype=np.uint8).reshape(pix.height,pix.width,pix.n)
+                  img=cv2.cvtColor(arr,cv2.COLOR_RGB2BGR)
+                  ok,infos,pts,_=detector.detectAndDecodeMulti(img)
+                  if ok: decoded.extend([x for x in infos if x])
+              evidence['pdf'][key]={'pages':doc.page_count,'qr':decoded}
+              assert decoded,(key,'no QR decoded')
+              assert set(decoded).issubset(allow_qr),(key,decoded)
+              doc.close()
+          assert env['GUIDE_URL'] in evidence['pdf']['quick_pdf']['qr']
+          assert env['REPLAY_URL'] in evidence['pdf']['quick_pdf']['qr']
+          assert {env['GUIDE_URL'],env['REPLAY_URL'],env['PRODUCT_URL']}.issubset(set(evidence['pdf']['detail_pdf']['qr']))
+
+          for key in ['quick_png','detail_png']:
+              im=Image.open(downloaded[key]); evidence[key]={'size':im.size}; assert im.width>=1100 and im.height>=1600
+
+          viewports=[('desktop',1440,1000),('ipad',1024,768),('mobile390',390,844),('mobile320',320,720)]
+          with sync_playwright() as pw:
+              browser=pw.chromium.launch(headless=True)
+              for label,w,h in viewports:
+                  ctx=browser.new_context(viewport={'width':w,'height':h})
+                  bad_methods=[]; errors=[]
+                  page=ctx.new_page()
+                  page.on('request',lambda r: bad_methods.append(r.method) if r.method not in ('GET','HEAD','OPTIONS') else None)
+                  page.on('pageerror',lambda e: errors.append('pageerror:'+str(e)))
+                  page.on('console',lambda m: errors.append('console:'+m.text) if m.type=='error' else None)
+                  page.goto(env['PRODUCT_URL']+'?r6qa='+str(time.time_ns()),wait_until='domcontentloaded',timeout=60000)
+                  page.wait_for_selector('#tutorial-guide',timeout=30000)
+                  overflow=page.evaluate('document.documentElement.scrollWidth-document.documentElement.clientWidth')
+                  assert overflow<=1,(label,'product overflow',overflow)
+                  hrefs=page.eval_on_selector_all('#tutorial-guide a','els=>els.map(e=>e.href)')
+                  for u in [env['GUIDE_URL'],env['TUTORIAL_URL'],env['REPLAY_URL'],env['QUICK_PDF_URL'],env['DETAIL_PDF_URL']]: assert u in hrefs,(label,u)
+                  imgs=page.eval_on_selector_all('#tutorial-guide img','els=>els.map(e=>({complete:e.complete,w:e.naturalWidth,h:e.naturalHeight}))')
+                  assert imgs and all(x['complete'] and x['w']>0 for x in imgs),(label,imgs)
+                  first=page.locator('#tutorial-guide a').first; first.focus()
+                  focus=first.evaluate("e=>{const s=getComputedStyle(e);return {outline:s.outlineStyle,width:s.outlineWidth}}")
+                  assert focus['outline']!='none' and focus['width']!='0px',(label,focus)
+                  assert '5,500円' in page.locator('body').inner_text()
+                  assert page.locator('a[href="https://lin.ee/YxJGXV6D"]').count()>0
+                  assert page.locator('a[href*="owner.html?v=CAREPLAN-10"]').count()>0
+                  page.screenshot(path=f'qa-evidence/product-{label}.png',full_page=True)
+                  product_errors=list(errors)
+                  product_bad_methods=list(bad_methods)
+
+                  # R4 Guide regression at each required width.
+                  errors.clear(); bad_methods.clear()
+                  page.goto(env['GUIDE_URL']+'?r6qa='+str(time.time_ns()),wait_until='domcontentloaded',timeout=60000)
+                  page.wait_for_selector('#launchFirst10',timeout=30000)
+                  ov2=page.evaluate('document.documentElement.scrollWidth-document.documentElement.clientWidth'); assert ov2<=1,(label,'guide overflow',ov2)
+                  assert page.get_attribute('#launchFirst10','href')=='tutorial.html?mode=replay'
+                  assert page.get_attribute('#resumeFirst10','href')=='tutorial.html'
+                  assert page.get_attribute('#replayFirst10','href')=='tutorial.html?mode=replay'
+                  page.screenshot(path=f'qa-evidence/guide-{label}.png',full_page=False)
+                  guide_errors=list(errors)
+                  guide_bad_methods=list(bad_methods)
+                  evidence['browser'][label]={'productOverflow':overflow,'guideOverflow':ov2,'productErrors':product_errors,'guideErrors':guide_errors,'productBadMethods':product_bad_methods,'guideBadMethods':guide_bad_methods,'focus':focus}
+                  assert not product_errors,(label,product_errors)
+                  assert not guide_errors,(label,guide_errors)
+                  assert not product_bad_methods,(label,'product business request method',product_bad_methods)
+                  assert not guide_bad_methods,(label,'guide business request method',guide_bad_methods)
+                  ctx.close()
+              browser.close()
+
+          # First10 source safety: exactly ten non-mutating steps and Tutorial pages reachable.
+          js=get('https://dpromstk2000-lab.github.io/dpro-careplan-line/dpro-tutorial-first10-data.js').text
+          assert js.count('mutation:false')==10,js.count('mutation:false')
+          assert 'CAREPLAN' in js
+          evidence['first10MutationFalseCount']=10
+          evidence['r3Regression']='PASS'; evidence['r4Regression']='PASS'; evidence['r5']='PASS'; evidence['r6']='PASS'
+          Path('qa-evidence/R6_LIVE_QA.json').write_text(json.dumps(evidence,ensure_ascii=False,indent=2),encoding='utf-8')
+          print(json.dumps(evidence,ensure_ascii=False,indent=2))
+          PY
+          python "$RUNNER_TEMP/careplan_r6_live_qa.py"
+
+      - name: Upload CAREPLAN R6 QA evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: careplan-r6-live-qa
+          path: qa-evidence/
+          if-no-files-found: warn
