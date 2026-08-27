@@ -1,0 +1,333 @@
+name: FLOWER Tutorial R6 Product Site Publish + LIVE QA
+
+on:
+  push:
+    paths:
+      - '.github/workflows/flower-tutorial-r6-product-site.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: read
+
+env:
+  PRODUCT_SITE_BASE: https://dpromstk2000-lab.github.io/dpro-line-systems-site
+  FLOWER_BASE: https://dpromstk2000-lab.github.io/dpro-flower-line-liff
+  QUICK_PDF: DPRO_TUTORIAL_FLOWER_QUICK_START_V1.0.pdf
+  DETAIL_PDF: DPRO_TUTORIAL_FLOWER_DETAILED_MANUAL_V1.0.pdf
+  FLOWER_PAGE: systems/flower-shop.html
+
+jobs:
+  flower-r6-publish-live-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout newest forward main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Record and verify forward source
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "WORKFLOW_TRIGGER_HEAD=${GITHUB_SHA}" | tee r6-trigger-head.txt
+          git fetch origin main
+          REMOTE_HEAD="$(git rev-parse origin/main)"
+          LOCAL_HEAD="$(git rev-parse HEAD)"
+          echo "REMOTE_HEAD=${REMOTE_HEAD}"
+          echo "LOCAL_HEAD=${LOCAL_HEAD}"
+          test "${REMOTE_HEAD}" = "${LOCAL_HEAD}"
+
+      - name: Verify COSMETICS predecessor and FLOWER R5 PDFs
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f systems/cosmetics.html
+          grep -q 'id="cosmetics-tutorial-manuals"' systems/cosmetics.html
+          grep -q 'DPRO_TUTORIAL_COSMETICS_QUICK_START_V1.0.pdf' systems/cosmetics.html
+          grep -q 'DPRO_TUTORIAL_COSMETICS_DETAILED_MANUAL_V1.0.pdf' systems/cosmetics.html
+          test -f "${QUICK_PDF}"
+          test -f "${DETAIL_PDF}"
+          test -f "${FLOWER_PAGE}"
+          echo "COSMETICS predecessor: PASS"
+          echo "FLOWER PDFs: PASS"
+
+      - name: Insert FLOWER Tutorial and manual access only
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 <<'PY'
+          from pathlib import Path
+
+          path = Path("systems/flower-shop.html")
+          text = path.read_text(encoding="utf-8")
+          marker = 'id="flower-tutorial-manuals"'
+
+          section = r'''
+          <section id="flower-tutorial-manuals" class="dpro-section ps-section-soft">
+            <div class="dpro-container">
+              <div class="ps-section-heading">
+                <p class="ps-kicker">TUTORIAL &amp; MANUAL</p>
+                <h2>操作ガイドと印刷マニュアル</h2>
+                <p>初めての方はFirst10で主要10ステップを確認できます。お客様・店舗iPad・スタッフ・オーナーの役割別ガイド、印刷用PDFもここから開けます。公開デモでは実在の個人情報を入力せず、Tutorialは業務登録を自動実行しません。</p>
+              </div>
+              <div class="ps-doclinks" aria-label="FLOWER Tutorial とマニュアル">
+                <a href="https://dpromstk2000-lab.github.io/dpro-flower-line-liff/guide-center.html#first10" target="_blank" rel="noopener">First10 を始める</a>
+                <a href="https://dpromstk2000-lab.github.io/dpro-flower-line-liff/guide-center.html" target="_blank" rel="noopener">Guide Center を開く</a>
+                <a href="../DPRO_TUTORIAL_FLOWER_QUICK_START_V1.0.pdf" target="_blank" rel="noopener">クイックスタート PDF を開く</a>
+                <a href="../DPRO_TUTORIAL_FLOWER_DETAILED_MANUAL_V1.0.pdf" target="_blank" rel="noopener">詳細操作マニュアル PDF を開く</a>
+              </div>
+            </div>
+          </section>
+          '''.strip()
+
+          if marker not in text:
+              if text.count("</main>") != 1:
+                  raise SystemExit(f"Expected one </main>, found {text.count('</main>')}")
+              text = text.replace("</main>", section + "</main>", 1)
+              path.write_text(text, encoding="utf-8")
+          else:
+              print("FLOWER R6 section already present; duplicate insertion skipped.")
+
+          final = path.read_text(encoding="utf-8")
+          required = [
+              'id="flower-tutorial-manuals"',
+              'dpro-flower-line-liff/guide-center.html#first10',
+              'dpro-flower-line-liff/guide-center.html',
+              '../DPRO_TUTORIAL_FLOWER_QUICK_START_V1.0.pdf',
+              '../DPRO_TUTORIAL_FLOWER_DETAILED_MANUAL_V1.0.pdf',
+              'Tutorialは業務登録を自動実行しません',
+          ]
+          missing = [x for x in required if x not in final]
+          if missing:
+              raise SystemExit(f"Missing R6 markers: {missing}")
+          if final.count('id="flower-tutorial-manuals"') != 1:
+              raise SystemExit("FLOWER R6 section marker is not unique")
+          print("FLOWER R6 static insertion: PASS")
+          PY
+
+      - name: Verify publish scope and predecessor preservation
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git diff --name-only | grep -v '^$' | sort | tr '\n' ' ')" = "systems/flower-shop.html "
+          grep -q 'id="cosmetics-tutorial-manuals"' systems/cosmetics.html
+          grep -q 'DPRO_TUTORIAL_COSMETICS_QUICK_START_V1.0.pdf' systems/cosmetics.html
+          grep -q 'DPRO_TUTORIAL_COSMETICS_DETAILED_MANUAL_V1.0.pdf' systems/cosmetics.html
+          echo "Publish diff scope: PASS"
+          echo "COSMETICS preservation: PASS"
+
+      - name: Commit FLOWER Product Site integration
+        shell: bash
+        run: |
+          set -euo pipefail
+          if git diff --quiet -- "${FLOWER_PAGE}"; then
+            echo "FLOWER Product Site section already committed."
+          else
+            git fetch origin main
+            test "$(git rev-parse origin/main)" = "$(git rev-parse HEAD)"
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add "${FLOWER_PAGE}"
+            git commit -m "FLOWER R6 add Tutorial and manual access"
+            git push origin HEAD:main
+          fi
+          FINAL_HEAD="$(git rev-parse HEAD)"
+          FINAL_TREE="$(git rev-parse HEAD^{tree})"
+          echo "FINAL_HEAD=${FINAL_HEAD}" | tee r6-final-source.txt
+          echo "FINAL_TREE=${FINAL_TREE}" | tee -a r6-final-source.txt
+
+      - name: Wait for Product Site Pages to publish FLOWER R6 marker
+        shell: bash
+        run: |
+          set -euo pipefail
+          URL="${PRODUCT_SITE_BASE}/systems/flower-shop.html"
+          for i in $(seq 1 60); do
+            BODY="$(curl -fsSL --max-time 20 "${URL}?r6=${GITHUB_RUN_ID}-${i}" || true)"
+            if printf '%s' "${BODY}" | grep -q 'flower-tutorial-manuals'; then
+              echo "Product Site FLOWER R6 marker is live."
+              exit 0
+            fi
+            sleep 5
+          done
+          echo "::error::Product Site Pages did not expose FLOWER R6 marker."
+          exit 1
+
+      - name: HTTP and link QA
+        shell: bash
+        run: |
+          set -euo pipefail
+          check_200() {
+            local url="$1"
+            local code
+            code="$(curl -L -sS -o /dev/null -w '%{http_code}' --max-time 30 "${url}")"
+            echo "${code} ${url}"
+            test "${code}" = "200"
+          }
+
+          check_200 "${PRODUCT_SITE_BASE}/systems/flower-shop.html"
+          check_200 "${PRODUCT_SITE_BASE}/${QUICK_PDF}"
+          check_200 "${PRODUCT_SITE_BASE}/${DETAIL_PDF}"
+          check_200 "${FLOWER_BASE}/guide-center.html"
+          check_200 "${FLOWER_BASE}/demo-guide.html?tutorial=start"
+          check_200 "${FLOWER_BASE}/demo-guide.html?tutorial=resume"
+          check_200 "${FLOWER_BASE}/demo-guide.html?tutorial=replay"
+
+          for path in catalog.html index.html member.html counter.html staff.html owner-ipad.html owner.html system-check.html; do
+            check_200 "${FLOWER_BASE}/${path}?demo=1"
+          done
+
+      - name: Install Playwright Chromium
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/flower-r6-playwright
+          cd /tmp/flower-r6-playwright
+          npm init -y >/dev/null 2>&1
+          npm install playwright@1.55.0 >/dev/null
+          npx playwright install --with-deps chromium >/dev/null
+
+      - name: Product Site and industry browser LIVE QA
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat > /tmp/flower-r6-playwright/qa.js <<'JS'
+          const { chromium } = require('playwright');
+
+          const SITE = process.env.PRODUCT_SITE_BASE;
+          const FLOWER = process.env.FLOWER_BASE;
+          const results = [];
+          const mutations = [];
+          const errors = [];
+
+          function record(name, pass, detail='') {
+            results.push({name, pass, detail});
+            console.log(`${pass ? 'PASS' : 'FAIL'} ${name}${detail ? ' :: ' + detail : ''}`);
+          }
+
+          async function auditPage(browser, url, viewport, label, marker) {
+            const context = await browser.newContext({ viewport });
+            const page = await context.newPage();
+
+            page.on('request', req => {
+              const method = req.method().toUpperCase();
+              if (!['GET','HEAD','OPTIONS'].includes(method)) {
+                mutations.push({label, method, url:req.url()});
+              }
+            });
+            page.on('pageerror', err => errors.push({label, type:'pageerror', message:String(err)}));
+            page.on('console', msg => {
+              if (msg.type() === 'error') errors.push({label, type:'console', message:msg.text()});
+            });
+
+            const response = await page.goto(url, {waitUntil:'domcontentloaded', timeout:30000});
+            const httpOk = !!response && response.status() >= 200 && response.status() < 400;
+            record(`${label}_HTTP`, httpOk, response ? String(response.status()) : 'no response');
+
+            if (marker) {
+              const count = await page.locator(marker).count().catch(() => 0);
+              record(`${label}_MARKER`, count === 1, `count=${count}`);
+            }
+
+            const overflow = await page.evaluate(() =>
+              Math.max(0, document.documentElement.scrollWidth - document.documentElement.clientWidth)
+            );
+            record(`${label}_OVERFLOW_${viewport.width}`, overflow === 0, `overflow=${overflow}`);
+
+            await context.close();
+          }
+
+          (async()=>{
+            const browser = await chromium.launch({headless:true});
+
+            await auditPage(browser, `${SITE}/systems/flower-shop.html`, {width:1440,height:1000}, 'PRODUCT_1440', '#flower-tutorial-manuals');
+            await auditPage(browser, `${SITE}/systems/flower-shop.html`, {width:1024,height:900}, 'PRODUCT_1024', '#flower-tutorial-manuals');
+            await auditPage(browser, `${SITE}/systems/flower-shop.html`, {width:390,height:844}, 'PRODUCT_390', '#flower-tutorial-manuals');
+            await auditPage(browser, `${SITE}/systems/flower-shop.html`, {width:320,height:720}, 'PRODUCT_320', '#flower-tutorial-manuals');
+
+            await auditPage(browser, `${FLOWER}/guide-center.html`, {width:390,height:844}, 'GUIDE_390', 'body');
+            await auditPage(browser, `${FLOWER}/guide-center.html`, {width:320,height:720}, 'GUIDE_320', 'body');
+
+            for (const mode of ['start','resume','replay']) {
+              await auditPage(browser, `${FLOWER}/demo-guide.html?tutorial=${mode}`, {width:390,height:844}, `FIRST10_${mode.toUpperCase()}`, 'body');
+            }
+
+            const ctx = await browser.newContext({viewport:{width:390,height:844}});
+            const p = await ctx.newPage();
+            await p.goto(`${SITE}/systems/flower-shop.html`, {waitUntil:'domcontentloaded', timeout:30000});
+            const hrefs = await p.locator('#flower-tutorial-manuals a').evaluateAll(as => as.map(a => a.href));
+            const requiredFragments = [
+              'dpro-flower-line-liff/guide-center.html#first10',
+              'dpro-flower-line-liff/guide-center.html',
+              'DPRO_TUTORIAL_FLOWER_QUICK_START_V1.0.pdf',
+              'DPRO_TUTORIAL_FLOWER_DETAILED_MANUAL_V1.0.pdf'
+            ];
+            for (const frag of requiredFragments) {
+              record(`PRODUCT_LINK_${frag}`, hrefs.some(h => h.includes(frag)), hrefs.join(' | '));
+            }
+            await ctx.close();
+
+            await browser.close();
+
+            record('BUSINESS_MUTATION_0', mutations.length === 0, JSON.stringify(mutations.slice(0,10)));
+
+            const attributableErrors = errors.filter(e => {
+              const m = (e.message || '').toLowerCase();
+              return !m.includes('favicon') && !m.includes('failed to load resource');
+            });
+            record('R6_ATTRIBUTABLE_ERRORS_0', attributableErrors.length === 0, JSON.stringify(attributableErrors.slice(0,10)));
+
+            const passed = results.filter(r => r.pass).length;
+            const total = results.length;
+            const fs = require('fs');
+            fs.writeFileSync(
+              process.env.GITHUB_WORKSPACE + '/FLOWER_TUTORIAL_R6_LIVE_QA_REPORT.json',
+              JSON.stringify({passed, total, results, mutations, errors}, null, 2)
+            );
+            fs.writeFileSync(
+              process.env.GITHUB_WORKSPACE + '/FLOWER_TUTORIAL_R6_LIVE_QA_REPORT.txt',
+              [
+                `FLOWER R6 LIVE QA: ${passed}/${total} PASS`,
+                `Business Mutation: ${mutations.length}`,
+                `Attributable Errors: ${attributableErrors.length}`,
+                ...results.map(r => `${r.pass ? 'PASS' : 'FAIL'} ${r.name} ${r.detail || ''}`)
+              ].join('\n')
+            );
+
+            if (passed !== total) process.exit(1);
+          })().catch(err => {
+            console.error(err);
+            process.exit(1);
+          });
+          JS
+
+          cd /tmp/flower-r6-playwright
+          PRODUCT_SITE_BASE="${PRODUCT_SITE_BASE}" \
+          FLOWER_BASE="${FLOWER_BASE}" \
+          GITHUB_WORKSPACE="${GITHUB_WORKSPACE}" \
+            node qa.js
+
+      - name: Verify Product Site current main final source
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch origin main
+          FINAL_REMOTE="$(git rev-parse origin/main)"
+          echo "FINAL_REMOTE_HEAD=${FINAL_REMOTE}" | tee -a r6-final-source.txt
+          test "${FINAL_REMOTE}" = "$(git rev-parse HEAD)"
+          git diff --quiet HEAD origin/main
+          echo "Source drift: 0"
+
+      - name: Upload R6 QA evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: FLOWER-TUTORIAL-R6-LIVE-QA
+          path: |
+            FLOWER_TUTORIAL_R6_LIVE_QA_REPORT.txt
+            FLOWER_TUTORIAL_R6_LIVE_QA_REPORT.json
+            r6-trigger-head.txt
+            r6-final-source.txt
+          if-no-files-found: warn
