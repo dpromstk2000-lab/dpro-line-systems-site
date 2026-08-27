@@ -1,0 +1,392 @@
+name: DPRO Tutorial SHIHO R6 Product Site + LIVE QA V1.0
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - ".github/workflows/dpro-tutorial-shiho-r6-product-site.yml"
+
+permissions:
+  contents: write
+  actions: read
+
+concurrency:
+  group: dpro-tutorial-shiho-r6-product-site
+  cancel-in-progress: true
+
+env:
+  PRODUCT_SITE_BASE_HEAD: 07d461c1030cfce163556786fe4534d76f9decab
+  INDUSTRY_BASE_HEAD: a4f93021992d24857e36193a3773756fab5227ee
+  INDUSTRY_BASE_TREE: 63f48c47b822be33a6155eb8ef643e1ec78cf1b2
+  INDUSTRY_REPO: dpromstk2000-lab/dpro-shiho-inheritance-line-liff
+  INDUSTRY_BASE: https://dpromstk2000-lab.github.io/dpro-shiho-inheritance-line-liff
+  PRODUCT_PAGE: https://dpromstk2000-lab.github.io/dpro-line-systems-site/systems/shiho.html
+  QUICK_PDF: SHIHO_R5_QUICK_START.pdf
+  DETAIL_PDF: SHIHO_R5_DETAILED_MANUAL.pdf
+  QUICK_PNG: SHIHO_R5_QUICK_START_p01.png
+  DETAIL_PNG: SHIHO_R5_DETAILED_MANUAL_p01.png
+  QUICK_PDF_SHA256: 4f82841636d302679492b1d272e0cb43fce22a0edca24c95b548b143cb02190e
+  DETAIL_PDF_SHA256: 2a6685e8faaa308008736d37ea827a9c8bf5fc7237490cb7dd8b2ca5cc2c8ea5
+  QUICK_PNG_SHA256: cd8cb46cc652b41ac54bc4c1c654d22da4d62d1ba08507d1bda1794348604c3d
+  DETAIL_PNG_SHA256: 8ef8dc88284e0c56edf7cf6190bc7d5b6a97e294437bce715aa88edd1cb24148
+
+jobs:
+  r6-product-site-live-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - name: Checkout newest Product Site main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Record locks and enforce forward-only Product Site
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p qa-r6 central-return
+          git rev-parse HEAD | tee qa-r6/product-site-head-before.txt
+          git rev-parse HEAD^{tree} | tee qa-r6/product-site-tree-before.txt
+          git merge-base --is-ancestor "$PRODUCT_SITE_BASE_HEAD" HEAD
+          printf 'FORWARD_ONLY=PASS\nBASE=%s\nCURRENT=%s\n' "$PRODUCT_SITE_BASE_HEAD" "$(git rev-parse HEAD)" > qa-r6/product-site-forward-lock.txt
+
+      - name: Verify Batch-04 predecessor R6 preservation
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          checks={
+            'systems/cosmetics.html':[
+              'dpro-cosmetics-line-liff/guide-center.html',
+              'DPRO_TUTORIAL_COSMETICS_QUICK_START_V1.0.pdf',
+              'DPRO_TUTORIAL_COSMETICS_DETAILED_MANUAL_V1.0.pdf',
+            ],
+            'systems/flower-shop.html':[
+              'dpro-flower-line-liff/guide-center.html',
+              'DPRO_TUTORIAL_FLOWER_QUICK_START_V1.0.pdf',
+              'DPRO_TUTORIAL_FLOWER_DETAILED_MANUAL_V1.0.pdf',
+            ],
+            'systems/yakiniku.html':[
+              'data-dpro-tutorial-r6="1"',
+              'dpro-yakiniku-line-liff/guide-center.html',
+              'DPRO_YAKINIKU_TUTORIAL_QUICK_START_R5_V1.0_20260827.pdf',
+              'DPRO_YAKINIKU_TUTORIAL_DETAILED_MANUAL_R5_V1.0_20260827.pdf',
+            ],
+            'systems/chosashi.html':[
+              'DPRO_TUTORIAL_CHOSASHI_R6',
+              'dpro-chosashi-line-liff/guide-center.html',
+              'CHOSASHI_R5_QUICK_START.pdf',
+              'CHOSASHI_R5_DETAILED_MANUAL.pdf',
+            ],
+          }
+          lines=[]
+          for path, needles in checks.items():
+            text=Path(path).read_text(encoding='utf-8')
+            missing=[n for n in needles if n not in text]
+            if missing:
+              raise SystemExit(f'{path}: predecessor R6 missing: {missing}')
+            lines.append(f'{path}: PASS')
+          Path('qa-r6/predecessor-preservation-before.txt').write_text('\n'.join(lines)+'\n',encoding='utf-8')
+          PY
+
+      - name: Verify SHIHO source continuity and locked R5 assets
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import hashlib,json,os,urllib.request
+          from pathlib import Path
+          repo=os.environ['INDUSTRY_REPO']; base=os.environ['INDUSTRY_BASE_HEAD']
+          headers={'Accept':'application/vnd.github+json','User-Agent':'DPRO-SHIHO-R6-QA','Authorization':'Bearer '+os.environ['GH_TOKEN']}
+          def get_json(url):
+            req=urllib.request.Request(url,headers=headers)
+            with urllib.request.urlopen(req,timeout=40) as r: return json.load(r)
+          current=get_json(f'https://api.github.com/repos/{repo}/commits/main')
+          head=current['sha']; tree=current['commit']['tree']['sha']
+          Path('qa-r6/industry-head-final.txt').write_text(head+'\n',encoding='utf-8')
+          Path('qa-r6/industry-tree-final.txt').write_text(tree+'\n',encoding='utf-8')
+          core=['guide-center.html','tutorial.js','tutorial.css','index.html','member.html','owner.html','staff.html','owner-ipad.html','system-check.html','demo-guide.html']
+          continuity=[]
+          for p in core:
+            old=get_json(f'https://api.github.com/repos/{repo}/contents/{p}?ref={base}')['sha']
+            new=get_json(f'https://api.github.com/repos/{repo}/contents/{p}?ref={head}')['sha']
+            if old!=new: raise SystemExit(f'SHIHO source drift: {p}: {old} -> {new}')
+            continuity.append(f'{p} {old} PASS')
+          Path('qa-r6/industry-source-continuity.txt').write_text('\n'.join(continuity)+'\n',encoding='utf-8')
+          cmp=get_json(f'https://api.github.com/repos/{repo}/compare/{base}...{head}')
+          allowed={os.environ['QUICK_PDF'],os.environ['DETAIL_PDF'],os.environ['QUICK_PNG'],os.environ['DETAIL_PNG']}
+          changed={f['filename'] for f in cmp.get('files',[])}
+          extra=changed-allowed
+          missing=allowed-changed
+          if extra: raise SystemExit('SHIHO forward diff has non-R5-asset paths: '+','.join(sorted(extra)))
+          if missing: raise SystemExit('SHIHO locked R5 assets not all committed: '+','.join(sorted(missing)))
+          Path('qa-r6/industry-forward-diff.txt').write_text('\n'.join(sorted(changed))+'\n',encoding='utf-8')
+          assets=[
+            (os.environ['QUICK_PDF'],os.environ['QUICK_PDF_SHA256']),
+            (os.environ['DETAIL_PDF'],os.environ['DETAIL_PDF_SHA256']),
+            (os.environ['QUICK_PNG'],os.environ['QUICK_PNG_SHA256']),
+            (os.environ['DETAIL_PNG'],os.environ['DETAIL_PNG_SHA256']),
+          ]
+          hashes=[]
+          for name,expected in assets:
+            url=f'https://raw.githubusercontent.com/{repo}/main/{name}'
+            req=urllib.request.Request(url,headers={'User-Agent':'DPRO-SHIHO-R6-QA'})
+            with urllib.request.urlopen(req,timeout=90) as r: data=r.read()
+            got=hashlib.sha256(data).hexdigest()
+            if got!=expected: raise SystemExit(f'R5 asset hash mismatch {name}: {got} != {expected}')
+            hashes.append(f'{got}  {name}')
+          Path('qa-r6/r5-asset-sha256.txt').write_text('\n'.join(hashes)+'\n',encoding='utf-8')
+          PY
+
+      - name: Patch SHIHO Product Site additively
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('systems/shiho.html')
+          original=p.read_text(encoding='utf-8')
+          if 'DPRO_TUTORIAL_SHIHO_R6' in original:
+            print('SHIHO R6 section already present; validation-only path')
+            raise SystemExit(0)
+          css='''\n/* DPRO_TUTORIAL_SHIHO_R6 */\n.ps-tutorial-r6{background:linear-gradient(180deg,#f4faf7 0%,#fff 100%)}\n.ps-tutorial-r6__grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem}\n.ps-tutorial-r6__card{min-width:0;padding:1.15rem;border:1px solid var(--ps-line);border-radius:1rem;background:#fff}\n.ps-tutorial-r6__label{display:inline-block;margin-bottom:.45rem;color:var(--dpro-green);font-size:.72rem;font-weight:900;letter-spacing:.12em}\n.ps-tutorial-r6__card h3{margin:0 0 .5rem;color:var(--ps-deep);font-size:1.12rem;line-height:1.4}\n.ps-tutorial-r6__card p{margin:0;color:var(--dpro-warm-gray-600);font-size:.9rem}\n.ps-tutorial-r6__links{display:grid;gap:.5rem;margin-top:1rem}\n.ps-tutorial-r6__links a{display:flex;align-items:center;min-height:46px;padding:.7rem .85rem;border:1px solid var(--ps-line);border-radius:.7rem;background:#fff;color:var(--ps-deep);font-weight:800;text-decoration:none;overflow-wrap:anywhere}\n.ps-tutorial-r6__links a:focus-visible{outline:3px solid var(--dpro-green);outline-offset:3px}\n.ps-tutorial-r6__safe{margin-top:1rem;padding:.85rem 1rem;border-left:4px solid var(--dpro-green);border-radius:.55rem;background:#eef8f3;color:#36584c;font-size:.86rem}\n@media(max-width:720px){.ps-tutorial-r6__grid{grid-template-columns:1fr}}\n@media(max-width:390px){.ps-tutorial-r6__card{padding:1rem}.ps-tutorial-r6__links a{align-items:flex-start}}\n@media(max-width:320px){.ps-tutorial-r6__card h3,.ps-tutorial-r6__card p,.ps-tutorial-r6__safe{overflow-wrap:anywhere}}\n'''
+          base='https://dpromstk2000-lab.github.io/dpro-shiho-inheritance-line-liff/'
+          section=f'''<section class="dpro-section ps-tutorial-r6" id="tutorial" aria-labelledby="tutorial-title" data-dpro-tutorial-r6="1"><div class="dpro-container"><div class="ps-section-heading"><p class="ps-kicker">TUTORIAL &amp; PRINT MANUAL</p><h2 id="tutorial-title">見ながら試せるガイドと、印刷できるマニュアル。</h2><p>司法書士・相続登記の相談受付、案件・必要書類・進捗、依頼者対応を、First10と役割別Guide Centerで確認できます。Tutorialは相談送信・案件更新・承認・設定変更を自動実行しません。</p></div><div class="ps-tutorial-r6__grid"><article class="ps-tutorial-r6__card"><span class="ps-tutorial-r6__label">LIVE GUIDE / FIRST10</span><h3>Guide Center と First10</h3><p>Start / Resume / Replayに加え、依頼者・スタッフ・オーナー・iPad・営業前確認の代表画面へ移動できます。</p><div class="ps-tutorial-r6__links"><a href="{base}guide-center.html?demo=1" target="_blank" rel="noopener">Guide Centerを開く</a><a href="{base}demo-guide.html?demo=1&amp;tutorial=start" target="_blank" rel="noopener">First10を開始</a><a href="{base}demo-guide.html?demo=1&amp;tutorial=resume" target="_blank" rel="noopener">First10をResume</a><a href="{base}demo-guide.html?demo=1&amp;tutorial=replay" target="_blank" rel="noopener">First10をReplay</a><a href="{base}member.html?demo=1" target="_blank" rel="noopener">依頼者画面</a><a href="{base}staff.html?demo=1" target="_blank" rel="noopener">スタッフ画面</a><a href="{base}owner.html?demo=1" target="_blank" rel="noopener">オーナー画面</a><a href="{base}owner-ipad.html?demo=1" target="_blank" rel="noopener">iPad画面</a><a href="{base}system-check.html?demo=1" target="_blank" rel="noopener">system-check</a></div></article><article class="ps-tutorial-r6__card"><span class="ps-tutorial-r6__label">A4 PRINT MANUALS / R5 CENTRAL ACCEPTED</span><h3>Quick Start と 詳細操作マニュアル</h3><p>R5 CENTRAL ACCEPTEDの確定版をそのまま公開します。Quick Startは8ページ、Detailed Manualは18ページです。</p><div class="ps-tutorial-r6__links"><a href="{base}SHIHO_R5_QUICK_START.pdf" target="_blank" rel="noopener">Quick Start PDFを開く</a><a href="{base}SHIHO_R5_DETAILED_MANUAL.pdf" target="_blank" rel="noopener">詳細操作マニュアルPDFを開く</a><a href="{base}SHIHO_R5_QUICK_START_p01.png" target="_blank" rel="noopener">Quick Start表紙PNG</a><a href="{base}SHIHO_R5_DETAILED_MANUAL_p01.png" target="_blank" rel="noopener">Detailed Manual表紙PNG</a></div></article></div><div class="ps-tutorial-r6__safe"><strong>安全：</strong> 公開デモには実在する氏名・電話番号・住所・登記識別情報・相続関係情報を入力しないでください。Tutorial / Guide Center / マニュアルから業務データの登録・更新・承認・削除・送信を自動実行することはありません。</div></div></section>'''
+          if '</style>' not in original: raise SystemExit('style close tag not found')
+          patched=original.replace('</style>',css+'</style>',1)
+          final_anchor='<section class="dpro-section ps-final master-section"'
+          pos=patched.find(final_anchor)
+          if pos<0: pos=patched.rfind('</main>')
+          if pos<0: raise SystemExit('safe insertion anchor not found')
+          patched=patched[:pos]+section+'\n'+patched[pos:]
+          p.write_text(patched,encoding='utf-8')
+          PY
+
+      - name: Validate additive scope before commit
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          text=Path('systems/shiho.html').read_text(encoding='utf-8')
+          required=[
+            'DPRO_TUTORIAL_SHIHO_R6',
+            'dpro-shiho-inheritance-line-liff/guide-center.html?demo=1',
+            'demo-guide.html?demo=1&amp;tutorial=start',
+            'SHIHO_R5_QUICK_START.pdf',
+            'SHIHO_R5_DETAILED_MANUAL.pdf',
+            'system-check.html?demo=1',
+          ]
+          missing=[x for x in required if x not in text]
+          if missing: raise SystemExit('SHIHO Product Site required markers missing: '+repr(missing))
+          forbidden=['localhost','file:///']
+          for x in forbidden:
+            if x in text: raise SystemExit('forbidden Product Site target: '+x)
+          Path('qa-r6/product-site-static-qa.txt').write_text('STATIC_QA=PASS\nBUSINESS_MUTATION=0\nR7=NOT_STARTED\n',encoding='utf-8')
+          PY
+          mapfile -t changed < <(git diff --name-only)
+          if [ "${#changed[@]}" -eq 0 ]; then
+            echo "ALREADY_PRESENT_NO_NEW_DIFF" | tee qa-r6/product-site-diff-scope.txt
+          elif [ "${#changed[@]}" -eq 1 ] && [ "${changed[0]}" = "systems/shiho.html" ]; then
+            printf '%s\n' "${changed[@]}" | tee qa-r6/product-site-diff-scope.txt
+          else
+            printf '%s\n' "${changed[@]}"
+            echo "Unexpected Product Site diff scope" >&2
+            exit 43
+          fi
+
+      - name: Guard against concurrent Product Site advance
+        shell: bash
+        run: |
+          set -euo pipefail
+          ENTRY="$(git rev-parse HEAD)"
+          git fetch origin main
+          LATEST="$(git rev-parse origin/main)"
+          printf 'ENTRY=%s\nLATEST=%s\n' "$ENTRY" "$LATEST" | tee qa-r6/pre-push-latest-main.txt
+          test "$ENTRY" = "$LATEST" || { echo 'PRODUCT_SITE_ADVANCED_RETRY_REQUIRED'; exit 42; }
+
+      - name: Commit and push SHIHO R6 Product Site
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if git diff --quiet; then
+            echo "No new diff; SHIHO R6 already present."
+          else
+            git add systems/shiho.html
+            git commit -m "Publish SHIHO R6 Tutorial and manuals"
+            git push origin HEAD:main
+          fi
+          git rev-parse HEAD | tee qa-r6/product-site-head-final.txt
+          git rev-parse HEAD^{tree} | tee qa-r6/product-site-tree-final.txt
+
+      - name: Wait for exact-head Product Site Pages success
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json,os,time,urllib.parse,urllib.request
+          from pathlib import Path
+          repo=os.environ['GITHUB_REPOSITORY']; head=Path('qa-r6/product-site-head-final.txt').read_text().strip()
+          headers={'Accept':'application/vnd.github+json','Authorization':'Bearer '+os.environ['GH_TOKEN'],'User-Agent':'DPRO-SHIHO-R6-QA'}
+          found=None
+          for _ in range(72):
+            url=f'https://api.github.com/repos/{repo}/actions/runs?head_sha={head}&per_page=100'
+            req=urllib.request.Request(url,headers=headers)
+            with urllib.request.urlopen(req,timeout=40) as r: data=json.load(r)
+            for run in data.get('workflow_runs',[]):
+              if run.get('name')=='pages build and deployment' and run.get('status')=='completed':
+                if run.get('conclusion')!='success': raise SystemExit('Pages exact-head run failed: '+str(run.get('html_url')))
+                found=run; break
+            if found: break
+            time.sleep(10)
+          if not found: raise SystemExit('Pages exact-head SUCCESS not observed in time')
+          Path('qa-r6/product-site-pages-run.txt').write_text(f"RUN_ID={found['id']}\nSTATUS={found['status']}\nCONCLUSION={found['conclusion']}\nURL={found['html_url']}\nHEAD={head}\n",encoding='utf-8')
+          PY
+
+      - name: Public LIVE link and manual QA
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import hashlib,os,time,urllib.request
+          from pathlib import Path
+          product=os.environ['PRODUCT_PAGE']; base=os.environ['INDUSTRY_BASE']
+          ua={'User-Agent':'DPRO-SHIHO-R6-LIVE-QA'}
+          required_product=['DPRO_TUTORIAL_SHIHO_R6','SHIHO_R5_QUICK_START.pdf','SHIHO_R5_DETAILED_MANUAL.pdf','guide-center.html?demo=1']
+          last=''
+          for _ in range(72):
+            try:
+              req=urllib.request.Request(product,headers=ua)
+              with urllib.request.urlopen(req,timeout=40) as r: last=r.read().decode('utf-8','replace')
+              if all(x in last for x in required_product): break
+            except Exception: pass
+            time.sleep(10)
+          else: raise SystemExit('Published SHIHO Product Site marker/links not observed')
+          urls=[
+            base+'/guide-center.html?demo=1',
+            base+'/demo-guide.html?demo=1&tutorial=start',
+            base+'/member.html?demo=1',
+            base+'/staff.html?demo=1',
+            base+'/owner.html?demo=1',
+            base+'/owner-ipad.html?demo=1',
+            base+'/system-check.html?demo=1',
+          ]
+          lines=[]
+          for url in urls:
+            req=urllib.request.Request(url,headers=ua)
+            with urllib.request.urlopen(req,timeout=60) as r:
+              body=r.read(2048); status=r.status
+            if status!=200 or not body: raise SystemExit(f'LIVE URL failed: {url} status={status}')
+            lines.append(f'PASS {status} {url}')
+          assets=[
+            (os.environ['QUICK_PDF'],os.environ['QUICK_PDF_SHA256']),
+            (os.environ['DETAIL_PDF'],os.environ['DETAIL_PDF_SHA256']),
+            (os.environ['QUICK_PNG'],os.environ['QUICK_PNG_SHA256']),
+            (os.environ['DETAIL_PNG'],os.environ['DETAIL_PNG_SHA256']),
+          ]
+          for name,expected in assets:
+            url=base+'/'+name
+            req=urllib.request.Request(url,headers=ua)
+            with urllib.request.urlopen(req,timeout=90) as r: data=r.read()
+            got=hashlib.sha256(data).hexdigest()
+            if got!=expected: raise SystemExit(f'Published asset hash mismatch: {name}: {got}')
+            lines.append(f'PASS SHA256={got} {url}')
+          Path('qa-r6/live-link-manual-qa.txt').write_text('\n'.join(lines)+'\n',encoding='utf-8')
+          PY
+
+      - name: Browser QA 1440 1024 390 320
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm init -y >/dev/null 2>&1
+          npm install playwright@1.55.0 --no-save >/dev/null 2>&1
+          npx playwright install --with-deps chromium >/dev/null
+          cat > /tmp/qa.mjs <<'JS'
+          import { chromium } from 'playwright';
+          import fs from 'fs';
+          const url=process.env.PRODUCT_PAGE;
+          const sizes=[[1440,900],[1024,900],[390,844],[320,720]];
+          const b=await chromium.launch({headless:true});
+          let lines=[];
+          for (const [width,height] of sizes){
+            const page=await b.newPage({viewport:{width,height}});
+            const pageErrors=[];
+            page.on('pageerror',e=>pageErrors.push(String(e)));
+            await page.goto(url,{waitUntil:'domcontentloaded',timeout:90000});
+            await page.waitForTimeout(1200);
+            const r=await page.evaluate(()=>({
+              marker:document.documentElement.innerHTML.includes('DPRO_TUTORIAL_SHIHO_R6'),
+              scrollWidth:document.documentElement.scrollWidth,
+              innerWidth:window.innerWidth
+            }));
+            if(!r.marker) throw new Error(`marker missing ${width}`);
+            if(r.scrollWidth>r.innerWidth) throw new Error(`overflow ${width}: ${r.scrollWidth}>${r.innerWidth}`);
+            if(pageErrors.length) throw new Error(`pageerror ${width}: ${pageErrors.join(' | ')}`);
+            lines.push(`${width}x${height} PASS scrollWidth=${r.scrollWidth} innerWidth=${r.innerWidth} pageErrors=0`);
+            await page.close();
+          }
+          await b.close();
+          fs.writeFileSync('qa-r6/browser-qa.txt',lines.join('\n')+'\n');
+          JS
+          node /tmp/qa.mjs
+
+      - name: Build SHIHO R6 CENTRAL RETURN evidence
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import hashlib,os
+          from pathlib import Path
+          q=Path('qa-r6'); c=Path('central-return')
+          def read(n): return (q/n).read_text(encoding='utf-8').strip()
+          ps_before=read('product-site-head-before.txt'); ps_before_tree=read('product-site-tree-before.txt')
+          ps_final=read('product-site-head-final.txt'); ps_final_tree=read('product-site-tree-final.txt')
+          ind_head=read('industry-head-final.txt'); ind_tree=read('industry-tree-final.txt')
+          pages=read('product-site-pages-run.txt')
+          files={
+          '00_START_HERE.txt':f'''DPRO TUTORIAL BATCH-04 SHIHO\nR6 PRODUCT SITE + LIVE QA CENTRAL RETURN\nVersion: V1.0\nDate: 2026-08-27\n\nFINAL RESULT\nR4 CENTRAL ACCEPTED / PRESERVED\nR5 CENTRAL ACCEPTED / PRESERVED\nR6 PRODUCT SITE PASS\nR6 LIVE QA PASS\nR6 INDUSTRY REGRESSION PASS\nFINAL LOCK COMPLETE\nR7 NOT STARTED / NOT AUTHORIZED\nBUSINESS MUTATION 0\nSOURCE DRIFT 0\n\nSHIHO INDUSTRY HEAD {ind_head}\nSHIHO INDUSTRY TREE {ind_tree}\nPRODUCT SITE HEAD {ps_final}\nPRODUCT SITE TREE {ps_final_tree}\n''',
+          'HANDOFF.txt':f'''SHIHO R6 CENTRAL HANDOFF\nINDUSTRY_REPO=https://github.com/{os.environ['INDUSTRY_REPO']}\nINDUSTRY_PAGES={os.environ['INDUSTRY_BASE']}/\nPRODUCT_SITE_REPO=https://github.com/{os.environ['GITHUB_REPOSITORY']}\nPRODUCT_PAGE={os.environ['PRODUCT_PAGE']}\nPRODUCT_SITE_BEFORE_HEAD={ps_before}\nPRODUCT_SITE_FINAL_HEAD={ps_final}\nFORWARD_ONLY=PASS\nROLLBACK=0\nR7=NOT_STARTED\n''',
+          'STATUS.txt':'R6=PASS\nFINAL_LOCK=COMPLETE\nBUSINESS_MUTATION=0\nSOURCE_DRIFT=0\nBACKEND_CHANGE=0\nR7=NOT_STARTED\n',
+          'R6_PRODUCT_SITE.txt':f'''RESULT=PASS\nBEFORE_HEAD={ps_before}\nBEFORE_TREE={ps_before_tree}\nFINAL_HEAD={ps_final}\nFINAL_TREE={ps_final_tree}\nCHANGED_PATH=systems/shiho.html\nFORWARD_ONLY=PASS\nPREDECESSOR_PRESERVATION=PASS\n''',
+          'R6_LIVE_QA.txt':'RESULT=PASS\n'+read('browser-qa.txt')+'\n'+pages+'\n',
+          'R6_INDUSTRY_REGRESSION.txt':'RESULT=PASS\n'+read('industry-source-continuity.txt')+'\n',
+          'MANUAL_LINK_QA.txt':'RESULT=PASS\n'+read('live-link-manual-qa.txt')+'\n',
+          'PREDECESSOR_PRESERVATION.txt':'RESULT=PASS\n'+read('predecessor-preservation-before.txt')+'\n',
+          'SOURCE_LOCK_R5.txt':f'''R5_ACCEPTED_HEAD={os.environ['INDUSTRY_BASE_HEAD']}\nR5_ACCEPTED_TREE={os.environ['INDUSTRY_BASE_TREE']}\nQUICK_PDF_SHA256={os.environ['QUICK_PDF_SHA256']}\nDETAIL_PDF_SHA256={os.environ['DETAIL_PDF_SHA256']}\n''',
+          'SOURCE_LOCK_R6_INDUSTRY_FINAL.txt':f'''HEAD={ind_head}\nTREE={ind_tree}\nSOURCE_DRIFT=0\nALLOWED_FORWARD_DIFF_ONLY=R5_PDF_AND_COVER_PNG_ASSETS\n''',
+          'PRODUCT_SITE_SOURCE_LOCK_BEFORE.txt':f'HEAD={ps_before}\nTREE={ps_before_tree}\n',
+          'PRODUCT_SITE_SOURCE_LOCK_FINAL.txt':f'HEAD={ps_final}\nTREE={ps_final_tree}\n'+pages+'\n',
+          'PRODUCT_SITE_DIFF_SCOPE.txt':'RESULT=PASS\nCHANGED_PATH=systems/shiho.html\nUNRELATED_PRODUCT_SITE_CHANGE=0\n',
+          'MUTATION_AUDIT.txt':'RESULT=PASS\nBUSINESS_MUTATION=0\nDB_CHANGE=0\nWORKER_CHANGE=0\nAPI_CHANGE=0\nAUTH_ROLE_PERMISSION_CHANGE=0\nFEATURE_FLAG_CHANGE=0\n',
+          'FINAL_LOCK.txt':f'''RESULT=FINAL COMPLETE\nSHIHO_R6=PASS\nINDUSTRY_HEAD={ind_head}\nINDUSTRY_TREE={ind_tree}\nPRODUCT_SITE_HEAD={ps_final}\nPRODUCT_SITE_TREE={ps_final_tree}\n1440_1024_390_320=PASS\nOVERFLOW_390_320=0\nBUSINESS_MUTATION=0\nSOURCE_DRIFT=0\nFORWARD_ONLY=PASS\nPRODUCT_SITE_ROLLBACK=0\nR7=NOT_STARTED\n''',
+          'NEXT_ACTION.txt':'1. Return this ZIP unchanged to DPRO TUTORIAL CENTRAL.\n2. Do not upload this CENTRAL RETURN ZIP to GitHub.\n3. CENTRAL verifies exact GitHub HEAD/Pages evidence.\n4. If PASS, mark SHIHO R6 FINAL LOCK and Batch-04 R6 5/5.\n5. STOP before R7.\n'
+          }
+          for n,t in files.items(): (c/n).write_text(t,encoding='utf-8')
+          sums=[]
+          for p in sorted(c.glob('*')):
+            if p.name=='SHA256.txt': continue
+            sums.append(f"{hashlib.sha256(p.read_bytes()).hexdigest()}  {p.name}")
+          (c/'SHA256.txt').write_text('\n'.join(sums)+'\n',encoding='utf-8')
+          PY
+          (cd central-return && zip -q ../DPRO_TUTORIAL_BATCH04_SHIHO_R6_CENTRAL_RETURN_V1.0_20260827.zip *)
+
+      - name: Upload CENTRAL RETURN artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: DPRO_TUTORIAL_BATCH04_SHIHO_R6_CENTRAL_RETURN_V1.0_20260827
+          path: DPRO_TUTORIAL_BATCH04_SHIHO_R6_CENTRAL_RETURN_V1.0_20260827.zip
+          if-no-files-found: error
+          retention-days: 14
