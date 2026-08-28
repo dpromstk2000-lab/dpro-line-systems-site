@@ -1,0 +1,436 @@
+name: DPRO Tutorial PHOTO R6 Product Site + LIVE QA
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/dpro-tutorial-photo-r6.yml'
+
+permissions:
+  contents: write
+  actions: read
+
+concurrency:
+  group: dpro-tutorial-photo-r6-product-site
+  cancel-in-progress: false
+
+env:
+  INDUSTRY_REPO: dpromstk2000-lab/dpro-photo-studio-line
+  R5_FINAL_HEAD: 870d12361378fd157491bf6f17eea35a15faf4a0
+  R5_ASSET_COMMIT: 8b86f5b4ee4c5f5110e552ddfdfc4cda64bb9990
+  PRODUCT_URL: https://dpromstk2000-lab.github.io/dpro-line-systems-site/systems/photo-studio.html
+  FIRST10_URL: https://dpromstk2000-lab.github.io/dpro-photo-studio-line/index.html?demo=1&tutorial=1
+  GUIDE_URL: https://dpromstk2000-lab.github.io/dpro-photo-studio-line/demo-guide.html?demo=1
+  QUICK_PDF_URL: https://dpromstk2000-lab.github.io/dpro-photo-studio-line/DPRO_TUTORIAL_PHOTO_QUICK_START_V1.0.pdf
+  QUICK_PNG_URL: https://dpromstk2000-lab.github.io/dpro-photo-studio-line/DPRO_TUTORIAL_PHOTO_QUICK_START_V1.0.png
+  DETAIL_PDF_URL: https://dpromstk2000-lab.github.io/dpro-photo-studio-line/DPRO_TUTORIAL_PHOTO_DETAILED_MANUAL_V1.0.pdf
+  DETAIL_PNG_URL: https://dpromstk2000-lab.github.io/dpro-photo-studio-line/DPRO_TUTORIAL_PHOTO_DETAILED_MANUAL_V1.0.png
+
+jobs:
+  patch-and-live-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout newest Product Site main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: R6 newest-main + R5 locked-asset entry gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch origin main --quiet
+          test "$(git rev-parse origin/main)" = "$(git rev-parse HEAD)"
+          test -f systems/photo-studio.html
+          test ! -f systems/photo-studio.html.txt
+          mkdir -p qa-evidence/local qa-evidence/live
+          printf 'R6_ENTRY_HEAD=%s\nR6_ENTRY_TREE=%s\nPHOTO_TXT_MIRROR=NONE\n' \
+            "$(git rev-parse HEAD)" "$(git rev-parse HEAD^{tree})" | tee qa-evidence/r6-entry.txt
+
+          python - <<'PY'
+          import json, os, urllib.request
+          from pathlib import Path
+
+          repo=os.environ['INDUSTRY_REPO']
+          final=os.environ['R5_FINAL_HEAD']
+          asset=os.environ['R5_ASSET_COMMIT']
+
+          def get_json(url):
+              req=urllib.request.Request(url,headers={'Accept':'application/vnd.github+json','User-Agent':'DPRO-PHOTO-R6'})
+              with urllib.request.urlopen(req,timeout=30) as r:
+                  return json.load(r)
+
+          main=get_json(f'https://api.github.com/repos/{repo}/commits/main')
+          if main['sha'] != final:
+              raise SystemExit(f'PHOTO R5 final head drift: {main["sha"]} != {final}')
+          parents=[x['sha'] for x in main.get('parents',[])]
+          if asset not in parents:
+              raise SystemExit(f'R5 asset commit is not direct parent of final evidence head: {parents}')
+
+          summary_url=f'https://raw.githubusercontent.com/{repo}/{final}/tutorial-evidence/photo-r5/R5_QA_SUMMARY.json'
+          with urllib.request.urlopen(urllib.request.Request(summary_url,headers={'User-Agent':'DPRO-PHOTO-R6'}),timeout=30) as r:
+              summary=json.load(r)
+          checks={
+              'system':summary.get('system')=='PHOTO',
+              'stage':summary.get('stage')=='R5',
+              'standard':summary.get('standard')=='V1.1',
+              'first10':summary.get('first10')==10,
+              'automatedGate':summary.get('automatedGate')=='PASS',
+              'r5AutomatedQa':summary.get('r5AutomatedQa')=='PASS',
+              'publicHttp':summary.get('publicHttp')=='PASS',
+              'pagesExactAssetCommit':summary.get('pagesExactAssetCommit')=='PASS',
+              'businessMutation':summary.get('businessMutation')==0,
+          }
+          if not all(checks.values()):
+              raise SystemExit('R5 summary gate failed: '+json.dumps(checks,ensure_ascii=False))
+          Path('qa-evidence/r5-lock-gate.json').write_text(json.dumps({
+              'r5FinalHead':final,'r5AssetCommit':asset,'checks':checks,'status':'PASS'
+          },ensure_ascii=False,indent=2),encoding='utf-8')
+          PY
+
+          python - <<'PY'
+          import os, urllib.request
+          urls={
+            'first10':os.environ['FIRST10_URL'],
+            'guide':os.environ['GUIDE_URL'],
+            'quick-pdf':os.environ['QUICK_PDF_URL'],
+            'quick-png':os.environ['QUICK_PNG_URL'],
+            'detail-pdf':os.environ['DETAIL_PDF_URL'],
+            'detail-png':os.environ['DETAIL_PNG_URL'],
+          }
+          lines=[]
+          for key,url in urls.items():
+              req=urllib.request.Request(url,headers={'User-Agent':'DPRO-PHOTO-R6','Cache-Control':'no-cache'})
+              with urllib.request.urlopen(req,timeout=30) as r:
+                  data=r.read(16); status=r.status
+              if status != 200: raise SystemExit(f'{key} HTTP {status}')
+              if key.endswith('pdf') and not data.startswith(b'%PDF'):
+                  raise SystemExit(f'{key} is not PDF')
+              if key.endswith('png') and not data.startswith(b'\x89PNG\r\n\x1a\n'):
+                  raise SystemExit(f'{key} is not PNG')
+              lines.append(f'{key}=HTTP_200')
+          open('qa-evidence/r5-public-assets.txt','w').write('\n'.join(lines)+'\nR5_PUBLIC_ASSETS=PASS\n')
+          PY
+
+      - name: Patch PHOTO Product Site page additively only
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+
+          path=Path('systems/photo-studio.html')
+          before=path.read_text(encoding='utf-8')
+
+          css=r'''
+          /* DPRO PHOTO TUTORIAL R6 START */
+          .ps-tutorial-r6{background:linear-gradient(180deg,#f4faf7 0%,#fff 100%)}
+          .ps-tutorial-r6__grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem}
+          .ps-tutorial-r6__card{display:flex;flex-direction:column;gap:.8rem;padding:1.2rem;border:1px solid var(--ps-line);border-radius:1rem;background:#fff;box-shadow:var(--dpro-shadow-sm)}
+          .ps-tutorial-r6__card h3{margin:0;color:var(--ps-deep);font-size:1.14rem}.ps-tutorial-r6__card p{margin:0;color:var(--dpro-warm-gray-600)}
+          .ps-tutorial-r6__links{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.6rem;margin-top:.2rem}
+          .ps-tutorial-r6__link{min-height:48px;display:flex;align-items:center;justify-content:space-between;gap:.6rem;padding:.72rem .82rem;border:1px solid var(--ps-line);border-radius:.78rem;background:var(--ps-pale);text-decoration:none;font-weight:850;color:var(--ps-deep)}
+          .ps-tutorial-r6__link::after{content:"→";color:var(--dpro-green);font-weight:900}.ps-tutorial-r6__link:hover{border-color:rgba(22,132,91,.45);background:#fff}
+          .ps-tutorial-r6__link:focus,.ps-tutorial-r6__link:focus-visible,.ps-tutorial-r6 .dpro-button:focus,.ps-tutorial-r6 .dpro-button:focus-visible{outline:3px solid #0f766e;outline-offset:3px}
+          .ps-tutorial-r6__manuals{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem;margin-top:1rem}
+          .ps-tutorial-r6__manual{overflow:hidden;padding:0}.ps-tutorial-r6__manual img{display:block;width:100%;aspect-ratio:210/297;object-fit:cover;object-position:top;border-bottom:1px solid var(--ps-line);background:#fff}
+          .ps-tutorial-r6__manual-body{padding:1rem}.ps-tutorial-r6__manual h3{margin:0;color:var(--ps-deep)}.ps-tutorial-r6__manual p{margin:.45rem 0 .9rem;color:var(--dpro-warm-gray-600);font-size:.9rem}.ps-tutorial-r6__manual .dpro-button{width:100%}
+          .ps-tutorial-r6__safe{margin:1rem 0 0;padding:1rem 1.1rem;border-left:4px solid var(--dpro-green);background:#edf8f4;color:#395149}
+          @media(max-width:700px){.ps-tutorial-r6__grid,.ps-tutorial-r6__manuals,.ps-tutorial-r6__links{grid-template-columns:1fr}.ps-tutorial-r6__manual img{max-height:420px;object-fit:contain}}
+          /* DPRO PHOTO TUTORIAL R6 END */
+          '''
+
+          section=r'''
+          <section class="dpro-section ps-tutorial-r6" id="tutorial-guide" aria-labelledby="tutorial-guide-title" data-dpro-tutorial-r6="PHOTO"><div class="dpro-container"><div class="ps-section-heading"><p class="ps-kicker">TUTORIAL / GUIDE / MANUALS</p><h2 id="tutorial-guide-title">画面を見ながら覚える、PHOTO操作ガイド。</h2><p>First10は撮影予約から当日受付、写真セレクト、撮影カルテ・再注文管理までExactly 10で案内します。Guide CenterとA4マニュアルからいつでも確認できます。</p></div><div class="ps-tutorial-r6__grid"><article class="ps-tutorial-r6__card"><h3>First10 / Guide Center</h3><p>現在のLIVEデモ画面を順番に案内します。Tutorial自身が同意チェック、予約送信、撮影進行の更新、納品処理、再注文登録などの業務操作を自動実行することはありません。</p><div class="ps-tutorial-r6__links"><a class="ps-tutorial-r6__link" data-r6-link="first10" href="https://dpromstk2000-lab.github.io/dpro-photo-studio-line/index.html?demo=1&amp;tutorial=1" target="_blank" rel="noopener">First10を開始</a><a class="ps-tutorial-r6__link" data-r6-link="guide" href="https://dpromstk2000-lab.github.io/dpro-photo-studio-line/demo-guide.html?demo=1" target="_blank" rel="noopener">Guide Center</a></div></article><article class="ps-tutorial-r6__card"><h3>10ステップの流れ</h3><p>撮影プラン → オプション・担当 → 撮影日時 → お客様情報 → 撮影対象者 → 事前ヒアリング → 内容確認 → 当日受付・撮影進行 → 写真セレクト・納品 → 撮影カルテ・再注文管理。</p><p><strong>STANDARD V1.1：</strong>Next / Back / Close / Esc / Skip / Resume / Replay、マウス・タッチ・キーボード操作に対応しています。</p></article></div><div class="ps-tutorial-r6__manuals"><article class="dpro-card ps-tutorial-r6__manual"><img src="https://dpromstk2000-lab.github.io/dpro-photo-studio-line/DPRO_TUTORIAL_PHOTO_QUICK_START_V1.0.png" alt="DPRO PHOTO Quick Start A4マニュアルのプレビュー" loading="lazy"><div class="ps-tutorial-r6__manual-body"><h3>Quick Start</h3><p>First10 Exactly 10を1ページにまとめた、最初に見るA4縦ガイドです。</p><a class="dpro-button dpro-button--secondary" data-r6-link="quick-pdf" href="https://dpromstk2000-lab.github.io/dpro-photo-studio-line/DPRO_TUTORIAL_PHOTO_QUICK_START_V1.0.pdf" target="_blank" rel="noopener">Quick Start PDFを開く</a></div></article><article class="dpro-card ps-tutorial-r6__manual"><img src="https://dpromstk2000-lab.github.io/dpro-photo-studio-line/DPRO_TUTORIAL_PHOTO_DETAILED_MANUAL_V1.0.png" alt="DPRO PHOTO Detailed Manual A4マニュアルのプレビュー" loading="lazy"><div class="ps-tutorial-r6__manual-body"><h3>Detailed Manual</h3><p>10ステップを現在のLIVE画面と安全ルール付きで4ページに整理した保存版です。</p><a class="dpro-button dpro-button--secondary" data-r6-link="detail-pdf" href="https://dpromstk2000-lab.github.io/dpro-photo-studio-line/DPRO_TUTORIAL_PHOTO_DETAILED_MANUAL_V1.0.pdf" target="_blank" rel="noopener">Detailed Manual PDFを開く</a></div></article></div><div class="ps-tutorial-r6__safe"><strong>安全：</strong>公開デモには実在する氏名・電話番号・住所などを入力しないでください。Tutorialによる業務状態変更はありません。</div></div></section>
+          '''
+
+          if 'data-dpro-tutorial-r6="PHOTO"' in before:
+              raise SystemExit('PHOTO R6 marker already exists; HOLD rather than double-patch')
+          if before.count('</style>')!=1 or before.count('</main>')!=1:
+              raise SystemExit('Safe insertion marker missing or ambiguous')
+
+          after=before.replace('</style>',css+'\n</style>',1)
+          after=after.replace('</main>',section+'\n</main>',1)
+
+          restored=after.replace(css+'\n','',1).replace(section+'\n','',1)
+          if restored != before:
+              raise SystemExit('Additive-only proof failed: original Product Site content would drift')
+
+          required=[
+            'data-dpro-tutorial-r6="PHOTO"',
+            'data-r6-link="first10"','data-r6-link="guide"',
+            'data-r6-link="quick-pdf"','data-r6-link="detail-pdf"',
+            'DPRO_TUTORIAL_PHOTO_QUICK_START_V1.0.pdf',
+            'DPRO_TUTORIAL_PHOTO_DETAILED_MANUAL_V1.0.pdf',
+            'DPRO_TUTORIAL_PHOTO_QUICK_START_V1.0.png',
+            'DPRO_TUTORIAL_PHOTO_DETAILED_MANUAL_V1.0.png',
+          ]
+          for token in required:
+              if token not in after: raise SystemExit('Missing R6 token: '+token)
+
+          Path('/tmp/photo-before.html').write_text(before,encoding='utf-8')
+          path.write_text(after,encoding='utf-8')
+          print('PHOTO R6 additive-only patch: PASS')
+          PY
+
+      - name: Static protected-boundary proof
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          import hashlib, json
+
+          before=Path('/tmp/photo-before.html').read_text(encoding='utf-8')
+          after=Path('systems/photo-studio.html').read_text(encoding='utf-8')
+          anchors=['DPRO PHOTO｜写真館向け業種特化システム','月額 14,800円（税込）']
+          missing=[x for x in anchors if x not in before or x not in after]
+          if missing: raise SystemExit('Protected anchor missing: '+repr(missing))
+          result={
+            'target':'systems/photo-studio.html','mirror':'NONE',
+            'pricingPreserved':True,'seoAndExistingContentPreservedByAdditiveProof':True,
+            'lineDemoLpA4ExistingContentPreservedByAdditiveProof':True,
+            'otherIndustriesTouched':False,'dbWorkerApiAuthRolePermissionFeatureFlagChange':0,
+            'businessMutation':0,'productSiteRollback':0,
+            'beforeSha256':hashlib.sha256(before.encode()).hexdigest(),
+            'afterSha256':hashlib.sha256(after.encode()).hexdigest(),'status':'PASS'
+          }
+          Path('qa-evidence/r6-static-boundary.json').write_text(json.dumps(result,ensure_ascii=False,indent=2),encoding='utf-8')
+          PY
+          CHANGED="$(git diff --name-only)"
+          printf '%s\n' "$CHANGED" | grep -qx 'systems/photo-studio.html'
+          test "$(printf '%s\n' "$CHANGED" | wc -l)" -eq 1
+
+      - name: Install browser QA tools
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m pip install --quiet playwright==1.55.0 requests
+          python -m playwright install --with-deps chromium
+
+      - name: Local responsive + keyboard + mutation QA
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m http.server 4173 >/tmp/dpro-photo-r6-http.log 2>&1 &
+          SERVER_PID=$!
+          trap 'kill $SERVER_PID || true' EXIT
+          sleep 2
+          cat > /tmp/photo_r6_local_qa.py <<'PY'
+          import json
+          from pathlib import Path
+          from playwright.sync_api import sync_playwright
+          exact={
+            'first10':'https://dpromstk2000-lab.github.io/dpro-photo-studio-line/index.html?demo=1&tutorial=1',
+            'guide':'https://dpromstk2000-lab.github.io/dpro-photo-studio-line/demo-guide.html?demo=1',
+            'quick-pdf':'https://dpromstk2000-lab.github.io/dpro-photo-studio-line/DPRO_TUTORIAL_PHOTO_QUICK_START_V1.0.pdf',
+            'detail-pdf':'https://dpromstk2000-lab.github.io/dpro-photo-studio-line/DPRO_TUTORIAL_PHOTO_DETAILED_MANUAL_V1.0.pdf',
+          }
+          sizes=[(1440,1050),(1024,900),(390,844),(320,700)]
+          out={'mode':'local','viewports':[],'links':{},'keyboardFocus':'PASS','businessMutation':0,'productSiteRollback':0,'status':'PASS'}
+          with sync_playwright() as pw:
+            browser=pw.chromium.launch(headless=True)
+            for w,h in sizes:
+              page=browser.new_page(viewport={'width':w,'height':h})
+              errors=[]; mutations=[]
+              page.on('pageerror',lambda e: errors.append(str(e)))
+              page.on('request',lambda r: mutations.append({'method':r.method,'url':r.url}) if r.method in ['POST','PUT','PATCH','DELETE'] else None)
+              r=page.goto('http://127.0.0.1:4173/systems/photo-studio.html',wait_until='domcontentloaded',timeout=60000)
+              assert r and r.status<400,(w,r.status if r else None)
+              page.locator('#tutorial-guide').scroll_into_view_if_needed(); page.wait_for_timeout(300)
+              assert page.locator('[data-dpro-tutorial-r6="PHOTO"]').is_visible()
+              overflow=page.evaluate('document.documentElement.scrollWidth-document.documentElement.clientWidth')
+              assert overflow<=1,(w,overflow)
+              for key,url in exact.items():
+                href=page.locator(f'[data-r6-link="{key}"]').get_attribute('href')
+                assert href==url,(key,href,url)
+                out['links'][key]=href
+              page.locator('body').click(position={'x':2,'y':2})
+              focused=False
+              for _ in range(120):
+                page.keyboard.press('Tab')
+                active=page.evaluate("document.activeElement && document.activeElement.getAttribute('data-r6-link')")
+                if active:
+                  style=page.evaluate("getComputedStyle(document.activeElement).outlineStyle")
+                  width=page.evaluate("getComputedStyle(document.activeElement).outlineWidth")
+                  assert style!='none' and width!='0px',(w,active,style,width)
+                  focused=True; break
+              assert focused,f'Keyboard could not reach PHOTO R6 links at {w}'
+              assert not errors,(w,errors)
+              assert not mutations,(w,mutations)
+              page.screenshot(path=f'qa-evidence/local/photo-{w}.png',full_page=True)
+              out['viewports'].append({'width':w,'height':h,'overflow':overflow,'pageErrors':0,'mutationRequests':0})
+              page.close()
+            browser.close()
+          Path('qa-evidence/r6-local-qa.json').write_text(json.dumps(out,ensure_ascii=False,indent=2),encoding='utf-8')
+          PY
+          python /tmp/photo_r6_local_qa.py
+
+      - name: Forward-only re-fetch immediately before Product Site commit
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch origin main --quiet
+          if [ "$(git rev-parse origin/main)" != "$(git rev-parse HEAD)" ]; then
+            echo 'Product Site main advanced during PHOTO R6. HOLD rather than overwrite.'
+            exit 4
+          fi
+          printf 'PRECOMMIT_REMOTE_HEAD=%s\nPRECOMMIT_LOCAL_HEAD=%s\nFORWARD_ONLY=PASS\n' \
+            "$(git rev-parse origin/main)" "$(git rev-parse HEAD)" | tee qa-evidence/r6-precommit.txt
+
+      - name: Commit PHOTO Product Site integration only
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "dpro-tutorial-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add systems/photo-studio.html
+          git diff --cached --name-only | grep -qx 'systems/photo-studio.html'
+          test "$(git diff --cached --name-only | wc -l)" -eq 1
+          git commit -m "DPRO TUTORIAL PHOTO R6 product site integration"
+          git push origin HEAD:main
+          echo "R6_PRODUCT_COMMIT=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
+          echo "R6_PRODUCT_TREE=$(git rev-parse HEAD^{tree})" >> "$GITHUB_ENV"
+          git rev-parse HEAD > qa-evidence/r6-final-sha.txt
+          git rev-parse HEAD^{tree} > qa-evidence/r6-final-tree.txt
+          git diff-tree --no-commit-id --name-only -r HEAD > qa-evidence/r6-final-changed-files.txt
+          test "$(cat qa-evidence/r6-final-changed-files.txt)" = "systems/photo-studio.html"
+
+      - name: Wait exact Product Site Pages publication
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json, os, time, urllib.request
+          repo=os.environ['GITHUB_REPOSITORY']; sha=os.environ['R6_PRODUCT_COMMIT']; token=os.environ['GH_TOKEN']
+          headers={'Accept':'application/vnd.github+json','Authorization':'Bearer '+token,'User-Agent':'DPRO-PHOTO-R6'}
+          deadline=time.time()+360; found=None
+          while time.time()<deadline:
+              req=urllib.request.Request(f'https://api.github.com/repos/{repo}/actions/runs?head_sha={sha}&per_page=30',headers=headers)
+              with urllib.request.urlopen(req,timeout=30) as r: data=json.load(r)
+              for run in data.get('workflow_runs',[]):
+                  if run.get('name')=='pages build and deployment' and run.get('head_sha')==sha and run.get('status')=='completed':
+                      if run.get('conclusion')!='success': raise SystemExit('Exact-head Pages failed: '+run.get('html_url',''))
+                      found=run; break
+              if found: break
+              time.sleep(8)
+          if not found: raise SystemExit('Exact-head Product Site Pages success not proven')
+          open('qa-evidence/r6-pages.txt','w').write(f'R6_PRODUCT_COMMIT={sha}\nPAGES_RUN={found.get("html_url","")}\nPAGES=SUCCESS\n')
+          PY
+          for i in $(seq 1 30); do
+            if curl -fsSL --retry 2 --connect-timeout 10 "${PRODUCT_URL}?r6=${R6_PRODUCT_COMMIT}-${i}" | grep -q 'data-dpro-tutorial-r6="PHOTO"'; then
+              echo "PHOTO R6 marker LIVE on attempt ${i}"; exit 0
+            fi
+            sleep 8
+          done
+          echo 'PHOTO R6 marker did not become LIVE'; exit 5
+
+      - name: R6 LIVE QA 1440 1024 390 320 + assets + focus
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat > /tmp/photo_r6_live_qa.py <<'PY'
+          import json, os, time
+          from pathlib import Path
+          import requests
+          from playwright.sync_api import sync_playwright
+          product=os.environ['PRODUCT_URL']
+          exact={
+            'first10':os.environ['FIRST10_URL'],'guide':os.environ['GUIDE_URL'],
+            'quick-pdf':os.environ['QUICK_PDF_URL'],'detail-pdf':os.environ['DETAIL_PDF_URL'],
+          }
+          resources={**exact,'quick-png':os.environ['QUICK_PNG_URL'],'detail-png':os.environ['DETAIL_PNG_URL']}
+          evidence={'mode':'LIVE','productUrl':product,'r6ProductCommit':os.environ['R6_PRODUCT_COMMIT'],'http':{},'viewports':[],'links':{},'keyboardFocus':'PASS','businessMutation':0,'productSiteRollback':0,'status':'PASS'}
+          s=requests.Session(); s.headers.update({'Cache-Control':'no-cache','Pragma':'no-cache','User-Agent':'DPRO-PHOTO-R6'})
+          rp=s.get(product,timeout=30); evidence['http']['product']=rp.status_code
+          assert rp.status_code==200 and 'data-dpro-tutorial-r6="PHOTO"' in rp.text
+          for key,url in resources.items():
+              r=s.get(url,timeout=30,allow_redirects=True); evidence['http'][key]=r.status_code
+              assert r.status_code==200,(key,r.status_code,url)
+              if key.endswith('pdf'): assert r.content[:4]==b'%PDF',(key,r.headers.get('content-type'))
+              if key.endswith('png'): assert r.content[:8]==b'\x89PNG\r\n\x1a\n',(key,r.headers.get('content-type'))
+          sizes=[(1440,1050),(1024,900),(390,844),(320,700)]
+          with sync_playwright() as pw:
+            browser=pw.chromium.launch(headless=True)
+            for w,h in sizes:
+              page=browser.new_page(viewport={'width':w,'height':h})
+              errors=[]; mutations=[]
+              page.on('pageerror',lambda e: errors.append(str(e)))
+              page.on('request',lambda r: mutations.append({'method':r.method,'url':r.url}) if r.method in ['POST','PUT','PATCH','DELETE'] else None)
+              r=page.goto(product+f'?qa={int(time.time())}-{w}',wait_until='domcontentloaded',timeout=60000)
+              assert r and r.status<400,(w,r.status if r else None)
+              page.locator('#tutorial-guide').scroll_into_view_if_needed(); page.wait_for_timeout(500)
+              assert page.locator('[data-dpro-tutorial-r6="PHOTO"]').is_visible()
+              overflow=page.evaluate('document.documentElement.scrollWidth-document.documentElement.clientWidth')
+              assert overflow<=1,(w,overflow)
+              for key,url in exact.items():
+                href=page.locator(f'[data-r6-link="{key}"]').get_attribute('href')
+                assert href==url,(key,href,url); evidence['links'][key]=href
+              page.locator('body').click(position={'x':2,'y':2})
+              focused=False
+              for _ in range(120):
+                page.keyboard.press('Tab')
+                active=page.evaluate("document.activeElement && document.activeElement.getAttribute('data-r6-link')")
+                if active:
+                  style=page.evaluate("getComputedStyle(document.activeElement).outlineStyle")
+                  width=page.evaluate("getComputedStyle(document.activeElement).outlineWidth")
+                  assert style!='none' and width!='0px',(w,active,style,width)
+                  focused=True; break
+              assert focused,f'Keyboard could not reach PHOTO R6 links at {w}'
+              assert not errors,(w,errors); assert not mutations,(w,mutations)
+              page.screenshot(path=f'qa-evidence/live/photo-{w}.png',full_page=True)
+              evidence['viewports'].append({'width':w,'height':h,'overflow':overflow,'pageErrors':0,'mutationRequests':0})
+              page.close()
+            browser.close()
+          Path('qa-evidence/r6-live-qa.json').write_text(json.dumps(evidence,ensure_ascii=False,indent=2),encoding='utf-8')
+          PY
+          python /tmp/photo_r6_live_qa.py
+
+      - name: R6 FINAL LOCK candidate evidence
+        shell: bash
+        run: |
+          set -euo pipefail
+          FINAL_SHA="$(cat qa-evidence/r6-final-sha.txt)"
+          FINAL_TREE="$(cat qa-evidence/r6-final-tree.txt)"
+          test "$(cat qa-evidence/r6-final-changed-files.txt)" = "systems/photo-studio.html"
+          cat > qa-evidence/R6_FINAL_LOCK_CANDIDATE.txt <<EOF
+          SYSTEM=PHOTO
+          STAGE=R6
+          R5=PASS
+          R5_FINAL_HEAD=$R5_FINAL_HEAD
+          R5_ASSET_COMMIT=$R5_ASSET_COMMIT
+          R6_PRODUCT_SITE=PASS
+          R6_LIVE_QA=PASS
+          PRODUCT_SITE_FINAL_SHA=$FINAL_SHA
+          PRODUCT_SITE_FINAL_TREE=$FINAL_TREE
+          PRODUCT_SITE_CHANGED_FILES=systems/photo-studio.html
+          PHOTO_TXT_MIRROR=NONE
+          STANDARD=V1.1_LOCKED
+          FIRST10_EXACTLY=10
+          QUICK_START_PAGES=1
+          DETAILED_MANUAL_PAGES=4
+          BUSINESS_MUTATION=0
+          PRODUCT_SITE_ROLLBACK=0
+          DB_WORKER_API_AUTH_ROLE_PERMISSION_FEATURE_FLAG_CHANGE=0
+          FINAL_LOCK=CENTRAL_REVIEW_REQUIRED
+          R7=NOT_STARTED
+          R7=NOT_AUTHORIZED
+          EOF
+
+      - name: Upload PHOTO R6 QA evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dpro-tutorial-photo-r6-product-site-qa
+          if-no-files-found: warn
+          retention-days: 7
+          path: |
+            qa-evidence/*.json
+            qa-evidence/*.txt
+            qa-evidence/local/*.png
+            qa-evidence/live/*.png
