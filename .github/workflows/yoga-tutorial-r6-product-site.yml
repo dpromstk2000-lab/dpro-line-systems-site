@@ -1,4 +1,4 @@
-name: YOGA Tutorial R6 Product Site Integration + LIVE QA + FINAL LOCK Candidate
+name: YOGA Tutorial R6 Product Site Integration + LIVE QA + FINAL LOCK Candidate V1.1
 
 on:
   push:
@@ -40,12 +40,20 @@ jobs:
           echo "PRODUCT_SITE_BEFORE=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
 
           test -s systems/yoga.html
-          test ! -e systems/yoga.txt
+          test -s systems/yoga.html.txt
+          cmp -s systems/yoga.html systems/yoga.html.txt
           test "$(grep -o '</main>' systems/yoga.html | wc -l)" -eq 1
-          grep -q 'ヨガ教室' systems/yoga.html
+          grep -q 'ヨガ・ピラティス' systems/yoga.html
           grep -q 'lp-yoga.html' systems/yoga.html
 
-          echo 'Newest-main / forward-only gate: PASS'
+          TRIGGER_PARENT=$(git rev-parse "${GITHUB_SHA}^")
+          trigger_files=$(git diff --name-only "$TRIGGER_PARENT" "$GITHUB_SHA")
+          printf '%s\n' "$trigger_files"
+          test "$(printf '%s\n' "$trigger_files" | sed '/^$/d' | wc -l)" -eq 1
+          printf '%s\n' "$trigger_files" | grep -qx '.github/workflows/yoga-tutorial-r6-product-site.yml'
+
+          echo "WORKFLOW_UPLOAD_PARENT=$TRIGGER_PARENT" >> "$GITHUB_ENV"
+          echo 'Newest-main / forward-only / normal+TEXT mirror gate: PASS'
 
       - name: Verify R5 public source and exact assets
         shell: bash
@@ -156,6 +164,7 @@ jobs:
             }
           </style>
           <section class="dpro-section" data-yoga-tutorial-r6="1" aria-labelledby="yoga-tutorial-r6-title">
+            <div class="dpro-container">
             <div class="ps-section-heading">
               <div>
                 <p class="ps-eyebrow">TUTORIAL &amp; PRINT MANUALS</p>
@@ -175,7 +184,7 @@ jobs:
               <a class="dpro-button dpro-button--secondary yoga-r6-link"
                  data-r6-link="first10"
                  href="https://dpromstk2000-lab.github.io/liff-yoga-reserve/tutorial.html"
-                 target="_blank" rel="noopener noreferrer">First10 Tutorial</a>
+                 target="_blank" rel="noopener noreferrer">First10 Tutorial（Start / Resume / Replay）</a>
               <a class="dpro-button dpro-button--secondary yoga-r6-link"
                  data-r6-link="quick-pdf"
                  href="https://dpromstk2000-lab.github.io/liff-yoga-reserve/DPRO_TUTORIAL_YOGA_QUICK_START_V1.0.pdf"
@@ -206,6 +215,7 @@ jobs:
                   loading="lazy">
               </a>
             </div>
+            </div>
           </section>
           <!-- DPRO YOGA TUTORIAL R6 END -->
           '''
@@ -226,9 +236,13 @@ jobs:
           for u in expected:
               if u not in s2:
                   raise SystemExit(f"missing URL: {u}")
-          if "ヨガ教室" not in s2 or "lp-yoga.html" not in s2:
+          if "ヨガ・ピラティス" not in s2 or "lp-yoga.html" not in s2:
               raise SystemExit("existing Product Site content was not preserved")
-          print("Product Site bounded insertion: PASS")
+
+          Path("systems/yoga.html.txt").write_text(s2, encoding="utf-8")
+          if Path("systems/yoga.html.txt").read_text(encoding="utf-8") != s2:
+              raise SystemExit("normal/TEXT mirror mismatch")
+          print("Product Site bounded insertion + normal/TEXT mirror: PASS")
           PY
 
       - name: Commit bounded page change and remove this temporary workflow
@@ -238,14 +252,18 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
 
-          git add systems/yoga.html
+          echo "ACTION_BASE=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
+
+          git add systems/yoga.html systems/yoga.html.txt
           git rm .github/workflows/yoga-tutorial-r6-product-site.yml
 
           changed=$(git diff --cached --name-only | sort)
           printf '%s\n' "$changed"
-          test "$(printf '%s\n' "$changed" | wc -l)" -eq 2
+          test "$(printf '%s\n' "$changed" | sed '/^$/d' | wc -l)" -eq 3
           printf '%s\n' "$changed" | grep -qx '.github/workflows/yoga-tutorial-r6-product-site.yml'
           printf '%s\n' "$changed" | grep -qx 'systems/yoga.html'
+          printf '%s\n' "$changed" | grep -qx 'systems/yoga.html.txt'
+          cmp -s systems/yoga.html systems/yoga.html.txt
 
           git commit -m 'Add YOGA Tutorial and print manuals to Product Site'
           git push origin HEAD:main
@@ -462,16 +480,28 @@ jobs:
           set -euo pipefail
           git fetch origin main
           FINAL=$(git rev-parse origin/main)
-          test "$FINAL" = "$PRODUCT_SITE_AFTER"
           git merge-base --is-ancestor "$PRODUCT_SITE_ACCEPTED_BASE" "$FINAL"
+          git merge-base --is-ancestor "$PRODUCT_SITE_AFTER" "$FINAL"
 
-          files=$(git diff --name-only "$PRODUCT_SITE_ACCEPTED_BASE" "$FINAL")
-          printf '%s\n' "$files"
-          test "$(printf '%s\n' "$files" | sed '/^$/d' | wc -l)" -eq 1
-          printf '%s\n' "$files" | grep -qx 'systems/yoga.html'
+          own_files=$(git diff-tree --no-commit-id --name-only -r "$PRODUCT_SITE_AFTER" | sort)
+          printf '%s\n' "$own_files"
+          test "$(printf '%s\n' "$own_files" | sed '/^$/d' | wc -l)" -eq 3
+          printf '%s\n' "$own_files" | grep -qx '.github/workflows/yoga-tutorial-r6-product-site.yml'
+          printf '%s\n' "$own_files" | grep -qx 'systems/yoga.html'
+          printf '%s\n' "$own_files" | grep -qx 'systems/yoga.html.txt'
+
+          if git cat-file -e "origin/main:.github/workflows/yoga-tutorial-r6-product-site.yml" 2>/dev/null; then
+            echo 'temporary workflow still exists on current main'
+            exit 1
+          fi
+
+          git show origin/main:systems/yoga.html > /tmp/yoga-final.html
+          git show origin/main:systems/yoga.html.txt > /tmp/yoga-final.html.txt
+          cmp -s /tmp/yoga-final.html /tmp/yoga-final.html.txt
+          test "$(grep -o 'data-yoga-tutorial-r6="1"' /tmp/yoga-final.html | wc -l)" -eq 1
 
           echo "PRODUCT_SITE_FINAL=$FINAL" >> "$GITHUB_ENV"
-          echo 'Final boundary: systems/yoga.html only / forward-only PASS'
+          echo 'Final boundary: YOGA normal+TEXT only persist; temporary workflow removed; forward-only PASS'
 
       - name: Write R6 evidence
         if: always()
@@ -483,7 +513,7 @@ jobs:
           accepted_base=${PRODUCT_SITE_ACCEPTED_BASE:-unknown}
           workflow_start_head=${PRODUCT_SITE_BEFORE:-unknown}
           final_head=${PRODUCT_SITE_AFTER:-unknown}
-          target=systems/yoga.html
+          targets=systems/yoga.html,systems/yoga.html.txt
           public=https://dpromstk2000-lab.github.io/dpro-line-systems-site/systems/yoga.html
           industry=https://dpromstk2000-lab.github.io/liff-yoga-reserve/
           R7=NOT_AUTHORIZED
