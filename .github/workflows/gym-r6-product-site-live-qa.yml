@@ -41,7 +41,7 @@ jobs:
         shell: bash
         run: |
           mkdir -p qa-evidence
-          cat > "$RUNNER_TEMP/gym_r6_live_qa.cjs" <<'NODE'
+          cat > "gym_r6_live_qa.cjs" <<'NODE'
           const fs = require('fs');
           const crypto = require('crypto');
           const { chromium, request } = require('playwright');
@@ -209,7 +209,7 @@ jobs:
             }
           })();
           NODE
-          node "$RUNNER_TEMP/gym_r6_live_qa.cjs"
+          node "gym_r6_live_qa.cjs"
 
       - uses: actions/upload-artifact@v4
         if: always()
