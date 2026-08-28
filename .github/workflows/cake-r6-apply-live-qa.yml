@@ -1,0 +1,216 @@
+name: CAKE R6 APPLY + LIVE QA
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/cake-r6-apply-live-qa.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  apply-and-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout newest main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 1
+
+      - name: Guard R6 write boundary
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f systems/cake.html
+          if [ -e systems/cake.txt ]; then
+            echo 'HOLD: systems/cake.txt mirror now exists; do not patch without mirror handling.' >&2
+            exit 1
+          fi
+          grep -Fq 'DPRO CAKE｜ケーキ・洋菓子向け業種特化システム' systems/cake.html
+          grep -Fq '5,500円' systems/cake.html
+          grep -Fq 'https://lin.ee/YxJGXV6D' systems/cake.html
+          grep -Fq 'index.html?demo=1&amp;v=CAKE-16' systems/cake.html
+          grep -Fq '../lp-cake.html' systems/cake.html
+          grep -Fq '../flyer-cake.html' systems/cake.html
+          grep -Fq '../flyer-cake.pdf' systems/cake.html
+
+      - name: Apply CAKE Tutorial and manuals integration
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('systems/cake.html')
+          s = p.read_text(encoding='utf-8')
+          marker = 'DPRO_TUTORIAL_CAKE_PRODUCT_SITE_R6_20260828'
+          if marker in s:
+              print('R6 marker already present; integration is idempotent.')
+          else:
+              css = r'''
+          /* DPRO_TUTORIAL_CAKE_PRODUCT_SITE_R6_20260828 */
+          .ps-tutorial-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:.9rem}.ps-tutorial-card{min-width:0;padding:1.1rem;border:1px solid var(--ps-line);border-radius:1rem;background:#fff;box-shadow:var(--dpro-shadow-sm)}.ps-tutorial-card span{display:block;color:var(--dpro-green);font-size:.7rem;font-weight:900;letter-spacing:.1em}.ps-tutorial-card h3{margin:.35rem 0;color:var(--ps-deep);font-size:1.02rem;line-height:1.4}.ps-tutorial-card p{margin:0;color:var(--dpro-warm-gray-600);font-size:.86rem}.ps-tutorial-card a{display:inline-flex;align-items:center;justify-content:center;min-height:44px;margin-top:.85rem;padding:.55rem .8rem;border-radius:.72rem;background:var(--dpro-deep-green);color:#fff;text-decoration:none;font-size:.84rem;font-weight:900}.ps-tutorial-card a:focus-visible{outline:3px solid #f2b94b;outline-offset:3px}.ps-tutorial-note{margin:1rem 0 0;padding:.9rem 1rem;border-left:4px solid var(--dpro-green);background:#fff;color:#395149;font-size:.88rem}
+          @media(max-width:980px){.ps-tutorial-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+          @media(max-width:640px){.ps-tutorial-grid{grid-template-columns:1fr}.ps-tutorial-card a{width:100%}}
+          '''
+              if '</style>' not in s:
+                  raise SystemExit('HOLD: </style> not found')
+              s = s.replace('</style>', css + '</style>', 1)
+
+              anchor = '<section class="dpro-section master-section" data-master-section="8" id="connected"'
+              if anchor not in s:
+                  raise SystemExit('HOLD: connected-section anchor not found')
+              section = r'''<section class="dpro-section ps-section-soft" id="tutorial" aria-labelledby="tutorial-title" data-dpro-tutorial-r6="DPRO_TUTORIAL_CAKE_PRODUCT_SITE_R6_20260828"><div class="dpro-container"><div class="ps-section-heading"><p class="ps-kicker">TUTORIAL / PRINT MANUALS</p><h2 id="tutorial-title">操作を見ながら確認。印刷して手元でも確認。</h2><p>STANDARD V1.1の10ステップ操作ガイドと、現在の公開実画面を使ったQuick Start／Detailed Manualを用意しています。</p></div><div class="ps-tutorial-grid"><article class="ps-tutorial-card"><span>01 / TUTORIAL</span><h3>操作チュートリアル</h3><p>Start / Resume / Replay対応の10ステップ操作チュートリアルを開きます。</p><a data-r6-link="tutorial" href="https://dpromstk2000-lab.github.io/dpro-cake-line-liff/demo-guide.html" target="_blank" rel="noopener">チュートリアルを開く</a></article><article class="ps-tutorial-card"><span>02 / GUIDE CENTER</span><h3>Guide Center</h3><p>First10の順番と各画面への導線を一覧で確認します。</p><a data-r6-link="guide" href="https://dpromstk2000-lab.github.io/dpro-cake-line-liff/demo-guide.html#dproGuideCenter" target="_blank" rel="noopener">Guide Centerを開く</a></article><article class="ps-tutorial-card"><span>03 / QUICK START</span><h3>Quick Start PDF</h3><p>A4縦1ページ。最初に確認するポイントを実画面とQRでまとめています。</p><a data-r6-link="quick" href="https://dpromstk2000-lab.github.io/dpro-cake-line-liff/DPRO_TUTORIAL_CAKE_QUICK_START_V1.0.pdf" target="_blank" rel="noopener">Quick Start PDF</a></article><article class="ps-tutorial-card"><span>04 / DETAILED MANUAL</span><h3>Detailed Manual PDF</h3><p>A4縦6ページ。10ステップと各役割の画面を詳しく確認できます。</p><a data-r6-link="detailed" href="https://dpromstk2000-lab.github.io/dpro-cake-line-liff/DPRO_TUTORIAL_CAKE_DETAILED_MANUAL_V1.0.pdf" target="_blank" rel="noopener">Detailed Manual PDF</a></article></div><p class="ps-tutorial-note"><strong>安全確認：</strong>公開デモでは実在する個人情報を入力せず、チュートリアル／マニュアル確認では注文・キャンセル・決済・商品保存などの業務更新操作を行いません。</p></div></section>'''
+              s = s.replace(anchor, section + anchor, 1)
+              p.write_text(s, encoding='utf-8')
+          PY
+
+          # Required baseline must remain after patch.
+          grep -Fq 'DPRO_TUTORIAL_CAKE_PRODUCT_SITE_R6_20260828' systems/cake.html
+          grep -Fq '5,500円' systems/cake.html
+          grep -Fq 'https://lin.ee/YxJGXV6D' systems/cake.html
+          grep -Fq 'index.html?demo=1&amp;v=CAKE-16' systems/cake.html
+          grep -Fq '../lp-cake.html' systems/cake.html
+          grep -Fq '../flyer-cake.html' systems/cake.html
+          grep -Fq '../flyer-cake.pdf' systems/cake.html
+
+      - name: Self-remove temporary workflow and commit forward-only
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -f .github/workflows/cake-r6-apply-live-qa.yml
+          changed="$(git status --porcelain | awk '{print $2}' | sort)"
+          printf '%s\n' "$changed"
+          expected="$(printf '%s\n' '.github/workflows/cake-r6-apply-live-qa.yml' 'systems/cake.html')"
+          test "$changed" = "$expected"
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add systems/cake.html .github/workflows/cake-r6-apply-live-qa.yml
+          git commit -m 'CAKE R6 Product Site tutorial/manual integration'
+          git push origin HEAD:main
+          echo "R6_COMMIT=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
+
+      - name: Wait for public R6 marker
+        shell: bash
+        run: |
+          set -euo pipefail
+          url='https://dpromstk2000-lab.github.io/dpro-line-systems-site/systems/cake.html'
+          ok=0
+          for i in $(seq 1 90); do
+            if curl -fsSL --retry 2 --retry-delay 1 "${url}?r6=${R6_COMMIT}-${i}" | grep -Fq 'DPRO_TUTORIAL_CAKE_PRODUCT_SITE_R6_20260828'; then
+              ok=1
+              break
+            fi
+            sleep 5
+          done
+          test "$ok" = 1
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install Playwright
+        shell: bash
+        run: |
+          npm init -y
+          npm install playwright@1.55.0
+          npx playwright install --with-deps chromium
+
+      - name: Exact-width Product Site LIVE QA
+        shell: bash
+        run: |
+          cat > cake-r6-live-qa.mjs <<'JS'
+          import { chromium } from 'playwright';
+          import fs from 'node:fs';
+          const URL='https://dpromstk2000-lab.github.io/dpro-line-systems-site/systems/cake.html';
+          const EXPECT={
+            tutorial:'https://dpromstk2000-lab.github.io/dpro-cake-line-liff/demo-guide.html',
+            guide:'https://dpromstk2000-lab.github.io/dpro-cake-line-liff/demo-guide.html#dproGuideCenter',
+            quick:'https://dpromstk2000-lab.github.io/dpro-cake-line-liff/DPRO_TUTORIAL_CAKE_QUICK_START_V1.0.pdf',
+            detailed:'https://dpromstk2000-lab.github.io/dpro-cake-line-liff/DPRO_TUTORIAL_CAKE_DETAILED_MANUAL_V1.0.pdf'
+          };
+          const browser=await chromium.launch({headless:true});
+          const report={marker:'DPRO_TUTORIAL_CAKE_PRODUCT_SITE_R6_20260828',r6Commit:process.env.R6_COMMIT||'',url:URL,metrics:[],links:{},baseline:{},errors:[],businessMutations:[]};
+          const widths=[1440,1024,390,320];
+          const isSafe=m=>['GET','HEAD','OPTIONS'].includes(m);
+          for(const width of widths){
+            const context=await browser.newContext({viewport:{width,height:1000}});
+            const page=await context.newPage();
+            const pageErrors=[],consoleErrors=[],mutations=[];
+            page.on('pageerror',e=>pageErrors.push(e.message));
+            page.on('console',m=>{if(m.type()==='error')consoleErrors.push(m.text())});
+            page.on('request',r=>{if(!isSafe(r.method()))mutations.push({method:r.method(),url:r.url()})});
+            try{
+              const resp=await page.goto(`${URL}?r6qa=${Date.now()}-${width}`,{waitUntil:'networkidle',timeout:60000});
+              if(!resp||!resp.ok())throw new Error(`HTTP ${resp?.status()} at width ${width}`);
+              await page.locator('#tutorial').waitFor({state:'visible',timeout:15000});
+              const marker=await page.locator('#tutorial').getAttribute('data-dpro-tutorial-r6');
+              if(marker!==report.marker)throw new Error(`marker mismatch ${width}: ${marker}`);
+              const data=await page.evaluate(()=>({
+                innerWidth,
+                documentElementScrollWidth:document.documentElement.scrollWidth,
+                bodyScrollWidth:document.body.scrollWidth,
+                title:document.title,
+                description:document.querySelector('meta[name="description"]')?.content||'',
+                price:document.querySelector('#price')?.textContent||'',
+                lineHrefs:[...document.querySelectorAll('a[href="https://lin.ee/YxJGXV6D"]')].length,
+                demoHrefs:[...document.querySelectorAll('a[href*="dpro-cake-line-liff/index.html?demo=1"]')].length,
+                lp:[...document.querySelectorAll('a[href="../lp-cake.html"]')].length,
+                flyerHtml:[...document.querySelectorAll('a[href="../flyer-cake.html"]')].length,
+                flyerPdf:[...document.querySelectorAll('a[href="../flyer-cake.pdf"]')].length,
+                tutorialVisible:!!document.querySelector('#tutorial'),
+                linkCount:document.querySelectorAll('#tutorial a[data-r6-link]').length
+              }));
+              if(data.innerWidth!==width)throw new Error(`innerWidth mismatch ${width} -> ${data.innerWidth}`);
+              if((width===390||width===320)&&(data.documentElementScrollWidth>data.innerWidth||data.bodyScrollWidth>data.innerWidth))throw new Error(`overflow ${width}: ${JSON.stringify(data)}`);
+              if(data.linkCount!==4)throw new Error(`tutorial linkCount ${width}: ${data.linkCount}`);
+              if(!data.price.includes('5,500円'))throw new Error(`price regression ${width}`);
+              if(data.lineHrefs<1||data.demoHrefs<1||data.lp<1||data.flyerHtml<1||data.flyerPdf<1)throw new Error(`baseline link regression ${width}: ${JSON.stringify(data)}`);
+              if(data.title!=='DPRO CAKE｜ケーキ・洋菓子向け業種特化システム')throw new Error(`title regression ${width}`);
+              if(!data.description.includes('写真付き公開カタログ'))throw new Error(`SEO description regression ${width}`);
+
+              for(const [key,expected] of Object.entries(EXPECT)){
+                const href=await page.locator(`#tutorial a[data-r6-link="${key}"]`).getAttribute('href');
+                if(href!==expected)throw new Error(`${key} href mismatch: ${href}`);
+              }
+              const first=page.locator('#tutorial a[data-r6-link]').first();
+              await first.focus();
+              await page.keyboard.press('Tab');
+              const keyboard=await page.evaluate(()=>({inside:!!document.activeElement?.closest?.('#tutorial'),focusVisible:document.activeElement?.matches?.(':focus-visible')||false,tag:document.activeElement?.tagName||''}));
+              if(!keyboard.inside||!keyboard.focusVisible)throw new Error(`keyboard focus failed ${width}: ${JSON.stringify(keyboard)}`);
+              report.metrics.push({...data,width,pageErrors,consoleErrors,mutations,keyboard});
+              report.businessMutations.push(...mutations);
+              if(pageErrors.length)throw new Error(`pageerror ${width}: ${pageErrors.join(' | ')}`);
+              if(consoleErrors.length)throw new Error(`console error ${width}: ${consoleErrors.join(' | ')}`);
+            }catch(e){report.errors.push({width,detail:e?.stack||String(e)});}finally{await context.close();}
+          }
+
+          // HTTP-check all current tutorial/manual resources independently.
+          const req=await browser.newContext();
+          for(const [key,target] of Object.entries(EXPECT)){
+            const response=await req.request.get(target.split('#')[0],{timeout:60000});
+            const ct=response.headers()['content-type']||'';
+            report.links[key]={url:target,status:response.status(),contentType:ct,ok:response.ok()};
+            if(!response.ok())report.errors.push({link:key,detail:`HTTP ${response.status()} ${target}`});
+            if((key==='quick'||key==='detailed')&&!ct.toLowerCase().includes('pdf'))report.errors.push({link:key,detail:`Expected PDF content-type, got ${ct}`});
+          }
+          await req.close();
+          await browser.close();
+          report.result=(report.errors.length===0&&report.businessMutations.length===0&&report.metrics.length===4)?'PASS':'FAIL';
+          fs.writeFileSync('cake-r6-live-qa.json',JSON.stringify(report,null,2));
+          console.log(JSON.stringify(report,null,2));
+          if(report.result!=='PASS')process.exitCode=1;
+          JS
+          node cake-r6-live-qa.mjs
+
+      - name: Upload R6 QA evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cake-r6-live-qa-evidence
+          path: cake-r6-live-qa.json
+          if-no-files-found: error
