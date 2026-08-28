@@ -23,7 +23,6 @@ jobs:
       WORKFLOW_PATH: .github/workflows/estate-r6-final-live-qa.yml
       TARGET_HTML: systems/estate.html
       TARGET_TEXT: systems/estate.html.txt
-      R6_ORIGINAL_BASE: ea3977df7218d2cae39c4625684ef9671f34c347
       R6_INTEGRATION_HEAD: ff35a2ea2e14707018ce068174a6487efb5dc5a2
     steps:
       - name: Checkout newest Product Site main
@@ -58,6 +57,25 @@ jobs:
           printf '%s\n' "$upload_base" > qa-r6-final/qa-upload-base.txt
           printf '%s\n' "$local_head" > qa-r6-final/qa-upload-head.txt
           echo "upload_head=$local_head" >> "$GITHUB_OUTPUT"
+          echo "upload_base=$upload_base" >> "$GITHUB_OUTPUT"
+
+          # Prove the original R6 integration commit touched only the two ESTATE mirrors
+          # plus deletion of its temporary workflow. This is commit-local and therefore
+          # unaffected by legitimate concurrent Product Site updates (e.g. GYM).
+          integration_parent=$(git rev-parse "${R6_INTEGRATION_HEAD}^")
+          mapfile -t integration_changed < <(git diff --name-only "$integration_parent" "$R6_INTEGRATION_HEAD" | sort)
+          integration_expected=$(printf '%s\n' ".github/workflows/estate-r6-product-site.yml" "$TARGET_HTML" "$TARGET_TEXT" | sort)
+          integration_actual=$(printf '%s\n' "${integration_changed[@]}" | sort)
+          test "$integration_actual" = "$integration_expected"
+          test "$(git diff --name-status "$integration_parent" "$R6_INTEGRATION_HEAD" -- .github/workflows/estate-r6-product-site.yml | awk '{print $1}')" = "D"
+          test "$(git diff --name-status "$integration_parent" "$R6_INTEGRATION_HEAD" -- "$TARGET_HTML" | awk '{print $1}')" = "M"
+          test "$(git diff --name-status "$integration_parent" "$R6_INTEGRATION_HEAD" -- "$TARGET_TEXT" | awk '{print $1}')" = "M"
+          printf '%s\n' "$integration_parent" > qa-r6-final/r6-integration-parent.txt
+          printf '%s\n' "${integration_changed[@]}" > qa-r6-final/r6-integration-changed.txt
+
+          # No later commit is allowed to alter the ESTATE R6 payload before this QA.
+          cmp <(git show "$R6_INTEGRATION_HEAD:$TARGET_HTML") "$TARGET_HTML"
+          cmp <(git show "$R6_INTEGRATION_HEAD:$TARGET_TEXT") "$TARGET_TEXT"
 
       - name: Setup Node for final LIVE QA
         uses: actions/setup-node@v4
@@ -93,7 +111,7 @@ jobs:
             {name:'320',width:320,height:720}
           ];
           const result = {
-            schema:'DPRO_TUTORIAL_ESTATE_R6_FINAL_LIVE_QA_V1_1',
+            schema:'DPRO_TUTORIAL_ESTATE_R6_FINAL_LIVE_QA_V1_3',
             productUrl, expected, viewports:[], resourceChecks:{},
             businessMutationAttempts:[], failures:[]
           };
@@ -199,16 +217,20 @@ jobs:
           node estate-r6-final-live-qa.mjs
           rm -f estate-r6-final-live-qa.mjs
 
-      - name: Verify R6 original write boundary and self-delete QA workflow
+      - name: Verify ESTATE payload unchanged and self-delete QA workflow
         if: success()
         shell: bash
         env:
           UPLOAD_HEAD: ${{ steps.base.outputs.upload_head }}
+          UPLOAD_BASE: ${{ steps.base.outputs.upload_base }}
         run: |
           set -euo pipefail
           cmp -s "$TARGET_HTML" "$TARGET_TEXT"
+          cmp <(git show "$R6_INTEGRATION_HEAD:$TARGET_HTML") "$TARGET_HTML"
+          cmp <(git show "$R6_INTEGRATION_HEAD:$TARGET_TEXT") "$TARGET_TEXT"
           sha256sum "$TARGET_HTML" "$TARGET_TEXT" > qa-r6-final/target-sha256-after.txt
           diff -u qa-r6-final/target-sha256-before.txt qa-r6-final/target-sha256-after.txt
+
           git rm "$WORKFLOW_PATH"
           mapfile -t worktree_changed < <(git diff --name-only HEAD | sort)
           test "${#worktree_changed[@]}" -eq 1
@@ -216,18 +238,21 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git commit -m "Complete Estate R6 final LIVE QA [skip ci]"
-          git merge-base --is-ancestor "$R6_ORIGINAL_BASE" HEAD
-          mapfile -t net_changed < <(git diff --name-only "$R6_ORIGINAL_BASE" HEAD | sort)
-          printf '%s\n' "${net_changed[@]}" > qa-r6-final/r6-net-changed.txt
-          test "${#net_changed[@]}" -eq 2
-          test "${net_changed[0]}" = "$TARGET_HTML"
-          test "${net_changed[1]}" = "$TARGET_TEXT"
+
+          # The final QA run itself must change nothing except removing its temporary
+          # workflow. Compare against the immediate pre-upload main, not an old global
+          # baseline, so concurrent industry updates are preserved rather than flagged.
+          mapfile -t cleanup_changed < <(git diff --name-only "$UPLOAD_BASE" HEAD | sort)
+          printf '%s\n' "${cleanup_changed[@]}" > qa-r6-final/qa-cleanup-changed.txt
+          test "${#cleanup_changed[@]}" -eq 1
+          test "${cleanup_changed[0]}" = "$WORKFLOW_PATH"
+          test "$(git diff --name-status "$UPLOAD_BASE" HEAD -- "$WORKFLOW_PATH" | awk '{print $1}')" = "D"
+
           git fetch origin main
           test "$(git rev-parse origin/main)" = "$UPLOAD_HEAD" || { echo "Product Site main advanced during final QA; refusing push."; exit 1; }
           git push origin HEAD:main
           git rev-parse HEAD > qa-r6-final/final-head.txt
           git rev-parse HEAD^{tree} > qa-r6-final/final-tree.txt
-          printf '%s\n' "$R6_ORIGINAL_BASE" > qa-r6-final/r6-original-base.txt
           printf '%s\n' "$R6_INTEGRATION_HEAD" > qa-r6-final/r6-integration-head.txt
 
       - name: Upload final R6 QA evidence
