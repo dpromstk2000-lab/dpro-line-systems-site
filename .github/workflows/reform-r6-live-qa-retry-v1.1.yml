@@ -1,0 +1,243 @@
+name: DPRO TUTORIAL REFORM R6 LIVE QA RETRY V1.1
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/reform-r6-live-qa-retry-v1.1.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: dpro-tutorial-reform-r6-live-qa-retry
+  cancel-in-progress: false
+
+env:
+  PRODUCT_URL: https://dpromstk2000-lab.github.io/dpro-line-systems-site/systems/reform.html
+  GUIDE_URL: https://dpromstk2000-lab.github.io/dpro-reform-line-liff/guide-center.html
+  DEMO_URL: https://dpromstk2000-lab.github.io/dpro-reform-line-liff/demo-guide.html
+  QUICK_PDF_URL: https://dpromstk2000-lab.github.io/dpro-reform-line-liff/manuals/reform-quick-start.pdf
+  QUICK_PNG_URL: https://dpromstk2000-lab.github.io/dpro-reform-line-liff/manuals/reform-quick-start.png
+  DETAIL_PDF_URL: https://dpromstk2000-lab.github.io/dpro-reform-line-liff/manuals/reform-detailed-manual.pdf
+  DETAIL_PNG_URL: https://dpromstk2000-lab.github.io/dpro-reform-line-liff/manuals/reform-detailed-manual.png
+  R5_EVIDENCE_RAW: https://raw.githubusercontent.com/dpromstk2000-lab/dpro-reform-line-liff/main/tutorial-evidence/reform-r5/r5-manuals-qa.json
+  R6_MARKER: DPRO_TUTORIAL_REFORM_PRODUCT_SITE_R6_20260828
+  R6_PRODUCT_SHA: 2afb06f3b8b4a2839670617e67ba28c3a3148696
+  WORKFLOW_PATH: .github/workflows/reform-r6-live-qa-retry-v1.1.yml
+
+jobs:
+  live-qa-retry:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Checkout newest Product Site main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Guard applied R6 and current mirror
+        shell: bash
+        run: |
+          set -euo pipefail
+          [[ "$GITHUB_REPOSITORY" == "dpromstk2000-lab/dpro-line-systems-site" ]]
+          test -f systems/reform.html
+          test -f systems/reform.html.txt
+          cmp -s systems/reform.html systems/reform.html.txt
+          for p in systems/reform.html systems/reform.html.txt; do
+            grep -Fq "$R6_MARKER" "$p"
+            grep -Fq 'id="tutorial-guide"' "$p"
+            grep -Fq 'guide-center.html' "$p"
+            grep -Fq 'demo-guide.html' "$p"
+            grep -Fq 'manuals/reform-quick-start.pdf' "$p"
+            grep -Fq 'manuals/reform-quick-start.png' "$p"
+            grep -Fq 'manuals/reform-detailed-manual.pdf' "$p"
+            grep -Fq 'manuals/reform-detailed-manual.png' "$p"
+            grep -Fq 'https://lin.ee/YxJGXV6D' "$p"
+            grep -Fq 'owner.html?demo=1&amp;v=reform-10' "$p"
+            grep -Fq 'id="price"' "$p"
+          done
+          git merge-base --is-ancestor "$R6_PRODUCT_SHA" HEAD
+          echo "VERIFY_SOURCE_SHA=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
+          echo "REFORM_R6_BLOB=$(git hash-object systems/reform.html)" >> "$GITHUB_ENV"
+
+      - name: Reconfirm REFORM R5 PASS gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/reform-r6-retry
+          curl --fail --location --silent --show-error --retry 5 --retry-delay 2 \
+            "$R5_EVIDENCE_RAW?run=$GITHUB_RUN_ID" -o /tmp/reform-r6-retry/r5.json
+          python - <<'PY'
+          import json
+          e=json.load(open('/tmp/reform-r6-retry/r5.json',encoding='utf-8'))
+          assert e.get('schema')=='DPRO_TUTORIAL_REFORM_R5_MANUALS_QA_V1_0'
+          assert e.get('ok') is True
+          assert e.get('errors')==[]
+          assert e.get('mutations')==[]
+          assert e.get('preflight',{}).get('ok') is True
+          assert e.get('preflight',{}).get('qrPass') is True
+          assert e.get('first10',{}).get('count')==10
+          assert e.get('first10',{}).get('pass') is True
+          runs=e.get('viewportRuns',[])
+          assert [x.get('viewport') for x in runs]==['1440','1024','390','320']
+          assert all(x.get('pass') is True for x in runs)
+          assert all(x.get('documentElementScrollWidth',10**9)<=x.get('innerWidth',0) for x in runs)
+          assert all(x.get('bodyScrollWidth',10**9)<=x.get('innerWidth',0) for x in runs)
+          assert len(e.get('assetChecks',[]))==4 and all(x.get('pass') for x in e['assetChecks'])
+          print('REFORM R5 gate reconfirmed: PASS')
+          PY
+
+      - name: Wait for applied R6 publication
+        shell: bash
+        run: |
+          set -euo pipefail
+          for i in $(seq 1 36); do
+            html="$(curl --fail --location --silent --show-error "$PRODUCT_URL?r6retry=${GITHUB_RUN_ID}-${i}" || true)"
+            if printf '%s' "$html" | grep -Fq "$R6_MARKER"; then
+              echo 'Applied REFORM R6 Product Site is public.'
+              exit 0
+            fi
+            sleep 5
+          done
+          echo 'HOLD: public Product Site does not expose applied REFORM R6 marker.' >&2
+          exit 1
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install Playwright
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm init -y >/dev/null 2>&1
+          npm install --no-audit --no-fund playwright@1.55.0 >/dev/null
+          npx playwright install --with-deps chromium >/dev/null
+          node -e "require('playwright'); console.log('PLAYWRIGHT_MODULE_RESOLUTION=PASS')"
+
+      - name: Run R6 Product Site + source LIVE QA
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p tutorial-evidence/reform-r6/screens
+          trap 'rm -f reform-r6-qa.js' EXIT
+          cat > reform-r6-qa.js <<'JS'
+          const { chromium, request } = require('playwright');
+          const fs=require('fs');
+          const env=process.env;
+          const urls={product:env.PRODUCT_URL,guide:env.GUIDE_URL,demo:env.DEMO_URL,quickPdf:env.QUICK_PDF_URL,quickPng:env.QUICK_PNG_URL,detailPdf:env.DETAIL_PDF_URL,detailPng:env.DETAIL_PNG_URL};
+          const expectedLinks=[urls.guide,urls.demo,urls.quickPdf,urls.quickPng,urls.detailPdf,urls.detailPng];
+          const widths=[['1440',1440,1000],['1024',1024,768],['390',390,844],['320',320,720]];
+          const mutationMethods=new Set(['POST','PUT','PATCH','DELETE']);
+          const ev={schema:'DPRO_TUTORIAL_REFORM_R6_PRODUCT_SITE_LIVE_QA_V1_0',qaWorkflowRevision:'V1.1_MODULE_RESOLUTION_FIX',verifySourceSha:env.VERIFY_SOURCE_SHA,productR6Sha:env.R6_PRODUCT_SHA,reformR6Blob:env.REFORM_R6_BLOB,startedAt:new Date().toISOString(),urls,http:{},viewports:[],guideCenter:{},keyboard:{},errors:[],mutations:[],businessMutation:0,backendChanges:0,r7:'NOT_AUTHORIZED',finalLockCandidate:false,ok:false};
+          const assert=(c,m)=>{if(!c)throw new Error(m)};
+          function attach(page,scope){
+            page.on('pageerror',e=>ev.errors.push({scope,type:'pageerror',message:String(e)}));
+            page.on('console',m=>{if(m.type()==='error')ev.errors.push({scope,type:'console',message:m.text()});});
+            page.on('request',r=>{if(mutationMethods.has(r.method()))ev.mutations.push({scope,method:r.method(),url:r.url()});});
+          }
+          async function tabTo(page,selector,max=80){
+            await page.locator('body').focus();
+            for(let i=0;i<max;i++){
+              await page.keyboard.press('Tab');
+              if(await page.evaluate(sel=>document.activeElement?.matches(sel),selector))return true;
+            }
+            return false;
+          }
+          (async()=>{
+            const browser=await chromium.launch({headless:true});
+            try{
+              const api=await request.newContext({extraHTTPHeaders:{'Cache-Control':'no-cache','Pragma':'no-cache'}});
+              for(const [k,u] of Object.entries(urls)){
+                const sep=u.includes('?')?'&':'?';
+                const r=await api.get(u+`${sep}r6qa=${Date.now()}-${k}`);
+                ev.http[k]={status:r.status(),contentType:r.headers()['content-type']||'',pass:r.status()===200};
+                assert(r.status()===200,`${k} HTTP ${r.status()}`);
+              }
+              await api.dispose();
+
+              for(const [key,w,h] of widths){
+                const ctx=await browser.newContext({viewport:{width:w,height:h}});
+                const page=await ctx.newPage(); attach(page,`product-${key}`);
+                const res=await page.goto(urls.product+`?r6qa=${env.R6_PRODUCT_SHA}-${key}-${Date.now()}`,{waitUntil:'domcontentloaded',timeout:60000});
+                assert(res&&res.status()===200,`product ${key} HTTP`);
+                await page.waitForSelector(`#tutorial-guide[data-dpro-tutorial-r6="${env.R6_MARKER}"]`,{timeout:30000});
+                const previewImgs=page.locator('#tutorial-guide img');
+                for(let i=0;i<await previewImgs.count();i++) await previewImgs.nth(i).scrollIntoViewIfNeeded();
+                await page.waitForFunction(()=>[...document.querySelectorAll('#tutorial-guide img')].every(i=>i.complete&&i.naturalWidth>0),null,{timeout:20000});
+                await page.locator('#tutorial-guide').scrollIntoViewIfNeeded();
+                const m=await page.evaluate(()=>({innerWidth,doc:document.documentElement.scrollWidth,body:document.body?.scrollWidth||0,links:[...document.querySelectorAll('#tutorial-guide a')].map(a=>a.href),imgs:[...document.querySelectorAll('#tutorial-guide img')].map(i=>({complete:i.complete,w:i.naturalWidth,h:i.naturalHeight}))}));
+                const pass=m.innerWidth===w&&m.doc<=m.innerWidth&&m.body<=m.innerWidth&&expectedLinks.every(u=>m.links.includes(u))&&m.imgs.length===2&&m.imgs.every(x=>x.complete&&x.w>0&&x.h>0);
+                ev.viewports.push({viewport:key,...m,pass}); assert(pass,`product viewport ${key} failed`);
+                await page.screenshot({path:`tutorial-evidence/reform-r6/screens/product-${key}.png`,fullPage:true});
+                await ctx.close();
+              }
+
+              const gctx=await browser.newContext({viewport:{width:1440,height:1000}});
+              const gp=await gctx.newPage();attach(gp,'guide-center');
+              const gr=await gp.goto(urls.guide+`?r6qa=${Date.now()}`,{waitUntil:'domcontentloaded',timeout:60000});
+              assert(gr&&gr.status()===200,'Guide Center HTTP');
+              await gp.waitForSelector('#guideCenterReady[data-ready="1"]',{timeout:30000});
+              const gm=await gp.evaluate(()=>({stepCount:window.DPRO_REFORM_TUTORIAL?.steps?.length||0,renderedCount:document.querySelectorAll('#gc-first10 .first10-item').length,start:!!document.querySelector('#gc-start'),resume:!!document.querySelector('#gc-resume'),replay:!!document.querySelector('#gc-replay'),doc:document.documentElement.scrollWidth,innerWidth}));
+              gm.pass=gm.stepCount===10&&gm.renderedCount===10&&gm.start&&gm.resume&&gm.replay&&gm.doc<=gm.innerWidth;
+              ev.guideCenter=gm;assert(gm.pass,'Guide Center First10/control check failed');
+              await gctx.close();
+
+              const kctx=await browser.newContext({viewport:{width:1440,height:1000}});
+              const kp=await kctx.newPage();attach(kp,'keyboard');
+              await kp.goto(urls.product+`?r6qa=keyboard-${Date.now()}`,{waitUntil:'domcontentloaded',timeout:60000});
+              await kp.waitForSelector('#tutorial-guide');
+              const focusGuide=await tabTo(kp,'#tutorial-guide a[data-r6-link="guide"]');
+              ev.keyboard={guideLink:focusGuide,pass:focusGuide};assert(focusGuide,'keyboard focus did not reach Guide Center link');
+              await kctx.close();
+
+              assert(ev.errors.length===0,`attributable errors: ${ev.errors.length}`);
+              assert(ev.mutations.length===0,`business mutations: ${ev.mutations.length}`);
+              ev.businessMutation=0;ev.backendChanges=0;ev.finalLockCandidate=true;ev.ok=true;
+            }catch(e){ev.errors.push({scope:'qa',type:'assertion',message:String(e?.stack||e)});ev.ok=false;ev.finalLockCandidate=false;}
+            finally{await browser.close();ev.finishedAt=new Date().toISOString();fs.writeFileSync('tutorial-evidence/reform-r6/r6-product-site-live-qa.json',JSON.stringify(ev,null,2));}
+            if(!ev.ok)process.exit(1);
+          })();
+          JS
+          node reform-r6-qa.js
+
+      - name: Publish R6 QA evidence and self-remove retry workflow
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f tutorial-evidence/reform-r6/r6-product-site-live-qa.json || {
+            echo 'No R6 evidence JSON was produced.'
+            exit 0
+          }
+          rm -rf /tmp/reform-r6-evidence
+          mkdir -p /tmp/reform-r6-evidence
+          cp -R tutorial-evidence/reform-r6/. /tmp/reform-r6-evidence/
+          for attempt in 1 2 3 4; do
+            git fetch origin main
+            git reset --hard origin/main
+            rm -rf tutorial-evidence/reform-r6
+            mkdir -p tutorial-evidence/reform-r6
+            cp -R /tmp/reform-r6-evidence/. tutorial-evidence/reform-r6/
+            rm -f "$WORKFLOW_PATH"
+            git add -A -- tutorial-evidence/reform-r6 "$WORKFLOW_PATH"
+            git config user.name 'DPRO Tutorial QA'
+            git config user.email 'actions@users.noreply.github.com'
+            if git diff --cached --quiet; then exit 0; fi
+            git commit -m 'REFORM Tutorial R6: publish Product Site LIVE QA evidence'
+            if git push origin HEAD:main; then exit 0; fi
+            sleep 4
+          done
+          echo 'Could not publish R6 evidence without force push.' >&2
+          exit 1
+
+      - name: Upload R6 evidence artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: reform-r6-product-site-live-qa-v1-1
+          path: tutorial-evidence/reform-r6
+          if-no-files-found: warn
