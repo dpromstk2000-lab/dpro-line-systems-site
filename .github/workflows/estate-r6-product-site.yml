@@ -1,0 +1,270 @@
+name: Estate Tutorial R6 Product Site Integration
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/estate-r6-product-site.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: estate-r6-product-site
+  cancel-in-progress: false
+
+jobs:
+  integrate-and-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      PRODUCT_URL: https://dpromstk2000-lab.github.io/dpro-line-systems-site/systems/estate.html
+      ESTATE_BASE: https://dpromstk2000-lab.github.io/dpro-estate-line-liff/
+      WORKFLOW_PATH: .github/workflows/estate-r6-product-site.yml
+      TARGET_HTML: systems/estate.html
+      TARGET_TEXT: systems/estate.html.txt
+    steps:
+      - name: Checkout newest Product Site main
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Lock forward-only base and upload boundary
+        id: base
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch origin main
+          local_head=$(git rev-parse HEAD)
+          remote_head=$(git rev-parse origin/main)
+          test "$local_head" = "$remote_head" || { echo "Product Site main advanced after workflow upload; HOLD and rebase on newest main."; exit 1; }
+          base=$(git rev-parse HEAD^)
+          mapfile -t changed < <(git diff --name-only "$base" HEAD)
+          test "${#changed[@]}" -eq 1
+          test "${changed[0]}" = "$WORKFLOW_PATH"
+          test -s "$TARGET_HTML"
+          test -s "$TARGET_TEXT"
+          cmp -s "$TARGET_HTML" "$TARGET_TEXT"
+          echo "base=$base" >> "$GITHUB_OUTPUT"
+          echo "upload_head=$local_head" >> "$GITHUB_OUTPUT"
+          printf '%s\n' "$base" > /tmp/r6-base.txt
+          sha256sum "$TARGET_HTML" > /tmp/r6-before-sha256.txt
+
+      - name: Integrate Estate Tutorial resources into both mirrors
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat > /tmp/estate-r6-integrate.mjs <<'NODE'
+          import fs from 'node:fs';
+          import crypto from 'node:crypto';
+
+          const htmlPath = process.env.TARGET_HTML;
+          const textPath = process.env.TARGET_TEXT;
+          const html = fs.readFileSync(htmlPath, 'utf8');
+          const text = fs.readFileSync(textPath, 'utf8');
+          if (html !== text) throw new Error('Normal/TEXT mirror mismatch before R6');
+          if (html.includes('DPRO TUTORIAL ESTATE R6')) throw new Error('R6 marker already present; abort to avoid duplicate integration');
+          if (!html.includes('</style></head>')) throw new Error('Expected style boundary not found');
+          if (!html.includes('</main><footer')) throw new Error('Expected main/footer boundary not found');
+
+          const css = `
+          /* DPRO TUTORIAL ESTATE R6 */
+          .ps-tutorial-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem}.ps-tutorial-card{display:flex;min-width:0;flex-direction:column;gap:.4rem;padding:1.1rem 1.15rem;border:1px solid var(--ps-line);border-radius:1rem;background:#fff;text-decoration:none;box-shadow:var(--dpro-shadow-sm)}.ps-tutorial-card span{color:var(--dpro-green);font-size:.72rem;font-weight:900;letter-spacing:.11em}.ps-tutorial-card strong{color:var(--ps-deep);font-size:1.05rem}.ps-tutorial-card small{color:var(--dpro-warm-gray-600);line-height:1.55}.ps-tutorial-card:focus-visible{outline:3px solid #0b73d9;outline-offset:3px}.ps-tutorial-card:hover{border-color:#9fd6bd;transform:translateY(-1px)}@media(max-width:640px){.ps-tutorial-grid{grid-template-columns:1fr}}
+          `;
+
+          const base = 'https://dpromstk2000-lab.github.io/dpro-estate-line-liff/';
+          const section = `<section class="dpro-section ps-section-soft master-section" data-master-section="tutorial-r6" id="tutorial" aria-labelledby="tutorial-title" data-estate-r6-tutorial="1"><div class="dpro-container"><div class="ps-section-heading"><p class="ps-kicker">GUIDE &amp; TUTORIAL</p><h2 id="tutorial-title">実際の操作を、ガイド付きで確認。</h2><p>First10 Tutorial、Guide Center、印刷用Quick Start／Detailed Manualを、現在公開中のESTATEデモと同じ内容で確認できます。</p></div><div class="ps-tutorial-grid" aria-label="ESTATE チュートリアル・操作資料"><a class="ps-tutorial-card" data-r6-resource="tutorial" href="${base}index.html?demo=1" target="_blank" rel="noopener"><span>TUTORIAL</span><strong>First10 Tutorial</strong><small>公開デモから10ステップの操作ガイドを開始します。</small></a><a class="ps-tutorial-card" data-r6-resource="guide" href="${base}guide-center.html?demo=1" target="_blank" rel="noopener"><span>GUIDE CENTER</span><strong>Guide Center</strong><small>First10の全体像、Start / Resume / Replay、補助ガイドを確認します。</small></a><a class="ps-tutorial-card" data-r6-resource="quick" href="${base}DPRO_TUTORIAL_ESTATE_QUICK_START_V1.0.pdf" target="_blank" rel="noopener"><span>PRINT / QUICK</span><strong>Quick Start PDF</strong><small>A4 1ページでFirst10の要点とQRを確認できます。</small></a><a class="ps-tutorial-card" data-r6-resource="detail" href="${base}DPRO_TUTORIAL_ESTATE_DETAILED_MANUAL_V1.0.pdf" target="_blank" rel="noopener"><span>PRINT / DETAIL</span><strong>Detailed Manual PDF</strong><small>現在LIVEの画面を使った全10ステップの詳細マニュアルです。</small></a></div></div></section>`;
+
+          let out = html.replace('</style></head>', `${css}</style></head>`);
+          out = out.replace('</main><footer', `${section}</main><footer`);
+          if (out === html) throw new Error('No R6 change was applied');
+          if ((out.match(/DPRO TUTORIAL ESTATE R6/g) || []).length !== 1) throw new Error('R6 marker count mismatch');
+          const expected = [
+            `${base}index.html?demo=1`,
+            `${base}guide-center.html?demo=1`,
+            `${base}DPRO_TUTORIAL_ESTATE_QUICK_START_V1.0.pdf`,
+            `${base}DPRO_TUTORIAL_ESTATE_DETAILED_MANUAL_V1.0.pdf`
+          ];
+          for (const url of expected) if (!out.includes(url)) throw new Error(`Missing R6 URL: ${url}`);
+          for (const preserved of ['5,500円','https://lin.ee/YxJGXV6D','../lp-estate.html','../flyer-estate.html','../flyer-estate.pdf','https://dpromstk2000-lab.github.io/dpro-estate-line-liff/']) {
+            if (!html.includes(preserved) || !out.includes(preserved)) throw new Error(`Protected Product Site content missing: ${preserved}`);
+          }
+          fs.writeFileSync(htmlPath, out);
+          fs.writeFileSync(textPath, out);
+          fs.mkdirSync('qa-r6', {recursive:true});
+          fs.writeFileSync('qa-r6/integration-evidence.json', JSON.stringify({
+            schema:'DPRO_TUTORIAL_ESTATE_R6_PRODUCT_SITE_V1_0',
+            beforeSha256:crypto.createHash('sha256').update(html).digest('hex'),
+            afterSha256:crypto.createHash('sha256').update(out).digest('hex'),
+            normalTextByteIdentical:true,
+            resourceUrls:expected,
+            protectedChecks:['pricing','LINE CTA','DEMO base','LP','A4 HTML','A4 PDF'],
+            businessMutation:0,
+            productSiteRollback:0
+          },null,2));
+          NODE
+          node /tmp/estate-r6-integrate.mjs
+          cmp -s "$TARGET_HTML" "$TARGET_TEXT"
+          rm -f /tmp/estate-r6-integrate.mjs
+
+      - name: Verify exact write boundary and commit forward-only
+        shell: bash
+        env:
+          BASE_COMMIT: ${{ steps.base.outputs.base }}
+        run: |
+          set -euo pipefail
+          git rm "$WORKFLOW_PATH"
+          mapfile -t worktree_changed < <(git diff --name-only HEAD | sort)
+          printf '%s\n' "${worktree_changed[@]}" > qa-r6/worktree-changed.txt
+          expected=$(printf '%s\n' "$WORKFLOW_PATH" "$TARGET_HTML" "$TARGET_TEXT" | sort)
+          actual=$(printf '%s\n' "${worktree_changed[@]}" | sort)
+          test "$actual" = "$expected"
+          cmp -s "$TARGET_HTML" "$TARGET_TEXT"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add "$TARGET_HTML" "$TARGET_TEXT" "$WORKFLOW_PATH"
+          git commit -m "Integrate Estate tutorial resources into Product Site [skip ci]"
+          git fetch origin main
+          test "$(git rev-parse origin/main)" = "${{ steps.base.outputs.upload_head }}" || { echo "Product Site main advanced during R6; refusing push."; exit 1; }
+          git push origin HEAD:main
+          git merge-base --is-ancestor "$BASE_COMMIT" HEAD
+          mapfile -t net_changed < <(git diff --name-only "$BASE_COMMIT" HEAD | sort)
+          printf '%s\n' "${net_changed[@]}" > qa-r6/net-changed.txt
+          test "${#net_changed[@]}" -eq 2
+          test "${net_changed[0]}" = "$TARGET_HTML"
+          test "${net_changed[1]}" = "$TARGET_TEXT"
+          git rev-parse HEAD > qa-r6/published-head.txt
+          git rev-parse HEAD^{tree} > qa-r6/published-tree.txt
+          cmp -s "$TARGET_HTML" "$TARGET_TEXT"
+
+      - name: Wait for R6 Product Site LIVE deployment
+        shell: bash
+        run: |
+          set -euo pipefail
+          ok=0
+          for attempt in $(seq 1 36); do
+            if curl --fail --silent "${PRODUCT_URL}?r6=$(date +%s)" | grep -q 'DPRO TUTORIAL ESTATE R6'; then ok=1; break; fi
+            sleep 10
+          done
+          test "$ok" = 1 || { echo "R6 marker not observed on public Product Site."; exit 1; }
+
+      - name: Setup Node for R6 LIVE QA
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install Playwright for R6 LIVE QA
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm install --no-save playwright@1.55.0
+          npx playwright install --with-deps chromium
+
+      - name: Run R6 Product Site LIVE QA
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat > estate-r6-live-qa.mjs <<'NODE'
+          import { chromium } from 'playwright';
+          import fs from 'node:fs';
+
+          const productUrl = process.env.PRODUCT_URL;
+          const expected = {
+            tutorial:'https://dpromstk2000-lab.github.io/dpro-estate-line-liff/index.html?demo=1',
+            guide:'https://dpromstk2000-lab.github.io/dpro-estate-line-liff/guide-center.html?demo=1',
+            quick:'https://dpromstk2000-lab.github.io/dpro-estate-line-liff/DPRO_TUTORIAL_ESTATE_QUICK_START_V1.0.pdf',
+            detail:'https://dpromstk2000-lab.github.io/dpro-estate-line-liff/DPRO_TUTORIAL_ESTATE_DETAILED_MANUAL_V1.0.pdf'
+          };
+          const viewports = [
+            {name:'1440',width:1440,height:1000},
+            {name:'1024',width:1024,height:768},
+            {name:'390',width:390,height:844},
+            {name:'320',width:320,height:720}
+          ];
+          const result={schema:'DPRO_TUTORIAL_ESTATE_R6_LIVE_QA_V1_0',productUrl,expected,viewports:[],resourceChecks:{},businessMutationAttempts:[],failures:[]};
+          const browser=await chromium.launch({headless:true});
+
+          for (const vp of viewports) {
+            const context=await browser.newContext({viewport:{width:vp.width,height:vp.height}});
+            const pageErrors=[]; const consoleErrors=[]; const unsafe=[];
+            await context.route('**/*', async route=>{
+              const m=route.request().method();
+              if(['POST','PUT','PATCH','DELETE'].includes(m)) {unsafe.push({method:m,url:route.request().url()}); return route.abort('blockedbyclient');}
+              return route.continue();
+            });
+            const page=await context.newPage();
+            page.on('pageerror',e=>pageErrors.push(String(e)));
+            page.on('console',m=>{if(m.type()==='error') consoleErrors.push(m.text());});
+            const resp=await page.goto(`${productUrl}?qa=${Date.now()}`,{waitUntil:'networkidle'});
+            if(!resp || resp.status()!==200) result.failures.push(`${vp.name}: product status ${resp?.status()}`);
+            const data=await page.evaluate(()=>({
+              width:window.innerWidth,
+              clientWidth:document.documentElement.clientWidth,
+              scrollWidth:document.documentElement.scrollWidth,
+              marker:document.documentElement.innerHTML.includes('DPRO TUTORIAL ESTATE R6'),
+              links:[...document.querySelectorAll('[data-r6-resource]')].map(a=>({key:a.getAttribute('data-r6-resource'),href:a.href})),
+              pricing:document.body.textContent.includes('5,500円'),
+              lineCta:[...document.querySelectorAll('a')].some(a=>a.href==='https://lin.ee/YxJGXV6D'),
+              lp:[...document.querySelectorAll('a')].some(a=>a.getAttribute('href')==='../lp-estate.html'),
+              flyer:[...document.querySelectorAll('a')].some(a=>a.getAttribute('href')==='../flyer-estate.html'),
+              pdf:[...document.querySelectorAll('a')].some(a=>a.getAttribute('href')==='../flyer-estate.pdf')
+            }));
+            if(data.width!==vp.width) result.failures.push(`${vp.name}: width mismatch ${data.width}`);
+            const overflow=Math.max(0,data.scrollWidth-data.clientWidth);
+            if((vp.width===390||vp.width===320)&&overflow!==0) result.failures.push(`${vp.name}: horizontal overflow ${overflow}`);
+            if(!data.marker) result.failures.push(`${vp.name}: R6 marker missing`);
+            if(data.links.length!==4) result.failures.push(`${vp.name}: resource link count ${data.links.length}`);
+            for(const [key,url] of Object.entries(expected)) if(!data.links.some(x=>x.key===key&&x.href===url)) result.failures.push(`${vp.name}: ${key} href mismatch`);
+            for(const key of ['pricing','lineCta','lp','flyer','pdf']) if(!data[key]) result.failures.push(`${vp.name}: preserved ${key} missing`);
+
+            const lastFaq=page.locator('#faq details:last-child summary');
+            if(await lastFaq.count()) {
+              await lastFaq.focus();
+              await page.keyboard.press('Tab');
+              const focus=await page.evaluate(()=>({
+                key:document.activeElement?.getAttribute('data-r6-resource'),
+                visible:document.activeElement?.matches(':focus-visible')||false,
+                outline:getComputedStyle(document.activeElement).outlineStyle,
+                outlineWidth:getComputedStyle(document.activeElement).outlineWidth
+              }));
+              if(focus.key!=='tutorial'||!focus.visible||focus.outline==='none'||focus.outlineWidth==='0px') result.failures.push(`${vp.name}: keyboard focus visibility failed ${JSON.stringify(focus)}`);
+            } else result.failures.push(`${vp.name}: FAQ focus anchor missing`);
+
+            if(pageErrors.length) result.failures.push(`${vp.name}: page errors ${JSON.stringify(pageErrors)}`);
+            if(consoleErrors.length) result.failures.push(`${vp.name}: console errors ${JSON.stringify(consoleErrors)}`);
+            if(unsafe.length) result.failures.push(`${vp.name}: unsafe writes ${JSON.stringify(unsafe)}`);
+            result.businessMutationAttempts.push(...unsafe);
+            await page.screenshot({path:`qa-r6/product-site-${vp.name}.png`,fullPage:true});
+            result.viewports.push({...vp,overflow,pageErrors,consoleErrors,unsafe,resourceLinks:data.links,keyboardFocusChecked:true});
+            await context.close();
+          }
+
+          const request=await browser.newContext();
+          for(const [key,url] of Object.entries(expected)) {
+            const r=await request.request.get(url,{maxRedirects:10});
+            result.resourceChecks[key]={url,status:r.status(),ok:r.ok()};
+            if(!r.ok()) result.failures.push(`${key}: resource status ${r.status()}`);
+          }
+          await request.close();
+          await browser.close();
+          result.normalTextByteIdentical = fs.readFileSync(process.env.TARGET_HTML).equals(fs.readFileSync(process.env.TARGET_TEXT));
+          if(!result.normalTextByteIdentical) result.failures.push('normal/TEXT not byte-identical');
+          result.pass=result.failures.length===0 && result.businessMutationAttempts.length===0;
+          result.businessMutation=0;
+          result.productSiteRollback=0;
+          fs.writeFileSync('qa-r6/r6-live-qa.json',JSON.stringify(result,null,2));
+          console.log(JSON.stringify({pass:result.pass,failures:result.failures.length,businessMutationAttempts:result.businessMutationAttempts.length},null,2));
+          if(!result.pass) process.exit(1);
+          NODE
+          node estate-r6-live-qa.mjs
+          rm -f estate-r6-live-qa.mjs
+
+      - name: Upload R6 QA evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: estate-tutorial-r6-product-site-qa
+          path: qa-r6
+          if-no-files-found: warn
+          retention-days: 30
