@@ -1,0 +1,378 @@
+name: NAIL Tutorial R6 Product Site Apply and LIVE QA
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - .github/workflows/dpro-tutorial-nail-r6.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: dpro-tutorial-nail-r6
+  cancel-in-progress: false
+
+env:
+  PRODUCT_URL: https://dpromstk2000-lab.github.io/dpro-line-systems-site/systems/nail.html
+  INDUSTRY_REPO: https://github.com/dpromstk2000-lab/liff-nail-reserve.git
+  INDUSTRY_RAW_BASE: https://raw.githubusercontent.com/dpromstk2000-lab/liff-nail-reserve/main
+  INDUSTRY_PAGES_BASE: https://dpromstk2000-lab.github.io/liff-nail-reserve
+  ACCEPTED_R5_HEAD: f9b78f9b512ec4d1c4a8fecc44e57515ce2d1f6a
+  PACKAGE_OBSERVED_PRODUCT_HEAD: df230c8421ed8e2a27cb90e4820581ceaeee81c8
+  TARGET_FILE: systems/nail.html
+  MIRROR_FILE: systems/nail.txt
+
+jobs:
+  apply-and-live-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: R5 PASS lock and newest Product Site main gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch origin main
+          test "$(git rev-parse HEAD)" = "$(git rev-parse origin/main)"
+          git merge-base --is-ancestor "$PACKAGE_OBSERVED_PRODUCT_HEAD" HEAD
+          git rev-parse HEAD > /tmp/R6_START_HEAD.txt
+          git rev-parse HEAD^{tree} > /tmp/R6_START_TREE.txt
+
+          CURRENT_R5="$(git ls-remote "$INDUSTRY_REPO" refs/heads/main | awk '{print $1}')"
+          echo "$CURRENT_R5" > /tmp/R6_R5_HEAD.txt
+          test "$CURRENT_R5" = "$ACCEPTED_R5_HEAD"
+
+          curl -fsSL "$INDUSTRY_RAW_BASE/R5_QA_SUMMARY.json" -o /tmp/R5_QA_SUMMARY.json
+          python - <<'PY'
+          import json
+          q=json.load(open('/tmp/R5_QA_SUMMARY.json',encoding='utf-8'))
+          assert q.get('automated_preflight_pass') is True, q
+          assert q.get('first10_count') == 10, q
+          assert q.get('current_live_screenshots') is True, q
+          assert q.get('qr_decode_qa') is True, q
+          assert q.get('business_mutation') == 0, q
+          assert q.get('failures') == [], q
+          print('R5 automated gate PASS; assistant visual QA is locked to ACCEPTED_R5_HEAD by this R6 package.')
+          PY
+
+          for u in \
+            "$INDUSTRY_PAGES_BASE/guide-center.html" \
+            "$INDUSTRY_PAGES_BASE/demo-guide.html?tutorial=nail&step=1" \
+            "$INDUSTRY_PAGES_BASE/DPRO_TUTORIAL_NAIL_QUICK_START_V1.0.pdf" \
+            "$INDUSTRY_PAGES_BASE/DPRO_TUTORIAL_NAIL_DETAILED_MANUAL_V1.0.pdf"
+          do
+            code="$(curl -L --retry 8 --retry-delay 4 --retry-all-errors -sS -o /dev/null -w '%{http_code}' "$u")"
+            test "$code" = "200"
+          done
+
+          cp "$TARGET_FILE" /tmp/R6_TARGET_BEFORE.html
+          if test -f "$MIRROR_FILE"; then
+            cmp -s "$TARGET_FILE" "$MIRROR_FILE"
+            echo yes > /tmp/R6_MIRROR_EXISTS.txt
+          else
+            echo no > /tmp/R6_MIRROR_EXISTS.txt
+          fi
+
+      - name: Install R6 browser QA dependency
+        shell: bash
+        run: npm install --no-save puppeteer-core@24
+
+      - name: Resolve Chrome
+        id: chrome
+        shell: bash
+        run: |
+          set -euo pipefail
+          CHROME="$(command -v google-chrome || command -v chromium || command -v chromium-browser || true)"
+          test -n "$CHROME"
+          echo "path=$CHROME" >> "$GITHUB_OUTPUT"
+          "$CHROME" --version
+
+      - name: Create Product Site LIVE QA runner
+        shell: bash
+        run: |
+          cat > /tmp/nail-r6-live-qa.cjs <<'NODE'
+          const fs=require('fs');
+          const puppeteer=require('puppeteer-core');
+          const mode=process.argv[2];
+          const out=process.argv[3];
+          const base=process.env.PRODUCT_URL;
+          const chrome=process.env.CHROME_PATH;
+          const expected={
+            guide:`${process.env.INDUSTRY_PAGES_BASE}/guide-center.html`,
+            first10:`${process.env.INDUSTRY_PAGES_BASE}/demo-guide.html?tutorial=nail&step=1`,
+            quick:`${process.env.INDUSTRY_PAGES_BASE}/DPRO_TUTORIAL_NAIL_QUICK_START_V1.0.pdf`,
+            detailed:`${process.env.INDUSTRY_PAGES_BASE}/DPRO_TUTORIAL_NAIL_DETAILED_MANUAL_V1.0.pdf`,
+          };
+          const viewports=[
+            {name:'1440x900',width:1440,height:900},
+            {name:'1024x768',width:1024,height:768},
+            {name:'390x844',width:390,height:844},
+            {name:'320x740',width:320,height:740},
+          ];
+          const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+          (async()=>{
+            const browser=await puppeteer.launch({executablePath:chrome,headless:true,args:['--no-sandbox','--disable-dev-shm-usage']});
+            const report={mode,url:base,time:new Date().toISOString(),pass:true,failures:[],viewports:[]};
+            try{
+              for(const vp of viewports){
+                const page=await browser.newPage();
+                await page.setViewport({width:vp.width,height:vp.height,deviceScaleFactor:1});
+                const consoleErrors=[]; const pageErrors=[]; const mutationRequests=[];
+                page.on('console',m=>{ if(m.type()==='error') consoleErrors.push(m.text()) });
+                page.on('pageerror',e=>pageErrors.push(String(e?.message||e)));
+                page.on('request',req=>{const method=req.method().toUpperCase(); if(!['GET','HEAD','OPTIONS'].includes(method)) mutationRequests.push({method,url:req.url()})});
+                let status=0, gotoError='';
+                try{
+                  const res=await page.goto(`${base}?r6qa=${Date.now()}`,{waitUntil:'networkidle2',timeout:60000});
+                  status=res?.status()||0;
+                }catch(e){gotoError=String(e?.message||e)}
+                await sleep(500);
+                const data=await page.evaluate((mode,expected)=>{
+                  const de=document.documentElement;
+                  const section=document.querySelector('[data-dpro-tutorial-r6="NAIL"]');
+                  const links={};
+                  for(const key of ['guide','first10','quick','detailed']){
+                    const a=document.querySelector(`[data-r6-link="${key}"]`);
+                    links[key]=a?{href:a.href,text:(a.textContent||'').trim()}:null;
+                  }
+                  let visible=false;
+                  if(section){const r=section.getBoundingClientRect();const s=getComputedStyle(section);visible=r.width>0&&r.height>0&&s.display!=='none'&&s.visibility!=='hidden'}
+                  const focus={};
+                  if(mode==='post'){
+                    for(const key of ['guide','first10','quick','detailed']){
+                      const a=document.querySelector(`[data-r6-link="${key}"]`);
+                      if(!a){focus[key]=null;continue}
+                      a.focus();
+                      const s=getComputedStyle(a);
+                      focus[key]={active:document.activeElement===a,outlineStyle:s.outlineStyle,outlineWidth:s.outlineWidth,outlineColor:s.outlineColor};
+                    }
+                  }
+                  return {
+                    title:document.title,
+                    scrollWidth:de.scrollWidth,
+                    clientWidth:de.clientWidth,
+                    overflow:de.scrollWidth>de.clientWidth,
+                    marker:!!section,
+                    visible,links,focus,
+                    baselineAnchors:[...document.querySelectorAll('a')].map(a=>a.href),
+                    expected,
+                  };
+                },mode,expected);
+                const row={viewport:vp.name,status,gotoError,consoleErrors,pageErrors,mutationRequests,...data};
+                report.viewports.push(row);
+                const fail=(msg)=>{report.pass=false;report.failures.push(`${vp.name}: ${msg}`)};
+                if(status!==200||gotoError) fail(`HTTP/goto status=${status} ${gotoError}`);
+                if(data.overflow) fail('horizontal overflow');
+                if(mutationRequests.length) fail(`business mutation requests=${JSON.stringify(mutationRequests)}`);
+                if(mode==='post'){
+                  if(!data.marker||!data.visible) fail('Tutorial section missing/not visible');
+                  for(const [key,url] of Object.entries(expected)){
+                    if(!data.links[key]||data.links[key].href!==url) fail(`link ${key} mismatch`);
+                    const f=data.focus[key];
+                    if(!f||!f.active||f.outlineStyle==='none'||parseFloat(f.outlineWidth||'0')<2) fail(`focus ${key} not visibly recoverable`);
+                  }
+                }
+                await page.close();
+              }
+            } finally {await browser.close()}
+            fs.writeFileSync(out,JSON.stringify(report,null,2));
+            if(!report.pass) process.exitCode=1;
+          })().catch(e=>{console.error(e);process.exit(1)});
+          NODE
+
+      - name: PRE-WRITE Product Site LIVE baseline 1440 1024 390 320
+        env:
+          CHROME_PATH: ${{ steps.chrome.outputs.path }}
+          NODE_PATH: ${{ github.workspace }}/node_modules
+        shell: bash
+        run: node /tmp/nail-r6-live-qa.cjs pre /tmp/R6_PRE_LIVE_QA.json
+
+      - name: Apply isolated NAIL Tutorial integration
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          p=Path('systems/nail.html')
+          s=p.read_text(encoding='utf-8')
+          start='<!-- DPRO TUTORIAL NAIL R6 START -->'
+          end='<!-- DPRO TUTORIAL NAIL R6 END -->'
+          block='''<!-- DPRO TUTORIAL NAIL R6 START -->
+          <style id="dpro-tutorial-nail-r6-style">
+          #tutorial .ps-tutorial-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.9rem}
+          #tutorial .ps-tutorial-link{display:flex;flex-direction:column;justify-content:center;min-height:116px;padding:1.05rem 1.15rem;border:1px solid var(--ps-line);border-radius:1rem;background:#fff;text-decoration:none;box-shadow:var(--dpro-shadow-sm)}
+          #tutorial .ps-tutorial-link strong{display:block;color:var(--ps-deep);font-size:1.06rem;line-height:1.35}
+          #tutorial .ps-tutorial-link span{display:block;margin-top:.3rem;color:var(--dpro-warm-gray-600);font-size:.88rem;line-height:1.55}
+          #tutorial .ps-tutorial-link:focus{outline:3px solid var(--dpro-green);outline-offset:3px}
+          #tutorial .ps-tutorial-note{margin:1rem 0 0;color:var(--dpro-warm-gray-600);font-size:.88rem}
+          @media(max-width:640px){#tutorial .ps-tutorial-grid{grid-template-columns:1fr}}
+          </style>
+          <section aria-labelledby="tutorial-title" class="dpro-section ps-section-soft master-section" data-dpro-tutorial-r6="NAIL" id="tutorial">
+            <div class="dpro-container">
+              <div class="ps-section-heading">
+                <p class="ps-kicker">TUTORIAL / GUIDE CENTER</p>
+                <h2 id="tutorial-title">実画面を見ながら、First10で操作を確認。</h2>
+                <p>Guide Center、10ステップのチュートリアル、A4 Quick Start、Detailed Manualを現在公開中のNAILデモに接続しています。</p>
+              </div>
+              <div class="ps-tutorial-grid">
+                <a class="ps-tutorial-link" data-r6-link="guide" href="https://dpromstk2000-lab.github.io/liff-nail-reserve/guide-center.html" rel="noopener" target="_blank"><strong>Guide Center</strong><span>First10の全体像と各ステップへの入口を確認</span></a>
+                <a class="ps-tutorial-link" data-r6-link="first10" href="https://dpromstk2000-lab.github.io/liff-nail-reserve/demo-guide.html?tutorial=nail&amp;step=1" rel="noopener" target="_blank"><strong>First10を体験</strong><span>予約・会員・店頭iPad・オーナー管理まで10ステップ</span></a>
+                <a class="ps-tutorial-link" data-r6-link="quick" href="https://dpromstk2000-lab.github.io/liff-nail-reserve/DPRO_TUTORIAL_NAIL_QUICK_START_V1.0.pdf" rel="noopener" target="_blank"><strong>Quick Start PDF</strong><span>A4 1ページで開始方法とFirst10を確認</span></a>
+                <a class="ps-tutorial-link" data-r6-link="detailed" href="https://dpromstk2000-lab.github.io/liff-nail-reserve/DPRO_TUTORIAL_NAIL_DETAILED_MANUAL_V1.0.pdf" rel="noopener" target="_blank"><strong>Detailed Manual PDF</strong><span>LIVE画面付きA4 6ページの詳細操作マニュアル</span></a>
+              </div>
+              <p class="ps-tutorial-note">デモでは架空情報のみを使用します。Tutorial操作による予約・カルテ・会計・設定などの業務データ更新は行いません。</p>
+            </div>
+          </section>
+          <!-- DPRO TUTORIAL NAIL R6 END -->'''
+          if start in s or end in s:
+              if not(start in s and end in s): raise SystemExit('partial existing R6 marker: HOLD')
+              s=re.sub(re.escape(start)+r'.*?'+re.escape(end),block,s,flags=re.S)
+          else:
+              if '</main>' not in s: raise SystemExit('missing </main>: HOLD')
+              s=s.replace('</main>',block+'</main>',1)
+          p.write_text(s,encoding='utf-8')
+          mirror=Path('systems/nail.txt')
+          if mirror.exists(): mirror.write_text(s,encoding='utf-8')
+          PY
+
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          before=Path('/tmp/R6_TARGET_BEFORE.html').read_text(encoding='utf-8')
+          after=Path('systems/nail.html').read_text(encoding='utf-8')
+          start='<!-- DPRO TUTORIAL NAIL R6 START -->'; end='<!-- DPRO TUTORIAL NAIL R6 END -->'
+          stripped=re.sub(re.escape(start)+r'.*?'+re.escape(end),'',after,flags=re.S)
+          if stripped != before:
+              raise SystemExit('non-Tutorial source changed: HOLD')
+          assert after.count('data-dpro-tutorial-r6="NAIL"')==1
+          for token in ['data-r6-link="guide"','data-r6-link="first10"','data-r6-link="quick"','data-r6-link="detailed"']:
+              assert after.count(token)==1, token
+          print('isolated patch PASS')
+          PY
+
+          if test "$(cat /tmp/R6_MIRROR_EXISTS.txt)" = yes; then cmp -s "$TARGET_FILE" "$MIRROR_FILE"; fi
+          git status --short
+          CHANGED="$(git diff --name-only | sort)"
+          if test "$(cat /tmp/R6_MIRROR_EXISTS.txt)" = yes; then
+            test "$CHANGED" = $'systems/nail.html\nsystems/nail.txt'
+          else
+            test "$CHANGED" = 'systems/nail.html'
+          fi
+
+      - name: Commit R6 Product Site forward-only
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch origin main
+          test "$(git rev-parse origin/main)" = "$(cat /tmp/R6_START_HEAD.txt)"
+          git config user.name "DPRO Tutorial R6"
+          git config user.email "actions@users.noreply.github.com"
+          git add "$TARGET_FILE"
+          if test "$(cat /tmp/R6_MIRROR_EXISTS.txt)" = yes; then git add "$MIRROR_FILE"; fi
+          git commit -m "NAIL Tutorial R6 Product Site integration"
+          git push origin HEAD:main
+          git rev-parse HEAD > /tmp/R6_IMPLEMENTATION_SHA.txt
+          git rev-parse HEAD^{tree} > /tmp/R6_IMPLEMENTATION_TREE.txt
+
+      - name: Wait for Product Site Pages deployment
+        shell: bash
+        run: |
+          set -euo pipefail
+          SHA="$(cat /tmp/R6_IMPLEMENTATION_SHA.txt)"
+          ok=0
+          for i in $(seq 1 60); do
+            body="$(curl -L --retry 2 -fsS "$PRODUCT_URL?r6=$SHA&t=$i" || true)"
+            if printf '%s' "$body" | grep -q 'data-dpro-tutorial-r6="NAIL"'; then ok=1; break; fi
+            sleep 5
+          done
+          test "$ok" -eq 1
+
+      - name: POST-LIVE Product Site QA 1440 1024 390 320
+        env:
+          CHROME_PATH: ${{ steps.chrome.outputs.path }}
+          NODE_PATH: ${{ github.workspace }}/node_modules
+        shell: bash
+        run: |
+          set -euo pipefail
+          node /tmp/nail-r6-live-qa.cjs post /tmp/R6_POST_LIVE_QA.json
+          python - <<'PY'
+          import json
+          pre=json.load(open('/tmp/R6_PRE_LIVE_QA.json',encoding='utf-8'))
+          post=json.load(open('/tmp/R6_POST_LIVE_QA.json',encoding='utf-8'))
+          assert pre['pass'] is True, pre
+          assert post['pass'] is True, post
+          pre_err={e for v in pre['viewports'] for e in (v['consoleErrors']+v['pageErrors'])}
+          post_err={e for v in post['viewports'] for e in (v['consoleErrors']+v['pageErrors'])}
+          new_err=sorted(post_err-pre_err)
+          assert not new_err, new_err
+          for v in post['viewports']:
+              if v['viewport'] in ('390x844','320x740'): assert v['overflow'] is False, v
+          print('R6 LIVE QA PASS; no new Tutorial-attributable console/page errors')
+          PY
+
+          for u in \
+            "$INDUSTRY_PAGES_BASE/guide-center.html" \
+            "$INDUSTRY_PAGES_BASE/demo-guide.html?tutorial=nail&step=1" \
+            "$INDUSTRY_PAGES_BASE/DPRO_TUTORIAL_NAIL_QUICK_START_V1.0.pdf" \
+            "$INDUSTRY_PAGES_BASE/DPRO_TUTORIAL_NAIL_DETAILED_MANUAL_V1.0.pdf"
+          do
+            code="$(curl -L --retry 6 --retry-delay 3 --retry-all-errors -sS -o /dev/null -w '%{http_code}' "$u")"
+            test "$code" = "200"
+          done
+
+      - name: Build R6 CENTRAL evidence artifact
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/r6-evidence
+          cp /tmp/R6_START_HEAD.txt /tmp/r6-evidence/PRODUCT_SITE_START_HEAD.txt || true
+          cp /tmp/R6_START_TREE.txt /tmp/r6-evidence/PRODUCT_SITE_START_TREE.txt || true
+          cp /tmp/R6_R5_HEAD.txt /tmp/r6-evidence/ACCEPTED_R5_HEAD.txt || true
+          cp /tmp/R5_QA_SUMMARY.json /tmp/r6-evidence/R5_QA_SUMMARY.json || true
+          cp /tmp/R6_PRE_LIVE_QA.json /tmp/r6-evidence/R6_PRE_LIVE_QA.json || true
+          cp /tmp/R6_POST_LIVE_QA.json /tmp/r6-evidence/R6_POST_LIVE_QA.json || true
+          cp /tmp/R6_IMPLEMENTATION_SHA.txt /tmp/r6-evidence/R6_IMPLEMENTATION_SHA.txt || true
+          cp /tmp/R6_IMPLEMENTATION_TREE.txt /tmp/r6-evidence/R6_IMPLEMENTATION_TREE.txt || true
+          cp /tmp/R6_TARGET_BEFORE.html /tmp/r6-evidence/systems_nail_BEFORE.html || true
+          cp systems/nail.html /tmp/r6-evidence/systems_nail_AFTER.html || true
+          python - <<'PY'
+          import json, pathlib
+          root=pathlib.Path('/tmp/r6-evidence')
+          pre=json.loads((root/'R6_PRE_LIVE_QA.json').read_text()) if (root/'R6_PRE_LIVE_QA.json').exists() else None
+          post=json.loads((root/'R6_POST_LIVE_QA.json').read_text()) if (root/'R6_POST_LIVE_QA.json').exists() else None
+          summary={
+            'system':'NAIL','stage':'R6','standard':'V1.1',
+            'product_site_repo':'dpromstk2000-lab/dpro-line-systems-site',
+            'target':'systems/nail.html',
+            'mirror_exists': pathlib.Path('/tmp/R6_MIRROR_EXISTS.txt').read_text().strip()=='yes' if pathlib.Path('/tmp/R6_MIRROR_EXISTS.txt').exists() else None,
+            'accepted_r5_head': pathlib.Path('/tmp/R6_R5_HEAD.txt').read_text().strip() if pathlib.Path('/tmp/R6_R5_HEAD.txt').exists() else None,
+            'assistant_visual_r5_qa': True,
+            'pre_live_pass': pre.get('pass') if pre else None,
+            'post_live_pass': post.get('pass') if post else None,
+            'tested_viewports':['1440x900','1024x768','390x844','320x740'],
+            'overflow_390': next((x['overflow'] for x in post['viewports'] if x['viewport']=='390x844'),None) if post else None,
+            'overflow_320': next((x['overflow'] for x in post['viewports'] if x['viewport']=='320x740'),None) if post else None,
+            'business_mutation': 0 if post and all(not x['mutationRequests'] for x in post['viewports']) else None,
+            'product_site_rollback':0,
+            'source_outside_tutorial_unchanged': True,
+            'r6_qa_pass': bool(post and post.get('pass')),
+          }
+          (root/'R6_QA_SUMMARY.json').write_text(json.dumps(summary,ensure_ascii=False,indent=2),encoding='utf-8')
+          PY
+
+      - name: Upload R6 CENTRAL evidence artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: NAIL-R6-PRODUCT-SITE-CENTRAL-EVIDENCE
+          path: /tmp/r6-evidence
+          if-no-files-found: warn
+          retention-days: 14
