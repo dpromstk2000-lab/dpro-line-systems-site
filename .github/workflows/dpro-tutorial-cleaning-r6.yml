@@ -1,0 +1,336 @@
+name: DPRO Tutorial CLEANING R6 Product Site + LIVE QA
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/dpro-tutorial-cleaning-r6.yml'
+
+permissions:
+  contents: write
+
+env:
+  PRODUCT_URL: https://dpromstk2000-lab.github.io/dpro-line-systems-site/systems/cleaning.html
+  FIRST10_URL: https://dpromstk2000-lab.github.io/dpro-cleaning-line-liff/demo-guide.html?v=cleaning-18&tutorial=start
+  GUIDE_URL: https://dpromstk2000-lab.github.io/dpro-cleaning-line-liff/tutorial-guide.html?v=cleaning-tutorial-v1-1
+  QUICK_PDF_URL: https://dpromstk2000-lab.github.io/dpro-cleaning-line-liff/DPRO_TUTORIAL_CLEANING_QUICK_START_V1.0.pdf
+  QUICK_PNG_URL: https://dpromstk2000-lab.github.io/dpro-cleaning-line-liff/DPRO_TUTORIAL_CLEANING_QUICK_START_V1.0.png
+  DETAIL_PDF_URL: https://dpromstk2000-lab.github.io/dpro-cleaning-line-liff/DPRO_TUTORIAL_CLEANING_DETAILED_MANUAL_V1.0.pdf
+  DETAIL_PNG_URL: https://dpromstk2000-lab.github.io/dpro-cleaning-line-liff/DPRO_TUTORIAL_CLEANING_DETAILED_MANUAL_V1.0.png
+
+jobs:
+  patch-and-live-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: R6 newest-main entry gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch origin main
+          test "$(git rev-parse origin/main)" = "$(git rev-parse HEAD)"
+          test -f systems/cleaning.html
+          echo "r6_entry_head=$(git rev-parse HEAD)" | tee /tmp/r6-entry.txt
+          echo "r6_entry_tree=$(git rev-parse HEAD^{tree})" | tee -a /tmp/r6-entry.txt
+          if [ -f systems/cleaning.html.txt ]; then
+            cmp -s systems/cleaning.html systems/cleaning.html.txt || { echo 'html/.txt mirror mismatch before R6'; exit 2; }
+            echo 'mirror=systems/cleaning.html.txt' | tee -a /tmp/r6-entry.txt
+          else
+            echo 'mirror=NONE' | tee -a /tmp/r6-entry.txt
+          fi
+
+      - name: Patch CLEANING product page only
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+
+          html=Path('systems/cleaning.html')
+          mirrors=[p for p in [Path('systems/cleaning.html.txt')] if p.exists()]
+          targets=[html]+mirrors
+          if mirrors and html.read_bytes()!=mirrors[0].read_bytes():
+              raise SystemExit('CLEANING html/.txt mirror is not byte-identical; HOLD')
+
+          css=r'''
+          /* DPRO CLEANING TUTORIAL R6 START */
+          .ps-tutorial-r6{background:linear-gradient(180deg,#f4faf7 0%,#fff 100%)}
+          .ps-tutorial-r6__grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem}
+          .ps-tutorial-r6__card{display:flex;flex-direction:column;gap:.8rem;padding:1.2rem;border:1px solid var(--ps-line);border-radius:1rem;background:#fff;box-shadow:var(--dpro-shadow-sm)}
+          .ps-tutorial-r6__card h3{margin:0;color:var(--ps-deep);font-size:1.14rem}.ps-tutorial-r6__card p{margin:0;color:var(--dpro-warm-gray-600)}
+          .ps-tutorial-r6__links{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.6rem;margin-top:.2rem}
+          .ps-tutorial-r6__link{min-height:48px;display:flex;align-items:center;justify-content:space-between;gap:.6rem;padding:.72rem .82rem;border:1px solid var(--ps-line);border-radius:.78rem;background:var(--ps-pale);text-decoration:none;font-weight:850;color:var(--ps-deep)}
+          .ps-tutorial-r6__link::after{content:"→";color:var(--dpro-green);font-weight:900}.ps-tutorial-r6__link:hover{border-color:rgba(22,132,91,.45);background:#fff}
+          .ps-tutorial-r6__link:focus,.ps-tutorial-r6__link:focus-visible,.ps-tutorial-r6 .dpro-button:focus,.ps-tutorial-r6 .dpro-button:focus-visible{outline:3px solid #0f766e;outline-offset:3px}
+          .ps-tutorial-r6__manuals{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem;margin-top:1rem}
+          .ps-tutorial-r6__manual{overflow:hidden;padding:0}.ps-tutorial-r6__manual img{display:block;width:100%;aspect-ratio:210/297;object-fit:cover;object-position:top;border-bottom:1px solid var(--ps-line);background:#fff}.ps-tutorial-r6__manual-body{padding:1rem}.ps-tutorial-r6__manual h3{margin:0;color:var(--ps-deep)}.ps-tutorial-r6__manual p{margin:.45rem 0 .9rem;color:var(--dpro-warm-gray-600);font-size:.9rem}.ps-tutorial-r6__manual .dpro-button{width:100%}
+          .ps-tutorial-r6__safe{margin:1rem 0 0;padding:1rem 1.1rem;border-left:4px solid var(--dpro-green);background:#edf8f4;color:#395149}
+          @media(max-width:700px){.ps-tutorial-r6__grid,.ps-tutorial-r6__manuals,.ps-tutorial-r6__links{grid-template-columns:1fr}.ps-tutorial-r6__manual img{max-height:420px;object-fit:contain}}
+          /* DPRO CLEANING TUTORIAL R6 END */
+          '''
+
+          section=r'''
+          <section class="dpro-section ps-tutorial-r6" id="tutorial-guide" aria-labelledby="tutorial-guide-title" data-dpro-tutorial-r6="CLEANING"><div class="dpro-container"><div class="ps-section-heading"><p class="ps-kicker">TUTORIAL / GUIDE / MANUALS</p><h2 id="tutorial-guide-title">画面を見ながら覚える、CLEANING操作ガイド。</h2><p>First10は受付から未受取フォローまでをExactly 10で案内します。詳しい確認はGuide CenterとA4マニュアルからいつでも開けます。</p></div><div class="ps-tutorial-r6__grid"><article class="ps-tutorial-r6__card"><h3>First10 / Guide Center</h3><p>既存のLIVE画面を順番に案内するだけで、注文作成、写真登録、工程変更、支払い、受け渡し完了、通知などの業務操作をTutorialが自動実行することはありません。</p><div class="ps-tutorial-r6__links"><a class="ps-tutorial-r6__link" data-r6-link="first10" href="https://dpromstk2000-lab.github.io/dpro-cleaning-line-liff/demo-guide.html?v=cleaning-18&amp;tutorial=start" target="_blank" rel="noopener">First10を開始</a><a class="ps-tutorial-r6__link" data-r6-link="guide" href="https://dpromstk2000-lab.github.io/dpro-cleaning-line-liff/tutorial-guide.html?v=cleaning-tutorial-v1-1" target="_blank" rel="noopener">Guide Center</a></div></article><article class="ps-tutorial-r6__card"><h3>10ステップの流れ</h3><p>全体確認 → デモ接続 → お客様検索 → 預かり品 → 受付確認 → 状態写真 → 作業工程 → 会員画面 → 受け渡し → 未受取フォローの順に確認できます。</p><p><strong>STANDARD V1.1：</strong>Next / Back / Close / Esc / Skip / Resume / Replay、マウス・タッチ・キーボード操作に対応しています。</p></article></div><div class="ps-tutorial-r6__manuals"><article class="dpro-card ps-tutorial-r6__manual"><img src="https://dpromstk2000-lab.github.io/dpro-cleaning-line-liff/DPRO_TUTORIAL_CLEANING_QUICK_START_V1.0.png" alt="DPRO CLEANING Quick Start A4マニュアルのプレビュー" loading="lazy"><div class="ps-tutorial-r6__manual-body"><h3>Quick Start</h3><p>First10 Exactly 10を1ページにまとめた、最初に見るA4縦ガイドです。</p><a class="dpro-button dpro-button--secondary" data-r6-link="quick-pdf" href="https://dpromstk2000-lab.github.io/dpro-cleaning-line-liff/DPRO_TUTORIAL_CLEANING_QUICK_START_V1.0.pdf" target="_blank" rel="noopener">Quick Start PDFを開く</a></div></article><article class="dpro-card ps-tutorial-r6__manual"><img src="https://dpromstk2000-lab.github.io/dpro-cleaning-line-liff/DPRO_TUTORIAL_CLEANING_DETAILED_MANUAL_V1.0.png" alt="DPRO CLEANING Detailed Manual A4マニュアルのプレビュー" loading="lazy"><div class="ps-tutorial-r6__manual-body"><h3>Detailed Manual</h3><p>10ステップを現在のLIVE画面と安全ルール付きで6ページに整理した保存版です。</p><a class="dpro-button dpro-button--secondary" data-r6-link="detail-pdf" href="https://dpromstk2000-lab.github.io/dpro-cleaning-line-liff/DPRO_TUTORIAL_CLEANING_DETAILED_MANUAL_V1.0.pdf" target="_blank" rel="noopener">Detailed Manual PDFを開く</a></div></article></div><div class="ps-tutorial-r6__safe"><strong>安全：</strong>公開デモには実在するお客様の氏名・電話番号・会員情報などを入力しないでください。Tutorialによる業務状態変更はありません。</div></div></section>
+          '''
+
+          for path in targets:
+              s=path.read_text(encoding='utf-8')
+              before=s
+              if 'data-dpro-tutorial-r6="CLEANING"' not in s:
+                  if s.count('</style>')!=1 or s.count('</main>')!=1:
+                      raise SystemExit(f'{path}: safe insertion marker missing/ambiguous')
+                  s=s.replace('</style>',css+'\n</style>',1)
+                  s=s.replace('</main>',section+'\n</main>',1)
+                  # Exact additive-patch proof: removing our two inserted blocks restores the original bytes/text.
+                  restored=s.replace(css+'\n','',1).replace(section+'\n','',1)
+                  if restored!=before:
+                      raise SystemExit(f'{path}: additive-only proof failed')
+              required=[
+                  'data-dpro-tutorial-r6="CLEANING"','data-r6-link="first10"','data-r6-link="guide"',
+                  'DPRO_TUTORIAL_CLEANING_QUICK_START_V1.0.pdf','DPRO_TUTORIAL_CLEANING_DETAILED_MANUAL_V1.0.pdf',
+                  'DPRO_TUTORIAL_CLEANING_QUICK_START_V1.0.png','DPRO_TUTORIAL_CLEANING_DETAILED_MANUAL_V1.0.png'
+              ]
+              for token in required:
+                  if token not in s: raise SystemExit(f'{path}: R6 token missing: {token}')
+              path.write_text(s,encoding='utf-8')
+
+          if mirrors and html.read_bytes()!=mirrors[0].read_bytes():
+              raise SystemExit('R6 patch did not keep HTML/.txt mirror byte-identical')
+          print('CLEANING R6 additive product-page patch: PASS')
+          PY
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install browser QA tools
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m pip install --quiet playwright requests
+          python -m playwright install --with-deps chromium
+
+      - name: Local responsive and protected-boundary QA
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p qa-evidence/local qa-evidence/live
+          python -m http.server 4173 >/tmp/dpro-r6-http.log 2>&1 &
+          SERVER_PID=$!
+          trap 'kill $SERVER_PID || true' EXIT
+          sleep 2
+          cat > /tmp/cleaning_r6_local_qa.py <<'PY'
+          import json
+          from pathlib import Path
+          from playwright.sync_api import sync_playwright
+
+          exact={
+            'first10':'https://dpromstk2000-lab.github.io/dpro-cleaning-line-liff/demo-guide.html?v=cleaning-18&tutorial=start',
+            'guide':'https://dpromstk2000-lab.github.io/dpro-cleaning-line-liff/tutorial-guide.html?v=cleaning-tutorial-v1-1',
+            'quick-pdf':'https://dpromstk2000-lab.github.io/dpro-cleaning-line-liff/DPRO_TUTORIAL_CLEANING_QUICK_START_V1.0.pdf',
+            'detail-pdf':'https://dpromstk2000-lab.github.io/dpro-cleaning-line-liff/DPRO_TUTORIAL_CLEANING_DETAILED_MANUAL_V1.0.pdf',
+          }
+          sizes=[(1440,1050),(1024,900),(390,844),(320,700)]
+          out={'mode':'local','viewports':[],'links':{},'keyboardFocus':'PASS','tutorialErrors':[],'businessMutation':0,'productSiteRollback':0}
+          with sync_playwright() as pw:
+            browser=pw.chromium.launch(headless=True)
+            for w,h in sizes:
+              page=browser.new_page(viewport={'width':w,'height':h})
+              errors=[]; mutations=[]
+              page.on('pageerror',lambda e: errors.append(str(e)))
+              page.on('request',lambda r: mutations.append({'method':r.method,'url':r.url}) if r.method in ['POST','PUT','PATCH','DELETE'] else None)
+              r=page.goto('http://127.0.0.1:4173/systems/cleaning.html',wait_until='domcontentloaded',timeout=60000)
+              assert r and r.status<400,(w,r.status if r else None)
+              page.locator('#tutorial-guide').scroll_into_view_if_needed(); page.wait_for_timeout(250)
+              assert page.locator('[data-dpro-tutorial-r6="CLEANING"]').is_visible()
+              overflow=page.evaluate('document.documentElement.scrollWidth-document.documentElement.clientWidth')
+              assert overflow<=1,(w,overflow)
+              for key,url in exact.items():
+                href=page.locator(f'[data-r6-link="{key}"]').get_attribute('href')
+                assert href==url,(key,href,url)
+                out['links'][key]=href
+              # Actual keyboard traversal to one of the new links + visible focus.
+              page.locator('body').click(position={'x':2,'y':2})
+              focused=False
+              for _ in range(100):
+                page.keyboard.press('Tab')
+                active=page.evaluate("document.activeElement && document.activeElement.getAttribute('data-r6-link')")
+                if active:
+                  style=page.evaluate("getComputedStyle(document.activeElement).outlineStyle")
+                  width=page.evaluate("getComputedStyle(document.activeElement).outlineWidth")
+                  assert style!='none' and width!='0px',(w,active,style,width)
+                  focused=True; break
+              assert focused,f'keyboard could not reach R6 links at {w}'
+              assert not errors,(w,errors)
+              assert not mutations,(w,mutations)
+              page.screenshot(path=f'qa-evidence/local/cleaning-{w}.png',full_page=True)
+              out['viewports'].append({'width':w,'height':h,'overflow':overflow,'pageErrors':len(errors),'mutationRequests':len(mutations)})
+              page.close()
+            browser.close()
+          Path('qa-evidence/r6-local-qa.json').write_text(json.dumps(out,ensure_ascii=False,indent=2),encoding='utf-8')
+          PY
+          python /tmp/cleaning_r6_local_qa.py
+          # Only the authorized Product Site target (and exact mirror if one existed) may be changed in the working tree.
+          git status --short | tee qa-evidence/r6-working-tree.txt
+          CHANGED="$(git diff --name-only)"
+          printf '%s\n' "$CHANGED" | grep -qx 'systems/cleaning.html'
+          if printf '%s\n' "$CHANGED" | grep -Ev '^systems/cleaning\.html$|^systems/cleaning\.html\.txt$' | grep -q .; then
+            echo 'Unauthorized Product Site file changed'; exit 3
+          fi
+          if [ -f systems/cleaning.html.txt ]; then
+            printf '%s\n' "$CHANGED" | grep -qx 'systems/cleaning.html.txt'
+            cmp -s systems/cleaning.html systems/cleaning.html.txt
+          fi
+
+      - name: Forward-only re-fetch immediately before R6 commit
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch origin main
+          test "$(git rev-parse origin/main)" = "$(git rev-parse HEAD)" || { echo 'main advanced during R6; HOLD rather than overwrite'; exit 4; }
+          echo "precommit_remote_head=$(git rev-parse origin/main)" | tee qa-evidence/r6-precommit.txt
+          echo "precommit_local_head=$(git rev-parse HEAD)" | tee -a qa-evidence/r6-precommit.txt
+
+      - name: Commit CLEANING Product Site integration only after QA gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add systems/cleaning.html
+          if [ -f systems/cleaning.html.txt ]; then git add systems/cleaning.html.txt; fi
+          git commit -m "DPRO TUTORIAL CLEANING R6 product site integration"
+          git push origin HEAD:main
+          git rev-parse HEAD | tee qa-evidence/r6-final-sha.txt
+          git rev-parse HEAD^{tree} | tee qa-evidence/r6-final-tree.txt
+          git diff-tree --no-commit-id --name-only -r HEAD | tee qa-evidence/r6-final-changed-files.txt
+
+      - name: Wait for Product Site Pages publication
+        shell: bash
+        run: |
+          set -euo pipefail
+          for i in $(seq 1 60); do
+            if curl -fsSL --retry 2 --connect-timeout 10 "${PRODUCT_URL}?r6=${RANDOM}-${i}" | grep -q 'data-dpro-tutorial-r6="CLEANING"'; then
+              echo "Product Site R6 marker LIVE on attempt ${i}"
+              exit 0
+            fi
+            sleep 10
+          done
+          echo 'R6 Product Site marker did not become LIVE in time'; exit 5
+
+      - name: R6 LIVE QA 1440 1024 390 320 + links + focus
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat > /tmp/cleaning_r6_live_qa.py <<'PY'
+          import json, os, time
+          from pathlib import Path
+          import requests
+          from playwright.sync_api import sync_playwright
+
+          product=os.environ['PRODUCT_URL']
+          exact={
+            'first10':os.environ['FIRST10_URL'],
+            'guide':os.environ['GUIDE_URL'],
+            'quick-pdf':os.environ['QUICK_PDF_URL'],
+            'detail-pdf':os.environ['DETAIL_PDF_URL'],
+          }
+          resource_urls={**exact,'quick-png':os.environ['QUICK_PNG_URL'],'detail-png':os.environ['DETAIL_PNG_URL']}
+          evidence={'mode':'LIVE','productUrl':product,'http':{},'viewports':[],'links':{},'keyboardFocus':'PASS','tutorialErrors':[],'businessMutation':0,'productSiteRollback':0,'status':'PASS'}
+          s=requests.Session(); s.headers.update({'Cache-Control':'no-cache','Pragma':'no-cache'})
+          rp=s.get(product,timeout=30); evidence['http']['product']=rp.status_code
+          assert rp.status_code==200 and 'data-dpro-tutorial-r6="CLEANING"' in rp.text
+          for key,url in resource_urls.items():
+            r=s.get(url,timeout=30,allow_redirects=True)
+            evidence['http'][key]=r.status_code
+            assert r.status_code==200,(key,r.status_code,url)
+            if key.endswith('pdf'):
+              assert r.content[:4]==b'%PDF',(key,r.headers.get('content-type'))
+            if key.endswith('png'):
+              assert r.content[:8]==b'\x89PNG\r\n\x1a\n',(key,r.headers.get('content-type'))
+
+          sizes=[(1440,1050),(1024,900),(390,844),(320,700)]
+          with sync_playwright() as pw:
+            browser=pw.chromium.launch(headless=True)
+            for w,h in sizes:
+              page=browser.new_page(viewport={'width':w,'height':h})
+              errors=[]; mutations=[]
+              page.on('pageerror',lambda e: errors.append(str(e)))
+              page.on('request',lambda r: mutations.append({'method':r.method,'url':r.url}) if r.method in ['POST','PUT','PATCH','DELETE'] else None)
+              r=page.goto(product+f'?qa={int(time.time())}-{w}',wait_until='domcontentloaded',timeout=60000)
+              assert r and r.status<400,(w,r.status if r else None)
+              page.locator('#tutorial-guide').scroll_into_view_if_needed(); page.wait_for_timeout(500)
+              assert page.locator('[data-dpro-tutorial-r6="CLEANING"]').is_visible()
+              overflow=page.evaluate('document.documentElement.scrollWidth-document.documentElement.clientWidth')
+              assert overflow<=1,(w,overflow)
+              for key,url in exact.items():
+                href=page.locator(f'[data-r6-link="{key}"]').get_attribute('href')
+                assert href==url,(key,href,url)
+                evidence['links'][key]=href
+              page.locator('body').click(position={'x':2,'y':2})
+              focused=False
+              for _ in range(100):
+                page.keyboard.press('Tab')
+                active=page.evaluate("document.activeElement && document.activeElement.getAttribute('data-r6-link')")
+                if active:
+                  style=page.evaluate("getComputedStyle(document.activeElement).outlineStyle")
+                  width=page.evaluate("getComputedStyle(document.activeElement).outlineWidth")
+                  assert style!='none' and width!='0px',(w,active,style,width)
+                  focused=True; break
+              assert focused,f'keyboard could not reach R6 links at {w}'
+              assert not errors,(w,errors)
+              assert not mutations,(w,mutations)
+              page.screenshot(path=f'qa-evidence/live/cleaning-{w}.png',full_page=True)
+              evidence['viewports'].append({'width':w,'height':h,'overflow':overflow,'pageErrors':len(errors),'mutationRequests':len(mutations)})
+              page.close()
+            browser.close()
+          Path('qa-evidence/r6-live-qa.json').write_text(json.dumps(evidence,ensure_ascii=False,indent=2),encoding='utf-8')
+          PY
+          python /tmp/cleaning_r6_live_qa.py
+
+      - name: R6 final lock candidate evidence
+        shell: bash
+        run: |
+          set -euo pipefail
+          FINAL_SHA="$(cat qa-evidence/r6-final-sha.txt)"
+          FINAL_TREE="$(cat qa-evidence/r6-final-tree.txt)"
+          CHANGED="$(cat qa-evidence/r6-final-changed-files.txt)"
+          test "$CHANGED" = "systems/cleaning.html" || {
+            if [ -f systems/cleaning.html.txt ]; then
+              test "$(printf '%s\n' "$CHANGED" | sort)" = "$(printf '%s\n' 'systems/cleaning.html' 'systems/cleaning.html.txt' | sort)" || exit 6
+            else
+              echo "Unexpected final changed files: $CHANGED"; exit 6
+            fi
+          }
+          cat > qa-evidence/R6_FINAL_LOCK_CANDIDATE.txt <<EOF
+          SYSTEM=CLEANING
+          STAGE=R6
+          R5=PASS
+          R6_PRODUCT_SITE=PASS
+          R6_LIVE_QA=PASS
+          PRODUCT_SITE_FINAL_SHA=$FINAL_SHA
+          PRODUCT_SITE_FINAL_TREE=$FINAL_TREE
+          STANDARD=V1.1_LOCKED
+          FIRST10_EXACTLY=10
+          BUSINESS_MUTATION=0
+          PRODUCT_SITE_ROLLBACK=0
+          FINAL_LOCK=CENTRAL_REVIEW_REQUIRED
+          R7=NOT_AUTHORIZED
+          EOF
+
+      - name: Upload CLEANING R6 QA evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dpro-tutorial-cleaning-r6-product-site-qa
+          path: |
+            qa-evidence/*.json
+            qa-evidence/*.txt
+            qa-evidence/local/*.png
+            qa-evidence/live/*.png
+          if-no-files-found: warn
