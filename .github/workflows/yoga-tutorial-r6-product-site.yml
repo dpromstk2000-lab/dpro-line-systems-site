@@ -1,0 +1,501 @@
+name: YOGA Tutorial R6 Product Site Integration + LIVE QA + FINAL LOCK Candidate
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/yoga-tutorial-r6-product-site.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: yoga-tutorial-r6-product-site
+  cancel-in-progress: false
+
+jobs:
+  r6:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout newest Product Site main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Re-fetch newest main and enforce forward-only gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch origin main
+          git reset --hard origin/main
+
+          BASELINE='df230c8421ed8e2a27cb90e4820581ceaeee81c8'
+          git merge-base --is-ancestor "$BASELINE" HEAD
+
+          echo "PRODUCT_SITE_ACCEPTED_BASE=$BASELINE" >> "$GITHUB_ENV"
+          echo "PRODUCT_SITE_BEFORE=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
+
+          test -s systems/yoga.html
+          test ! -e systems/yoga.txt
+          test "$(grep -o '</main>' systems/yoga.html | wc -l)" -eq 1
+          grep -q 'ヨガ教室' systems/yoga.html
+          grep -q 'lp-yoga.html' systems/yoga.html
+
+          echo 'Newest-main / forward-only gate: PASS'
+
+      - name: Verify R5 public source and exact assets
+        shell: bash
+        run: |
+          set -euo pipefail
+          INDUSTRY='https://dpromstk2000-lab.github.io/liff-yoga-reserve'
+          urls=(
+            "$INDUSTRY/guide-center.html"
+            "$INDUSTRY/tutorial.html"
+            "$INDUSTRY/DPRO_TUTORIAL_YOGA_QUICK_START_V1.0.pdf"
+            "$INDUSTRY/DPRO_TUTORIAL_YOGA_DETAILED_MANUAL_V1.0.pdf"
+            "$INDUSTRY/DPRO_TUTORIAL_YOGA_QUICK_START_V1.0.png"
+            "$INDUSTRY/DPRO_TUTORIAL_YOGA_DETAILED_MANUAL_V1.0.png"
+          )
+          for u in "${urls[@]}"; do
+            code=$(curl -L -sS -o /dev/null -w '%{http_code}' --retry 3 --connect-timeout 15 "$u")
+            test "$code" -ge 200 -a "$code" -lt 400
+            echo "$code $u"
+          done
+
+          mkdir -p .r6tmp/manuals
+          curl -fsSL --retry 3 -o .r6tmp/manuals/quick.pdf \
+            "$INDUSTRY/DPRO_TUTORIAL_YOGA_QUICK_START_V1.0.pdf"
+          curl -fsSL --retry 3 -o .r6tmp/manuals/detail.pdf \
+            "$INDUSTRY/DPRO_TUTORIAL_YOGA_DETAILED_MANUAL_V1.0.pdf"
+          curl -fsSL --retry 3 -o .r6tmp/manuals/quick.png \
+            "$INDUSTRY/DPRO_TUTORIAL_YOGA_QUICK_START_V1.0.png"
+          curl -fsSL --retry 3 -o .r6tmp/manuals/detail.png \
+            "$INDUSTRY/DPRO_TUTORIAL_YOGA_DETAILED_MANUAL_V1.0.png"
+
+          printf '%s  %s\n' \
+            'a3189a5ffcc13b8825b483c8c9c708c17eb11c496c4f894127213ba8cc2ca9bf' \
+            '.r6tmp/manuals/quick.pdf' | sha256sum -c -
+          printf '%s  %s\n' \
+            '9edf9a70b5330ed89bd9eb0ce496ec02439ea7298890a8db5bea5c7203d4172d' \
+            '.r6tmp/manuals/detail.pdf' | sha256sum -c -
+          printf '%s  %s\n' \
+            '5dd4c2637bdfb48b429b4aa4c18de1e732961c2f3adc844b2ebf19d9eb295fef' \
+            '.r6tmp/manuals/quick.png' | sha256sum -c -
+          printf '%s  %s\n' \
+            'cd75352241a89f3db7f3e91bdff195ab2a3d287ef84c7fabc28b649213d1ff96' \
+            '.r6tmp/manuals/detail.png' | sha256sum -c -
+
+          echo 'R5 public assets exact-hash gate: PASS'
+
+      - name: Add YOGA Tutorial and manual section to current page
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+
+          p = Path("systems/yoga.html")
+          s = p.read_text(encoding="utf-8")
+
+          marker = 'data-yoga-tutorial-r6="1"'
+          if s.count(marker) > 1:
+              raise SystemExit("duplicate YOGA R6 marker")
+
+          if marker not in s:
+              block = r'''
+          <!-- DPRO YOGA TUTORIAL R6 START -->
+          <style id="yoga-tutorial-r6-style">
+            [data-yoga-tutorial-r6="1"] .yoga-r6-links{
+              display:grid;
+              grid-template-columns:repeat(2,minmax(0,1fr));
+              gap:10px;
+              margin-top:16px;
+            }
+            [data-yoga-tutorial-r6="1"] .yoga-r6-link{
+              display:flex;
+              align-items:center;
+              justify-content:center;
+              min-height:48px;
+              padding:11px 14px;
+              border-radius:12px;
+              text-align:center;
+              text-decoration:none;
+              font-weight:800;
+              overflow-wrap:anywhere;
+            }
+            [data-yoga-tutorial-r6="1"] .yoga-r6-preview-grid{
+              display:grid;
+              grid-template-columns:repeat(2,minmax(0,1fr));
+              gap:14px;
+              margin-top:18px;
+            }
+            [data-yoga-tutorial-r6="1"] .yoga-r6-preview{
+              min-width:0;
+              overflow:hidden;
+            }
+            [data-yoga-tutorial-r6="1"] .yoga-r6-preview img{
+              display:block;
+              width:100%;
+              max-width:100%;
+              height:auto;
+              border-radius:12px;
+            }
+            [data-yoga-tutorial-r6="1"] a:focus-visible{
+              outline:3px solid #f59e0b;
+              outline-offset:3px;
+            }
+            @media (max-width:640px){
+              [data-yoga-tutorial-r6="1"] .yoga-r6-links,
+              [data-yoga-tutorial-r6="1"] .yoga-r6-preview-grid{
+                grid-template-columns:1fr;
+              }
+            }
+          </style>
+          <section class="dpro-section" data-yoga-tutorial-r6="1" aria-labelledby="yoga-tutorial-r6-title">
+            <div class="ps-section-heading">
+              <div>
+                <p class="ps-eyebrow">TUTORIAL &amp; PRINT MANUALS</p>
+                <h2 id="yoga-tutorial-r6-title">操作を試す・印刷して確認する</h2>
+                <p>
+                  First10の順番に沿って、読み取り専用TutorialとA4印刷マニュアルを確認できます。
+                  Tutorialから予約・進捗・設定などの業務データは変更しません。
+                </p>
+              </div>
+            </div>
+
+            <div class="yoga-r6-links" aria-label="YOGA Tutorialとマニュアル">
+              <a class="dpro-button dpro-button--primary yoga-r6-link"
+                 data-r6-link="guide"
+                 href="https://dpromstk2000-lab.github.io/liff-yoga-reserve/guide-center.html"
+                 target="_blank" rel="noopener noreferrer">Guide Center</a>
+              <a class="dpro-button dpro-button--secondary yoga-r6-link"
+                 data-r6-link="first10"
+                 href="https://dpromstk2000-lab.github.io/liff-yoga-reserve/tutorial.html"
+                 target="_blank" rel="noopener noreferrer">First10 Tutorial</a>
+              <a class="dpro-button dpro-button--secondary yoga-r6-link"
+                 data-r6-link="quick-pdf"
+                 href="https://dpromstk2000-lab.github.io/liff-yoga-reserve/DPRO_TUTORIAL_YOGA_QUICK_START_V1.0.pdf"
+                 target="_blank" rel="noopener noreferrer">Quick Start PDF</a>
+              <a class="dpro-button dpro-button--secondary yoga-r6-link"
+                 data-r6-link="detail-pdf"
+                 href="https://dpromstk2000-lab.github.io/liff-yoga-reserve/DPRO_TUTORIAL_YOGA_DETAILED_MANUAL_V1.0.pdf"
+                 target="_blank" rel="noopener noreferrer">Detailed Manual PDF</a>
+            </div>
+
+            <div class="yoga-r6-preview-grid" aria-label="印刷マニュアルのプレビュー">
+              <a class="dpro-card yoga-r6-preview"
+                 data-r6-preview="quick"
+                 href="https://dpromstk2000-lab.github.io/liff-yoga-reserve/DPRO_TUTORIAL_YOGA_QUICK_START_V1.0.pdf"
+                 target="_blank" rel="noopener noreferrer">
+                <img
+                  src="https://dpromstk2000-lab.github.io/liff-yoga-reserve/DPRO_TUTORIAL_YOGA_QUICK_START_V1.0.png"
+                  alt="DPRO YOGA Quick Start 印刷マニュアルのプレビュー"
+                  loading="lazy">
+              </a>
+              <a class="dpro-card yoga-r6-preview"
+                 data-r6-preview="detail"
+                 href="https://dpromstk2000-lab.github.io/liff-yoga-reserve/DPRO_TUTORIAL_YOGA_DETAILED_MANUAL_V1.0.pdf"
+                 target="_blank" rel="noopener noreferrer">
+                <img
+                  src="https://dpromstk2000-lab.github.io/liff-yoga-reserve/DPRO_TUTORIAL_YOGA_DETAILED_MANUAL_V1.0.png"
+                  alt="DPRO YOGA Detailed Manual 印刷マニュアルのプレビュー"
+                  loading="lazy">
+              </a>
+            </div>
+          </section>
+          <!-- DPRO YOGA TUTORIAL R6 END -->
+          '''
+              if s.count("</main>") != 1:
+                  raise SystemExit("unexpected </main> count")
+              s = s.replace("</main>", block + "\n</main>", 1)
+              p.write_text(s, encoding="utf-8")
+
+          s2 = p.read_text(encoding="utf-8")
+          if s2.count(marker) != 1:
+              raise SystemExit("R6 marker count != 1")
+          expected = [
+              "https://dpromstk2000-lab.github.io/liff-yoga-reserve/guide-center.html",
+              "https://dpromstk2000-lab.github.io/liff-yoga-reserve/tutorial.html",
+              "https://dpromstk2000-lab.github.io/liff-yoga-reserve/DPRO_TUTORIAL_YOGA_QUICK_START_V1.0.pdf",
+              "https://dpromstk2000-lab.github.io/liff-yoga-reserve/DPRO_TUTORIAL_YOGA_DETAILED_MANUAL_V1.0.pdf",
+          ]
+          for u in expected:
+              if u not in s2:
+                  raise SystemExit(f"missing URL: {u}")
+          if "ヨガ教室" not in s2 or "lp-yoga.html" not in s2:
+              raise SystemExit("existing Product Site content was not preserved")
+          print("Product Site bounded insertion: PASS")
+          PY
+
+      - name: Commit bounded page change and remove this temporary workflow
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+
+          git add systems/yoga.html
+          git rm .github/workflows/yoga-tutorial-r6-product-site.yml
+
+          changed=$(git diff --cached --name-only | sort)
+          printf '%s\n' "$changed"
+          test "$(printf '%s\n' "$changed" | wc -l)" -eq 2
+          printf '%s\n' "$changed" | grep -qx '.github/workflows/yoga-tutorial-r6-product-site.yml'
+          printf '%s\n' "$changed" | grep -qx 'systems/yoga.html'
+
+          git commit -m 'Add YOGA Tutorial and print manuals to Product Site'
+          git push origin HEAD:main
+
+          echo "PRODUCT_SITE_AFTER=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
+          echo 'Forward-only Product Site commit pushed; temporary workflow removed.'
+
+      - name: Wait until GitHub Pages publishes exact R6 marker
+        shell: bash
+        run: |
+          set -euo pipefail
+          URL='https://dpromstk2000-lab.github.io/dpro-line-systems-site/systems/yoga.html'
+          ok=0
+          for i in $(seq 1 72); do
+            body=$(curl -fsSL --retry 2 --connect-timeout 10 "${URL}?r=${GITHUB_RUN_ID}-${i}" || true)
+            if printf '%s' "$body" | grep -q 'data-yoga-tutorial-r6="1"'; then
+              ok=1
+              break
+            fi
+            sleep 5
+          done
+          test "$ok" -eq 1
+          echo 'Product Site Pages R6 marker: PASS'
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install Playwright Chromium
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm init -y >/dev/null 2>&1
+          npm install --no-save playwright@1.55.0
+          npx playwright install --with-deps chromium
+
+      - name: Run R6 browser LIVE QA
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p .r6tmp/screens
+          cat > .r6tmp/yoga-r6-live-qa.mjs <<'JS'
+          import { chromium, request } from 'playwright';
+          import fs from 'node:fs';
+
+          const PRODUCT='https://dpromstk2000-lab.github.io/dpro-line-systems-site/systems/yoga.html';
+          const GUIDE='https://dpromstk2000-lab.github.io/liff-yoga-reserve/guide-center.html';
+          const FIRST10='https://dpromstk2000-lab.github.io/liff-yoga-reserve/tutorial.html';
+          const QUICK='https://dpromstk2000-lab.github.io/liff-yoga-reserve/DPRO_TUTORIAL_YOGA_QUICK_START_V1.0.pdf';
+          const DETAIL='https://dpromstk2000-lab.github.io/liff-yoga-reserve/DPRO_TUTORIAL_YOGA_DETAILED_MANUAL_V1.0.pdf';
+          const QUICK_PNG='https://dpromstk2000-lab.github.io/liff-yoga-reserve/DPRO_TUTORIAL_YOGA_QUICK_START_V1.0.png';
+          const DETAIL_PNG='https://dpromstk2000-lab.github.io/liff-yoga-reserve/DPRO_TUTORIAL_YOGA_DETAILED_MANUAL_V1.0.png';
+
+          const api=await request.newContext();
+          const http={};
+          for(const u of [PRODUCT,GUIDE,FIRST10,QUICK,DETAIL,QUICK_PNG,DETAIL_PNG]){
+            const r=await api.get(u,{timeout:60000});
+            http[u]=r.status();
+            if(r.status()>=400) throw new Error(`HTTP ${r.status()} ${u}`);
+          }
+          await api.dispose();
+
+          const browser=await chromium.launch({headless:true});
+          const results=[];
+          const mutations=[];
+
+          for(const [name,width,height] of [
+            ['1440',1440,900],['1024',1024,768],['390',390,844],['320',320,720]
+          ]){
+            const context=await browser.newContext({
+              viewport:{width,height},
+              deviceScaleFactor:1
+            });
+            const page=await context.newPage();
+            const errors=[];
+            const localMut=[];
+
+            page.on('console',m=>{
+              if(m.type()==='error') errors.push({type:'console',text:m.text()});
+            });
+            page.on('pageerror',e=>errors.push({type:'pageerror',text:String(e)}));
+            page.on('request',r=>{
+              const method=r.method().toUpperCase();
+              if(!['GET','HEAD','OPTIONS'].includes(method)){
+                const x={width:name,method,url:r.url()};
+                localMut.push(x); mutations.push(x);
+              }
+            });
+
+            const resp=await page.goto(PRODUCT+'?r='+Date.now(),{
+              waitUntil:'domcontentloaded',
+              timeout:60000
+            });
+            if(!resp || resp.status()>=400) throw new Error(`Product ${name} HTTP ${resp?.status()}`);
+
+            const root=page.locator('[data-yoga-tutorial-r6="1"]');
+            await root.waitFor({state:'visible',timeout:20000});
+            if(await root.count()!==1) throw new Error(`R6 marker count invalid ${name}`);
+            await root.scrollIntoViewIfNeeded();
+
+            const imgs=root.locator('img');
+            if(await imgs.count()!==2) throw new Error(`preview image count ${name}`);
+            for(let i=0;i<2;i++){
+              const im=imgs.nth(i);
+              await im.scrollIntoViewIfNeeded();
+              await im.evaluate(el=>{
+                if(el.complete && el.naturalWidth>=100) return true;
+                return new Promise((resolve,reject)=>{
+                  const t=setTimeout(()=>reject(new Error('image timeout '+el.src)),15000);
+                  el.addEventListener('load',()=>{clearTimeout(t);resolve(true)},{once:true});
+                  el.addEventListener('error',()=>{clearTimeout(t);reject(new Error('image error '+el.src))},{once:true});
+                });
+              });
+            }
+            await root.scrollIntoViewIfNeeded();
+            await page.waitForTimeout(250);
+
+            const data=await root.evaluate(el=>{
+              const d=document.documentElement;
+              return {
+                scrollWidth:d.scrollWidth,
+                clientWidth:d.clientWidth,
+                links:[...el.querySelectorAll('a[data-r6-link]')].map(a=>({
+                  key:a.dataset.r6Link,
+                  href:a.href,
+                  text:(a.textContent||'').trim()
+                })),
+                imgs:[...el.querySelectorAll('img')].map(i=>({
+                  src:i.src,
+                  complete:i.complete,
+                  naturalWidth:i.naturalWidth,
+                  alt:i.alt
+                })),
+                preserved:{
+                  yoga:(document.body.textContent||'').includes('ヨガ教室'),
+                  lp:[...document.querySelectorAll('a')].some(a=>(a.getAttribute('href')||'').includes('lp-yoga.html'))
+                }
+              };
+            });
+
+            const links=Object.fromEntries(data.links.map(x=>[x.key,x.href]));
+            const expected={
+              guide:GUIDE,
+              first10:FIRST10,
+              'quick-pdf':QUICK,
+              'detail-pdf':DETAIL
+            };
+            for(const [k,v] of Object.entries(expected)){
+              if(links[k]!==v) throw new Error(`link mismatch ${name} ${k}: ${links[k]} != ${v}`);
+            }
+
+            const srcs=new Set(data.imgs.map(x=>x.src));
+            if(!srcs.has(QUICK_PNG)||!srcs.has(DETAIL_PNG)) throw new Error(`preview src mismatch ${name}`);
+            for(const im of data.imgs){
+              if(!im.complete || im.naturalWidth<100 || !im.alt) throw new Error(`preview invalid ${name}`);
+            }
+
+            if(data.scrollWidth>data.clientWidth+1){
+              throw new Error(`horizontal overflow ${name}: ${data.scrollWidth}/${data.clientWidth}`);
+            }
+            if(!data.preserved.yoga || !data.preserved.lp){
+              throw new Error(`existing content regression ${name}`);
+            }
+
+            const focusLink=root.locator('a[data-r6-link]').first();
+            await focusLink.focus();
+            const focus=await focusLink.evaluate(el=>{
+              const s=getComputedStyle(el);
+              return {
+                active:document.activeElement===el,
+                outlineStyle:s.outlineStyle,
+                outlineWidth:s.outlineWidth,
+                outlineColor:s.outlineColor
+              };
+            });
+            if(!focus.active || focus.outlineStyle==='none' || focus.outlineWidth==='0px'){
+              throw new Error(`focus not visible ${name} ${JSON.stringify(focus)}`);
+            }
+            if(errors.length) throw new Error(`console/page errors ${name}: ${JSON.stringify(errors)}`);
+            if(localMut.length) throw new Error(`business mutation ${name}: ${JSON.stringify(localMut)}`);
+
+            await page.screenshot({path:`.r6tmp/screens/product-${name}.png`,fullPage:false});
+            results.push({name,width,height,status:resp.status(),data,focus,errors,mutations:localMut});
+            await context.close();
+          }
+
+          await browser.close();
+          if(mutations.length) throw new Error(`BUSINESS_MUTATION ${JSON.stringify(mutations)}`);
+
+          const report={
+            checked_at:new Date().toISOString(),
+            product:PRODUCT,
+            accepted_base:process.env.PRODUCT_SITE_ACCEPTED_BASE,
+            before:process.env.PRODUCT_SITE_BEFORE,
+            after:process.env.PRODUCT_SITE_AFTER,
+            http,
+            results,
+            business_mutation:0,
+            overall:'PASS'
+          };
+          fs.writeFileSync('.r6tmp/yoga-r6-product-site-qa.json',JSON.stringify(report,null,2));
+          console.log('YOGA R6 PRODUCT SITE LIVE QA PASS');
+          console.log('VIEWPORTS PASS: 1440 / 1024 / 390 / 320');
+          console.log('EXACT LINKS PASS: Guide / First10 / Quick PDF / Detailed PDF');
+          console.log('BUSINESS MUTATION = 0');
+          JS
+
+          node .r6tmp/yoga-r6-live-qa.mjs
+
+      - name: Verify final git boundary
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch origin main
+          FINAL=$(git rev-parse origin/main)
+          test "$FINAL" = "$PRODUCT_SITE_AFTER"
+          git merge-base --is-ancestor "$PRODUCT_SITE_ACCEPTED_BASE" "$FINAL"
+
+          files=$(git diff --name-only "$PRODUCT_SITE_ACCEPTED_BASE" "$FINAL")
+          printf '%s\n' "$files"
+          test "$(printf '%s\n' "$files" | sed '/^$/d' | wc -l)" -eq 1
+          printf '%s\n' "$files" | grep -qx 'systems/yoga.html'
+
+          echo "PRODUCT_SITE_FINAL=$FINAL" >> "$GITHUB_ENV"
+          echo 'Final boundary: systems/yoga.html only / forward-only PASS'
+
+      - name: Write R6 evidence
+        if: always()
+        shell: bash
+        run: |
+          mkdir -p .r6tmp
+          cat > .r6tmp/R6_RUN_EVIDENCE.txt <<EOF
+          DPRO TUTORIAL BATCH-05 YOGA R6
+          accepted_base=${PRODUCT_SITE_ACCEPTED_BASE:-unknown}
+          workflow_start_head=${PRODUCT_SITE_BEFORE:-unknown}
+          final_head=${PRODUCT_SITE_AFTER:-unknown}
+          target=systems/yoga.html
+          public=https://dpromstk2000-lab.github.io/dpro-line-systems-site/systems/yoga.html
+          industry=https://dpromstk2000-lab.github.io/liff-yoga-reserve/
+          R7=NOT_AUTHORIZED
+          EOF
+
+      - name: Upload R6 evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: yoga-r6-product-site-${{ github.run_id }}
+          path: |
+            .r6tmp/yoga-r6-product-site-qa.json
+            .r6tmp/R6_RUN_EVIDENCE.txt
+            .r6tmp/screens/*.png
+          if-no-files-found: warn
