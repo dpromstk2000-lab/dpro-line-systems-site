@@ -1,4 +1,4 @@
-name: YOGA Tutorial R6 Product Site Integration + LIVE QA + FINAL LOCK Candidate V1.1
+name: YOGA Tutorial R6 Product Site Integration + LIVE QA + FINAL LOCK Candidate V1.2
 
 on:
   push:
@@ -85,10 +85,10 @@ jobs:
             "$INDUSTRY/DPRO_TUTORIAL_YOGA_DETAILED_MANUAL_V1.0.png"
 
           printf '%s  %s\n' \
-            'a3189a5ffcc13b8825b483c8c9c708c17eb11c496c4f894127213ba8cc2ca9bf' \
+            '9b2160076f86bbab7f00b165b44f533857be6fe31f7b561234a101a74a7810b6' \
             '.r6tmp/manuals/quick.pdf' | sha256sum -c -
           printf '%s  %s\n' \
-            '9edf9a70b5330ed89bd9eb0ce496ec02439ea7298890a8db5bea5c7203d4172d' \
+            '0d2cd13dfdc364d0f81d608c5dac920672422ff3c5ea9dee3d7787e0e9449689' \
             '.r6tmp/manuals/detail.pdf' | sha256sum -c -
           printf '%s  %s\n' \
             '5dd4c2637bdfb48b429b4aa4c18de1e732961c2f3adc844b2ebf19d9eb295fef' \
