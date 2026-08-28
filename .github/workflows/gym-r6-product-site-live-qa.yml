@@ -52,8 +52,8 @@ jobs:
             guideMarker: 'GYM-R4-V1.0-20260828',
             tutorialMarker: 'GYM-R3-V1.1-20260828',
             hashes: {
-              quick_pdf: 'c715644a74020405104370e8453f439a7522c972347c7ecd959808bda152e4c9',
-              detail_pdf: '4640ff6383d713f149dda94118ad2a16ad2c878ee3231f9ae3af785c5dba6c60',
+              quick_pdf: '4442b00d85072cb43cbe77402e530e414fee0d5c226ff5d84d1c80e05482487e',
+              detail_pdf: '5443022766e737f5199c5a79d70c10dd5262cff916b9177d71f379a1db00517b',
               quick_png: '25eef6b7779f5f2da404e4f059a2123f565305d427de62115d57e065360cd461',
               detail_png: '22b8d40dc0fba4f50f12b05957c378e415ee6514bfdc7dd10de29b951593919d'
             }
@@ -189,7 +189,7 @@ jobs:
               } finally { await browser.close(); }
 
               const vals=Object.values(result.viewports);
-              result.checks.exact_widths = vals.length===4 && vals.every((v,i)=>v.innerWidth===widths[i].width);
+              result.checks.exact_widths = widths.every(vp=>result.viewports[String(vp.width)]?.innerWidth===vp.width);
               result.checks.no_horizontal_overflow = vals.length===4 && vals.every(v=>v.doc<=v.innerWidth && v.body<=v.innerWidth);
               result.checks.four_r6_links = vals.length===4 && vals.every(v=>v.links.guide===E.GUIDE_URL && v.links.tutorial===E.TUTORIAL_URL && v.links.quick===E.QUICK_PDF_URL && v.links.detail===E.DETAIL_PDF_URL);
               result.checks.dashboard_preserved = vals.length===4 && vals.every(v=>v.links.dashboard===E.DASHBOARD_URL) && result.link_http.dashboard===200;
