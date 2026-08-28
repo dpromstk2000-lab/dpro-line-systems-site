@@ -1,0 +1,219 @@
+name: GYM R6 Product Site LIVE QA
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/gym-r6-product-site-live-qa.yml'
+      - 'systems/gym.html'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  PRODUCT_URL: https://dpromstk2000-lab.github.io/dpro-line-systems-site/systems/gym.html
+  DASHBOARD_URL: https://dpromstk2000-lab.github.io/liff-gym-demo/dashboard.html?demo=1&v=gym-next-10
+  GUIDE_URL: https://dpromstk2000-lab.github.io/liff-gym-demo/guide-center.html
+  TUTORIAL_URL: https://dpromstk2000-lab.github.io/liff-gym-demo/tutorial.html?mode=start
+  QUICK_PDF_URL: https://dpromstk2000-lab.github.io/liff-gym-demo/DPRO_TUTORIAL_GYM_QUICK_START_V1.0.pdf
+  DETAIL_PDF_URL: https://dpromstk2000-lab.github.io/liff-gym-demo/DPRO_TUTORIAL_GYM_DETAILED_MANUAL_V1.0.pdf
+  QUICK_PNG_URL: https://dpromstk2000-lab.github.io/liff-gym-demo/DPRO_TUTORIAL_GYM_QUICK_START_V1.0.png
+  DETAIL_PNG_URL: https://dpromstk2000-lab.github.io/liff-gym-demo/DPRO_TUTORIAL_GYM_DETAILED_MANUAL_V1.0.png
+
+jobs:
+  live-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Playwright
+        run: |
+          npm install --no-save playwright@1.55.0
+          npx playwright install --with-deps chromium
+
+      - name: Run exact-width LIVE QA
+        shell: bash
+        run: |
+          mkdir -p qa-evidence
+          cat > "$RUNNER_TEMP/gym_r6_live_qa.cjs" <<'NODE'
+          const fs = require('fs');
+          const crypto = require('crypto');
+          const { chromium, request } = require('playwright');
+
+          const E = process.env;
+          const expected = {
+            productMarker: 'GYM-R6-V1.0-20260828',
+            guideMarker: 'GYM-R4-V1.0-20260828',
+            tutorialMarker: 'GYM-R3-V1.1-20260828',
+            hashes: {
+              quick_pdf: 'c715644a74020405104370e8453f439a7522c972347c7ecd959808bda152e4c9',
+              detail_pdf: '4640ff6383d713f149dda94118ad2a16ad2c878ee3231f9ae3af785c5dba6c60',
+              quick_png: '25eef6b7779f5f2da404e4f059a2123f565305d427de62115d57e065360cd461',
+              detail_png: '22b8d40dc0fba4f50f12b05957c378e415ee6514bfdc7dd10de29b951593919d'
+            }
+          };
+          const widths = [
+            {width:1440,height:1000},
+            {width:1024,height:768},
+            {width:390,height:844},
+            {width:320,height:568}
+          ];
+          const result = {
+            ok:false,
+            version:'GYM-R6-V1.0-20260828',
+            stage:'R6',
+            product_url:E.PRODUCT_URL,
+            viewports:{},
+            link_http:{},
+            hashes:{},
+            errors:[],
+            warnings:[],
+            business_mutations:[],
+            checks:{
+              exact_widths:false,
+              no_horizontal_overflow:false,
+              four_r6_links:false,
+              dashboard_preserved:false,
+              guide_preserved:false,
+              tutorial_preserved:false,
+              r5_assets_preserved:false,
+              page_errors_0:false,
+              console_errors_0:false,
+              business_mutation_0:false
+            },
+            finished_at:null
+          };
+          const fail = m => { result.errors.push(String(m)); };
+          const sha256 = b => crypto.createHash('sha256').update(b).digest('hex');
+
+          (async()=>{
+            const api = await request.newContext({extraHTTPHeaders:{'Cache-Control':'no-cache','Pragma':'no-cache'}});
+            try {
+              let published = false;
+              for (let i=0;i<36;i++) {
+                try {
+                  const r = await api.get(`${E.PRODUCT_URL}?r6qa=${Date.now()}`, {timeout:30000});
+                  const t = await r.text();
+                  if (r.status()===200 && t.includes(`data-tutorial-r6="${expected.productMarker}"`)) { published=true; break; }
+                } catch(_) {}
+                await new Promise(r=>setTimeout(r,5000));
+              }
+              if (!published) fail('Product Site R6 marker not published');
+
+              const urlChecks = {
+                dashboard:E.DASHBOARD_URL,
+                guide:E.GUIDE_URL,
+                tutorial:E.TUTORIAL_URL,
+                quick_pdf:E.QUICK_PDF_URL,
+                detail_pdf:E.DETAIL_PDF_URL,
+                quick_png:E.QUICK_PNG_URL,
+                detail_png:E.DETAIL_PNG_URL
+              };
+              for (const [name,url] of Object.entries(urlChecks)) {
+                try {
+                  const r = await api.get(url,{timeout:30000});
+                  result.link_http[name]=r.status();
+                  if (r.status()!==200) { fail(`${name} HTTP ${r.status()}`); continue; }
+                  const body = await r.body();
+                  if (expected.hashes[name]) {
+                    const h=sha256(body); result.hashes[name]=h;
+                    if (h!==expected.hashes[name]) fail(`${name} hash mismatch`);
+                  }
+                  if (name==='guide') {
+                    const t=body.toString('utf8');
+                    if (!t.includes(`data-guide-version="${expected.guideMarker}"`)) fail('Guide Center R4 marker missing');
+                  }
+                  if (name==='tutorial') {
+                    const t=body.toString('utf8');
+                    if (!t.includes(`data-tutorial-version="${expected.tutorialMarker}"`)) fail('Tutorial R3 marker missing');
+                  }
+                  if (name.endsWith('_pdf') && !body.subarray(0,5).toString().startsWith('%PDF')) fail(`${name} is not PDF`);
+                } catch(e) { fail(`${name} request failed: ${e.message}`); }
+              }
+
+              const browser = await chromium.launch({headless:true});
+              try {
+                for (const vp of widths) {
+                  const ctx = await browser.newContext({viewport:vp});
+                  const page = await ctx.newPage();
+                  const pageErrors=[];
+                  const consoleErrors=[];
+                  const mutations=[];
+                  page.on('pageerror',e=>pageErrors.push(String(e)));
+                  page.on('console',m=>{ if(m.type()==='error') consoleErrors.push(m.text()); });
+                  page.on('request',r=>{ if(!['GET','HEAD'].includes(r.method())) mutations.push({method:r.method(),url:r.url()}); });
+                  try {
+                    const resp = await page.goto(`${E.PRODUCT_URL}?r6qa=${Date.now()}-${vp.width}`,{waitUntil:'domcontentloaded',timeout:45000});
+                    if (!resp || resp.status()!==200) fail(`width ${vp.width}: product HTTP ${resp?.status()}`);
+                    await page.waitForSelector(`body[data-tutorial-r6="${expected.productMarker}"]`,{timeout:20000});
+                    await page.waitForTimeout(600);
+                    const data = await page.evaluate(()=>{
+                      const get = k => document.querySelector(`[data-r6-link="${k}"]`)?.href || null;
+                      const dashboard = document.querySelector('a[href*="/liff-gym-demo/dashboard.html?demo=1"]')?.href || null;
+                      return {
+                        innerWidth:window.innerWidth,
+                        doc:document.documentElement.scrollWidth,
+                        body:document.body.scrollWidth,
+                        links:{
+                          guide:get('guide-center'),
+                          tutorial:get('tutorial-start'),
+                          quick:get('quick-start-pdf'),
+                          detail:get('detailed-manual-pdf'),
+                          dashboard
+                        }
+                      };
+                    });
+                    result.viewports[String(vp.width)]={...data,pageErrors,consoleErrors,mutations};
+                    if (data.innerWidth!==vp.width) fail(`width ${vp.width}: innerWidth ${data.innerWidth}`);
+                    if (data.doc>data.innerWidth || data.body>data.innerWidth) fail(`width ${vp.width}: horizontal overflow doc=${data.doc} body=${data.body}`);
+                    const exact = {
+                      guide:E.GUIDE_URL,
+                      tutorial:E.TUTORIAL_URL,
+                      quick:E.QUICK_PDF_URL,
+                      detail:E.DETAIL_PDF_URL,
+                      dashboard:E.DASHBOARD_URL
+                    };
+                    for (const [k,v] of Object.entries(exact)) if (data.links[k]!==v) fail(`width ${vp.width}: ${k} href mismatch: ${data.links[k]}`);
+                    if (pageErrors.length) fail(`width ${vp.width}: page errors ${JSON.stringify(pageErrors)}`);
+                    if (consoleErrors.length) fail(`width ${vp.width}: console errors ${JSON.stringify(consoleErrors)}`);
+                    if (mutations.length) { result.business_mutations.push(...mutations); fail(`width ${vp.width}: non-GET/HEAD requests observed`); }
+                  } catch(e) { fail(`width ${vp.width}: ${e.message}`); }
+                  await ctx.close();
+                }
+              } finally { await browser.close(); }
+
+              const vals=Object.values(result.viewports);
+              result.checks.exact_widths = vals.length===4 && vals.every((v,i)=>v.innerWidth===widths[i].width);
+              result.checks.no_horizontal_overflow = vals.length===4 && vals.every(v=>v.doc<=v.innerWidth && v.body<=v.innerWidth);
+              result.checks.four_r6_links = vals.length===4 && vals.every(v=>v.links.guide===E.GUIDE_URL && v.links.tutorial===E.TUTORIAL_URL && v.links.quick===E.QUICK_PDF_URL && v.links.detail===E.DETAIL_PDF_URL);
+              result.checks.dashboard_preserved = vals.length===4 && vals.every(v=>v.links.dashboard===E.DASHBOARD_URL) && result.link_http.dashboard===200;
+              result.checks.guide_preserved = result.link_http.guide===200;
+              result.checks.tutorial_preserved = result.link_http.tutorial===200;
+              result.checks.r5_assets_preserved = ['quick_pdf','detail_pdf','quick_png','detail_png'].every(k=>result.link_http[k]===200 && result.hashes[k]===expected.hashes[k]);
+              result.checks.page_errors_0 = vals.length===4 && vals.every(v=>v.pageErrors.length===0);
+              result.checks.console_errors_0 = vals.length===4 && vals.every(v=>v.consoleErrors.length===0);
+              result.checks.business_mutation_0 = result.business_mutations.length===0;
+              result.ok = result.errors.length===0 && Object.values(result.checks).every(Boolean);
+            } finally {
+              await api.dispose();
+              result.finished_at = new Date().toISOString();
+              fs.writeFileSync('qa-evidence/gym-r6-product-site-live-qa.json',JSON.stringify(result,null,2));
+              console.log(JSON.stringify(result));
+              if (!result.ok) process.exitCode=1;
+            }
+          })();
+          NODE
+          node "$RUNNER_TEMP/gym_r6_live_qa.cjs"
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: gym-r6-product-site-live-qa
+          path: qa-evidence/gym-r6-product-site-live-qa.json
+          if-no-files-found: error
