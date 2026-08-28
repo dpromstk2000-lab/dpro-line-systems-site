@@ -1,4 +1,4 @@
-name: YOGA Tutorial R6 Product Site Integration + LIVE QA + FINAL LOCK Candidate V1.2
+name: YOGA Tutorial R6 Product Site Integration + LIVE QA + FINAL LOCK Candidate V1.3
 
 on:
   push:
@@ -110,10 +110,11 @@ jobs:
           s = p.read_text(encoding="utf-8")
 
           marker = 'data-yoga-tutorial-r6="1"'
-          if s.count(marker) > 1:
-              raise SystemExit("duplicate YOGA R6 marker")
+          section_marker = '<section class="dpro-section" data-yoga-tutorial-r6="1"'
+          if s.count(section_marker) > 1:
+              raise SystemExit("duplicate YOGA R6 section")
 
-          if marker not in s:
+          if section_marker not in s:
               block = r'''
           <!-- DPRO YOGA TUTORIAL R6 START -->
           <style id="yoga-tutorial-r6-style">
@@ -225,8 +226,8 @@ jobs:
               p.write_text(s, encoding="utf-8")
 
           s2 = p.read_text(encoding="utf-8")
-          if s2.count(marker) != 1:
-              raise SystemExit("R6 marker count != 1")
+          if s2.count(section_marker) != 1:
+              raise SystemExit("R6 section count != 1")
           expected = [
               "https://dpromstk2000-lab.github.io/liff-yoga-reserve/guide-center.html",
               "https://dpromstk2000-lab.github.io/liff-yoga-reserve/tutorial.html",
@@ -498,7 +499,7 @@ jobs:
           git show origin/main:systems/yoga.html > /tmp/yoga-final.html
           git show origin/main:systems/yoga.html.txt > /tmp/yoga-final.html.txt
           cmp -s /tmp/yoga-final.html /tmp/yoga-final.html.txt
-          test "$(grep -o 'data-yoga-tutorial-r6="1"' /tmp/yoga-final.html | wc -l)" -eq 1
+          test "$(grep -o '<section class="dpro-section" data-yoga-tutorial-r6="1"' /tmp/yoga-final.html | wc -l)" -eq 1
 
           echo "PRODUCT_SITE_FINAL=$FINAL" >> "$GITHUB_ENV"
           echo 'Final boundary: YOGA normal+TEXT only persist; temporary workflow removed; forward-only PASS'
