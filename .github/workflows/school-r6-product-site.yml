@@ -73,7 +73,7 @@ jobs:
           if old != mirror_old:
               raise SystemExit("normal/TEXT mismatch before R6; refusing to overwrite forward-only state")
 
-          marker = '<div class="ps-doclinks">'
+          marker = '<div class="ps-doclinks" aria-label="関連資料">'
           if old.count(marker) != 1:
               raise SystemExit(f"expected exactly one ps-doclinks marker, found {old.count(marker)}")
 
@@ -104,7 +104,7 @@ jobs:
           old = Path("/tmp/school-before.html").read_text(encoding="utf-8")
           new = Path("systems/school.html").read_text(encoding="utf-8")
           block = Path("/tmp/r6-block.txt").read_text(encoding="utf-8")
-          marker = '<div class="ps-doclinks">'
+          marker = '<div class="ps-doclinks" aria-label="関連資料">'
           restored = new.replace(marker + block, marker, 1)
           if restored != old:
               raise SystemExit("Product Site regression guard failed: diff is not insertion-only")
