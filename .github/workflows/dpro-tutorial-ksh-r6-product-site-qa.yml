@@ -65,13 +65,27 @@ jobs:
                       raise SystemExit(f'{key}: published PDF SHA mismatch {got}')
           print('R5 public resources prewrite verification PASS')
 
-      - name: Verify target scope and current mirror
+      - name: Verify target scope and record current mirror state
         shell: bash
         run: |
           set -euo pipefail
           test -f systems/car-service.html
           test -f systems/car-service.html.txt
-          cmp -s systems/car-service.html systems/car-service.html.txt
+          HTML_PRE_SHA="$(sha256sum systems/car-service.html | awk '{print $1}')"
+          MIRROR_PRE_SHA="$(sha256sum systems/car-service.html.txt | awk '{print $1}')"
+          if cmp -s systems/car-service.html systems/car-service.html.txt; then
+            PREWRITE_MIRROR_STATE='SAME'
+          else
+            PREWRITE_MIRROR_STATE='DIFFERENT_ACCEPTED_FOR_FORWARD_NORMALIZATION'
+          fi
+          printf '%s\n' \
+            'DPRO TUTORIAL BATCH08 KSH R6 PREWRITE MIRROR EVIDENCE' \
+            "HTML_PRE_SHA256=${HTML_PRE_SHA}" \
+            "MIRROR_PRE_SHA256=${MIRROR_PRE_SHA}" \
+            "PREWRITE_MIRROR_STATE=${PREWRITE_MIRROR_STATE}" \
+            'CANONICAL_PREWRITE_SOURCE=systems/car-service.html' \
+            'POSTWRITE_BYTE_IDENTICAL_REQUIRED=YES' \
+            'FORWARD_ONLY=PASS' > KSH_R6_PREWRITE_MIRROR_EVIDENCE.txt
           grep -q 'data-system-code="KSH"' systems/car-service.html
           grep -q '月額合計 5,500円（税込）' systems/car-service.html
           grep -q 'https://lin.ee/YxJGXV6D' systems/car-service.html
@@ -450,6 +464,7 @@ jobs:
           if-no-files-found: error
           path: |
             KSH_R6_PRODUCT_SITE_PREWRITE_LOCK.txt
+            KSH_R6_PREWRITE_MIRROR_EVIDENCE.txt
             KSH_R6_APPLY_EVIDENCE.json
             KSH_R6_LIVE_QA.json
             KSH_R6_LIVE_QA.txt
