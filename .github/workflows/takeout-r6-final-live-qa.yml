@@ -1,4 +1,4 @@
-name: TAKEOUT Tutorial R6 Final LIVE QA
+name: TAKEOUT Tutorial R6 Final LIVE QA V1.2
 
 on:
   workflow_dispatch:
@@ -31,12 +31,12 @@ jobs:
       DETAIL_URL: https://dpromstk2000-lab.github.io/dpro-takeout-line-liff/DPRO_TUTORIAL_TAKEOUT_DETAILED_MANUAL_V1.0.pdf
 
     steps:
-      - name: Checkout newest Product Site main
+      - name: Checkout workflow upload commit
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Verify QA-only upload boundary and current R6 state
+      - name: Verify QA-only upload and newest forward-only TAKEOUT state
         id: base
         shell: bash
         run: |
@@ -44,73 +44,67 @@ jobs:
           mkdir -p qa-r6-final
           git fetch origin main
 
-          local_head="$(git rev-parse HEAD)"
-          remote_head="$(git rev-parse origin/main)"
-          test "$local_head" = "$remote_head" || {
-            echo "Product Site main advanced after QA workflow upload; HOLD." >&2
-            exit 1
-          }
+          upload_head="$(git rev-parse HEAD)"
+          upload_parent="$(git rev-parse HEAD^)"
+          newest_head="$(git rev-parse origin/main)"
+          newest_tree="$(git rev-parse "origin/main^{tree}")"
 
-          upload_base="$(git rev-parse HEAD^)"
-          upload_base_tree="$(git rev-parse "${upload_base}^{tree}")"
-          mapfile -t changed < <(git diff --name-only "$upload_base" HEAD)
+          mapfile -t changed < <(git diff --name-only "$upload_parent" "$upload_head")
           test "${#changed[@]}" -eq 1
           test "${changed[0]}" = "$WORKFLOW_PATH"
 
-          # Forward-only: current base must descend from the accepted R6 integration.
-          git merge-base --is-ancestor "$R6_INTEGRATION_HEAD" "$upload_base"
+          git merge-base --is-ancestor "$upload_head" "$newest_head"
+          git merge-base --is-ancestor "$R6_INTEGRATION_HEAD" "$newest_head"
 
-          test -s "$TARGET_HTML"
-          test -s "$TARGET_TEXT"
-          cmp -s "$TARGET_HTML" "$TARGET_TEXT"
-          grep -q 'DPRO TUTORIAL TAKEOUT R6' "$TARGET_HTML"
-          grep -q 'data-r6-resource="tutorial"' "$TARGET_HTML"
-          grep -q 'data-r6-resource="guide"' "$TARGET_HTML"
-          grep -q 'data-r6-resource="quick"' "$TARGET_HTML"
-          grep -q 'data-r6-resource="detail"' "$TARGET_HTML"
+          git show "origin/main:$TARGET_HTML" > /tmp/takeout-current.html
+          git show "origin/main:$TARGET_TEXT" > /tmp/takeout-current.txt
+          git show "$R6_INTEGRATION_HEAD:$TARGET_HTML" > /tmp/takeout-r6.html
+          git show "$R6_INTEGRATION_HEAD:$TARGET_TEXT" > /tmp/takeout-r6.txt
 
-          # Prove the original R6 integration commit touched only the two TAKEOUT
-          # mirrors plus deletion of the temporary integration workflow.
+          test -s /tmp/takeout-current.html
+          test -s /tmp/takeout-current.txt
+          cmp -s /tmp/takeout-current.html /tmp/takeout-current.txt
+          cmp -s /tmp/takeout-r6.html /tmp/takeout-current.html
+          cmp -s /tmp/takeout-r6.txt /tmp/takeout-current.txt
+
+          grep -q 'DPRO TUTORIAL TAKEOUT R6' /tmp/takeout-current.html
+          grep -q 'data-r6-resource="tutorial"' /tmp/takeout-current.html
+          grep -q 'data-r6-resource="guide"' /tmp/takeout-current.html
+          grep -q 'data-r6-resource="quick"' /tmp/takeout-current.html
+          grep -q 'data-r6-resource="detail"' /tmp/takeout-current.html
+
           integration_parent="$(git rev-parse "${R6_INTEGRATION_HEAD}^")"
-          mapfile -t integration_changed < <(git diff --name-status "$integration_parent" "$R6_INTEGRATION_HEAD")
-          printf '%s\n' "${integration_changed[@]}" > qa-r6-final/r6-integration-changed.txt
+          git diff --name-status "$integration_parent" "$R6_INTEGRATION_HEAD" > qa-r6-final/r6-integration-changed.txt
           test "$(wc -l < qa-r6-final/r6-integration-changed.txt)" -eq 3
           grep -q $'D\t.github/workflows/takeout-r6-product-site.yml' qa-r6-final/r6-integration-changed.txt
           grep -q $'M\tsystems/takeout.html' qa-r6-final/r6-integration-changed.txt
           grep -q $'M\tsystems/takeout.html.txt' qa-r6-final/r6-integration-changed.txt
 
-          # No later commit may alter TAKEOUT R6 payload before QA.
-          cmp <(git show "$R6_INTEGRATION_HEAD:$TARGET_HTML") "$TARGET_HTML"
-          cmp <(git show "$R6_INTEGRATION_HEAD:$TARGET_TEXT") "$TARGET_TEXT"
-
-          printf '%s\n' "$upload_base" > qa-r6-final/product-site-head-before-final-qa.txt
-          printf '%s\n' "$upload_base_tree" > qa-r6-final/product-site-tree-before-final-qa.txt
+          printf '%s\n' "$upload_head" > qa-r6-final/workflow-upload-head.txt
+          printf '%s\n' "$upload_parent" > qa-r6-final/workflow-upload-parent.txt
+          printf '%s\n' "$newest_head" > qa-r6-final/product-site-head-before-final-qa.txt
+          printf '%s\n' "$newest_tree" > qa-r6-final/product-site-tree-before-final-qa.txt
           printf '%s\n' "$R6_INTEGRATION_HEAD" > qa-r6-final/r6-integration-head.txt
           printf '%s\n' "$R6_INTEGRATION_TREE" > qa-r6-final/r6-integration-tree.txt
-          sha256sum "$TARGET_HTML" "$TARGET_TEXT" > qa-r6-final/target-sha256-before-final-qa.txt
-
-          echo "upload_head=$local_head" >> "$GITHUB_OUTPUT"
-          echo "upload_base=$upload_base" >> "$GITHUB_OUTPUT"
+          sha256sum /tmp/takeout-current.html /tmp/takeout-current.txt > qa-r6-final/target-sha256-before-final-qa.txt
 
       - name: Setup Node for final LIVE QA
         uses: actions/setup-node@v4
         with:
           node-version: 22
 
-      - name: Install Playwright for final LIVE QA
+      - name: Install Playwright
         shell: bash
         run: |
           set -euo pipefail
           npm install --no-save playwright@1.55.0
           npx playwright install --with-deps chromium
 
-      - name: Run corrected R6 LIVE QA
+      - name: Run TAKEOUT R6 exact-width LIVE QA V1.2
         shell: bash
         run: |
           set -euo pipefail
 
-          # IMPORTANT: script is in repository workspace so Node resolves local
-          # node_modules/playwright. The failed first QA used /tmp.
           cat > takeout-r6-final-live-qa.mjs <<'NODE'
           import { chromium } from 'playwright';
           import fs from 'node:fs';
@@ -130,7 +124,7 @@ jobs:
           ];
 
           const result = {
-            schema:'DPRO_TUTORIAL_TAKEOUT_R6_FINAL_LIVE_QA_V1.1',
+            schema:'DPRO_TUTORIAL_TAKEOUT_R6_FINAL_LIVE_QA_V1.2',
             productUrl,
             expected,
             integrationHead:process.env.R6_INTEGRATION_HEAD,
@@ -146,7 +140,6 @@ jobs:
 
           const browser = await chromium.launch({headless:true});
 
-          // Verify all four destinations are actually reachable.
           const requestContext = await browser.newContext();
           const requestPage = await requestContext.newPage();
           for (const [key,url] of Object.entries(expected)) {
@@ -184,7 +177,9 @@ jobs:
             const page = await context.newPage();
             page.on('pageerror', e => pageErrors.push(String(e)));
             page.on('console', m => {
-              if (m.type() === 'error') consoleErrors.push({text:m.text(),location:m.location()});
+              if (m.type() === 'error') {
+                consoleErrors.push({text:m.text(),location:m.location()});
+              }
             });
 
             const resp = await page.goto(`${productUrl}?qa=${Date.now()}-${vp.name}`,{
@@ -203,7 +198,8 @@ jobs:
               links: [...document.querySelectorAll('[data-r6-resource]')].map(a => ({
                 key:a.getAttribute('data-r6-resource'),
                 href:a.href,
-                text:(a.textContent||'').trim()
+                text:(a.textContent||'').trim(),
+                tabIndex:a.tabIndex
               })),
               pricing: (document.body.textContent||'').includes('5,500円'),
               lineCta: [...document.querySelectorAll('a')].some(a => a.href === 'https://lin.ee/YxJGXV6D'),
@@ -242,32 +238,85 @@ jobs:
               result.failures.push(`${vp.name}: mobile overflow`);
             }
 
-            await page.locator('body').focus();
-            let focusVisible = false;
-            let focusRecord = null;
-            for (let i=0; i<100; i++) {
+            // V1.2 focus QA:
+            // Avoid the old false-negative caused by assuming the R6 links must be
+            // reached within an arbitrary 100 Tabs from the document start.
+            // For each resource link, place a temporary starting focus on that link,
+            // then use real keyboard traversal Shift+Tab -> Tab and prove that the
+            // browser returns to the same link with :focus-visible and visible focus paint.
+            const keyboardFocus = {};
+            for (const key of Object.keys(expected)) {
+              const link = page.locator(`[data-r6-resource="${key}"]`).first();
+              const count = await link.count();
+              if (count !== 1) {
+                keyboardFocus[key] = {ok:false,reason:`locator count ${count}`};
+                result.failures.push(`${vp.name}: ${key} keyboard locator count ${count}`);
+                continue;
+              }
+
+              const visible = await link.isVisible();
+              const tabbable = await link.evaluate(el =>
+                el instanceof HTMLElement &&
+                el.tabIndex >= 0 &&
+                !el.hasAttribute('disabled') &&
+                el.getAttribute('aria-disabled') !== 'true'
+              );
+
+              await link.scrollIntoViewIfNeeded();
+              await link.focus();
+              await page.keyboard.press('Shift+Tab');
               await page.keyboard.press('Tab');
-              const fr = await page.evaluate(() => {
+
+              const rec = await page.evaluate((key) => {
                 const a = document.activeElement;
-                if (!a || !a.matches?.('[data-r6-resource]')) return null;
+                if (!(a instanceof HTMLElement)) {
+                  return {key,active:false};
+                }
                 const r = a.getBoundingClientRect();
+                const cs = getComputedStyle(a);
+                const outlineWidth = parseFloat(cs.outlineWidth || '0') || 0;
+                const focusPaint =
+                  (cs.outlineStyle !== 'none' && outlineWidth > 0) ||
+                  (cs.boxShadow && cs.boxShadow !== 'none');
                 return {
-                  key:a.getAttribute('data-r6-resource'),
+                  key,
+                  active:true,
+                  activeKey:a.getAttribute('data-r6-resource'),
+                  sameKey:a.getAttribute('data-r6-resource') === key,
+                  focusVisible:a.matches(':focus-visible'),
+                  focusPaint,
+                  outlineStyle:cs.outlineStyle,
+                  outlineWidth:cs.outlineWidth,
+                  boxShadow:cs.boxShadow,
                   left:r.left,top:r.top,right:r.right,bottom:r.bottom,
                   width:r.width,height:r.height,
-                  innerWidth:window.innerWidth,innerHeight:window.innerHeight
+                  innerWidth:window.innerWidth,innerHeight:window.innerHeight,
+                  inViewport:
+                    r.width > 0 && r.height > 0 &&
+                    r.left >= -1 && r.right <= window.innerWidth + 1 &&
+                    r.top >= -1 && r.bottom <= window.innerHeight + 1
                 };
-              });
-              if (fr) {
-                focusRecord = fr;
-                focusVisible =
-                  fr.width > 0 && fr.height > 0 &&
-                  fr.left >= -1 && fr.right <= fr.innerWidth + 1 &&
-                  fr.top >= -1 && fr.bottom <= fr.innerHeight + 1;
-                break;
+              }, key);
+
+              const ok =
+                visible &&
+                tabbable &&
+                rec.active === true &&
+                rec.sameKey === true &&
+                rec.focusVisible === true &&
+                rec.focusPaint === true &&
+                rec.inViewport === true;
+
+              keyboardFocus[key] = {visible,tabbable,...rec,ok};
+
+              if (!ok) {
+                result.failures.push(
+                  `${vp.name}: ${key} keyboard focus fail ` +
+                  `visible=${visible} tabbable=${tabbable} sameKey=${rec.sameKey} ` +
+                  `focusVisible=${rec.focusVisible} focusPaint=${rec.focusPaint} inViewport=${rec.inViewport}`
+                );
               }
             }
-            if (!focusVisible) result.failures.push(`${vp.name}: keyboard focus not visible`);
 
             const tutorialConsole = consoleErrors.filter(e =>
               String(e.location?.url || '').includes('/systems/takeout.html')
@@ -276,10 +325,22 @@ jobs:
             if (tutorialConsole.length) result.failures.push(`${vp.name}: Tutorial integration console error`);
             if (unsafe.length) result.failures.push(`${vp.name}: unsafe write attempts ${unsafe.length}`);
 
-            result.viewports.push({
-              viewport:vp,data,overflow,focusVisible,focusRecord,
-              pageErrors,consoleErrors,tutorialConsole,unsafe
+            await page.screenshot({
+              path:`qa-r6-final/takeout-r6-${vp.name}.png`,
+              fullPage:true
             });
+
+            result.viewports.push({
+              viewport:vp,
+              data,
+              overflow,
+              keyboardFocus,
+              pageErrors,
+              consoleErrors,
+              tutorialConsole,
+              unsafe
+            });
+
             await context.close();
           }
 
@@ -296,11 +357,17 @@ jobs:
             result.productSiteRollback === 0 &&
             result.forwardOnly === true;
 
-          fs.writeFileSync('qa-r6-final/takeout-r6-final-live-qa.json',JSON.stringify(result,null,2));
+          fs.writeFileSync(
+            'qa-r6-final/takeout-r6-final-live-qa.json',
+            JSON.stringify(result,null,2)
+          );
+
           console.log(JSON.stringify({
             pass:result.pass,
             failures:result.failures,
             resourceChecks:result.resourceChecks,
+            mobile390:result.viewports.find(v=>v.viewport.name==='390')?.overflow,
+            mobile320:result.viewports.find(v=>v.viewport.name==='320')?.overflow,
             businessMutation:result.businessMutation,
             productSiteRollback:result.productSiteRollback,
             forwardOnly:result.forwardOnly
@@ -311,7 +378,7 @@ jobs:
 
           node takeout-r6-final-live-qa.mjs
 
-      - name: Verify current main remains forward-only and unchanged for TAKEOUT
+      - name: Verify newest main still preserves TAKEOUT R6 exactly
         shell: bash
         run: |
           set -euo pipefail
@@ -321,41 +388,70 @@ jobs:
           current_tree="$(git rev-parse "origin/main^{tree}")"
           git merge-base --is-ancestor "$R6_INTEGRATION_HEAD" "$current_head"
 
-          git show "$R6_INTEGRATION_HEAD:$TARGET_HTML" > /tmp/r6-integration.html
-          git show "origin/main:$TARGET_HTML" > /tmp/r6-current.html
-          git show "origin/main:$TARGET_TEXT" > /tmp/r6-current.txt
+          git show "origin/main:$TARGET_HTML" > /tmp/takeout-current-after.html
+          git show "origin/main:$TARGET_TEXT" > /tmp/takeout-current-after.txt
+          git show "$R6_INTEGRATION_HEAD:$TARGET_HTML" > /tmp/takeout-r6-after.html
 
-          cmp -s /tmp/r6-integration.html /tmp/r6-current.html
-          cmp -s /tmp/r6-current.html /tmp/r6-current.txt
+          cmp -s /tmp/takeout-current-after.html /tmp/takeout-current-after.txt
+          cmp -s /tmp/takeout-r6-after.html /tmp/takeout-current-after.html
 
-          printf '%s\n' "$current_head" > qa-r6-final/product-site-final-head.txt
-          printf '%s\n' "$current_tree" > qa-r6-final/product-site-final-tree.txt
-          sha256sum /tmp/r6-current.html /tmp/r6-current.txt > qa-r6-final/target-sha256-after-final-qa.txt
+          printf '%s\n' "$current_head" > qa-r6-final/product-site-head-after-final-qa-before-cleanup.txt
+          printf '%s\n' "$current_tree" > qa-r6-final/product-site-tree-after-final-qa-before-cleanup.txt
+          sha256sum /tmp/takeout-current-after.html /tmp/takeout-current-after.txt > qa-r6-final/target-sha256-after-final-qa.txt
 
-      - name: Self-remove temporary final QA workflow
+      - name: Self-remove temporary final QA workflow forward-only
+        if: success()
         shell: bash
         run: |
           set -euo pipefail
-          git fetch origin main
 
-          # Work from newest main so legitimate concurrent industry updates are retained.
-          git reset --hard origin/main
-          test -s "$WORKFLOW_PATH"
+          cp -a qa-r6-final /tmp/qa-r6-final-preserved
 
-          # R6 TAKEOUT payload must still be exactly the accepted integration payload.
-          git merge-base --is-ancestor "$R6_INTEGRATION_HEAD" HEAD
-          cmp <(git show "$R6_INTEGRATION_HEAD:$TARGET_HTML") "$TARGET_HTML"
-          cmp <(git show "$R6_INTEGRATION_HEAD:$TARGET_TEXT") "$TARGET_TEXT"
+          pushed=0
+          for attempt in 1 2 3; do
+            git fetch origin main
+            git reset --hard origin/main
 
-          git rm "$WORKFLOW_PATH"
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git commit -m "Complete TAKEOUT R6 final LIVE QA [skip ci]"
-          git push origin HEAD:main
+            current_head="$(git rev-parse HEAD)"
+            git merge-base --is-ancestor "$R6_INTEGRATION_HEAD" "$current_head"
 
-      - name: Upload R6 final QA evidence
+            git show "$R6_INTEGRATION_HEAD:$TARGET_HTML" > /tmp/r6-cleanup-source.html
+            cmp -s /tmp/r6-cleanup-source.html "$TARGET_HTML"
+            cmp -s "$TARGET_HTML" "$TARGET_TEXT"
+
+            if [ ! -e "$WORKFLOW_PATH" ]; then
+              cleanup_head="$(git rev-parse HEAD)"
+              cleanup_tree="$(git rev-parse "HEAD^{tree}")"
+              pushed=1
+              break
+            fi
+
+            git rm "$WORKFLOW_PATH"
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git commit -m "Remove TAKEOUT R6 final QA workflow after PASS [skip ci]"
+
+            if git push origin HEAD:main; then
+              cleanup_head="$(git rev-parse HEAD)"
+              cleanup_tree="$(git rev-parse "HEAD^{tree}")"
+              pushed=1
+              break
+            fi
+          done
+
+          test "$pushed" -eq 1
+
+          rm -rf qa-r6-final
+          cp -a /tmp/qa-r6-final-preserved qa-r6-final
+          printf '%s\n' "$cleanup_head" > qa-r6-final/product-site-final-head-after-cleanup.txt
+          printf '%s\n' "$cleanup_tree" > qa-r6-final/product-site-final-tree-after-cleanup.txt
+          printf '%s\n' "WORKFLOW_REMOVED=PASS" > qa-r6-final/workflow-cleanup.txt
+
+      - name: Upload TAKEOUT R6 final QA evidence
+        if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: takeout-r6-final-live-qa-evidence
+          name: takeout-r6-final-live-qa-evidence-v1-2
           path: qa-r6-final
           if-no-files-found: error
+          retention-days: 30
