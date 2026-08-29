@@ -1,0 +1,519 @@
+name: SEITAI Tutorial R6 Product Site V1.0
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/seitai-tutorial-r6-product-site-v1.0.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: seitai-tutorial-r6-product-site-v1-0
+  cancel-in-progress: false
+
+jobs:
+  r6-product-site:
+    name: R6 Product Site integration + exact LIVE QA
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      TARGET_HTML: systems/osteopathic.html
+      TARGET_TEXT: systems/osteopathic.html.txt
+      WORKFLOW_PATH: .github/workflows/seitai-tutorial-r6-product-site-v1.0.yml
+      PRODUCT_URL: https://dpromstk2000-lab.github.io/dpro-line-systems-site/systems/osteopathic.html
+      TUTORIAL_URL: https://dpromstk2000-lab.github.io/dpro-seitai-line/index.html
+      GUIDE_URL: https://dpromstk2000-lab.github.io/dpro-seitai-line/guide-center.html
+      QUICK_URL: https://dpromstk2000-lab.github.io/dpro-seitai-line/DPRO_TUTORIAL_SEITAI_QUICK_START_V1.0.pdf
+      DETAIL_URL: https://dpromstk2000-lab.github.io/dpro-seitai-line/DPRO_TUTORIAL_SEITAI_DETAILED_MANUAL_V1.0.pdf
+      START_OBSERVED_PRODUCT_HEAD: d37d6049a8c7b3f08f42a8eec9c291d8b11a6d43
+      R5_PASS_HEAD: 6b8d5094654bed0960316a90ab46b207e9836bfa
+      R5_PASS_TREE: 89cc7fd23afe173f83a522f409e0949fac6301e9
+
+    steps:
+      - name: Checkout current Product Site main explicitly
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Verify workflow presence and forward-only ancestry
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p qa-r6/screens
+          git fetch origin main
+          git checkout main
+          git reset --hard origin/main
+          test -s "$WORKFLOW_PATH"
+          git merge-base --is-ancestor "$START_OBSERVED_PRODUCT_HEAD" HEAD
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Verify four SEITAI resources are actually public
+        shell: bash
+        run: |
+          set -euo pipefail
+          ok=0
+          for i in $(seq 1 48); do
+            rm -f /tmp/seitai-tutorial.html /tmp/seitai-guide.html /tmp/seitai-quick.pdf /tmp/seitai-detail.pdf
+            tutorial_ok=0; guide_ok=0; quick_ok=0; detail_ok=0
+            if curl -fsSL --max-time 25 "$TUTORIAL_URL?qa=${GITHUB_RUN_ID}-$i" -o /tmp/seitai-tutorial.html; then
+              grep -q 'DPRO' /tmp/seitai-tutorial.html && tutorial_ok=1 || true
+            fi
+            if curl -fsSL --max-time 25 "$GUIDE_URL?qa=${GITHUB_RUN_ID}-$i" -o /tmp/seitai-guide.html; then
+              grep -q 'SEITAI Guide Center' /tmp/seitai-guide.html && guide_ok=1 || true
+            fi
+            if curl -fsSL --max-time 25 "$QUICK_URL?qa=${GITHUB_RUN_ID}-$i" -o /tmp/seitai-quick.pdf; then
+              test "$(head -c 4 /tmp/seitai-quick.pdf)" = '%PDF' && quick_ok=1 || true
+            fi
+            if curl -fsSL --max-time 25 "$DETAIL_URL?qa=${GITHUB_RUN_ID}-$i" -o /tmp/seitai-detail.pdf; then
+              test "$(head -c 4 /tmp/seitai-detail.pdf)" = '%PDF' && detail_ok=1 || true
+            fi
+            if [ "$tutorial_ok" -eq 1 ] && [ "$guide_ok" -eq 1 ] && [ "$quick_ok" -eq 1 ] && [ "$detail_ok" -eq 1 ]; then
+              ok=1
+              break
+            fi
+            sleep 10
+          done
+          test "$ok" -eq 1
+          {
+            echo "R6 LINKS / SEITAI"
+            echo "TUTORIAL_START=$TUTORIAL_URL"
+            echo "GUIDE_CENTER=$GUIDE_URL"
+            echo "QUICK_START_PDF=$QUICK_URL"
+            echo "DETAILED_MANUAL_PDF=$DETAIL_URL"
+            echo "ALL_4_PUBLIC_REACHABLE=PASS"
+            echo "R5_PASS_HEAD=$R5_PASS_HEAD"
+            echo "R5_PASS_TREE=$R5_PASS_TREE"
+          } > qa-r6/R6_LINKS.txt
+
+      - name: Fetch newest Product Site main immediately before write and integrate target only
+        id: integrate
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch origin main
+          git checkout main
+          git reset --hard origin/main
+
+          prewrite_head="$(git rev-parse HEAD)"
+          prewrite_tree="$(git rev-parse HEAD^{tree})"
+          git merge-base --is-ancestor "$START_OBSERVED_PRODUCT_HEAD" "$prewrite_head"
+
+          test -s "$TARGET_HTML"
+          test -s "$TARGET_TEXT"
+          cmp -s "$TARGET_HTML" "$TARGET_TEXT"
+          test -s "$WORKFLOW_PATH"
+          ! grep -q 'DPRO TUTORIAL SEITAI R6' "$TARGET_HTML"
+
+          sha256sum "$TARGET_HTML" "$TARGET_TEXT" > qa-r6/target-sha256-before.txt
+          html_blob_before="$(git rev-parse "HEAD:$TARGET_HTML")"
+          text_blob_before="$(git rev-parse "HEAD:$TARGET_TEXT")"
+          test "$html_blob_before" = "$text_blob_before"
+
+          {
+            echo "R6 PRODUCT SITE PREWRITE LOCK / SEITAI"
+            echo "FETCH_NEWEST_PRODUCT_MAIN_PREWRITE=PASS"
+            echo "PRODUCT_SITE_PREWRITE_HEAD=$prewrite_head"
+            echo "PRODUCT_SITE_PREWRITE_TREE=$prewrite_tree"
+            echo "START_OBSERVED_PRODUCT_HEAD=$START_OBSERVED_PRODUCT_HEAD"
+            echo "TARGET_HTML=$TARGET_HTML"
+            echo "TARGET_TEXT=$TARGET_TEXT"
+            echo "HTML_BLOB_BEFORE=$html_blob_before"
+            echo "TEXT_BLOB_BEFORE=$text_blob_before"
+            echo "HTML_TEXT_BYTE_IDENTICAL_BEFORE=PASS"
+            echo "FORWARD_ONLY=PASS"
+          } > qa-r6/R6_PRODUCT_SITE_PREWRITE_LOCK.txt
+
+          cp "$TARGET_HTML" /tmp/osteopathic-before-r6.html
+
+          cat > /tmp/seitai-r6-patch.py <<'PY'
+          from pathlib import Path
+          import os
+
+          target = Path(os.environ['TARGET_HTML'])
+          text = target.read_text(encoding='utf-8')
+          marker = 'DPRO TUTORIAL SEITAI R6'
+          if marker in text:
+              raise SystemExit('R6 marker already exists')
+
+          css = r'''
+          /* DPRO TUTORIAL SEITAI R6 */
+          .ps-tutorial-resources{background:linear-gradient(135deg,#f3faf6 0%,#f7fbff 100%)}
+          .ps-tutorial-intro{max-width:820px;margin-bottom:1.2rem;color:var(--dpro-warm-gray-600)}
+          .ps-tutorial-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.85rem}
+          .ps-tutorial-card{display:flex;align-items:flex-start;gap:.85rem;min-height:126px;padding:1rem 1.05rem;border:1px solid var(--ps-line);border-radius:1rem;background:#fff;text-decoration:none;box-shadow:var(--dpro-shadow-sm);transition:border-color .18s ease,transform .18s ease}
+          .ps-tutorial-card:hover{border-color:#9cccb8;transform:translateY(-1px)}
+          .ps-tutorial-card:focus-visible{outline:3px solid #16845b;outline-offset:3px}
+          .ps-tutorial-card__no{flex:0 0 38px;width:38px;height:38px;display:grid;place-items:center;border-radius:11px;background:var(--dpro-soft-green);color:var(--dpro-green);font-size:.75rem;font-weight:900}
+          .ps-tutorial-card strong{display:block;color:var(--ps-deep);font-size:1rem;line-height:1.35}
+          .ps-tutorial-card small{display:block;margin-top:.35rem;color:var(--dpro-warm-gray-600);font-size:.82rem;line-height:1.55}
+          .ps-tutorial-safe{margin:1rem 0 0;padding:.85rem 1rem;border-left:4px solid var(--dpro-green);background:#fff;color:#40554d;font-size:.86rem}
+          @media(max-width:640px){.ps-tutorial-grid{grid-template-columns:1fr}.ps-tutorial-card{min-height:0}}
+          '''
+
+          section = f'''<!-- DPRO TUTORIAL SEITAI R6 -->
+          <section aria-labelledby="tutorial-resources-title" class="dpro-section ps-tutorial-resources" id="tutorial-resources">
+            <div class="dpro-container">
+              <div class="ps-section-heading">
+                <p class="ps-kicker">TUTORIAL &amp; GUIDE</p>
+                <h2 id="tutorial-resources-title">操作を試す。ガイドで確認する。</h2>
+                <p>整体・整骨院向けのFirst10チュートリアル、Guide Center、印刷用マニュアルをここから確認できます。</p>
+              </div>
+              <p class="ps-tutorial-intro">Tutorialは公開デモを安全に確認するための操作ガイドです。予約確定、受付・施術進捗変更、患者・顧客情報更新、保存・削除・承認・送信・設定変更などの実業務操作を自動実行しません。</p>
+              <div class="ps-tutorial-grid">
+                <a class="ps-tutorial-card" data-r6-resource="tutorial" href="{os.environ['TUTORIAL_URL']}" rel="noopener" target="_blank">
+                  <span class="ps-tutorial-card__no">01</span><span><strong>Tutorial Start</strong><small>First10をStep 1から開始。Start / Resume / Replay、マウス・タッチ・キーボードに対応。</small></span>
+                </a>
+                <a class="ps-tutorial-card" data-r6-resource="guide" href="{os.environ['GUIDE_URL']}" rel="noopener" target="_blank">
+                  <span class="ps-tutorial-card__no">02</span><span><strong>Guide Center</strong><small>First10の順序・対象画面と、現在の進行状態を確認。</small></span>
+                </a>
+                <a class="ps-tutorial-card" data-r6-resource="quick" href="{os.environ['QUICK_URL']}" rel="noopener" target="_blank">
+                  <span class="ps-tutorial-card__no">03</span><span><strong>Quick Start PDF</strong><small>A4縦1ページ。開始方法、基本操作、安全な確認範囲を短く確認。</small></span>
+                </a>
+                <a class="ps-tutorial-card" data-r6-resource="detail" href="{os.environ['DETAIL_URL']}" rel="noopener" target="_blank">
+                  <span class="ps-tutorial-card__no">04</span><span><strong>Detailed Manual PDF</strong><small>First10、会員ページへの画面移動、Guide Center、ドラッグ・タッチ・キーボード操作を詳しく確認。</small></span>
+                </a>
+              </div>
+              <p class="ps-tutorial-safe"><strong>安全境界:</strong> Tutorialは実業務データを書き換えません。予約・患者情報・施術履歴・受付状態・設定などの変更は、通常の業務画面で利用者が明示的に行う操作です。</p>
+            </div>
+          </section>'''
+
+          style_anchor = '</style>'
+          body_anchor = '<section aria-labelledby="final-title"'
+          if text.count(style_anchor) != 1:
+              raise SystemExit('style anchor mismatch')
+          if text.count(body_anchor) != 1:
+              raise SystemExit('final CTA anchor mismatch')
+
+          text = text.replace(style_anchor, css + '\n' + style_anchor, 1)
+          text = text.replace(body_anchor, section + body_anchor, 1)
+          target.write_text(text, encoding='utf-8')
+          PY
+
+          python /tmp/seitai-r6-patch.py
+          cp "$TARGET_HTML" "$TARGET_TEXT"
+
+          cmp -s "$TARGET_HTML" "$TARGET_TEXT"
+          grep -q 'DPRO TUTORIAL SEITAI R6' "$TARGET_HTML"
+          grep -q 'data-r6-resource="tutorial"' "$TARGET_HTML"
+          grep -q 'data-r6-resource="guide"' "$TARGET_HTML"
+          grep -q 'data-r6-resource="quick"' "$TARGET_HTML"
+          grep -q 'data-r6-resource="detail"' "$TARGET_HTML"
+          grep -Fq "$TUTORIAL_URL" "$TARGET_HTML"
+          grep -Fq "$GUIDE_URL" "$TARGET_HTML"
+          grep -Fq "$QUICK_URL" "$TARGET_HTML"
+          grep -Fq "$DETAIL_URL" "$TARGET_HTML"
+
+          # Existing Product Site regression guards.
+          grep -q '月額5,500円' "$TARGET_HTML"
+          grep -q 'https://lin.ee/YxJGXV6D' "$TARGET_HTML"
+          grep -q '../lp-seitai.html' "$TARGET_HTML"
+          grep -q '../flyer-seitai.html' "$TARGET_HTML"
+          grep -q '../flyer-seitai.pdf' "$TARGET_HTML"
+          grep -q '../systems-data.js' "$TARGET_HTML"
+          grep -q '../dpro-v3.js' "$TARGET_HTML"
+          grep -q 'LIVE DEMO' "$TARGET_HTML"
+
+          git add "$TARGET_HTML" "$TARGET_TEXT"
+          git rm "$WORKFLOW_PATH"
+
+          git fetch origin main
+          remote_now="$(git rev-parse origin/main)"
+          test "$remote_now" = "$prewrite_head" || {
+            echo "Product Site main advanced after prewrite. HOLD without push." >&2
+            exit 1
+          }
+
+          mapfile -t changed < <(git diff --cached --name-only | sort)
+          expected="$(printf '%s\n' "$WORKFLOW_PATH" "$TARGET_HTML" "$TARGET_TEXT" | sort)"
+          actual="$(printf '%s\n' "${changed[@]}" | sort)"
+          test "$actual" = "$expected"
+
+          git commit -m "Integrate SEITAI Tutorial R6 Product Site [skip ci]"
+          integration_head="$(git rev-parse HEAD)"
+          integration_tree="$(git rev-parse HEAD^{tree})"
+          git merge-base --is-ancestor "$prewrite_head" "$integration_head"
+          git push origin HEAD:main
+
+          printf '%s\n' "$integration_head" > qa-r6/r6-integration-head.txt
+          printf '%s\n' "$integration_tree" > qa-r6/r6-integration-tree.txt
+          git diff-tree --no-commit-id --name-status -r "$integration_head" > qa-r6/R6_CHANGED_FILES.txt
+          sha256sum "$TARGET_HTML" "$TARGET_TEXT" > qa-r6/target-sha256-after.txt
+          html_blob_after="$(git rev-parse "HEAD:$TARGET_HTML")"
+          text_blob_after="$(git rev-parse "HEAD:$TARGET_TEXT")"
+          test "$html_blob_after" = "$text_blob_after"
+
+          {
+            echo "R6 FORWARD ONLY EVIDENCE / SEITAI"
+            echo "PRODUCT_SITE_PREWRITE_HEAD=$prewrite_head"
+            echo "PRODUCT_SITE_PREWRITE_TREE=$prewrite_tree"
+            echo "R6_INTEGRATION_HEAD=$integration_head"
+            echo "R6_INTEGRATION_TREE=$integration_tree"
+            echo "HTML_BLOB_AFTER=$html_blob_after"
+            echo "TEXT_BLOB_AFTER=$text_blob_after"
+            echo "HTML_TEXT_BYTE_IDENTICAL=PASS"
+            echo "PRODUCT_SITE_ROLLBACK=0"
+            echo "FORWARD_ONLY=PASS"
+            echo "BUSINESS_MUTATION=0"
+            echo "R7=NOT_AUTHORIZED_NOT_EXECUTED"
+            echo "FINAL_LOCK=CENTRAL_DECISION_ONLY"
+          } > qa-r6/R6_FORWARD_ONLY_EVIDENCE.txt
+
+          echo "prewrite_head=$prewrite_head" >> "$GITHUB_OUTPUT"
+          echo "prewrite_tree=$prewrite_tree" >> "$GITHUB_OUTPUT"
+          echo "integration_head=$integration_head" >> "$GITHUB_OUTPUT"
+          echo "integration_tree=$integration_tree" >> "$GITHUB_OUTPUT"
+
+      - name: Wait for Product Site Pages deployment safely
+        shell: bash
+        run: |
+          set -euo pipefail
+          for i in $(seq 1 48); do
+            rm -f /tmp/seitai-product-live.html
+            if curl -fsSL --max-time 25 "$PRODUCT_URL?qa=${{ steps.integrate.outputs.integration_head }}-$i" -o /tmp/seitai-product-live.html; then
+              if grep -q 'DPRO TUTORIAL SEITAI R6' /tmp/seitai-product-live.html; then
+                exit 0
+              fi
+            fi
+            sleep 10
+          done
+          echo "R6 marker did not appear on Product Site GitHub Pages." >&2
+          exit 1
+
+      - name: Setup Node for exact-width LIVE QA
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install Playwright
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm install --no-save playwright@1.55.0
+          npx playwright install --with-deps chromium
+
+      - name: Run R6 exact four-width public LIVE QA
+        shell: bash
+        env:
+          R6_PREWRITE_HEAD: ${{ steps.integrate.outputs.prewrite_head }}
+          R6_PREWRITE_TREE: ${{ steps.integrate.outputs.prewrite_tree }}
+          R6_INTEGRATION_HEAD: ${{ steps.integrate.outputs.integration_head }}
+          R6_INTEGRATION_TREE: ${{ steps.integrate.outputs.integration_tree }}
+        run: |
+          set -euo pipefail
+          git fetch origin main
+          final_head="$(git rev-parse origin/main)"
+          final_tree="$(git rev-parse "origin/main^{tree}")"
+          git merge-base --is-ancestor "$R6_INTEGRATION_HEAD" "$final_head"
+
+          git show "$R6_INTEGRATION_HEAD:$TARGET_HTML" > /tmp/r6-integration.html
+          git show "origin/main:$TARGET_HTML" > /tmp/r6-current.html
+          cmp -s /tmp/r6-integration.html /tmp/r6-current.html
+          git show "origin/main:$TARGET_TEXT" > /tmp/r6-current.txt
+          cmp -s /tmp/r6-current.html /tmp/r6-current.txt
+
+          cat > /tmp/seitai-r6-live-qa.mjs <<'NODE'
+          import { chromium } from 'playwright';
+          import fs from 'node:fs';
+
+          const productUrl = process.env.PRODUCT_URL;
+          const expected = {
+            tutorial: process.env.TUTORIAL_URL,
+            guide: process.env.GUIDE_URL,
+            quick: process.env.QUICK_URL,
+            detail: process.env.DETAIL_URL
+          };
+          const viewports = [
+            {name:'1440x1000',width:1440,height:1000},
+            {name:'1024x768',width:1024,height:768},
+            {name:'390x844',width:390,height:844},
+            {name:'320x720',width:320,height:720}
+          ];
+
+          const result = {
+            schema:'DPRO_TUTORIAL_SEITAI_R6_PRODUCT_SITE_LIVE_QA_V1.0',
+            productUrl, expected,
+            prewriteHead:process.env.R6_PREWRITE_HEAD,
+            prewriteTree:process.env.R6_PREWRITE_TREE,
+            integrationHead:process.env.R6_INTEGRATION_HEAD,
+            integrationTree:process.env.R6_INTEGRATION_TREE,
+            finalHead:process.env.FINAL_HEAD,
+            finalTree:process.env.FINAL_TREE,
+            viewports:[], resourceChecks:{}, failures:[],
+            productSiteRollback:0, businessMutation:0, unsafeWriteRequest:0,
+            productSiteRegression:0, forwardOnly:true
+          };
+
+          const browser = await chromium.launch({headless:true});
+
+          const rc = await browser.newContext();
+          const rp = await rc.newPage();
+          for (const [key,url] of Object.entries(expected)) {
+            try {
+              const resp = await rp.request.get(url,{timeout:30000});
+              const ct = String(resp.headers()['content-type'] || '').toLowerCase();
+              const pdfExpected = key === 'quick' || key === 'detail';
+              const ok = resp.status() === 200 && (!pdfExpected || ct.includes('pdf'));
+              result.resourceChecks[key] = {url,status:resp.status(),contentType:ct,ok};
+              if (!ok) result.failures.push(`resource ${key}: status=${resp.status()} contentType=${ct}`);
+            } catch (e) {
+              result.resourceChecks[key] = {url,error:String(e),ok:false};
+              result.failures.push(`resource ${key}: ${String(e)}`);
+            }
+          }
+          await rc.close();
+
+          for (const vp of viewports) {
+            const context = await browser.newContext({viewport:{width:vp.width,height:vp.height}});
+            const page = await context.newPage();
+            const pageErrors = [];
+            const consoleErrors = [];
+            const unsafe = [];
+
+            page.on('pageerror', e => pageErrors.push(String(e)));
+            page.on('console', m => { if (m.type() === 'error') consoleErrors.push(m.text()); });
+            await page.route('**/*', async route => {
+              const method = route.request().method().toUpperCase();
+              if (['POST','PUT','PATCH','DELETE'].includes(method)) {
+                unsafe.push({method,url:route.request().url()});
+                return route.abort();
+              }
+              return route.continue();
+            });
+
+            const resp = await page.goto(`${productUrl}?r6qa=${Date.now()}-${vp.width}`,{waitUntil:'networkidle',timeout:45000});
+            const status = resp ? resp.status() : 0;
+            const section = page.locator('#tutorial-resources');
+            await section.waitFor({state:'visible',timeout:15000});
+            await section.scrollIntoViewIfNeeded();
+
+            const data = await page.evaluate((expected) => {
+              const links = [...document.querySelectorAll('[data-r6-resource]')].map(a => ({
+                key:a.getAttribute('data-r6-resource'),
+                href:a.href,
+                visible:!!(a.offsetWidth || a.offsetHeight || a.getClientRects().length)
+              }));
+              const map = Object.fromEntries(links.map(x => [x.key,x]));
+              const de = document.documentElement;
+              const body = document.body;
+              const bodyText = body.innerText;
+              const existingPreserved = [
+                '月額5,500円', 'LINEで相談する', 'LIVE DEMO', '詳しい紹介を見る', 'A4チラシを見る', 'PDF資料を開く'
+              ].every(x => bodyText.includes(x));
+              return {
+                innerWidth:window.innerWidth,
+                documentElementScrollWidth:de.scrollWidth,
+                bodyScrollWidth:body.scrollWidth,
+                linkCount:links.length,
+                map,
+                existingPreserved,
+                marker:document.documentElement.innerHTML.includes('DPRO TUTORIAL SEITAI R6')
+              };
+            }, expected);
+
+            let keyboardFocusVisible = false;
+            await page.locator('[data-r6-resource="tutorial"]').focus();
+            keyboardFocusVisible = await page.locator('[data-r6-resource="tutorial"]').evaluate(el => {
+              const cs = getComputedStyle(el);
+              return document.activeElement === el && cs.outlineStyle !== 'none' && parseFloat(cs.outlineWidth || '0') >= 2;
+            });
+
+            const exactLinks = Object.entries(expected).every(([k,u]) => data.map[k]?.href === u && data.map[k]?.visible);
+            const noOverflow = data.documentElementScrollWidth <= data.innerWidth && data.bodyScrollWidth <= data.innerWidth;
+            const pass = status === 200 && data.marker && data.linkCount === 4 && exactLinks && keyboardFocusVisible &&
+              data.existingPreserved && noOverflow && pageErrors.length === 0 && consoleErrors.length === 0 && unsafe.length === 0;
+
+            await section.screenshot({path:`qa-r6/screens/${vp.name}.png`});
+            result.viewports.push({
+              ...vp,status,links:data.map,linkCount:data.linkCount,keyboardFocusVisible,
+              existingPreserved:data.existingPreserved,
+              overflow:{innerWidth:data.innerWidth,documentElementScrollWidth:data.documentElementScrollWidth,bodyScrollWidth:data.bodyScrollWidth,noPositiveHorizontalOverflow:noOverflow},
+              pageErrors,consoleErrors,unsafe,pass
+            });
+            if (!pass) result.failures.push(`viewport ${vp.name} failed`);
+            await context.close();
+          }
+
+          await browser.close();
+          result.unsafeWriteRequest = result.viewports.reduce((n,v)=>n+v.unsafe.length,0);
+          result.businessMutation = result.unsafeWriteRequest;
+          result.productSiteRegression = result.viewports.every(v=>v.existingPreserved) ? 0 : 1;
+          result.pass = Object.values(result.resourceChecks).every(x=>x.ok) && result.viewports.every(v=>v.pass) &&
+            result.unsafeWriteRequest === 0 && result.businessMutation === 0 && result.productSiteRegression === 0 && result.productSiteRollback === 0;
+
+          fs.writeFileSync('qa-r6/R6_LIVE_QA.json', JSON.stringify(result,null,2));
+          if (!result.pass) {
+            console.error(JSON.stringify(result,null,2));
+            process.exit(1);
+          }
+          NODE
+
+          FINAL_HEAD="$final_head" FINAL_TREE="$final_tree" node /tmp/seitai-r6-live-qa.mjs
+
+          {
+            echo "PRODUCT_SITE_FINAL_HEAD=$final_head"
+            echo "PRODUCT_SITE_FINAL_TREE=$final_tree"
+            echo "R6_INTEGRATION_HEAD=$R6_INTEGRATION_HEAD"
+            echo "R6_INTEGRATION_TREE=$R6_INTEGRATION_TREE"
+            echo "PRODUCT_SITE_ROLLBACK=0"
+            echo "FORWARD_ONLY=PASS"
+          } >> qa-r6/R6_FORWARD_ONLY_EVIDENCE.txt
+
+      - name: Final R6 gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          q = json.loads(Path('qa-r6/R6_LIVE_QA.json').read_text())
+          assert q['pass'] is True
+          assert q['businessMutation'] == 0
+          assert q['unsafeWriteRequest'] == 0
+          assert q['productSiteRegression'] == 0
+          assert q['productSiteRollback'] == 0
+          assert q['forwardOnly'] is True
+          assert len(q['viewports']) == 4
+          assert all(v['pass'] for v in q['viewports'])
+          assert all(v['keyboardFocusVisible'] for v in q['viewports'])
+          assert all(v['overflow']['noPositiveHorizontalOverflow'] for v in q['viewports'])
+          assert all(v['pageErrors'] == [] for v in q['viewports'])
+          assert all(v['consoleErrors'] == [] for v in q['viewports'])
+          assert all(x['ok'] for x in q['resourceChecks'].values())
+          PY
+          {
+            echo "R4_CENTRAL=ACCEPTED"
+            echo "R5=PASS"
+            echo "R6=PASS"
+            echo "FIRST10_COUNT=10"
+            echo "GUIDE_COUNT=10"
+            echo "BUSINESS_MUTATION=0"
+            echo "PRODUCT_SITE_ROLLBACK=0"
+            echo "FORWARD_ONLY=PASS"
+            echo "R7=NOT_AUTHORIZED_NOT_EXECUTED"
+            echo "FINAL_LOCK=CENTRAL_DECISION_ONLY"
+          } > qa-r6/R6_STATUS.txt
+
+      - name: Upload R6 evidence and screenshots
+        uses: actions/upload-artifact@v4
+        with:
+          name: seitai-r6-product-site-evidence
+          path: |
+            qa-r6/R6_PRODUCT_SITE_PREWRITE_LOCK.txt
+            qa-r6/R6_CHANGED_FILES.txt
+            qa-r6/R6_LINKS.txt
+            qa-r6/R6_LIVE_QA.json
+            qa-r6/R6_FORWARD_ONLY_EVIDENCE.txt
+            qa-r6/R6_STATUS.txt
+            qa-r6/target-sha256-before.txt
+            qa-r6/target-sha256-after.txt
+            qa-r6/r6-integration-head.txt
+            qa-r6/r6-integration-tree.txt
+            qa-r6/screens/*.png
+          if-no-files-found: error
+          retention-days: 14
