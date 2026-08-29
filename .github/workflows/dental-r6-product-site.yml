@@ -189,7 +189,7 @@ jobs:
 
           python - <<'PY'
           from pathlib import Path
-          import os,re,json
+          import os,json
 
           target=Path(os.environ["TARGET_HTML"])
           before=Path("/tmp/dental-r6-before.html").read_text(encoding="utf-8")
@@ -200,8 +200,27 @@ jobs:
           sec_start="<!-- DPRO TUTORIAL DENTAL R6 SECTION START -->"
           sec_end="<!-- DPRO TUTORIAL DENTAL R6 SECTION END -->"
 
-          stripped=re.sub(re.escape(css_start)+r'.*?'+re.escape(css_end)+r'\n?', '', after, count=1, flags=re.S)
-          stripped=re.sub(re.escape(sec_start)+r'.*?'+re.escape(sec_end)+r'\n?', '', stripped, count=1, flags=re.S)
+          # The CSS f-string already ends with one newline and the insertion adds
+          # one more before </style>; the SECTION adds exactly one newline before FAQ.
+          # Remove those exact insertion spans only, then require byte-for-byte text equality.
+          css_s=after.find(css_start)
+          css_e=after.find(css_end,css_s)
+          if css_s < 0 or css_e < 0:
+            raise SystemExit("DENTAL R6 CSS insertion markers missing")
+          css_e += len(css_end)
+          if after[css_e:css_e+2] != "\n\n":
+            raise SystemExit("DENTAL R6 CSS insertion boundary mismatch")
+          stripped=after[:css_s]+after[css_e+2:]
+
+          sec_s=stripped.find(sec_start)
+          sec_e=stripped.find(sec_end,sec_s)
+          if sec_s < 0 or sec_e < 0:
+            raise SystemExit("DENTAL R6 SECTION insertion markers missing")
+          sec_e += len(sec_end)
+          if stripped[sec_e:sec_e+1] != "\n":
+            raise SystemExit("DENTAL R6 SECTION insertion boundary mismatch")
+          stripped=stripped[:sec_s]+stripped[sec_e+1:]
+
           if stripped != before:
             raise SystemExit("Existing DENTAL Product Site content changed outside the authorized R6 insertion blocks")
 
