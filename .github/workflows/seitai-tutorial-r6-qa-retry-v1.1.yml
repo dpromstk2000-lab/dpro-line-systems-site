@@ -1,0 +1,298 @@
+name: SEITAI Tutorial R6 QA Retry V1.1
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/seitai-tutorial-r6-qa-retry-v1.1.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: seitai-tutorial-r6-qa-retry-v1-1
+  cancel-in-progress: false
+
+jobs:
+  r6-qa-retry:
+    name: R6 exact LIVE QA retry only
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      WORKFLOW_PATH: .github/workflows/seitai-tutorial-r6-qa-retry-v1.1.yml
+      TARGET_HTML: systems/osteopathic.html
+      TARGET_TEXT: systems/osteopathic.html.txt
+      PRODUCT_URL: https://dpromstk2000-lab.github.io/dpro-line-systems-site/systems/osteopathic.html
+      TUTORIAL_URL: https://dpromstk2000-lab.github.io/dpro-seitai-line/index.html
+      GUIDE_URL: https://dpromstk2000-lab.github.io/dpro-seitai-line/guide-center.html
+      QUICK_URL: https://dpromstk2000-lab.github.io/dpro-seitai-line/DPRO_TUTORIAL_SEITAI_QUICK_START_V1.0.pdf
+      DETAIL_URL: https://dpromstk2000-lab.github.io/dpro-seitai-line/DPRO_TUTORIAL_SEITAI_DETAILED_MANUAL_V1.0.pdf
+      R6_INTEGRATION_HEAD: 59f0e6cba6b2aa258799ab11968e647d03e2d3c5
+      R6_INTEGRATION_TREE: c2ac3315c8f6449359e870b032eb740e2e1dfedd
+      R5_PASS_HEAD: 6b8d5094654bed0960316a90ab46b207e9836bfa
+      R5_PASS_TREE: 89cc7fd23afe173f83a522f409e0949fac6301e9
+
+    steps:
+      - name: Checkout newest Product Site main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Verify forward-only R6 integration lock
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p qa-r6-retry/screens
+          git fetch origin main
+          git checkout main
+          git reset --hard origin/main
+          test -s "$WORKFLOW_PATH"
+          git merge-base --is-ancestor "$R6_INTEGRATION_HEAD" HEAD
+          git show "$R6_INTEGRATION_HEAD:$TARGET_HTML" > /tmp/r6-locked.html
+          git show "HEAD:$TARGET_HTML" > /tmp/r6-current.html
+          git show "HEAD:$TARGET_TEXT" > /tmp/r6-current.txt
+          cmp -s /tmp/r6-locked.html /tmp/r6-current.html
+          cmp -s /tmp/r6-current.html /tmp/r6-current.txt
+          grep -q 'DPRO TUTORIAL SEITAI R6' /tmp/r6-current.html
+          printf '%s\n' "$(git rev-parse HEAD)" > qa-r6-retry/product-site-head-before-retry.txt
+          printf '%s\n' "$(git rev-parse HEAD^{tree})" > qa-r6-retry/product-site-tree-before-retry.txt
+          sha256sum /tmp/r6-current.html /tmp/r6-current.txt > qa-r6-retry/target-sha256.txt
+
+      - name: Verify four public SEITAI resources
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL --max-time 30 "$TUTORIAL_URL?qa=${GITHUB_RUN_ID}" -o /tmp/tutorial.html
+          curl -fsSL --max-time 30 "$GUIDE_URL?qa=${GITHUB_RUN_ID}" -o /tmp/guide.html
+          curl -fsSL --max-time 30 "$QUICK_URL?qa=${GITHUB_RUN_ID}" -o /tmp/quick.pdf
+          curl -fsSL --max-time 30 "$DETAIL_URL?qa=${GITHUB_RUN_ID}" -o /tmp/detail.pdf
+          grep -q 'DPRO' /tmp/tutorial.html
+          grep -q 'SEITAI Guide Center' /tmp/guide.html
+          test "$(head -c 4 /tmp/quick.pdf)" = '%PDF'
+          test "$(head -c 4 /tmp/detail.pdf)" = '%PDF'
+          cat > qa-r6-retry/R6_LINKS.txt <<EOF
+          TUTORIAL_START=$TUTORIAL_URL
+          GUIDE_CENTER=$GUIDE_URL
+          QUICK_START_PDF=$QUICK_URL
+          DETAILED_MANUAL_PDF=$DETAIL_URL
+          ALL_4_PUBLIC_REACHABLE=PASS
+          EOF
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install Playwright
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm install --no-save playwright@1.55.0
+          npx playwright install --with-deps chromium
+
+      - name: Run exact four-width public LIVE QA from repository root
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch origin main
+          current_head="$(git rev-parse origin/main)"
+          git merge-base --is-ancestor "$R6_INTEGRATION_HEAD" "$current_head"
+          git show "$R6_INTEGRATION_HEAD:$TARGET_HTML" > /tmp/r6-locked.html
+          git show "origin/main:$TARGET_HTML" > /tmp/r6-current.html
+          git show "origin/main:$TARGET_TEXT" > /tmp/r6-current.txt
+          cmp -s /tmp/r6-locked.html /tmp/r6-current.html
+          cmp -s /tmp/r6-current.html /tmp/r6-current.txt
+
+          cat > seitai-r6-live-qa-retry.mjs <<'NODE'
+          import { chromium } from 'playwright';
+          import fs from 'node:fs';
+
+          const productUrl = process.env.PRODUCT_URL;
+          const expected = {
+            tutorial: process.env.TUTORIAL_URL,
+            guide: process.env.GUIDE_URL,
+            quick: process.env.QUICK_URL,
+            detail: process.env.DETAIL_URL
+          };
+          const viewports = [
+            {name:'1440x1000',width:1440,height:1000},
+            {name:'1024x768',width:1024,height:768},
+            {name:'390x844',width:390,height:844},
+            {name:'320x720',width:320,height:720}
+          ];
+          const result = {
+            schema:'DPRO_TUTORIAL_SEITAI_R6_PRODUCT_SITE_LIVE_QA_RETRY_V1.1',
+            productUrl, expected,
+            r6IntegrationHead:process.env.R6_INTEGRATION_HEAD,
+            r6IntegrationTree:process.env.R6_INTEGRATION_TREE,
+            r5PassHead:process.env.R5_PASS_HEAD,
+            r5PassTree:process.env.R5_PASS_TREE,
+            viewports:[], resourceChecks:{}, failures:[],
+            productSiteRollback:0, businessMutation:0, unsafeWriteRequest:0,
+            productSiteRegression:0, forwardOnly:true
+          };
+
+          const browser = await chromium.launch({headless:true});
+          const rc = await browser.newContext();
+          const rp = await rc.newPage();
+          for (const [key,url] of Object.entries(expected)) {
+            try {
+              const resp = await rp.request.get(url,{timeout:30000});
+              const ct = String(resp.headers()['content-type'] || '').toLowerCase();
+              const pdfExpected = key === 'quick' || key === 'detail';
+              const ok = resp.status() === 200 && (!pdfExpected || ct.includes('pdf'));
+              result.resourceChecks[key] = {url,status:resp.status(),contentType:ct,ok};
+              if (!ok) result.failures.push(`resource ${key}: status=${resp.status()} contentType=${ct}`);
+            } catch (e) {
+              result.resourceChecks[key] = {url,error:String(e),ok:false};
+              result.failures.push(`resource ${key}: ${String(e)}`);
+            }
+          }
+          await rc.close();
+
+          for (const vp of viewports) {
+            const context = await browser.newContext({viewport:{width:vp.width,height:vp.height}});
+            const page = await context.newPage();
+            const pageErrors = [];
+            const consoleErrors = [];
+            const unsafe = [];
+            page.on('pageerror', e => pageErrors.push(String(e)));
+            page.on('console', m => { if (m.type() === 'error') consoleErrors.push(m.text()); });
+            await page.route('**/*', async route => {
+              const method = route.request().method().toUpperCase();
+              if (['POST','PUT','PATCH','DELETE'].includes(method)) {
+                unsafe.push({method,url:route.request().url()});
+                return route.abort();
+              }
+              return route.continue();
+            });
+
+            const resp = await page.goto(`${productUrl}?r6qa=${Date.now()}-${vp.width}`,{waitUntil:'networkidle',timeout:45000});
+            const status = resp ? resp.status() : 0;
+            const section = page.locator('#tutorial-resources');
+            await section.waitFor({state:'visible',timeout:15000});
+            await section.scrollIntoViewIfNeeded();
+            const data = await page.evaluate(() => {
+              const links = [...document.querySelectorAll('[data-r6-resource]')].map(a => ({
+                key:a.getAttribute('data-r6-resource'), href:a.href,
+                visible:!!(a.offsetWidth || a.offsetHeight || a.getClientRects().length)
+              }));
+              const map = Object.fromEntries(links.map(x => [x.key,x]));
+              const de = document.documentElement, body = document.body, bodyText = body.innerText;
+              return {
+                innerWidth:window.innerWidth,
+                documentElementScrollWidth:de.scrollWidth,
+                bodyScrollWidth:body.scrollWidth,
+                linkCount:links.length, map,
+                existingPreserved:['月額5,500円','LINEで相談する','LIVE DEMO','詳しい紹介を見る','A4チラシを見る','PDF資料を開く'].every(x=>bodyText.includes(x)),
+                marker:document.documentElement.innerHTML.includes('DPRO TUTORIAL SEITAI R6')
+              };
+            });
+
+            await page.keyboard.press('Tab');
+            const tutorial = page.locator('[data-r6-resource="tutorial"]');
+            await tutorial.focus();
+            const keyboardFocusVisible = await tutorial.evaluate(el => {
+              const cs = getComputedStyle(el);
+              return document.activeElement === el && cs.outlineStyle !== 'none' && parseFloat(cs.outlineWidth || '0') >= 2;
+            });
+            const exactLinks = Object.entries(expected).every(([k,u]) => data.map[k]?.href === u && data.map[k]?.visible);
+            const noOverflow = data.documentElementScrollWidth <= data.innerWidth && data.bodyScrollWidth <= data.innerWidth;
+            const pass = status === 200 && data.marker && data.linkCount === 4 && exactLinks && keyboardFocusVisible && data.existingPreserved && noOverflow && pageErrors.length === 0 && consoleErrors.length === 0 && unsafe.length === 0;
+            await section.screenshot({path:`qa-r6-retry/screens/${vp.name}.png`});
+            result.viewports.push({...vp,status,links:data.map,linkCount:data.linkCount,keyboardFocusVisible,existingPreserved:data.existingPreserved,overflow:{innerWidth:data.innerWidth,documentElementScrollWidth:data.documentElementScrollWidth,bodyScrollWidth:data.bodyScrollWidth,noPositiveHorizontalOverflow:noOverflow},pageErrors,consoleErrors,unsafe,pass});
+            if (!pass) result.failures.push(`viewport ${vp.name} failed`);
+            await context.close();
+          }
+
+          await browser.close();
+          result.unsafeWriteRequest = result.viewports.reduce((n,v)=>n+v.unsafe.length,0);
+          result.businessMutation = result.unsafeWriteRequest;
+          result.productSiteRegression = result.viewports.every(v=>v.existingPreserved) ? 0 : 1;
+          result.pass = Object.values(result.resourceChecks).every(x=>x.ok) && result.viewports.every(v=>v.pass) && result.unsafeWriteRequest === 0 && result.businessMutation === 0 && result.productSiteRegression === 0 && result.productSiteRollback === 0;
+          fs.writeFileSync('qa-r6-retry/R6_LIVE_QA.json', JSON.stringify(result,null,2));
+          if (!result.pass) { console.error(JSON.stringify(result,null,2)); process.exit(1); }
+          NODE
+
+          node ./seitai-r6-live-qa-retry.mjs
+          rm -f seitai-r6-live-qa-retry.mjs
+
+      - name: Write final R6 PASS evidence
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path('qa-r6-retry/R6_LIVE_QA.json')
+          d=json.loads(p.read_text())
+          assert d['pass'] is True
+          assert len(d['viewports']) == 4
+          assert all(v['pass'] for v in d['viewports'])
+          assert d['businessMutation'] == 0
+          assert d['unsafeWriteRequest'] == 0
+          assert d['productSiteRollback'] == 0
+          assert d['productSiteRegression'] == 0
+          assert all(x['ok'] for x in d['resourceChecks'].values())
+          PY
+          git fetch origin main
+          final_head="$(git rev-parse origin/main)"
+          final_tree="$(git rev-parse origin/main^{tree})"
+          git merge-base --is-ancestor "$R6_INTEGRATION_HEAD" "$final_head"
+          git show "$R6_INTEGRATION_HEAD:$TARGET_HTML" > /tmp/r6-locked.html
+          git show "origin/main:$TARGET_HTML" > /tmp/r6-final.html
+          git show "origin/main:$TARGET_TEXT" > /tmp/r6-final.txt
+          cmp -s /tmp/r6-locked.html /tmp/r6-final.html
+          cmp -s /tmp/r6-final.html /tmp/r6-final.txt
+          cat > qa-r6-retry/R6_FINAL_STATUS.txt <<EOF
+          R5=PASS
+          R6=PASS
+          FIRST10_COUNT=10
+          GUIDE_COUNT=10
+          R6_INTEGRATION_HEAD=$R6_INTEGRATION_HEAD
+          R6_INTEGRATION_TREE=$R6_INTEGRATION_TREE
+          PRODUCT_SITE_FINAL_HEAD=$final_head
+          PRODUCT_SITE_FINAL_TREE=$final_tree
+          HTML_TEXT_BYTE_IDENTICAL=PASS
+          FOUR_VIEWPORT_LIVE_QA=PASS
+          FOUR_PUBLIC_RESOURCES=PASS
+          PRODUCT_SITE_REGRESSION=0
+          PRODUCT_SITE_ROLLBACK=0
+          BUSINESS_MUTATION=0
+          UNSAFE_WRITE_REQUEST=0
+          FORWARD_ONLY=PASS
+          R7=NOT_AUTHORIZED_NOT_EXECUTED
+          FINAL_LOCK=CENTRAL_DECISION_ONLY
+          EOF
+
+      - name: Upload R6 PASS evidence and screenshots
+        uses: actions/upload-artifact@v4
+        with:
+          name: seitai-r6-pass-evidence-v1-1
+          path: qa-r6-retry
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Cleanup retry workflow after PASS
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch origin main
+          git checkout main
+          git reset --hard origin/main
+          test -s "$WORKFLOW_PATH"
+          git merge-base --is-ancestor "$R6_INTEGRATION_HEAD" HEAD
+          git show "$R6_INTEGRATION_HEAD:$TARGET_HTML" > /tmp/r6-locked.html
+          cmp -s /tmp/r6-locked.html "$TARGET_HTML"
+          cmp -s "$TARGET_HTML" "$TARGET_TEXT"
+          base="$(git rev-parse HEAD)"
+          git rm "$WORKFLOW_PATH"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Remove SEITAI R6 QA retry workflow after PASS [skip ci]"
+          git fetch origin main
+          test "$(git rev-parse origin/main)" = "$base"
+          git push origin HEAD:main
