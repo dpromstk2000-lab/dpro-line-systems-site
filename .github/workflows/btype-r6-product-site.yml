@@ -1,0 +1,459 @@
+name: BTYPE R6 Product Site Integration + LIVE QA
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/btype-r6-product-site.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: btype-r6-product-site
+  cancel-in-progress: false
+
+env:
+  START_PRODUCT_HEAD: fddeea6deb4df13948675cce6cc7f8397f9eb17b
+  PRODUCT_URL: https://dpromstk2000-lab.github.io/dpro-line-systems-site/systems/btype.html
+  TUTORIAL_URL: https://dpromstk2000-lab.github.io/dpro-btype-line-liff/tutorial.html
+  GUIDE_URL: https://dpromstk2000-lab.github.io/dpro-btype-line-liff/tutorial.html#guideCenter
+  QUICK_URL: https://dpromstk2000-lab.github.io/dpro-btype-line-liff/DPRO_TUTORIAL_BTYPE_QUICK_START_V1.0.pdf
+  DETAIL_URL: https://dpromstk2000-lab.github.io/dpro-btype-line-liff/DPRO_TUTORIAL_BTYPE_DETAILED_MANUAL_V1.0.pdf
+  QUICK_SHA256: 5770263dedb789480dfcf330989958b0449cd1370d77c6a7bf56313c8eea003d
+  DETAIL_SHA256: c5831a0608bd8547413c154d7b167338a2b86b496d7d3476b3064ad258f386ab
+
+jobs:
+  r6-product-site:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Re-fetch newest Product Site main and patch BTYPE target only
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/btype-r6-evidence
+
+          cat > /tmp/btype_r6_patch.py <<'PY'
+          from pathlib import Path
+          import hashlib
+
+          html = Path('systems/btype.html')
+          mirror = Path('systems/btype.html.txt')
+          if not html.exists():
+              raise SystemExit('systems/btype.html missing')
+          if not mirror.exists():
+              raise SystemExit('systems/btype.html.txt mirror missing')
+          before_html = html.read_bytes()
+          before_mirror = mirror.read_bytes()
+          if before_html != before_mirror:
+              raise SystemExit('BTYPE HTML/TEXT mirror mismatch before R6')
+
+          s = before_html.decode('utf-8')
+
+          preserve = [
+              '<title>DPRO 就労継続支援B型｜業種特化型LINE・業務管理システム</title>',
+              '月額合計 5,500円（税込）',
+              'LINE公式運用</span><strong>3,300円</strong>',
+              'ホームページ運用</span><strong>1,100円</strong>',
+              'DPROシステム運用</span><strong>1,100円</strong>',
+              'https://lin.ee/YxJGXV6D',
+              'https://dpromstk2000-lab.github.io/dpro-btype-line-liff/',
+              '../lp-btype.html',
+              '../flyer-btype.html',
+              '../flyer-btype.pdf',
+              '../dpro-v3.css',
+              '../systems-data.js',
+              '../dpro-v3.js',
+          ]
+          for token in preserve:
+              if token not in s:
+                  raise SystemExit(f'protected baseline token missing before R6: {token}')
+
+          css = r'''
+          /* BTYPE TUTORIAL R6 START */
+          .ps-tutorial{background:#fff}
+          .ps-tutorial-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.85rem}
+          .ps-tutorial-link{min-width:0;display:flex;align-items:center;justify-content:space-between;gap:.8rem;min-height:64px;padding:1rem 1.05rem;border:1px solid var(--ps-line);border-radius:1rem;background:var(--ps-pale);text-decoration:none;font-weight:900;color:var(--ps-deep);overflow-wrap:anywhere}
+          .ps-tutorial-link span{min-width:0}.ps-tutorial-link small{display:block;margin-top:.12rem;color:var(--dpro-warm-gray-600);font-size:.73rem;font-weight:700}
+          .ps-tutorial-link::after{content:"↗";flex:0 0 auto;color:var(--dpro-green);font-size:1.15rem}
+          .ps-tutorial-link:hover{border-color:#9fd6bd;background:#eef9f3}
+          .ps-tutorial-link:focus,.ps-tutorial-link:focus-visible{outline:3px solid var(--dpro-green);outline-offset:3px}
+          .ps-tutorial-safe{margin:1rem 0 0;padding:1rem 1.1rem;border-left:4px solid var(--dpro-green);background:#f7fbf9;color:#395149}
+          @media(max-width:640px){.ps-tutorial-grid{grid-template-columns:1fr}.ps-tutorial-link{min-height:58px;padding:.85rem .9rem}}
+          /* BTYPE TUTORIAL R6 END */
+          '''
+
+          section = r'''<section class="dpro-section ps-tutorial master-section" id="tutorial-guide" aria-labelledby="tutorial-guide-title" data-tutorial-r6="BTYPE-TUTORIAL-R6-20260829"><div class="dpro-container"><div class="ps-section-heading"><p class="ps-kicker">TUTORIAL &amp; MANUAL</p><h2 id="tutorial-guide-title">実画面を見ながら、操作を確認。</h2><p>安全なTutorialとGuide Center、A4マニュアルから、就労継続支援B型の操作手順を確認できます。</p></div><div class="ps-tutorial-grid"><a id="tutorial-start-link" class="ps-tutorial-link" href="https://dpromstk2000-lab.github.io/dpro-btype-line-liff/tutorial.html" target="_blank" rel="noopener"><span>Tutorial Start<small>First10をSTEP 1から開始</small></span></a><a id="guide-center-link" class="ps-tutorial-link" href="https://dpromstk2000-lab.github.io/dpro-btype-line-liff/tutorial.html#guideCenter" target="_blank" rel="noopener"><span>Guide Center<small>10項目のガイドを一覧で確認</small></span></a><a id="quick-start-link" class="ps-tutorial-link" href="https://dpromstk2000-lab.github.io/dpro-btype-line-liff/DPRO_TUTORIAL_BTYPE_QUICK_START_V1.0.pdf" target="_blank" rel="noopener"><span>Quick Start PDF<small>A4縦・1ページの簡易操作ガイド</small></span></a><a id="detailed-manual-link" class="ps-tutorial-link" href="https://dpromstk2000-lab.github.io/dpro-btype-line-liff/DPRO_TUTORIAL_BTYPE_DETAILED_MANUAL_V1.0.pdf" target="_blank" rel="noopener"><span>Detailed Manual PDF<small>First10・安全操作を詳しく確認</small></span></a></div><p class="ps-tutorial-safe"><strong>安全：</strong>Tutorial / Guide Centerは、出欠・送迎・作業・支援記録・工賃・個別支援計画などの実業務状態を自動変更しません。公開デモへ実在する利用者・家族の個人情報や機微情報を入力しないでください。</p></div></section>'''
+
+          if 'data-tutorial-r6="BTYPE-TUTORIAL-R6-20260829"' not in s:
+              if '</style>' not in s:
+                  raise SystemExit('style insertion marker missing')
+              final_marker = '<section class="dpro-section ps-final master-section" data-master-section="12" id="final-cta"'
+              if final_marker not in s:
+                  raise SystemExit('final CTA insertion marker missing')
+              s = s.replace('</style>', css + '\n</style>', 1)
+              s = s.replace(final_marker, section + final_marker, 1)
+
+          required = [
+              'data-tutorial-r6="BTYPE-TUTORIAL-R6-20260829"',
+              'id="tutorial-start-link"',
+              'id="guide-center-link"',
+              'id="quick-start-link"',
+              'id="detailed-manual-link"',
+              'https://dpromstk2000-lab.github.io/dpro-btype-line-liff/tutorial.html',
+              'https://dpromstk2000-lab.github.io/dpro-btype-line-liff/tutorial.html#guideCenter',
+              'https://dpromstk2000-lab.github.io/dpro-btype-line-liff/DPRO_TUTORIAL_BTYPE_QUICK_START_V1.0.pdf',
+              'https://dpromstk2000-lab.github.io/dpro-btype-line-liff/DPRO_TUTORIAL_BTYPE_DETAILED_MANUAL_V1.0.pdf',
+          ]
+          for token in required:
+              if token not in s:
+                  raise SystemExit(f'R6 token missing after patch: {token}')
+          if s.count('data-tutorial-r6="BTYPE-TUTORIAL-R6-20260829"') != 1:
+              raise SystemExit('R6 section duplicate')
+
+          for token in preserve:
+              if token not in s:
+                  raise SystemExit(f'protected baseline token lost after R6: {token}')
+
+          data = s.encode('utf-8')
+          html.write_bytes(data)
+          mirror.write_bytes(data)
+          if html.read_bytes() != mirror.read_bytes():
+              raise SystemExit('BTYPE HTML/TEXT mirror mismatch after R6')
+          print('BTYPE R6 target patch PASS', hashlib.sha256(data).hexdigest())
+          PY
+
+          success=0
+          for attempt in 1 2 3 4; do
+            echo "R6 forward-only attempt $attempt"
+            git fetch origin main
+            git reset --hard origin/main
+
+            PREWRITE_HEAD="$(git rev-parse HEAD)"
+            PREWRITE_TREE="$(git rev-parse HEAD^{tree})"
+            PREWRITE_HTML_BLOB="$(git hash-object systems/btype.html)"
+            PREWRITE_TXT_BLOB="$(git hash-object systems/btype.html.txt)"
+            PREWRITE_HTML_SHA256="$(sha256sum systems/btype.html | awk '{print $1}')"
+            PREWRITE_TXT_SHA256="$(sha256sum systems/btype.html.txt | awk '{print $1}')"
+
+            git merge-base --is-ancestor "$START_PRODUCT_HEAD" "$PREWRITE_HEAD"
+            cmp -s systems/btype.html systems/btype.html.txt
+
+            python /tmp/btype_r6_patch.py
+
+            changed="$(git diff --name-only | sort)"
+            expected=$'systems/btype.html\nsystems/btype.html.txt'
+            if [ -n "$changed" ] && [ "$changed" != "$expected" ]; then
+              echo "Unexpected target diff:"
+              printf '%s\n' "$changed"
+              exit 1
+            fi
+
+            if git diff --quiet -- systems/btype.html systems/btype.html.txt; then
+              PATCH_HEAD="$PREWRITE_HEAD"
+              PATCH_TREE="$PREWRITE_TREE"
+              PATCH_COMMIT_CREATED=0
+              success=1
+            else
+              git config user.name "dpro-tutorial-qa-bot"
+              git config user.email "actions@users.noreply.github.com"
+              git add systems/btype.html systems/btype.html.txt
+              git commit -m "Add BTYPE R6 tutorial and manuals to product site"
+              PATCH_HEAD="$(git rev-parse HEAD)"
+              PATCH_TREE="$(git rev-parse HEAD^{tree})"
+              PATCH_COMMIT_CREATED=1
+              if git push origin HEAD:main; then
+                success=1
+              else
+                echo "Remote advanced before push; retrying from newest main."
+                success=0
+              fi
+            fi
+
+            if [ "$success" = 1 ]; then
+              POST_HTML_BLOB="$(git hash-object systems/btype.html)"
+              POST_TXT_BLOB="$(git hash-object systems/btype.html.txt)"
+              POST_HTML_SHA256="$(sha256sum systems/btype.html | awk '{print $1}')"
+              POST_TXT_SHA256="$(sha256sum systems/btype.html.txt | awk '{print $1}')"
+              cmp -s systems/btype.html systems/btype.html.txt
+
+              cat > /tmp/btype-r6-evidence/R6_PRODUCT_SITE_PREWRITE_LOCK.txt <<EOF
+          PRODUCT_REPO=https://github.com/dpromstk2000-lab/dpro-line-systems-site
+          START_PACKAGE_HEAD=$START_PRODUCT_HEAD
+          PREWRITE_HEAD=$PREWRITE_HEAD
+          PREWRITE_TREE=$PREWRITE_TREE
+          PREWRITE_HTML_BLOB=$PREWRITE_HTML_BLOB
+          PREWRITE_TXT_BLOB=$PREWRITE_TXT_BLOB
+          PREWRITE_HTML_SHA256=$PREWRITE_HTML_SHA256
+          PREWRITE_TXT_SHA256=$PREWRITE_TXT_SHA256
+          PREWRITE_HTML_TEXT_BYTE_IDENTICAL=PASS
+          START_HEAD_IS_ANCESTOR_OF_PREWRITE=PASS
+          PATCH_HEAD=$PATCH_HEAD
+          PATCH_TREE=$PATCH_TREE
+          PATCH_COMMIT_CREATED=$PATCH_COMMIT_CREATED
+          POST_HTML_BLOB=$POST_HTML_BLOB
+          POST_TXT_BLOB=$POST_TXT_BLOB
+          POST_HTML_SHA256=$POST_HTML_SHA256
+          POST_TXT_SHA256=$POST_TXT_SHA256
+          POST_HTML_TEXT_BYTE_IDENTICAL=PASS
+          FORWARD_ONLY=PASS
+          PRODUCT_SITE_ROLLBACK=0
+          EOF
+              cat > /tmp/btype-r6-evidence/R6_CHANGED_FILES.txt <<EOF
+          systems/btype.html
+          systems/btype.html.txt
+          TARGET_SCOPE_ONLY=PASS
+          SYSTEMS_DATA_JS_CHANGED=0
+          SHARED_CSS_JS_CHANGED=0
+          OTHER_INDUSTRY_CHANGED=0
+          EOF
+              echo "PREWRITE_HEAD=$PREWRITE_HEAD" >> "$GITHUB_ENV"
+              echo "PREWRITE_TREE=$PREWRITE_TREE" >> "$GITHUB_ENV"
+              echo "PATCH_HEAD=$PATCH_HEAD" >> "$GITHUB_ENV"
+              echo "PATCH_TREE=$PATCH_TREE" >> "$GITHUB_ENV"
+              break
+            fi
+          done
+          test "$success" = 1
+
+      - name: Verify exact published BTYPE Tutorial and manual resources
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          curl -L --fail --silent --show-error "$TUTORIAL_URL?qa=$PATCH_HEAD" -o /tmp/btype-tutorial.html
+          grep -q 'BTYPE-R4-GUIDE-CENTER-20260829' /tmp/btype-tutorial.html
+          grep -q 'id="guideCenter"' /tmp/btype-tutorial.html
+
+          curl -L --fail --silent --show-error "$QUICK_URL?qa=$PATCH_HEAD" -o /tmp/btype-quick.pdf
+          curl -L --fail --silent --show-error "$DETAIL_URL?qa=$PATCH_HEAD" -o /tmp/btype-detail.pdf
+
+          actual_quick="$(sha256sum /tmp/btype-quick.pdf | awk '{print $1}')"
+          actual_detail="$(sha256sum /tmp/btype-detail.pdf | awk '{print $1}')"
+          test "$actual_quick" = "$QUICK_SHA256"
+          test "$actual_detail" = "$DETAIL_SHA256"
+
+          cat > /tmp/btype-r6-evidence/R6_LINKS.txt <<EOF
+          TUTORIAL_START=$TUTORIAL_URL
+          GUIDE_CENTER=$GUIDE_URL
+          QUICK_START_PDF=$QUICK_URL
+          DETAILED_MANUAL_PDF=$DETAIL_URL
+          TUTORIAL_PUBLIC_REACHABLE=PASS
+          GUIDE_CENTER_PUBLIC_REACHABLE=PASS
+          QUICK_START_PDF_PUBLIC_REACHABLE=PASS
+          DETAILED_MANUAL_PDF_PUBLIC_REACHABLE=PASS
+          QUICK_START_SHA256=$actual_quick
+          DETAILED_MANUAL_SHA256=$actual_detail
+          ALL_4_LINKS_PUBLIC_REACHABLE=PASS
+          EOF
+
+      - name: Wait for R6 Product Site marker on GitHub Pages
+        shell: bash
+        run: |
+          set -euo pipefail
+          ok=0
+          for i in $(seq 1 60); do
+            body="$(curl -L --retry 2 --retry-delay 2 --retry-all-errors -fsS "$PRODUCT_URL?r6=$PATCH_HEAD&t=$i" || true)"
+            if printf '%s' "$body" | grep -q 'BTYPE-TUTORIAL-R6-20260829' \
+              && printf '%s' "$body" | grep -q 'DPRO_TUTORIAL_BTYPE_QUICK_START_V1.0.pdf' \
+              && printf '%s' "$body" | grep -q 'DPRO_TUTORIAL_BTYPE_DETAILED_MANUAL_V1.0.pdf'; then
+              ok=1
+              break
+            fi
+            sleep 5
+          done
+          test "$ok" = 1
+
+      - name: Install Playwright
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm init -y >/dev/null 2>&1
+          npm install --no-save playwright@1.55.0
+          npx playwright install --with-deps chromium
+
+      - name: Exact four-width public R6 LIVE QA
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat > btype-r6-live-qa.mjs <<'JS'
+          import { chromium } from 'playwright';
+          import fs from 'fs';
+
+          const product=process.env.PRODUCT_URL;
+          const expectedLinks=[
+            ['tutorial-start-link',process.env.TUTORIAL_URL],
+            ['guide-center-link',process.env.GUIDE_URL],
+            ['quick-start-link',process.env.QUICK_URL],
+            ['detailed-manual-link',process.env.DETAIL_URL],
+          ];
+          const widths=[[1440,1000],[1024,768],[390,844],[320,720]];
+          const out={
+            system:'BTYPE',r6:'HOLD',
+            prewrite_head:process.env.PREWRITE_HEAD,prewrite_tree:process.env.PREWRITE_TREE,
+            patch_head:process.env.PATCH_HEAD,patch_tree:process.env.PATCH_TREE,
+            four_links:{},widths:{},requests:{unsafe:[]},pageerrors:[],console_errors:[],
+            product_site_regression:0,product_site_rollback:0,forward_only:'PASS',
+            business_mutation:0,html_text_byte_identical:'PASS',failure:null
+          };
+
+          const browser=await chromium.launch({headless:true});
+          try{
+            for(const [w,h] of widths){
+              const ctx=await browser.newContext({viewport:{width:w,height:h}});
+              const page=await ctx.newPage();
+              const unsafe=[],pageerrors=[],consoleErrors=[];
+              page.on('request',r=>{
+                if(['POST','PUT','PATCH','DELETE'].includes(r.method()))
+                  unsafe.push({method:r.method(),url:r.url()});
+              });
+              page.on('pageerror',e=>pageerrors.push(String(e.stack||e)));
+              page.on('console',m=>{if(m.type()==='error') consoleErrors.push(m.text())});
+
+              const resp=await page.goto(`${product}?r6=${process.env.PATCH_HEAD}&w=${w}`,{
+                waitUntil:'networkidle',timeout:45000
+              });
+              if(!resp||!resp.ok()) throw new Error(`Product HTTP failed ${w}: ${resp?.status()}`);
+
+              const markerCount=await page.locator('[data-tutorial-r6="BTYPE-TUTORIAL-R6-20260829"]').count();
+              if(markerCount!==1) throw new Error(`R6 marker count ${w}: ${markerCount}`);
+
+              const section=page.locator('#tutorial-guide');
+              if(!(await section.isVisible())) throw new Error(`Tutorial section not visible ${w}`);
+
+              const linkStatus={};
+              for(const [id,url] of expectedLinks){
+                const a=page.locator(`#${id}`);
+                if(await a.count()!==1) throw new Error(`Link count ${id} ${w}`);
+                if(!(await a.isVisible())) throw new Error(`Link hidden ${id} ${w}`);
+                const href=await a.getAttribute('href');
+                if(href!==url) throw new Error(`Link href mismatch ${id} ${w}: ${href}`);
+                linkStatus[id]={href,visible:true};
+              }
+
+              await section.evaluate(el=>{el.setAttribute('tabindex','-1');el.focus({preventScroll:true})});
+              const focusSequence=[];
+              for(const [id] of expectedLinks){
+                await page.keyboard.press('Tab');
+                const focus=await page.evaluate(()=>{
+                  const e=document.activeElement,c=e?getComputedStyle(e):null;
+                  return {id:e?.id||'',outlineStyle:c?.outlineStyle||'',outlineWidth:c?.outlineWidth||'',boxShadow:c?.boxShadow||''};
+                });
+                focusSequence.push(focus);
+                if(focus.id!==id) throw new Error(`Keyboard focus order ${w}: expected ${id}, got ${focus.id}`);
+                if((focus.outlineStyle==='none'||focus.outlineWidth==='0px')&&(focus.boxShadow==='none'||!focus.boxShadow))
+                  throw new Error(`Keyboard focus not visible ${w}/${id}: ${JSON.stringify(focus)}`);
+              }
+
+              const metrics=await page.evaluate(()=>({
+                innerWidth:window.innerWidth,
+                documentElementScrollWidth:document.documentElement.scrollWidth,
+                bodyScrollWidth:document.body.scrollWidth,
+              }));
+              metrics.positive=Math.max(0,metrics.documentElementScrollWidth-metrics.innerWidth,metrics.bodyScrollWidth-metrics.innerWidth);
+              if(metrics.positive!==0) throw new Error(`Positive overflow ${w}: ${JSON.stringify(metrics)}`);
+
+              const html=await page.content();
+              const regressionTokens=[
+                '月額合計 5,500円（税込）','https://lin.ee/YxJGXV6D',
+                'https://dpromstk2000-lab.github.io/dpro-btype-line-liff/',
+                '../lp-btype.html','../flyer-btype.html','../flyer-btype.pdf',
+                '../dpro-v3.css','../systems-data.js','../dpro-v3.js'
+              ];
+              for(const token of regressionTokens)
+                if(!html.includes(token)) throw new Error(`Regression token missing ${w}: ${token}`);
+
+              if(unsafe.length) throw new Error(`Unsafe write ${w}: ${JSON.stringify(unsafe)}`);
+              if(pageerrors.length) throw new Error(`Pageerror ${w}: ${JSON.stringify(pageerrors)}`);
+              if(consoleErrors.length) throw new Error(`Console error ${w}: ${JSON.stringify(consoleErrors)}`);
+
+              out.widths[`${w}x${h}`]={
+                status:'PASS',links:linkStatus,keyboard_focus:'PASS',focus_sequence:focusSequence,
+                overflow:metrics,pageerror:0,console_error:0,unsafe_write:0
+              };
+              await ctx.close();
+            }
+
+            const checkCtx=await browser.newContext();
+            for(const [id,url] of expectedLinks){
+              const r=await checkCtx.request.get(url,{timeout:30000});
+              if(!r.ok()) throw new Error(`Public resource failed ${id}: ${r.status()}`);
+              out.four_links[id]={url,status:r.status(),reachable:'PASS'};
+            }
+            await checkCtx.close();
+
+            const keys=['1440x1000','1024x768','390x844','320x720'];
+            if(keys.some(k=>out.widths[k]?.status!=='PASS')) throw new Error('Missing exact width PASS');
+            if(out.widths['390x844'].overflow.positive!==0) throw new Error('390 overflow not zero');
+            if(out.widths['320x720'].overflow.positive!==0) throw new Error('320 overflow not zero');
+            if(Object.keys(out.four_links).length!==4) throw new Error('4-link reachability count failed');
+            out.r6='PASS';
+          }catch(e){
+            out.failure=String(e.stack||e);
+          }finally{
+            fs.writeFileSync('/tmp/btype-r6-evidence/R6_LIVE_QA.json',JSON.stringify(out,null,2));
+            await browser.close();
+          }
+          console.log(JSON.stringify(out,null,2));
+          if(out.r6!=='PASS') process.exit(1);
+          JS
+          node btype-r6-live-qa.mjs
+          rm -f btype-r6-live-qa.mjs
+
+      - name: Write R6 forward-only summary
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/btype-r6-evidence
+          cat > /tmp/btype-r6-evidence/R6_FORWARD_ONLY_EVIDENCE.txt <<EOF
+          START_PACKAGE_HEAD=$START_PRODUCT_HEAD
+          PREWRITE_HEAD=${PREWRITE_HEAD:-NOT_REACHED}
+          PREWRITE_TREE=${PREWRITE_TREE:-NOT_REACHED}
+          PATCH_HEAD=${PATCH_HEAD:-NOT_REACHED}
+          PATCH_TREE=${PATCH_TREE:-NOT_REACHED}
+          FORWARD_ONLY=PASS_IF_R6_LIVE_QA_PASS
+          PRODUCT_SITE_ROLLBACK=0
+          TARGET_SCOPE=systems/btype.html + systems/btype.html.txt only
+          R7=NOT_AUTHORIZED_NOT_EXECUTED
+          FINAL_LOCK=CENTRAL_DECISION_ONLY
+          EOF
+
+      - name: Upload R6 evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: btype-r6-live-qa-evidence
+          path: /tmp/btype-r6-evidence/
+          if-no-files-found: error
+          retention-days: 90
+
+      - name: Remove temporary R6 workflow from Product Site main
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          success=0
+          for attempt in 1 2 3 4; do
+            git fetch origin main
+            git reset --hard origin/main
+            if [ ! -f .github/workflows/btype-r6-product-site.yml ]; then
+              success=1
+              break
+            fi
+            git config user.name "dpro-tutorial-qa-bot"
+            git config user.email "actions@users.noreply.github.com"
+            git rm .github/workflows/btype-r6-product-site.yml
+            git commit -m "Remove temporary BTYPE R6 workflow [skip ci]"
+            if git push origin HEAD:main; then
+              success=1
+              break
+            fi
+          done
+          test "$success" = 1
