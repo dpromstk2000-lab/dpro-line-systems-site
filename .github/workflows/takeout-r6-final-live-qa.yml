@@ -1,0 +1,361 @@
+name: TAKEOUT Tutorial R6 Final LIVE QA
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/takeout-r6-final-live-qa.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: takeout-tutorial-r6-final-live-qa
+  cancel-in-progress: false
+
+jobs:
+  final-live-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      PRODUCT_URL: https://dpromstk2000-lab.github.io/dpro-line-systems-site/systems/takeout.html
+      WORKFLOW_PATH: .github/workflows/takeout-r6-final-live-qa.yml
+      TARGET_HTML: systems/takeout.html
+      TARGET_TEXT: systems/takeout.html.txt
+      R6_INTEGRATION_HEAD: 6bae91af90c9a250c50cdfee55c9ba870741085f
+      R6_INTEGRATION_TREE: e2c4c27cb0988a26f7b6545401defe6bbf0c6cb0
+      TUTORIAL_URL: https://dpromstk2000-lab.github.io/dpro-takeout-line-liff/index.html?preview=1&tutorial=1
+      GUIDE_URL: https://dpromstk2000-lab.github.io/dpro-takeout-line-liff/guide-center.html
+      QUICK_URL: https://dpromstk2000-lab.github.io/dpro-takeout-line-liff/DPRO_TUTORIAL_TAKEOUT_QUICK_START_V1.0.pdf
+      DETAIL_URL: https://dpromstk2000-lab.github.io/dpro-takeout-line-liff/DPRO_TUTORIAL_TAKEOUT_DETAILED_MANUAL_V1.0.pdf
+
+    steps:
+      - name: Checkout newest Product Site main
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Verify QA-only upload boundary and current R6 state
+        id: base
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p qa-r6-final
+          git fetch origin main
+
+          local_head="$(git rev-parse HEAD)"
+          remote_head="$(git rev-parse origin/main)"
+          test "$local_head" = "$remote_head" || {
+            echo "Product Site main advanced after QA workflow upload; HOLD." >&2
+            exit 1
+          }
+
+          upload_base="$(git rev-parse HEAD^)"
+          upload_base_tree="$(git rev-parse "${upload_base}^{tree}")"
+          mapfile -t changed < <(git diff --name-only "$upload_base" HEAD)
+          test "${#changed[@]}" -eq 1
+          test "${changed[0]}" = "$WORKFLOW_PATH"
+
+          # Forward-only: current base must descend from the accepted R6 integration.
+          git merge-base --is-ancestor "$R6_INTEGRATION_HEAD" "$upload_base"
+
+          test -s "$TARGET_HTML"
+          test -s "$TARGET_TEXT"
+          cmp -s "$TARGET_HTML" "$TARGET_TEXT"
+          grep -q 'DPRO TUTORIAL TAKEOUT R6' "$TARGET_HTML"
+          grep -q 'data-r6-resource="tutorial"' "$TARGET_HTML"
+          grep -q 'data-r6-resource="guide"' "$TARGET_HTML"
+          grep -q 'data-r6-resource="quick"' "$TARGET_HTML"
+          grep -q 'data-r6-resource="detail"' "$TARGET_HTML"
+
+          # Prove the original R6 integration commit touched only the two TAKEOUT
+          # mirrors plus deletion of the temporary integration workflow.
+          integration_parent="$(git rev-parse "${R6_INTEGRATION_HEAD}^")"
+          mapfile -t integration_changed < <(git diff --name-status "$integration_parent" "$R6_INTEGRATION_HEAD")
+          printf '%s\n' "${integration_changed[@]}" > qa-r6-final/r6-integration-changed.txt
+          test "$(wc -l < qa-r6-final/r6-integration-changed.txt)" -eq 3
+          grep -q $'D\t.github/workflows/takeout-r6-product-site.yml' qa-r6-final/r6-integration-changed.txt
+          grep -q $'M\tsystems/takeout.html' qa-r6-final/r6-integration-changed.txt
+          grep -q $'M\tsystems/takeout.html.txt' qa-r6-final/r6-integration-changed.txt
+
+          # No later commit may alter TAKEOUT R6 payload before QA.
+          cmp <(git show "$R6_INTEGRATION_HEAD:$TARGET_HTML") "$TARGET_HTML"
+          cmp <(git show "$R6_INTEGRATION_HEAD:$TARGET_TEXT") "$TARGET_TEXT"
+
+          printf '%s\n' "$upload_base" > qa-r6-final/product-site-head-before-final-qa.txt
+          printf '%s\n' "$upload_base_tree" > qa-r6-final/product-site-tree-before-final-qa.txt
+          printf '%s\n' "$R6_INTEGRATION_HEAD" > qa-r6-final/r6-integration-head.txt
+          printf '%s\n' "$R6_INTEGRATION_TREE" > qa-r6-final/r6-integration-tree.txt
+          sha256sum "$TARGET_HTML" "$TARGET_TEXT" > qa-r6-final/target-sha256-before-final-qa.txt
+
+          echo "upload_head=$local_head" >> "$GITHUB_OUTPUT"
+          echo "upload_base=$upload_base" >> "$GITHUB_OUTPUT"
+
+      - name: Setup Node for final LIVE QA
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install Playwright for final LIVE QA
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm install --no-save playwright@1.55.0
+          npx playwright install --with-deps chromium
+
+      - name: Run corrected R6 LIVE QA
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          # IMPORTANT: script is in repository workspace so Node resolves local
+          # node_modules/playwright. The failed first QA used /tmp.
+          cat > takeout-r6-final-live-qa.mjs <<'NODE'
+          import { chromium } from 'playwright';
+          import fs from 'node:fs';
+
+          const productUrl = process.env.PRODUCT_URL;
+          const expected = {
+            tutorial: process.env.TUTORIAL_URL,
+            guide: process.env.GUIDE_URL,
+            quick: process.env.QUICK_URL,
+            detail: process.env.DETAIL_URL
+          };
+          const viewports = [
+            {name:'1440',width:1440,height:1000},
+            {name:'1024',width:1024,height:768},
+            {name:'390',width:390,height:844},
+            {name:'320',width:320,height:720}
+          ];
+
+          const result = {
+            schema:'DPRO_TUTORIAL_TAKEOUT_R6_FINAL_LIVE_QA_V1.1',
+            productUrl,
+            expected,
+            integrationHead:process.env.R6_INTEGRATION_HEAD,
+            integrationTree:process.env.R6_INTEGRATION_TREE,
+            viewports:[],
+            resourceChecks:{},
+            businessMutationAttempts:[],
+            failures:[],
+            productSiteRollback:0,
+            businessMutation:0,
+            forwardOnly:true
+          };
+
+          const browser = await chromium.launch({headless:true});
+
+          // Verify all four destinations are actually reachable.
+          const requestContext = await browser.newContext();
+          const requestPage = await requestContext.newPage();
+          for (const [key,url] of Object.entries(expected)) {
+            try {
+              const resp = await requestPage.request.get(url,{timeout:30000});
+              const ct = String(resp.headers()['content-type'] || '');
+              const pdfExpected = key === 'quick' || key === 'detail';
+              const ok = resp.status() === 200 && (!pdfExpected || ct.toLowerCase().includes('pdf'));
+              result.resourceChecks[key] = {url,status:resp.status(),contentType:ct,ok};
+              if (!ok) result.failures.push(`resource ${key}: status=${resp.status()} content-type=${ct}`);
+            } catch (e) {
+              result.resourceChecks[key] = {url,error:String(e),ok:false};
+              result.failures.push(`resource ${key}: ${String(e)}`);
+            }
+          }
+          await requestContext.close();
+
+          for (const vp of viewports) {
+            const context = await browser.newContext({viewport:{width:vp.width,height:vp.height}});
+            const pageErrors = [];
+            const consoleErrors = [];
+            const unsafe = [];
+
+            await context.route('**/*', async route => {
+              const method = route.request().method();
+              if (['POST','PUT','PATCH','DELETE'].includes(method)) {
+                const rec = {viewport:vp.name,method,url:route.request().url()};
+                unsafe.push(rec);
+                result.businessMutationAttempts.push(rec);
+                return route.abort('blockedbyclient');
+              }
+              return route.continue();
+            });
+
+            const page = await context.newPage();
+            page.on('pageerror', e => pageErrors.push(String(e)));
+            page.on('console', m => {
+              if (m.type() === 'error') consoleErrors.push({text:m.text(),location:m.location()});
+            });
+
+            const resp = await page.goto(`${productUrl}?qa=${Date.now()}-${vp.name}`,{
+              waitUntil:'networkidle',
+              timeout:45000
+            });
+            if (!resp || resp.status() !== 200) {
+              result.failures.push(`${vp.name}: product status ${resp?.status()}`);
+            }
+
+            const data = await page.evaluate(() => ({
+              innerWidth: window.innerWidth,
+              documentScrollWidth: document.documentElement.scrollWidth,
+              bodyScrollWidth: document.body.scrollWidth,
+              marker: document.documentElement.innerHTML.includes('DPRO TUTORIAL TAKEOUT R6'),
+              links: [...document.querySelectorAll('[data-r6-resource]')].map(a => ({
+                key:a.getAttribute('data-r6-resource'),
+                href:a.href,
+                text:(a.textContent||'').trim()
+              })),
+              pricing: (document.body.textContent||'').includes('5,500円'),
+              lineCta: [...document.querySelectorAll('a')].some(a => a.href === 'https://lin.ee/YxJGXV6D'),
+              demo: [...document.querySelectorAll('a')].some(a => a.href.includes('/dpro-takeout-line-liff/index.html?preview=1&v=takeout-18-check')),
+              lp: [...document.querySelectorAll('a')].some(a => a.getAttribute('href') === '../lp-takeout.html'),
+              flyerHtml: [...document.querySelectorAll('a')].some(a => a.getAttribute('href') === '../flyer-takeout.html'),
+              flyerPdf: [...document.querySelectorAll('a')].some(a => a.getAttribute('href') === '../flyer-takeout.pdf'),
+              systemsData: [...document.scripts].some(s => s.getAttribute('src') === '../systems-data.js'),
+              sharedJs: [...document.scripts].some(s => s.getAttribute('src') === '../dpro-v3.js')
+            }));
+
+            if (!data.marker) result.failures.push(`${vp.name}: R6 marker missing`);
+
+            const linkMap = Object.fromEntries(data.links.map(x => [x.key,x.href]));
+            if (data.links.length !== 4) result.failures.push(`${vp.name}: resource link count ${data.links.length}`);
+            for (const [key,url] of Object.entries(expected)) {
+              if (linkMap[key] !== url) result.failures.push(`${vp.name}: ${key} link mismatch: ${linkMap[key]}`);
+            }
+
+            if (!data.pricing) result.failures.push(`${vp.name}: pricing regression`);
+            if (!data.lineCta) result.failures.push(`${vp.name}: LINE CTA regression`);
+            if (!data.demo) result.failures.push(`${vp.name}: DEMO regression`);
+            if (!data.lp) result.failures.push(`${vp.name}: LP regression`);
+            if (!data.flyerHtml) result.failures.push(`${vp.name}: flyer HTML regression`);
+            if (!data.flyerPdf) result.failures.push(`${vp.name}: flyer PDF regression`);
+            if (!data.systemsData || !data.sharedJs) result.failures.push(`${vp.name}: shared asset regression`);
+
+            const overflow = {
+              innerWidth:data.innerWidth,
+              documentScrollWidth:data.documentScrollWidth,
+              bodyScrollWidth:data.bodyScrollWidth,
+              documentOverflow:Math.max(0,data.documentScrollWidth-data.innerWidth),
+              bodyOverflow:Math.max(0,data.bodyScrollWidth-data.innerWidth)
+            };
+            if (vp.width <= 390 && (overflow.documentOverflow !== 0 || overflow.bodyOverflow !== 0)) {
+              result.failures.push(`${vp.name}: mobile overflow`);
+            }
+
+            await page.locator('body').focus();
+            let focusVisible = false;
+            let focusRecord = null;
+            for (let i=0; i<100; i++) {
+              await page.keyboard.press('Tab');
+              const fr = await page.evaluate(() => {
+                const a = document.activeElement;
+                if (!a || !a.matches?.('[data-r6-resource]')) return null;
+                const r = a.getBoundingClientRect();
+                return {
+                  key:a.getAttribute('data-r6-resource'),
+                  left:r.left,top:r.top,right:r.right,bottom:r.bottom,
+                  width:r.width,height:r.height,
+                  innerWidth:window.innerWidth,innerHeight:window.innerHeight
+                };
+              });
+              if (fr) {
+                focusRecord = fr;
+                focusVisible =
+                  fr.width > 0 && fr.height > 0 &&
+                  fr.left >= -1 && fr.right <= fr.innerWidth + 1 &&
+                  fr.top >= -1 && fr.bottom <= fr.innerHeight + 1;
+                break;
+              }
+            }
+            if (!focusVisible) result.failures.push(`${vp.name}: keyboard focus not visible`);
+
+            const tutorialConsole = consoleErrors.filter(e =>
+              String(e.location?.url || '').includes('/systems/takeout.html')
+            );
+            if (pageErrors.length) result.failures.push(`${vp.name}: pageerror ${pageErrors.join(' | ')}`);
+            if (tutorialConsole.length) result.failures.push(`${vp.name}: Tutorial integration console error`);
+            if (unsafe.length) result.failures.push(`${vp.name}: unsafe write attempts ${unsafe.length}`);
+
+            result.viewports.push({
+              viewport:vp,data,overflow,focusVisible,focusRecord,
+              pageErrors,consoleErrors,tutorialConsole,unsafe
+            });
+            await context.close();
+          }
+
+          await browser.close();
+
+          if (result.businessMutationAttempts.length) {
+            result.businessMutation = 'BLOCKED_UNSAFE_ATTEMPT_PRESENT';
+          }
+
+          result.pass =
+            result.failures.length === 0 &&
+            result.businessMutationAttempts.length === 0 &&
+            result.businessMutation === 0 &&
+            result.productSiteRollback === 0 &&
+            result.forwardOnly === true;
+
+          fs.writeFileSync('qa-r6-final/takeout-r6-final-live-qa.json',JSON.stringify(result,null,2));
+          console.log(JSON.stringify({
+            pass:result.pass,
+            failures:result.failures,
+            resourceChecks:result.resourceChecks,
+            businessMutation:result.businessMutation,
+            productSiteRollback:result.productSiteRollback,
+            forwardOnly:result.forwardOnly
+          },null,2));
+
+          if (!result.pass) process.exit(1);
+          NODE
+
+          node takeout-r6-final-live-qa.mjs
+
+      - name: Verify current main remains forward-only and unchanged for TAKEOUT
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch origin main
+
+          current_head="$(git rev-parse origin/main)"
+          current_tree="$(git rev-parse "origin/main^{tree}")"
+          git merge-base --is-ancestor "$R6_INTEGRATION_HEAD" "$current_head"
+
+          git show "$R6_INTEGRATION_HEAD:$TARGET_HTML" > /tmp/r6-integration.html
+          git show "origin/main:$TARGET_HTML" > /tmp/r6-current.html
+          git show "origin/main:$TARGET_TEXT" > /tmp/r6-current.txt
+
+          cmp -s /tmp/r6-integration.html /tmp/r6-current.html
+          cmp -s /tmp/r6-current.html /tmp/r6-current.txt
+
+          printf '%s\n' "$current_head" > qa-r6-final/product-site-final-head.txt
+          printf '%s\n' "$current_tree" > qa-r6-final/product-site-final-tree.txt
+          sha256sum /tmp/r6-current.html /tmp/r6-current.txt > qa-r6-final/target-sha256-after-final-qa.txt
+
+      - name: Self-remove temporary final QA workflow
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch origin main
+
+          # Work from newest main so legitimate concurrent industry updates are retained.
+          git reset --hard origin/main
+          test -s "$WORKFLOW_PATH"
+
+          # R6 TAKEOUT payload must still be exactly the accepted integration payload.
+          git merge-base --is-ancestor "$R6_INTEGRATION_HEAD" HEAD
+          cmp <(git show "$R6_INTEGRATION_HEAD:$TARGET_HTML") "$TARGET_HTML"
+          cmp <(git show "$R6_INTEGRATION_HEAD:$TARGET_TEXT") "$TARGET_TEXT"
+
+          git rm "$WORKFLOW_PATH"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Complete TAKEOUT R6 final LIVE QA [skip ci]"
+          git push origin HEAD:main
+
+      - name: Upload R6 final QA evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: takeout-r6-final-live-qa-evidence
+          path: qa-r6-final
+          if-no-files-found: error
