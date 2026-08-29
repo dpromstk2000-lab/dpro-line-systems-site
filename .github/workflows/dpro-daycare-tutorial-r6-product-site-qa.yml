@@ -93,18 +93,22 @@ jobs:
           set -euo pipefail
           python3 <<'PY'
           from pathlib import Path
-          import hashlib, json
+          import hashlib, json, re
 
           html_path=Path('systems/dayservice.html')
           txt_path=Path('systems/dayservice.html.txt')
           html=html_path.read_text(encoding='utf-8')
           txt=txt_path.read_text(encoding='utf-8')
-          marker='<div class="ps-doclinks">'
-          if html.count(marker) != 1:
-              raise SystemExit(f'Expected exactly one {marker!r}, found {html.count(marker)}')
+          doclinks_re=re.compile(r'<(?P<tag>[a-zA-Z][\w:-]*)\b[^>]*class=["\'][^"\']*\bps-doclinks\b[^"\']*["\'][^>]*>', re.I)
+          matches=list(doclinks_re.finditer(html))
+          if len(matches) != 1:
+              raise SystemExit(f'Expected exactly one ps-doclinks container, found {len(matches)}')
 
-          start=html.index(marker)
-          end=html.index('</div>', start)+len('</div>')
+          match=matches[0]
+          start=match.start()
+          open_tag=match.group(0)
+          close_tag=f'</{match.group("tag")}>'
+          end=html.index(close_tag, match.end())+len(close_tag)
           old_block=html[start:end]
           outside_before=html[:start]+'<!--DPRO_R6_DOCLINKS-->'+html[end:]
           outside_hash=hashlib.sha256(outside_before.encode()).hexdigest()
@@ -116,13 +120,13 @@ jobs:
               ('detailed','Detailed Manual PDF','https://dpromstk2000-lab.github.io/dpro-dayservice-line/DPRO_TUTORIAL_DAYCARE_DETAILED_MANUAL_V1.0.pdf'),
           ]
           lines=[
-              '<div class="ps-doclinks">',
+              open_tag,
               '<strong>操作ガイド / マニュアル</strong>',
               '<span class="ps-doclinks-note">Tutorialは送信・保存・業務更新を行わず、安全な主要導線を確認します。</span>',
           ]
           for key,label,url in resources:
               lines.append(f'<a data-dpro-tutorial-resource="{key}" href="{url}" target="_blank" rel="noopener">{label}</a>')
-          lines.append('</div>')
+          lines.append(close_tag)
           new_block=''.join(lines)
           final_html=html[:start]+new_block+html[end:]
 
@@ -135,8 +139,13 @@ jobs:
               if label not in new_block or url not in new_block:
                   raise SystemExit(f'Missing resource {label}')
 
-          start2=final_html.index(marker)
-          end2=final_html.index('</div>', start2)+len('</div>')
+          matches2=list(doclinks_re.finditer(final_html))
+          if len(matches2) != 1:
+              raise SystemExit(f'Final ps-doclinks container count must be one, found {len(matches2)}')
+          match2=matches2[0]
+          start2=match2.start()
+          close_tag2=f'</{match2.group("tag")}>'
+          end2=final_html.index(close_tag2, match2.end())+len(close_tag2)
           outside_after=final_html[:start2]+'<!--DPRO_R6_DOCLINKS-->'+final_html[end2:]
           if outside_before != outside_after:
               raise SystemExit('Product content outside ps-doclinks changed')
@@ -313,7 +322,7 @@ jobs:
             const browser=await chromium.launch({headless:true});const results=[];
             for(const v of viewports)results.push(await run(browser,v));
             await browser.close();
-            const summary={standard:'DAYCARE-R6-V1.0',expectedResources:expected.map(({marker,...x})=>x),results,pass:results.every(r=>r.pass)};
+            const summary={standard:'DAYCARE-R6-V1.1',expectedResources:expected.map(({marker,...x})=>x),results,pass:results.every(r=>r.pass)};
             fs.writeFileSync(path.join(outDir,'R6_LIVE_QA.json'),JSON.stringify(summary,null,2)+'\n');
             console.log(JSON.stringify(summary,null,2));
             if(!summary.pass)process.exitCode=1;
