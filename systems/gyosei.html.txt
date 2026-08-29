@@ -27,12 +27,11 @@ a{color:inherit}.ps-header{position:sticky;top:0;z-index:40;background:rgba(255,
   <style>
     .r6-gyosei-resources .r6-resource-head{display:flex;flex-wrap:wrap;align-items:center;gap:.7rem}
     .r6-gyosei-resources .r6-demo-badge{display:inline-flex;align-items:center;min-height:30px;padding:.22rem .7rem;border-radius:999px;background:var(--dpro-green);color:#fff;font-size:.78rem;font-weight:900;letter-spacing:.05em}
-    .r6-gyosei-resources .r6-resource-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1rem;margin-top:1rem}
+    .r6-gyosei-resources .r6-resource-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem;margin-top:1rem}
     .r6-gyosei-resources .r6-resource-card{display:flex;flex-direction:column;min-width:0}
     .r6-gyosei-resources .r6-resource-card p{flex:1}
     .r6-gyosei-resources [data-r6-resource]:focus-visible{outline:3px solid #0b7a55;outline-offset:4px;box-shadow:0 0 0 4px rgba(11,122,85,.16)}
     .r6-gyosei-resources .r6-resource-note{margin:1rem 0 0;padding:1rem 1.1rem;border-left:4px solid var(--dpro-green);background:#fff;color:#395149}
-    @media(max-width:980px){.r6-gyosei-resources .r6-resource-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
     @media(max-width:640px){.r6-gyosei-resources .r6-resource-grid{grid-template-columns:1fr}.r6-gyosei-resources .ps-actions{display:block}.r6-gyosei-resources .ps-actions .dpro-button{width:100%}}
   </style>
   <div class="dpro-container">
@@ -42,26 +41,14 @@ a{color:inherit}.ps-header{position:sticky;top:0;z-index:40;background:rgba(255,
         <span class="r6-demo-badge" data-r6-demo-label>Demo</span>
       </div>
       <h2 id="tutorial-manuals-title">操作ガイドと印刷マニュアル</h2>
-      <p>First10全10項目、Guide Center、A4印刷マニュアル、公開デモをここから確認できます。Tutorialは案内・移動・ハイライト専用で、相談・予約・案件・書類・タスク・設定などの業務データを変更しません。</p>
+      <p>First10全10項目、Guide Center、A4印刷マニュアルをここから確認できます。Tutorialは案内・移動・ハイライト専用で、相談・予約・案件・書類・タスク・設定などの業務データを変更しません。</p>
     </div>
 
     <div class="r6-resource-grid" data-r6-resource-grid>
-      <article class="dpro-card ps-card-copy r6-resource-card" data-r6-card="quick-start">
-        <h3>Quick Start</h3>
-        <p>A4縦1ページ。初回説明、Start / Resume / Replay、ドラッグ、キーボード、安全境界を短く確認できます。</p>
-        <div class="ps-actions"><a class="dpro-button dpro-button--secondary" data-r6-resource="quick-start" href="https://dpromstk2000-lab.github.io/dpro-gyosei-permit-line/manuals/DPRO_TUTORIAL_GYOSEI_QUICK_START_V1.0.pdf" target="_blank" rel="noopener">Quick Start PDF</a></div>
-      </article>
-
-      <article class="dpro-card ps-card-copy r6-resource-card" data-r6-card="detailed-manual">
-        <h3>Detailed Manual</h3>
-        <p>A4縦6ページ。First10全10ステップ、Guide Center、Resume / Replay、操作方法、安全境界をまとめています。</p>
-        <div class="ps-actions"><a class="dpro-button dpro-button--secondary" data-r6-resource="detailed-manual" href="https://dpromstk2000-lab.github.io/dpro-gyosei-permit-line/manuals/DPRO_TUTORIAL_GYOSEI_DETAILED_MANUAL_V1.0.pdf" target="_blank" rel="noopener">Detailed Manual PDF</a></div>
-      </article>
-
-      <article class="dpro-card ps-card-copy r6-resource-card" data-r6-card="tutorial">
-        <h3>Tutorial</h3>
-        <p>公開Tutorialを開き、First10を画面ハイライト付きで確認します。Close / Esc後もResumeできます。</p>
-        <div class="ps-actions"><a class="dpro-button dpro-button--primary" data-r6-resource="tutorial" href="https://dpromstk2000-lab.github.io/dpro-gyosei-permit-line/tutorial.html" target="_blank" rel="noopener">Tutorialを開く</a></div>
+      <article class="dpro-card ps-card-copy r6-resource-card" data-r6-card="tutorial-start">
+        <h3>Tutorial Start</h3>
+        <p>公開TutorialをSTEP 1から開始し、First10を画面ハイライト付きで確認します。</p>
+        <div class="ps-actions"><a class="dpro-button dpro-button--primary" data-r6-resource="tutorial-start" href="https://dpromstk2000-lab.github.io/dpro-gyosei-permit-line/tutorial.html?mode=start" target="_blank" rel="noopener">Tutorial Start</a></div>
       </article>
 
       <article class="dpro-card ps-card-copy r6-resource-card" data-r6-card="guide-center">
@@ -70,10 +57,16 @@ a{color:inherit}.ps-header{position:sticky;top:0;z-index:40;background:rgba(255,
         <div class="ps-actions"><a class="dpro-button dpro-button--secondary" data-r6-resource="guide-center" href="https://dpromstk2000-lab.github.io/dpro-gyosei-permit-line/demo-guide.html" target="_blank" rel="noopener">Guide Centerを開く</a></div>
       </article>
 
-      <article class="dpro-card ps-card-copy r6-resource-card" data-r6-card="public-demo">
-        <h3>Public Demo</h3>
-        <p>行政書士・許認可申請システムの公開デモ入口です。実在する顧客・案件・書類情報は入力しないでください。</p>
-        <div class="ps-actions"><a class="dpro-button dpro-button--demo" data-r6-resource="public-demo" href="https://dpromstk2000-lab.github.io/dpro-gyosei-permit-line/" target="_blank" rel="noopener">Demoを開く</a></div>
+      <article class="dpro-card ps-card-copy r6-resource-card" data-r6-card="quick-start-pdf">
+        <h3>Quick Start PDF</h3>
+        <p>A4縦1ページ。初回説明、Start / Resume / Replay、ドラッグ、キーボード、安全境界を短く確認できます。</p>
+        <div class="ps-actions"><a class="dpro-button dpro-button--secondary" data-r6-resource="quick-start-pdf" href="https://dpromstk2000-lab.github.io/dpro-gyosei-permit-line/manuals/DPRO_TUTORIAL_GYOSEI_QUICK_START_V1.0.pdf" target="_blank" rel="noopener">Quick Start PDF</a></div>
+      </article>
+
+      <article class="dpro-card ps-card-copy r6-resource-card" data-r6-card="detailed-manual-pdf">
+        <h3>Detailed Manual PDF</h3>
+        <p>A4縦6ページ。First10全10ステップ、Guide Center、Resume / Replay、操作方法、安全境界をまとめています。</p>
+        <div class="ps-actions"><a class="dpro-button dpro-button--secondary" data-r6-resource="detailed-manual-pdf" href="https://dpromstk2000-lab.github.io/dpro-gyosei-permit-line/manuals/DPRO_TUTORIAL_GYOSEI_DETAILED_MANUAL_V1.0.pdf" target="_blank" rel="noopener">Detailed Manual PDF</a></div>
       </article>
     </div>
 
