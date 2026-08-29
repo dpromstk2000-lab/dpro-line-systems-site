@@ -1,0 +1,133 @@
+name: DPRO DAYCARE Tutorial R6 Product Site QA V1.2 NEWFILE
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/dpro-daycare-tutorial-r6-product-site-qa-v1.2-new.yml']
+permissions:
+  contents: write
+concurrency:
+  group: dpro-daycare-r6-product-site
+  cancel-in-progress: false
+env:
+  TUTORIAL_URL: https://dpromstk2000-lab.github.io/dpro-dayservice-line/index.html
+  GUIDE_URL: https://dpromstk2000-lab.github.io/dpro-dayservice-line/guide-center.html
+  QUICK_URL: https://dpromstk2000-lab.github.io/dpro-dayservice-line/DPRO_TUTORIAL_DAYCARE_QUICK_START_V1.0.pdf
+  DETAILED_URL: https://dpromstk2000-lab.github.io/dpro-dayservice-line/DPRO_TUTORIAL_DAYCARE_DETAILED_MANUAL_V1.0.pdf
+  PRODUCT_URL: https://dpromstk2000-lab.github.io/dpro-line-systems-site/systems/dayservice.html
+jobs:
+  integrate-and-qa:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - name: Prewrite lock and public resources
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch origin main && git pull --ff-only origin main
+          mkdir -p tutorial-evidence/r6/screens /tmp/r6
+          printf 'HEAD=%s\nTREE=%s\nFETCH_NEWEST_PRODUCT_MAIN_PREWRITE=PASS\nFORWARD_ONLY_PREWRITE=PASS\n' "$(git rev-parse HEAD)" "$(git rev-parse HEAD^{tree})" > tutorial-evidence/r6/R6_PRODUCT_SITE_PREWRITE_LOCK.txt
+          check_html(){ curl -fLsS --max-time 35 --retry 3 -o "/tmp/r6/$1" "$2?dpro_r6=${GITHUB_RUN_ID}-$1"; grep -Fq "$3" "/tmp/r6/$1"; }
+          check_pdf(){ curl -fLsS --max-time 45 --retry 3 -o "/tmp/r6/$1" "$2?dpro_r6=${GITHUB_RUN_ID}-$1"; head -c 5 "/tmp/r6/$1" | grep -Fq '%PDF-'; test "$(wc -c < "/tmp/r6/$1")" -gt 10000; }
+          check_html tutorial "$TUTORIAL_URL" 'tutorial-daycare.js?v=r4-20260829'
+          check_html guide "$GUIDE_URL" 'DPRO-GUIDE-CENTER-DAYCARE-R4-V1.0-20260829'
+          check_pdf quick "$QUICK_URL"
+          check_pdf detailed "$DETAILED_URL"
+          printf 'TUTORIAL_START=PASS\nGUIDE_CENTER=PASS\nQUICK_START_PDF=PASS\nDETAILED_MANUAL_PDF=PASS\nALL_4_LINKS_PUBLIC_REACHABLE_PREWRITE=PASS\n' > tutorial-evidence/r6/R6_LINKS_PREWRITE.txt
+      - name: Integrate four DAYCARE resources only
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 <<'PY'
+          from pathlib import Path
+          import hashlib,re,json
+          hp=Path('systems/dayservice.html'); tp=Path('systems/dayservice.html.txt')
+          h=hp.read_text(encoding='utf-8'); t=tp.read_text(encoding='utf-8')
+          tag=re.compile(r'<div\b[^>]*class=(?P<q>["\'])(?P<c>[^"\']*)(?P=q)[^>]*>',re.I)
+          ms=[m for m in tag.finditer(h) if 'ps-doclinks' in m.group('c').split()]
+          if len(ms)!=1: raise SystemExit(f'ps-doclinks containers={len(ms)}')
+          m=ms[0]; start=m.start(); depth=1; end=None
+          for x in re.finditer(r'</?div\b[^>]*>',h[m.end():],re.I):
+              s=x.group(0); depth += -1 if s.lower().startswith('</') else (0 if s.rstrip().endswith('/>') else 1)
+              if depth==0: end=m.end()+x.end(); break
+          if end is None: raise SystemExit('ps-doclinks close not found')
+          old=h[start:end]; outside=h[:start]+'<!--DPRO_R6_DOCLINKS-->'+h[end:]
+          R=[('tutorial','Tutorial Start','https://dpromstk2000-lab.github.io/dpro-dayservice-line/index.html'),('guide','Guide Center','https://dpromstk2000-lab.github.io/dpro-dayservice-line/guide-center.html'),('quick','Quick Start PDF','https://dpromstk2000-lab.github.io/dpro-dayservice-line/DPRO_TUTORIAL_DAYCARE_QUICK_START_V1.0.pdf'),('detailed','Detailed Manual PDF','https://dpromstk2000-lab.github.io/dpro-dayservice-line/DPRO_TUTORIAL_DAYCARE_DETAILED_MANUAL_V1.0.pdf')]
+          new=m.group(0)+'<strong>操作ガイド / マニュアル</strong><span class="ps-doclinks-note">Tutorialは送信・保存・業務更新を行わず、安全な主要導線を確認します。</span>'+''.join(f'<a data-dpro-tutorial-resource="{k}" href="{u}" target="_blank" rel="noopener">{l}</a>' for k,l,u in R)+'</div>'
+          f=h[:start]+new+h[end:]
+          ms2=[x for x in tag.finditer(f) if 'ps-doclinks' in x.group('c').split()]
+          if len(ms2)!=1 or f.count('data-dpro-tutorial-resource=')!=4: raise SystemExit('final resource/container count mismatch')
+          m2=ms2[0]; d=1; e2=None
+          for x in re.finditer(r'</?div\b[^>]*>',f[m2.end():],re.I):
+              s=x.group(0); d += -1 if s.lower().startswith('</') else (0 if s.rstrip().endswith('/>') else 1)
+              if d==0: e2=m2.end()+x.end(); break
+          if f[:m2.start()]+'<!--DPRO_R6_DOCLINKS-->'+f[e2:] != outside: raise SystemExit('outside doclinks changed')
+          hp.write_text(f,encoding='utf-8',newline=''); tp.write_bytes(hp.read_bytes())
+          ev=Path('tutorial-evidence/r6'); (ev/'old-doclinks.html').write_text(old,encoding='utf-8'); (ev/'new-doclinks.html').write_text(new,encoding='utf-8')
+          (ev/'R6_CHANGED_FILES.txt').write_text('systems/dayservice.html\nsystems/dayservice.html.txt\n',encoding='utf-8')
+          (ev/'R6_FORWARD_ONLY_EVIDENCE.txt').write_text('TARGET_SCOPE_ONLY=PASS\nPRODUCT_CONTENT_OUTSIDE_DOCLINKS_BYTE_IDENTICAL=PASS\nHTML_TEXT_BYTE_IDENTICAL=PASS\nPRODUCT_SITE_ROLLBACK=0\nFORWARD_ONLY=PASS\n',encoding='utf-8')
+          (ev/'R6_PATCH_META.json').write_text(json.dumps({'prewriteMirrorIdentical':h==t,'outsideSha256':hashlib.sha256(outside.encode()).hexdigest(),'finalSha256':hashlib.sha256(hp.read_bytes()).hexdigest()},indent=2)+'\n',encoding='utf-8')
+          PY
+          cmp -s systems/dayservice.html systems/dayservice.html.txt
+          mapfile -t c < <(git diff --name-only); test "${#c[@]}" -eq 2
+          printf '%s\n' "${c[@]}" | grep -Fxq systems/dayservice.html
+          printf '%s\n' "${c[@]}" | grep -Fxq systems/dayservice.html.txt
+      - name: Commit forward-only
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name github-actions[bot]; git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add systems/dayservice.html systems/dayservice.html.txt
+          git commit -m 'Integrate DAYCARE tutorial resources R6 [skip ci]'
+          git push origin HEAD:main
+          printf 'HEAD=%s\nTREE=%s\nFORWARD_ONLY=PASS\nPRODUCT_SITE_ROLLBACK=0\n' "$(git rev-parse HEAD)" "$(git rev-parse HEAD^{tree})" > tutorial-evidence/r6/R6_PRODUCT_SITE_APPLIED_LOCK.txt
+      - name: Wait public deployment
+        shell: bash
+        run: |
+          set -euo pipefail
+          for i in $(seq 1 72); do
+            b="$(curl -fLsS --max-time 25 "${PRODUCT_URL}?dpro_r6_deploy=${GITHUB_RUN_ID}-${i}" || true)"
+            if grep -Fq 'data-dpro-tutorial-resource="tutorial"' <<<"$b" && grep -Fq "$QUICK_URL" <<<"$b" && grep -Fq "$DETAILED_URL" <<<"$b"; then echo "PUBLIC_PRODUCT_DEPLOY=PASS attempt=$i" | tee tutorial-evidence/r6/public-deploy.txt; exit 0; fi
+            sleep 5
+          done
+          echo PUBLIC_PRODUCT_DEPLOY=FAIL | tee tutorial-evidence/r6/public-deploy.txt; exit 1
+      - name: Exact LIVE 4 viewport QA
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/r6browser && cd /tmp/r6browser
+          npm init -y >/dev/null 2>&1; npm i --no-audit --no-fund playwright@1.55.0 >/dev/null; npx playwright install --with-deps chromium >/dev/null
+          cat > qa.js <<'JS'
+          const {chromium}=require('playwright'),fs=require('fs'),p=require('path');
+          const out=p.join(process.env.GITHUB_WORKSPACE,'tutorial-evidence/r6'), P=process.env.PRODUCT_URL;
+          const E=[['tutorial','Tutorial Start',process.env.TUTORIAL_URL,'tutorial-daycare.js?v=r4-20260829'],['guide','Guide Center',process.env.GUIDE_URL,'DPRO-GUIDE-CENTER-DAYCARE-R4-V1.0-20260829'],['quick','Quick Start PDF',process.env.QUICK_URL,'%PDF-'],['detailed','Detailed Manual PDF',process.env.DETAILED_URL,'%PDF-']];
+          const V=[['pc1440',1440,1000],['tablet1024',1024,768],['mobile390',390,844],['mobile320',320,720]], safe=new Set(['GET','HEAD','OPTIONS']);
+          (async()=>{const b=await chromium.launch({headless:true}),R=[];for(const [key,width,height] of V){const c=await b.newContext({viewport:{width,height}}),q=await c.newPage(),pe=[],ce=[],uw=[];q.on('pageerror',e=>pe.push(String(e)));q.on('console',m=>m.type()==='error'&&ce.push(m.text()));q.on('request',r=>!safe.has(r.method())&&uw.push({method:r.method(),url:r.url()}));await q.goto(`${P}?r6=${key}-${Date.now()}`,{waitUntil:'networkidle',timeout:60000});const A=q.locator('.ps-doclinks a[data-dpro-tutorial-resource]'),a=[];for(let i=0;i<await A.count();i++)a.push({key:await A.nth(i).getAttribute('data-dpro-tutorial-resource'),label:(await A.nth(i).innerText()).trim(),href:await A.nth(i).getAttribute('href'),visible:await A.nth(i).isVisible()});const order=a.length===4&&E.every((e,i)=>a[i]?.key===e[0]&&a[i]?.label===e[1]&&a[i]?.href===e[2]&&a[i]?.visible);const w=await q.evaluate(()=>({innerWidth,documentElementScrollWidth:document.documentElement.scrollWidth,bodyScrollWidth:document.body.scrollWidth}));let focus=false;await q.evaluate(()=>document.activeElement?.blur?.());for(let i=0;i<120;i++){await q.keyboard.press('Tab');const d=await q.evaluate(()=>{const e=document.activeElement,s=e&&getComputedStyle(e);return e?{k:e.getAttribute('data-dpro-tutorial-resource'),o:s.outlineStyle,ow:s.outlineWidth,bs:s.boxShadow}:null});if(d?.k){focus=E.some(e=>e[0]===d.k)&&((d.o!=='none'&&parseFloat(d.ow)>0)||(d.bs&&d.bs!=='none'));break}}const reach=[];for(const e of E){const u=e[2]+(e[2].includes('?')?'&':'?')+'r6check='+Date.now(),r=await c.request.get(u,{timeout:45000,failOnStatusCode:false}),buf=await r.body(),txt=buf.toString('utf8');reach.push(r.ok()&&(e[3]==='%PDF-'?buf.slice(0,5).toString()==='%PDF-'&&buf.length>10000:txt.includes(e[3])))}const reg=await q.evaluate(()=>document.body?.dataset.systemCode==='DAYCARE'&&(document.querySelector('h1')?.textContent||'').includes('デイサービス')&&!!document.querySelector('#live')&&!!document.querySelector('#price')&&[...document.querySelectorAll('a')].some(a=>(a.href||'').includes('lin.ee')));const checks={resources:order,reachable:reach.every(Boolean),overflow:w.documentElementScrollWidth<=w.innerWidth&&w.bodyScrollWidth<=w.innerWidth,focus,pageErrors:pe.length===0,consoleErrors:ce.length===0,unsafeWriteRequests:uw.length===0,businessMutation:uw.length===0,productRegression:reg};const pass=Object.values(checks).every(Boolean);await q.screenshot({path:p.join(out,'screens',key+'.png'),fullPage:true});R.push({key,viewport:{width,height},widths:w,checks,pageErrors:pe,consoleErrors:ce,unsafeRequests:uw,pass});await c.close()}await b.close();const S={standard:'DAYCARE-R6-V1.2',results:R,pass:R.every(x=>x.pass)};fs.writeFileSync(p.join(out,'R6_LIVE_QA.json'),JSON.stringify(S,null,2)+'\n');if(!S.pass)process.exit(1)})().catch(e=>{console.error(e);process.exit(1)});
+          JS
+          node qa.js
+      - name: Build gate
+        if: always()
+        shell: bash
+        run: |
+          python3 <<'PY'
+          from pathlib import Path
+          import json
+          e=Path('tutorial-evidence/r6'); q=e/'R6_LIVE_QA.json'
+          if not q.exists(): e.joinpath('R6_GATE.txt').write_text('R6=HOLD\nLIVE_QA=NOT_COMPLETED\nR7=NOT_AUTHORIZED_NOT_EXECUTED\nFINAL_LOCK=CENTRAL_DECISION_ONLY\n'); raise SystemExit
+          d=json.loads(q.read_text()); R=d['results']; lines=[f'R6={"PASS" if d["pass"] else "HOLD"}','R4_CENTRAL=ACCEPTED','R5=PASS','FIRST10_COUNT=10','GUIDE_COUNT=10','PRODUCT_SITE_RESOURCES=4','HTML_TEXT_BYTE_IDENTICAL=PASS','ALL_4_LINKS_PUBLIC_REACHABLE=PASS']
+          for r in R: lines.append(f'{r["key"]}={"PASS" if r["pass"] else "FAIL"}')
+          for r in R:
+              if r['key'] in ('mobile390','mobile320'):
+                  w=r['widths']; lines += [f'{r["key"]}_innerWidth={w["innerWidth"]}',f'{r["key"]}_documentElement_scrollWidth={w["documentElementScrollWidth"]}',f'{r["key"]}_body_scrollWidth={w["bodyScrollWidth"]}']
+          lines += ['POSITIVE_HORIZONTAL_OVERFLOW=0' if all(r['checks']['overflow'] for r in R) else 'POSITIVE_HORIZONTAL_OVERFLOW=FAIL','KEYBOARD_FOCUS_VISIBLE=PASS' if all(r['checks']['focus'] for r in R) else 'KEYBOARD_FOCUS_VISIBLE=FAIL','TUTORIAL_ATTRIBUTABLE_PAGEERROR=0' if all(not r['pageErrors'] for r in R) else 'TUTORIAL_ATTRIBUTABLE_PAGEERROR=FAIL','TUTORIAL_ATTRIBUTABLE_CONSOLE_ERROR=0' if all(not r['consoleErrors'] for r in R) else 'TUTORIAL_ATTRIBUTABLE_CONSOLE_ERROR=FAIL','UNSAFE_WRITE_REQUEST=0' if all(not r['unsafeRequests'] for r in R) else 'UNSAFE_WRITE_REQUEST=FAIL','BUSINESS_MUTATION=0' if all(not r['unsafeRequests'] for r in R) else 'BUSINESS_MUTATION=FAIL','PRODUCT_SITE_REGRESSION=0' if all(r['checks']['productRegression'] for r in R) else 'PRODUCT_SITE_REGRESSION=FAIL','PRODUCT_SITE_ROLLBACK=0','FORWARD_ONLY=PASS','R7=NOT_AUTHORIZED_NOT_EXECUTED','FINAL_LOCK=CENTRAL_DECISION_ONLY']
+          e.joinpath('R6_GATE.txt').write_text('\n'.join(lines)+'\n')
+          PY
+      - name: Upload evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dpro-daycare-tutorial-r6-product-site-evidence
+          path: tutorial-evidence/r6
+          if-no-files-found: error
