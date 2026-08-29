@@ -45,14 +45,18 @@ jobs:
         run: |
           set -euo pipefail
           TUTORIAL='https://dpromstk2000-lab.github.io/dpro-disposal-line-liff/owner.html?demo=1&tutorial=start'
+          TUTORIAL_ASSET='https://dpromstk2000-lab.github.io/dpro-disposal-line-liff/dpro-tutorial-r3.js'
           GUIDE='https://dpromstk2000-lab.github.io/dpro-disposal-line-liff/guide-center.html'
           QUICK='https://dpromstk2000-lab.github.io/dpro-disposal-line-liff/docs/DPRO_TUTORIAL_DISPOSAL_QUICK_START_V1.0.pdf'
           DETAIL='https://dpromstk2000-lab.github.io/dpro-disposal-line-liff/docs/DPRO_TUTORIAL_DISPOSAL_DETAILED_MANUAL_V1.0.pdf'
           curl -fsSL --retry 3 --max-time 30 "$TUTORIAL" -o /tmp/tutorial.html
+          curl -fsSL --retry 3 --max-time 30 "$TUTORIAL_ASSET" -o /tmp/tutorial.js
           curl -fsSL --retry 3 --max-time 30 "$GUIDE" -o /tmp/guide.html
           curl -fsSL --retry 3 --max-time 30 "$QUICK" -o /tmp/quick.pdf
           curl -fsSL --retry 3 --max-time 30 "$DETAIL" -o /tmp/detail.pdf
-          grep -q 'DPRO-TUTORIAL-DISPOSAL-B09-R3-V1.0-20260829' /tmp/tutorial.html || grep -q 'dpro-tutorial-r3.js' /tmp/tutorial.html
+          # owner.html intentionally loads Tutorial through config.js; verify page and live asset separately.
+          grep -q '<script src="config.js"></script>' /tmp/tutorial.html
+          grep -q 'DPRO-TUTORIAL-DISPOSAL-B09-R3-V1.0-20260829' /tmp/tutorial.js
           grep -q 'DPRO-TUTORIAL-DISPOSAL-B09-R4-GUIDE-V1.0-20260829' /tmp/guide.html
           head -c 5 /tmp/quick.pdf | grep -q '%PDF-'
           head -c 5 /tmp/detail.pdf | grep -q '%PDF-'
