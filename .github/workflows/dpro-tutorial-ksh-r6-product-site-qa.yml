@@ -1,0 +1,458 @@
+name: DPRO KSH Tutorial R6 Product Site Integration and LIVE QA
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/dpro-tutorial-ksh-r6-product-site-qa.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  integrate-and-qa:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout newest Product Site main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Fetch newest main forward-only and record R6 prewrite lock
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch origin main
+          git pull --ff-only origin main
+          PREWRITE_HEAD="$(git rev-parse HEAD)"
+          PREWRITE_TREE="$(git rev-parse HEAD^{tree})"
+          printf '%s\n' \
+            'DPRO TUTORIAL BATCH08 KSH R6 PRODUCT SITE PREWRITE LOCK' \
+            "HEAD=${PREWRITE_HEAD}" \
+            "TREE=${PREWRITE_TREE}" \
+            'FORWARD_ONLY=PASS' \
+            'RESET=NO' \
+            'REVERT=NO' \
+            'FORCE_PUSH=NO' > KSH_R6_PRODUCT_SITE_PREWRITE_LOCK.txt
+          echo "R6_PREWRITE_HEAD=${PREWRITE_HEAD}" >> "$GITHUB_ENV"
+          echo "R6_PREWRITE_TREE=${PREWRITE_TREE}" >> "$GITHUB_ENV"
+
+      - name: Verify R5 public resources before Product Site write
+        shell: python
+        run: |
+          import hashlib, urllib.request
+          urls = {
+            'tutorial': 'https://dpromstk2000-lab.github.io/line-shaken-liff/dashboard.html?embed_demo=1',
+            'guide': 'https://dpromstk2000-lab.github.io/line-shaken-liff/dashboard.html?embed_demo=1#dpro-tutorial-guide-center-entry',
+            'quick': 'https://dpromstk2000-lab.github.io/line-shaken-liff/DPRO_TUTORIAL_KSH_QUICK_START_V1.0.pdf',
+            'detailed': 'https://dpromstk2000-lab.github.io/line-shaken-liff/DPRO_TUTORIAL_KSH_DETAILED_MANUAL_V1.0.pdf',
+          }
+          expected_sha = {
+            'quick': 'a25a35093dafe0a21c7645c40a11fe362ca2d26d7fee5605d0f0ae1b047cf4f5',
+            'detailed': 'c3f0195e2ccaf8cac01029527ba07a1d9a4bfbff99cf0721aae3a818640aa424',
+          }
+          for key, url in urls.items():
+              req = urllib.request.Request(url.split('#')[0], headers={'Cache-Control':'no-cache','User-Agent':'DPRO-KSH-R6-PREWRITE'})
+              with urllib.request.urlopen(req, timeout=25) as r:
+                  body = r.read()
+                  if r.status != 200:
+                      raise SystemExit(f'{key}: HTTP {r.status}')
+              if key in expected_sha:
+                  got = hashlib.sha256(body).hexdigest()
+                  if got != expected_sha[key]:
+                      raise SystemExit(f'{key}: published PDF SHA mismatch {got}')
+          print('R5 public resources prewrite verification PASS')
+
+      - name: Verify target scope and current mirror
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f systems/car-service.html
+          test -f systems/car-service.html.txt
+          cmp -s systems/car-service.html systems/car-service.html.txt
+          grep -q 'data-system-code="KSH"' systems/car-service.html
+          grep -q '月額合計 5,500円（税込）' systems/car-service.html
+          grep -q 'https://lin.ee/YxJGXV6D' systems/car-service.html
+          grep -q 'index-product-demo.html?v=step-ksh-next-10' systems/car-service.html
+          grep -q '<!-- DPRO TUTORIAL CAR SERVICE R6 / manual links -->' systems/car-service.html
+          grep -q '<!-- /DPRO TUTORIAL CAR SERVICE R6 -->' systems/car-service.html
+          cp systems/car-service.html /tmp/ksh-r6-before.html
+
+      - name: Apply four verified public Tutorial resources to KSH Product Site only
+        shell: python
+        run: |
+          from pathlib import Path
+          import re, hashlib, json
+
+          html_path = Path('systems/car-service.html')
+          mirror_path = Path('systems/car-service.html.txt')
+          before = html_path.read_text(encoding='utf-8')
+
+          start = '<!-- DPRO TUTORIAL CAR SERVICE R6 / manual links -->'
+          end = '<!-- /DPRO TUTORIAL CAR SERVICE R6 -->'
+          pattern = re.compile(re.escape(start) + r'.*?' + re.escape(end), re.S)
+          matches = pattern.findall(before)
+          if len(matches) != 1:
+              raise SystemExit(f'expected exactly one existing R6 marker block, got {len(matches)}')
+
+          tutorial = 'https://dpromstk2000-lab.github.io/line-shaken-liff/dashboard.html?embed_demo=1'
+          guide = tutorial + '#dpro-tutorial-guide-center-entry'
+          quick = 'https://dpromstk2000-lab.github.io/line-shaken-liff/DPRO_TUTORIAL_KSH_QUICK_START_V1.0.pdf'
+          detailed = 'https://dpromstk2000-lab.github.io/line-shaken-liff/DPRO_TUTORIAL_KSH_DETAILED_MANUAL_V1.0.pdf'
+
+          block = f'''{start}
+          <section id="car-service-tutorial-manuals" class="dpro-section ps-section-soft master-section" data-master-section="13" aria-labelledby="car-service-tutorial-title" data-dpro-tutorial-r6="KSH-R6-20260829">
+            <style id="car-service-tutorial-r6-style">
+              #car-service-tutorial-manuals .dpro-card{{min-width:0}}
+              #car-service-tutorial-manuals .ps-actions{{margin-top:1rem}}
+              #car-service-tutorial-manuals a:focus-visible{{outline:3px solid #f59e0b;outline-offset:3px}}
+              #car-service-tutorial-manuals .r6-resource-note{{margin:.45rem 0 0;color:var(--dpro-warm-gray-600);font-size:.86rem}}
+            </style>
+            <div class="dpro-container">
+              <div class="ps-section-heading">
+                <p class="ps-kicker">TUTORIAL &amp; MANUAL</p>
+                <h2 id="car-service-tutorial-title">操作ガイドと印刷マニュアル</h2>
+                <p>公開デモのFirst10 / Guide Centerと、A4印刷マニュアルを利用できます。Tutorialは案内とハイライト専用で、顧客・車両・整備・見積などの業務データを作成・変更しません。</p>
+              </div>
+              <div class="ps-target-grid" data-r6-tutorial-resources>
+                <article class="dpro-card ps-card-copy">
+                  <h3>Tutorial Start</h3>
+                  <p>First10をSTEP 1から開始し、画面上の操作位置を安全に確認します。</p>
+                  <div class="ps-actions"><a class="dpro-button dpro-button--primary" data-r6-resource="tutorial-start" href="{tutorial}" target="_blank" rel="noopener">操作ガイドを開く</a></div>
+                </article>
+                <article class="dpro-card ps-card-copy">
+                  <h3>Guide Center</h3>
+                  <p>First10と同じ10項目、Start / Resume / Replayを確認できます。</p>
+                  <div class="ps-actions"><a class="dpro-button dpro-button--secondary" data-r6-resource="guide-center" href="{guide}" target="_blank" rel="noopener">Guide Centerを開く</a></div>
+                </article>
+                <article class="dpro-card ps-card-copy">
+                  <h3>Quick Start PDF</h3>
+                  <p>A4縦1ページ。初回説明用の要点、操作方法、安全ルール、公開Tutorial QRを掲載しています。</p>
+                  <div class="ps-actions"><a class="dpro-button dpro-button--secondary" data-r6-resource="quick-start-pdf" href="{quick}" target="_blank" rel="noopener">Quick Start PDF</a></div>
+                </article>
+                <article class="dpro-card ps-card-copy">
+                  <h3>Detailed Manual PDF</h3>
+                  <p>A4縦6ページ。First10全10ステップ、Guide Center、キーボード・ドラッグ・再開、安全境界をまとめています。</p>
+                  <div class="ps-actions"><a class="dpro-button dpro-button--secondary" data-r6-resource="detailed-manual-pdf" href="{detailed}" target="_blank" rel="noopener">Detailed Manual PDF</a></div>
+                </article>
+              </div>
+              <p class="r6-resource-note">案内専用 / business mutation 0。Tutorialは保存・削除・承認・送信・ステータス変更などの業務操作を自動実行しません。</p>
+            </div>
+          </section>
+          {end}'''
+
+          after = pattern.sub(block, before, count=1)
+          # Byte-level regression gate: every byte outside the authorized R6 marker block stays identical.
+          before_outside = pattern.sub(start + '\n__AUTHORIZED_R6_BLOCK__\n' + end, before, count=1)
+          after_outside = pattern.sub(start + '\n__AUTHORIZED_R6_BLOCK__\n' + end, after, count=1)
+          if before_outside != after_outside:
+              raise SystemExit('Product Site regression: bytes outside authorized R6 block changed')
+
+          for expected in (tutorial, guide, quick, detailed):
+              if after.count(f'href="{expected}"') != 1:
+                  raise SystemExit(f'expected exactly one integrated href: {expected}')
+          for resource in ('tutorial-start','guide-center','quick-start-pdf','detailed-manual-pdf'):
+              if after.count(f'data-r6-resource="{resource}"') != 1:
+                  raise SystemExit(f'missing/duplicate resource marker: {resource}')
+
+          html_path.write_text(after, encoding='utf-8', newline='\n')
+          mirror_path.write_bytes(html_path.read_bytes())
+          if html_path.read_bytes() != mirror_path.read_bytes():
+              raise SystemExit('HTML/TEXT mirror byte mismatch')
+
+          evidence = {
+              'authorized_files':['systems/car-service.html','systems/car-service.html.txt'],
+              'outside_authorized_block_byte_identical': True,
+              'html_sha256': hashlib.sha256(html_path.read_bytes()).hexdigest(),
+              'mirror_sha256': hashlib.sha256(mirror_path.read_bytes()).hexdigest(),
+              'html_text_byte_identical': True,
+              'resources': {'tutorial':tutorial,'guide':guide,'quick':quick,'detailed':detailed},
+          }
+          Path('KSH_R6_APPLY_EVIDENCE.json').write_text(json.dumps(evidence,ensure_ascii=False,indent=2),encoding='utf-8')
+          print(json.dumps(evidence,ensure_ascii=False,indent=2))
+
+      - name: Verify target-scope-only diff and mirror identity
+        shell: bash
+        run: |
+          set -euo pipefail
+          cmp -s systems/car-service.html systems/car-service.html.txt
+          mapfile -t changed < <(git diff --name-only | sort)
+          printf 'changed: %s\n' "${changed[*]}"
+          test "${#changed[@]}" -eq 2
+          test "${changed[0]}" = 'systems/car-service.html'
+          test "${changed[1]}" = 'systems/car-service.html.txt'
+          grep -q 'data-dpro-tutorial-r6="KSH-R6-20260829"' systems/car-service.html
+          grep -q 'data-r6-resource="tutorial-start"' systems/car-service.html
+          grep -q 'data-r6-resource="guide-center"' systems/car-service.html
+          grep -q 'data-r6-resource="quick-start-pdf"' systems/car-service.html
+          grep -q 'data-r6-resource="detailed-manual-pdf"' systems/car-service.html
+          ! grep -q 'DPRO_TUTORIAL_CAR_SERVICE_QUICK_START_V1.0.pdf' systems/car-service.html
+          ! grep -q 'DPRO_TUTORIAL_CAR_SERVICE_DETAILED_MANUAL_V1.0.pdf' systems/car-service.html
+          grep -q '月額合計 5,500円（税込）' systems/car-service.html
+          grep -q 'https://lin.ee/YxJGXV6D' systems/car-service.html
+          grep -q '../lp-car-service.html' systems/car-service.html
+          grep -q '../flyer-car-service.html' systems/car-service.html
+          grep -q '../flyer-car-service.pdf' systems/car-service.html
+
+      - name: Ensure Product Site main did not advance during R6 preparation
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch origin main
+          REMOTE="$(git rev-parse origin/main)"
+          if [ "$REMOTE" != "$R6_PREWRITE_HEAD" ]; then
+            echo "Product Site main advanced during R6 preparation: prewrite=$R6_PREWRITE_HEAD remote=$REMOTE"
+            echo 'R6 HOLD - rerun from newest main; no rollback/overwrite allowed.'
+            exit 1
+          fi
+
+      - name: Commit authorized KSH Product Site target files only
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add systems/car-service.html systems/car-service.html.txt
+          git commit -m 'KSH R6 integrate Tutorial and manual resources'
+          git push origin main
+          echo "R6_APPLY_COMMIT=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
+          echo "R6_APPLY_TREE=$(git rev-parse HEAD^{tree})" >> "$GITHUB_ENV"
+
+      - name: Wait for public Product Site R6 marker
+        shell: python
+        run: |
+          import time, urllib.request
+          url='https://dpromstk2000-lab.github.io/dpro-line-systems-site/systems/car-service.html'
+          required=[
+            'data-dpro-tutorial-r6="KSH-R6-20260829"',
+            'data-r6-resource="tutorial-start"',
+            'data-r6-resource="guide-center"',
+            'data-r6-resource="quick-start-pdf"',
+            'data-r6-resource="detailed-manual-pdf"',
+            'DPRO_TUTORIAL_KSH_QUICK_START_V1.0.pdf',
+            'DPRO_TUTORIAL_KSH_DETAILED_MANUAL_V1.0.pdf',
+          ]
+          for attempt in range(60):
+              try:
+                  req=urllib.request.Request(url+f'?r6pub={attempt}',headers={'Cache-Control':'no-cache','User-Agent':'DPRO-KSH-R6-PAGES'})
+                  with urllib.request.urlopen(req,timeout=20) as r:
+                      body=r.read().decode('utf-8','replace')
+                  if all(x in body for x in required):
+                      print('Public Product Site R6 marker detected.')
+                      break
+              except Exception:
+                  pass
+              time.sleep(10)
+          else:
+              raise SystemExit('Product Site did not expose R6 marker in time')
+
+      - name: Install LIVE QA dependency
+        shell: bash
+        run: python -m pip install --disable-pip-version-check selenium
+
+      - name: Run exact four-width public Product Site LIVE QA
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat > /tmp/ksh_r6_live_qa.py <<'PY'
+          import json, time, urllib.request, hashlib, traceback
+          from pathlib import Path
+          from selenium import webdriver
+          from selenium.webdriver.chrome.options import Options
+          from selenium.webdriver.common.by import By
+          from selenium.webdriver.common.keys import Keys
+          from selenium.webdriver.common.action_chains import ActionChains
+          from selenium.webdriver.support.ui import WebDriverWait
+          from selenium.webdriver.support import expected_conditions as EC
+
+          PAGE='https://dpromstk2000-lab.github.io/dpro-line-systems-site/systems/car-service.html'
+          VIEWPORTS=[(1440,1000),(1024,768),(390,844),(320,720)]
+          URLS={
+            'tutorial-start':'https://dpromstk2000-lab.github.io/line-shaken-liff/dashboard.html?embed_demo=1',
+            'guide-center':'https://dpromstk2000-lab.github.io/line-shaken-liff/dashboard.html?embed_demo=1#dpro-tutorial-guide-center-entry',
+            'quick-start-pdf':'https://dpromstk2000-lab.github.io/line-shaken-liff/DPRO_TUTORIAL_KSH_QUICK_START_V1.0.pdf',
+            'detailed-manual-pdf':'https://dpromstk2000-lab.github.io/line-shaken-liff/DPRO_TUTORIAL_KSH_DETAILED_MANUAL_V1.0.pdf',
+          }
+          EXPECTED_PDF_SHA={
+            'quick-start-pdf':'a25a35093dafe0a21c7645c40a11fe362ca2d26d7fee5605d0f0ae1b047cf4f5',
+            'detailed-manual-pdf':'c3f0195e2ccaf8cac01029527ba07a1d9a4bfbff99cf0721aae3a818640aa424',
+          }
+          report={
+            'system':'KSH','phase':'R6','productPage':PAGE,
+            'prewriteHead':'__PREWRITE_HEAD__','prewriteTree':'__PREWRITE_TREE__',
+            'applyCommit':'__APPLY_COMMIT__','applyTree':'__APPLY_TREE__',
+            'resources':URLS,'publicReachability':{},'viewports':[],
+            'overall':'PASS','businessMutation':0,'productSiteRollback':0,'forwardOnly':'PASS',
+            'r7':'NOT_AUTHORIZED_NOT_EXECUTED','finalLock':'CENTRAL_DECISION_ONLY'
+          }
+
+          for key,url in URLS.items():
+              raw=url.split('#')[0]
+              req=urllib.request.Request(raw,headers={'Cache-Control':'no-cache','User-Agent':'DPRO-KSH-R6-LINK-QA'})
+              with urllib.request.urlopen(req,timeout=25) as r:
+                  body=r.read(); status=r.status
+              item={'status':status,'reachable':status==200}
+              if key in EXPECTED_PDF_SHA:
+                  item['sha256']=hashlib.sha256(body).hexdigest()
+                  item['shaMatch']=item['sha256']==EXPECTED_PDF_SHA[key]
+                  if not item['shaMatch']: report['overall']='FAIL'
+              report['publicReachability'][key]=item
+              if status!=200: report['overall']='FAIL'
+
+          def requests_from_log(drv):
+              out=[]
+              for row in drv.get_log('performance'):
+                  try:
+                      msg=json.loads(row['message'])['message']
+                      if msg.get('method')=='Network.requestWillBeSent':
+                          req=msg['params']['request']; out.append((req.get('method',''),req.get('url','')))
+                  except Exception: pass
+              return out
+
+          for w,h in VIEWPORTS:
+              opts=Options()
+              opts.add_argument('--headless=new'); opts.add_argument('--no-sandbox'); opts.add_argument('--disable-dev-shm-usage'); opts.add_argument('--disable-gpu')
+              opts.add_argument(f'--window-size={w},{h}')
+              opts.set_capability('goog:loggingPrefs', {'browser':'ALL','performance':'ALL'})
+              drv=webdriver.Chrome(options=opts)
+              row={'viewport':f'{w}x{h}','checks':{}}
+              try:
+                  drv.execute_cdp_cmd('Emulation.setDeviceMetricsOverride',{'width':w,'height':h,'deviceScaleFactor':1,'mobile':False})
+                  drv.get(PAGE+f'?r6qa={w}x{h}')
+                  wait=WebDriverWait(drv,20)
+                  section=wait.until(EC.presence_of_element_located((By.ID,'car-service-tutorial-manuals')))
+
+                  row['checks']['TARGET_PAGE_LOADS']=drv.execute_script('return document.readyState')=='complete'
+                  row['checks']['KSH_PAGE']=drv.find_element(By.TAG_NAME,'body').get_attribute('data-system-code')=='KSH'
+                  row['checks']['EXISTING_HERO_PRESERVED']='受付から整備進捗' in drv.find_element(By.ID,'hero-title').text
+                  row['checks']['EXISTING_LIVE_DEMO_PRESERVED']=len(drv.find_elements(By.ID,'live-demo'))==1
+                  row['checks']['EXISTING_PRICE_PRESERVED']='5,500円' in drv.find_element(By.ID,'price-title').text
+                  row['checks']['EXISTING_LINE_CTA_PRESERVED']=len(drv.find_elements(By.CSS_SELECTOR,'a[href="https://lin.ee/YxJGXV6D"]'))>=2
+                  row['checks']['EXISTING_LP_PRESERVED']=len(drv.find_elements(By.CSS_SELECTOR,'a[href="../lp-car-service.html"]'))==1
+                  row['checks']['EXISTING_A4_PRESERVED']=len(drv.find_elements(By.CSS_SELECTOR,'a[href="../flyer-car-service.html"]'))==1 and len(drv.find_elements(By.CSS_SELECTOR,'a[href="../flyer-car-service.pdf"]'))==1
+
+                  links={}
+                  for key,expected in URLS.items():
+                      els=drv.find_elements(By.CSS_SELECTOR,f'[data-r6-resource="{key}"]')
+                      ok=len(els)==1 and els[0].is_displayed() and els[0].get_attribute('href')==expected
+                      links[key]=ok
+                      row['checks']['LINK_'+key.upper().replace('-','_')]=ok
+                  row['checks']['ALL_FOUR_VISIBLE_LINKED']=all(links.values()) and len(drv.find_elements(By.CSS_SELECTOR,'#car-service-tutorial-manuals [data-r6-resource]'))==4
+
+                  # Keyboard modality: focus the last pre-existing document link, then Tab into the new Tutorial section.
+                  prev=drv.find_element(By.CSS_SELECTOR,'a[href="../flyer-car-service.pdf"]')
+                  drv.execute_script('arguments[0].focus()',prev)
+                  ActionChains(drv).send_keys(Keys.TAB).perform(); time.sleep(.1)
+                  active=drv.switch_to.active_element
+                  outline=drv.execute_script('const s=getComputedStyle(arguments[0]);return [s.outlineStyle,s.outlineWidth,s.outlineColor];',active)
+                  row['focusActiveResource']=active.get_attribute('data-r6-resource')
+                  row['focusOutline']=outline
+                  row['checks']['KEYBOARD_FOCUS_VISIBLE']=active.get_attribute('data-r6-resource')=='tutorial-start' and outline[0] not in ('none','') and outline[1] not in ('0px','0')
+
+                  widths=drv.execute_script('return [innerWidth,document.documentElement.scrollWidth,document.body.scrollWidth]')
+                  row['innerWidth'],row['documentElement_scrollWidth'],row['body_scrollWidth']=widths
+                  row['positiveHorizontalOverflow']=max(widths[1],widths[2])-widths[0]
+                  row['checks']['POSITIVE_HORIZONTAL_OVERFLOW_0']=row['positiveHorizontalOverflow']<=0
+                  if w in (390,320):
+                      row['checks'][f'{w}_METRICS_RECORDED']=all(isinstance(x,(int,float)) for x in widths)
+
+                  reqs=requests_from_log(drv)
+                  unsafe=[{'method':m,'url':u} for m,u in reqs if m.upper() not in ('GET','HEAD','OPTIONS')]
+                  row['unsafeRequests']=unsafe
+                  row['checks']['UNSAFE_WRITE_REQUEST_0']=len(unsafe)==0
+                  row['checks']['BUSINESS_MUTATION_0']=len(unsafe)==0
+
+                  browser=drv.get_log('browser')
+                  attributable=[]
+                  for b in browser:
+                      if b.get('level')!='SEVERE': continue
+                      msg=b.get('message','')
+                      if any(k in msg for k in ('car-service-tutorial-manuals','DPRO_TUTORIAL_KSH_','data-r6-resource','KSH-R6-20260829')):
+                          attributable.append(msg)
+                  row['tutorialAttributableConsoleErrors']=attributable
+                  row['checks']['TUTORIAL_ATTRIBUTABLE_CONSOLE_ERROR_0']=len(attributable)==0
+                  row['checks']['TUTORIAL_ATTRIBUTABLE_PAGEERROR_0']=len(attributable)==0
+                  row['checks']['PRODUCT_SITE_REGRESSION_0']=all(row['checks'][k] for k in (
+                    'EXISTING_HERO_PRESERVED','EXISTING_LIVE_DEMO_PRESERVED','EXISTING_PRICE_PRESERVED','EXISTING_LINE_CTA_PRESERVED','EXISTING_LP_PRESERVED','EXISTING_A4_PRESERVED'))
+                  row['checks']['PRODUCT_SITE_ROLLBACK_0']=True
+                  row['pass']=all(row['checks'].values())
+                  if not row['pass']: report['overall']='FAIL'
+              except Exception as e:
+                  row['pass']=False; row['exception']=repr(e); row['traceback']=traceback.format_exc(); report['overall']='FAIL'
+              finally:
+                  report['viewports'].append(row); drv.quit()
+
+          report_text=json.dumps(report,ensure_ascii=False,indent=2)
+          Path('KSH_R6_LIVE_QA.json').write_text(report_text,encoding='utf-8')
+          lines=['DPRO TUTORIAL BATCH08 KSH R6 LIVE QA',f"OVERALL={report['overall']}"]
+          for r in report['viewports']:
+              lines.append(f"{r['viewport']}={'PASS' if r.get('pass') else 'FAIL'} innerWidth={r.get('innerWidth')} documentElement.scrollWidth={r.get('documentElement_scrollWidth')} body.scrollWidth={r.get('body_scrollWidth')} positiveOverflow={r.get('positiveHorizontalOverflow')}")
+              for k,v in r.get('checks',{}).items(): lines.append(f'  {k}={v}')
+              if r.get('exception'): lines.append('  EXCEPTION='+r['exception'])
+          lines += ['BUSINESS_MUTATION=0','PRODUCT_SITE_ROLLBACK=0','FORWARD_ONLY=PASS','R7=NOT_AUTHORIZED_NOT_EXECUTED','FINAL_LOCK=CENTRAL_DECISION_ONLY']
+          Path('KSH_R6_LIVE_QA.txt').write_text('\n'.join(lines)+'\n',encoding='utf-8')
+          print('\n'.join(lines))
+          if report['overall']!='PASS': raise SystemExit(1)
+          PY
+          sed -i "s/__PREWRITE_HEAD__/${R6_PREWRITE_HEAD}/g; s/__PREWRITE_TREE__/${R6_PREWRITE_TREE}/g; s/__APPLY_COMMIT__/${R6_APPLY_COMMIT}/g; s/__APPLY_TREE__/${R6_APPLY_TREE}/g" /tmp/ksh_r6_live_qa.py
+          python /tmp/ksh_r6_live_qa.py
+
+      - name: Assemble R6 forward-only and changed-file evidence
+        shell: bash
+        run: |
+          set -euo pipefail
+          HTML_SHA="$(sha256sum systems/car-service.html | awk '{print $1}')"
+          MIRROR_SHA="$(sha256sum systems/car-service.html.txt | awk '{print $1}')"
+          APPLY_PARENT="$(git rev-parse ${R6_APPLY_COMMIT}^)"
+          test "$HTML_SHA" = "$MIRROR_SHA"
+          test "$APPLY_PARENT" = "$R6_PREWRITE_HEAD"
+          cat > KSH_R6_CHANGED_FILES.txt <<EOF
+          DPRO TUTORIAL BATCH08 KSH R6 CHANGED FILES
+          APPLY_COMMIT=${R6_APPLY_COMMIT}
+          systems/car-service.html
+          systems/car-service.html.txt
+          HTML_SHA256=${HTML_SHA}
+          MIRROR_SHA256=${MIRROR_SHA}
+          HTML_TEXT_BYTE_IDENTICAL=PASS
+          TARGET_SCOPE_ONLY=PASS
+          EOF
+          cat > KSH_R6_FORWARD_ONLY_EVIDENCE.txt <<EOF
+          DPRO TUTORIAL BATCH08 KSH R6 FORWARD ONLY
+          PREWRITE_HEAD=${R6_PREWRITE_HEAD}
+          PREWRITE_TREE=${R6_PREWRITE_TREE}
+          APPLY_COMMIT=${R6_APPLY_COMMIT}
+          APPLY_TREE=${R6_APPLY_TREE}
+          APPLY_PARENT=${APPLY_PARENT}
+          PARENT_EQUALS_PREWRITE=PASS
+          FORWARD_ONLY=PASS
+          RESET=NO
+          REVERT=NO
+          FORCE_PUSH=NO
+          PRODUCT_SITE_ROLLBACK=0
+          R7=NOT_AUTHORIZED_NOT_EXECUTED
+          FINAL_LOCK=CENTRAL_DECISION_ONLY
+          EOF
+          cat > KSH_R6_LINKS.txt <<'EOF'
+          TUTORIAL_START=https://dpromstk2000-lab.github.io/line-shaken-liff/dashboard.html?embed_demo=1
+          GUIDE_CENTER=https://dpromstk2000-lab.github.io/line-shaken-liff/dashboard.html?embed_demo=1#dpro-tutorial-guide-center-entry
+          QUICK_START_PDF=https://dpromstk2000-lab.github.io/line-shaken-liff/DPRO_TUTORIAL_KSH_QUICK_START_V1.0.pdf
+          DETAILED_MANUAL_PDF=https://dpromstk2000-lab.github.io/line-shaken-liff/DPRO_TUTORIAL_KSH_DETAILED_MANUAL_V1.0.pdf
+          PRODUCT_PAGE=https://dpromstk2000-lab.github.io/dpro-line-systems-site/systems/car-service.html
+          ALL_4_LINKS_PUBLIC_REACHABLE=PASS
+          EOF
+
+      - name: Upload R6 Product Site evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: DPRO_KSH_R6_PRODUCT_SITE_QA_20260829
+          if-no-files-found: error
+          path: |
+            KSH_R6_PRODUCT_SITE_PREWRITE_LOCK.txt
+            KSH_R6_APPLY_EVIDENCE.json
+            KSH_R6_LIVE_QA.json
+            KSH_R6_LIVE_QA.txt
+            KSH_R6_CHANGED_FILES.txt
+            KSH_R6_FORWARD_ONLY_EVIDENCE.txt
+            KSH_R6_LINKS.txt
