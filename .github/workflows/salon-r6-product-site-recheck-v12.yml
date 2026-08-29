@@ -1,0 +1,345 @@
+name: SALON Tutorial R6 Product Site Recheck V1.2
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/salon-r6-product-site-recheck-v12.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: salon-tutorial-r6-product-site-recheck
+  cancel-in-progress: false
+
+jobs:
+  r6-recheck:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      TARGET_HTML: systems/salon.html
+      TARGET_TEXT: systems/salon.html.txt
+      WORKFLOW_PATH: .github/workflows/salon-r6-product-site-recheck-v12.yml
+      OLD_WORKFLOW_PATH: .github/workflows/salon-r6-product-site-recheck.yml
+      PRODUCT_URL: https://dpromstk2000-lab.github.io/dpro-line-systems-site/systems/salon.html
+      TUTORIAL_URL: https://dpromstk2000-lab.github.io/liff-salon-reserve/tutorial.html
+      GUIDE_URL: https://dpromstk2000-lab.github.io/liff-salon-reserve/guide-center.html
+      QUICK_URL: https://dpromstk2000-lab.github.io/liff-salon-reserve/DPRO_TUTORIAL_SALON_QUICK_START_V1.0.pdf
+      DETAIL_URL: https://dpromstk2000-lab.github.io/liff-salon-reserve/DPRO_TUTORIAL_SALON_DETAILED_MANUAL_V1.0.pdf
+      LIVE_DEMO_URL: https://dpromstk2000-lab.github.io/liff-salon-reserve/?embed_demo=1
+      R6_INTEGRATION_HEAD: 86130b9dd268a2859f99a57c973c73c2de395bd1
+      R6_INTEGRATION_TREE: 49889c35c9c24b171a016d512a868ec8968b2f39
+
+    steps:
+      - name: Checkout newest Product Site main
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Forward-only recheck preflight
+        id: preflight
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p qa-r6 screenshots-r6
+          git fetch origin main
+          local_head="$(git rev-parse HEAD)"
+          remote_head="$(git rev-parse origin/main)"
+          test "$local_head" = "$remote_head" || { echo "Product Site main advanced after recheck upload. HOLD." >&2; exit 1; }
+
+          upload_base="$(git rev-parse HEAD^)"
+          upload_base_tree="$(git rev-parse "${upload_base}^{tree}")"
+          mapfile -t upload_changed < <(git diff --name-only "$upload_base" HEAD)
+          test "${#upload_changed[@]}" -eq 1
+          test "${upload_changed[0]}" = "$WORKFLOW_PATH"
+
+          git merge-base --is-ancestor "$R6_INTEGRATION_HEAD" "$upload_base"
+          test "$(git rev-parse "$R6_INTEGRATION_HEAD^{tree}")" = "$R6_INTEGRATION_TREE"
+
+          test -s "$TARGET_HTML"
+          test -s "$TARGET_TEXT"
+          cmp -s "$TARGET_HTML" "$TARGET_TEXT"
+          grep -Fq 'DPRO TUTORIAL SALON R6' "$TARGET_HTML"
+          test "$(grep -Fc 'data-r6-resource=' "$TARGET_HTML")" -eq 4
+          grep -Fq "$TUTORIAL_URL" "$TARGET_HTML"
+          grep -Fq "$GUIDE_URL" "$TARGET_HTML"
+          grep -Fq "$QUICK_URL" "$TARGET_HTML"
+          grep -Fq "$DETAIL_URL" "$TARGET_HTML"
+          grep -Fq "$LIVE_DEMO_URL" "$TARGET_HTML"
+          grep -Fq '5,500円' "$TARGET_HTML"
+          grep -Fq 'https://lin.ee/YxJGXV6D' "$TARGET_HTML"
+          grep -Fq '../lp-salon.html' "$TARGET_HTML"
+          grep -Fq '../flyer-salon.html' "$TARGET_HTML"
+          grep -Fq '../flyer-salon.pdf' "$TARGET_HTML"
+          grep -Fq '../systems-data.js' "$TARGET_HTML"
+          grep -Fq '../dpro-v3.js' "$TARGET_HTML"
+
+          sha256sum "$TARGET_HTML" "$TARGET_TEXT" > qa-r6/target-sha256-preflight.txt
+          printf '%s\n' "$upload_base" > qa-r6/recheck-upload-base.txt
+          printf '%s\n' "$upload_base_tree" > qa-r6/recheck-upload-base-tree.txt
+          printf '%s\n' "$R6_INTEGRATION_HEAD" > qa-r6/r6-integration-head.txt
+          printf '%s\n' "$R6_INTEGRATION_TREE" > qa-r6/r6-integration-tree.txt
+
+          echo "upload_base=$upload_base" >> "$GITHUB_OUTPUT"
+          echo "upload_base_tree=$upload_base_tree" >> "$GITHUB_OUTPUT"
+
+      - name: Verify published SALON marker without pipefail false-negative
+        shell: bash
+        run: |
+          set -euo pipefail
+          ok=0
+          for i in $(seq 1 18); do
+            live="/tmp/salon-r6-live-$i.html"
+            if curl -fsSL "$PRODUCT_URL?qa=recheck-${GITHUB_SHA}-$i" -o "$live"; then
+              if grep -Fq 'DPRO TUTORIAL SALON R6' "$live" \
+                 && grep -Fq "$TUTORIAL_URL" "$live" \
+                 && grep -Fq "$GUIDE_URL" "$live" \
+                 && grep -Fq "$QUICK_URL" "$live" \
+                 && grep -Fq "$DETAIL_URL" "$live"; then
+                cp "$live" qa-r6/published-salon.html
+                ok=1
+                break
+              fi
+            fi
+            sleep 10
+          done
+          test "$ok" -eq 1 || { echo "Published SALON R6 marker/resources not observed." >&2; exit 1; }
+          sha256sum qa-r6/published-salon.html > qa-r6/published-salon-sha256.txt
+
+      - name: Setup Node for exact-width LIVE QA
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install Playwright
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm install --no-save playwright@1.55.0
+          npx playwright install --with-deps chromium
+
+      - name: Run R6 exact-width LIVE QA
+        shell: bash
+        env:
+          R6_UPLOAD_BASE: ${{ steps.preflight.outputs.upload_base }}
+          R6_UPLOAD_BASE_TREE: ${{ steps.preflight.outputs.upload_base_tree }}
+        run: |
+          set -euo pipefail
+          git fetch origin main
+          qa_head="$(git rev-parse origin/main)"
+          qa_tree="$(git rev-parse "origin/main^{tree}")"
+          git merge-base --is-ancestor "$R6_INTEGRATION_HEAD" "$qa_head"
+
+          git show "origin/main:$TARGET_HTML" > /tmp/r6-current.html
+          git show "origin/main:$TARGET_TEXT" > /tmp/r6-current.txt
+          cmp -s /tmp/r6-current.html /tmp/r6-current.txt
+          grep -Fq 'DPRO TUTORIAL SALON R6' /tmp/r6-current.html
+          sha256sum /tmp/r6-current.html /tmp/r6-current.txt > qa-r6/target-sha256-at-live-qa.txt
+          printf '%s\n' "$qa_head" > qa-r6/product-site-head-at-live-qa.txt
+          printf '%s\n' "$qa_tree" > qa-r6/product-site-tree-at-live-qa.txt
+
+          cat > salon-r6-live-qa.mjs <<'NODE'
+          import { chromium } from 'playwright';
+          import fs from 'node:fs';
+
+          const productUrl=process.env.PRODUCT_URL;
+          const expected={
+            tutorial:process.env.TUTORIAL_URL,
+            guide:process.env.GUIDE_URL,
+            quick:process.env.QUICK_URL,
+            detail:process.env.DETAIL_URL
+          };
+          const viewports=[
+            {name:'1440x1000',width:1440,height:1000},
+            {name:'1024x768',width:1024,height:768},
+            {name:'390x844',width:390,height:844},
+            {name:'320x720',width:320,height:720}
+          ];
+
+          const result={
+            schema:'DPRO_TUTORIAL_SALON_R6_PRODUCT_SITE_LIVE_QA_V1.2',
+            productUrl,expected,
+            integrationHead:process.env.R6_INTEGRATION_HEAD,
+            integrationTree:process.env.R6_INTEGRATION_TREE,
+            uploadBase:process.env.R6_UPLOAD_BASE,
+            uploadBaseTree:process.env.R6_UPLOAD_BASE_TREE,
+            viewports:[],resourceChecks:{},
+            businessMutationAttempts:[],failures:[],
+            productSiteRollback:0,businessMutation:0,forwardOnly:true
+          };
+
+          const browser=await chromium.launch({headless:true});
+          try {
+            const requestContext=await browser.newContext();
+            const requestPage=await requestContext.newPage();
+            for(const [key,url] of Object.entries(expected)){
+              try{
+                const resp=await requestPage.request.get(`${url}${url.includes('?')?'&':'?'}r6qa=${Date.now()}-${key}`,{timeout:30000});
+                const ct=String(resp.headers()['content-type']||'');
+                const ok=resp.status()===200 && (!['quick','detail'].includes(key) || ct.toLowerCase().includes('pdf'));
+                result.resourceChecks[key]={url,status:resp.status(),contentType:ct,ok};
+                if(!ok) result.failures.push(`resource ${key}: status=${resp.status()} content-type=${ct}`);
+              }catch(e){
+                result.resourceChecks[key]={url,error:String(e),ok:false};
+                result.failures.push(`resource ${key}: ${String(e)}`);
+              }
+            }
+            await requestContext.close();
+
+            for(const vp of viewports){
+              const context=await browser.newContext({viewport:{width:vp.width,height:vp.height}});
+              const unsafe=[],pageErrors=[],consoleErrors=[],requestFailed=[];
+              await context.route('**/*',async route=>{
+                const method=route.request().method();
+                if(['POST','PUT','PATCH','DELETE'].includes(method)){
+                  const rec={viewport:vp.name,method,url:route.request().url()};
+                  unsafe.push(rec);result.businessMutationAttempts.push(rec);
+                  return route.abort('blockedbyclient');
+                }
+                return route.continue();
+              });
+
+              const page=await context.newPage();
+              page.on('pageerror',e=>pageErrors.push(String(e)));
+              page.on('console',m=>{if(m.type()==='error')consoleErrors.push({text:m.text(),location:m.location()});});
+              page.on('requestfailed',r=>requestFailed.push({method:r.method(),url:r.url(),failure:r.failure()?.errorText||''}));
+
+              const resp=await page.goto(`${productUrl}?r6qa=${Date.now()}-${vp.name}`,{waitUntil:'networkidle',timeout:45000});
+              if(!resp || resp.status()!==200) result.failures.push(`${vp.name}: product status ${resp?.status()}`);
+
+              const data=await page.evaluate(()=>({
+                innerWidth:window.innerWidth,
+                documentScrollWidth:document.documentElement.scrollWidth,
+                bodyScrollWidth:document.body.scrollWidth,
+                marker:document.documentElement.innerHTML.includes('DPRO TUTORIAL SALON R6'),
+                links:[...document.querySelectorAll('[data-r6-resource]')].map(a=>({key:a.getAttribute('data-r6-resource'),href:a.href,text:(a.textContent||'').trim()})),
+                pricing:(document.body.textContent||'').includes('5,500円'),
+                lineCta:[...document.querySelectorAll('a')].some(a=>a.href==='https://lin.ee/YxJGXV6D'),
+                demo:[...document.querySelectorAll('a,button')].some(a=>(a.href||a.getAttribute?.('data-src')||'').includes('/liff-salon-reserve/')),
+                lp:[...document.querySelectorAll('a')].some(a=>a.getAttribute('href')==='../lp-salon.html'),
+                flyerHtml:[...document.querySelectorAll('a')].some(a=>a.getAttribute('href')==='../flyer-salon.html'),
+                flyerPdf:[...document.querySelectorAll('a')].some(a=>a.getAttribute('href')==='../flyer-salon.pdf'),
+                systemsData:[...document.scripts].some(s=>s.getAttribute('src')==='../systems-data.js'),
+                sharedJs:[...document.scripts].some(s=>s.getAttribute('src')==='../dpro-v3.js')
+              }));
+
+              if(!data.marker) result.failures.push(`${vp.name}: R6 marker missing`);
+              const map=Object.fromEntries(data.links.map(x=>[x.key,x.href]));
+              for(const [key,url] of Object.entries(expected)) if(map[key]!==url) result.failures.push(`${vp.name}: ${key} link mismatch: ${map[key]}`);
+              if(data.links.length!==4) result.failures.push(`${vp.name}: resource link count ${data.links.length}`);
+              if(!data.pricing) result.failures.push(`${vp.name}: pricing regression`);
+              if(!data.lineCta) result.failures.push(`${vp.name}: LINE CTA regression`);
+              if(!data.demo) result.failures.push(`${vp.name}: DEMO regression`);
+              if(!data.lp) result.failures.push(`${vp.name}: LP regression`);
+              if(!data.flyerHtml) result.failures.push(`${vp.name}: flyer HTML regression`);
+              if(!data.flyerPdf) result.failures.push(`${vp.name}: flyer PDF regression`);
+              if(!data.systemsData||!data.sharedJs) result.failures.push(`${vp.name}: shared asset regression`);
+
+              const overflow={
+                innerWidth:data.innerWidth,
+                documentScrollWidth:data.documentScrollWidth,
+                bodyScrollWidth:data.bodyScrollWidth,
+                documentOverflow:Math.max(0,data.documentScrollWidth-data.innerWidth),
+                bodyOverflow:Math.max(0,data.bodyScrollWidth-data.innerWidth)
+              };
+              if(vp.width<=390 && (overflow.documentOverflow!==0||overflow.bodyOverflow!==0)) result.failures.push(`${vp.name}: mobile overflow`);
+
+              await page.locator('#tutorial-resources').scrollIntoViewIfNeeded();
+              await page.locator('body').focus();
+              let focusVisible=false,focusRecord=null;
+              for(let i=0;i<160;i++){
+                await page.keyboard.press('Tab');
+                const fr=await page.evaluate(()=>{
+                  const a=document.activeElement;
+                  if(!a||!a.matches?.('[data-r6-resource]')) return null;
+                  const r=a.getBoundingClientRect();
+                  return {key:a.getAttribute('data-r6-resource'),left:r.left,top:r.top,right:r.right,bottom:r.bottom,width:r.width,height:r.height,innerWidth:window.innerWidth,innerHeight:window.innerHeight};
+                });
+                if(fr){focusRecord=fr;focusVisible=fr.width>0&&fr.height>0&&fr.left>=-1&&fr.right<=fr.innerWidth+1&&fr.top>=-1&&fr.bottom<=fr.innerHeight+1;break;}
+              }
+              if(!focusVisible) result.failures.push(`${vp.name}: keyboard focus not visible`);
+              if(pageErrors.length) result.failures.push(`${vp.name}: pageerror ${pageErrors.join(' | ')}`);
+              if(consoleErrors.length) result.failures.push(`${vp.name}: console errors ${consoleErrors.map(x=>x.text).join(' | ')}`);
+              if(unsafe.length) result.failures.push(`${vp.name}: unsafe write attempts ${unsafe.length}`);
+
+              await page.screenshot({path:`screenshots-r6/salon-r6-${vp.name}.png`,fullPage:true});
+              result.viewports.push({viewport:vp,data,overflow,focusVisible,focusRecord,pageErrors,consoleErrors,requestFailed,unsafe,status:(!pageErrors.length&&!consoleErrors.length&&!unsafe.length&&focusVisible)?'CHECKED':'HOLD'});
+              await context.close();
+            }
+          } finally {
+            await browser.close();
+          }
+
+          if(result.businessMutationAttempts.length) result.businessMutation='BLOCKED_UNSAFE_ATTEMPT_PRESENT';
+          result.pass=result.failures.length===0&&result.businessMutationAttempts.length===0&&result.businessMutation===0&&result.productSiteRollback===0&&result.forwardOnly===true;
+          fs.writeFileSync('qa-r6/salon-r6-live-qa.json',JSON.stringify(result,null,2));
+          console.log(`R6_QA_RESULT=${JSON.stringify({schema:result.schema,pass:result.pass,failures:result.failures,resources:result.resourceChecks,businessMutation:result.businessMutation,productSiteRollback:result.productSiteRollback,forwardOnly:result.forwardOnly,viewports:result.viewports.map(v=>({viewport:v.viewport,overflow:v.overflow,focusVisible:v.focusVisible,pageerror:v.pageErrors.length,consoleError:v.consoleErrors.length,unsafeWrite:v.unsafe.length,requestFailed:v.requestFailed.length}))})}`);
+          if(!result.pass) process.exit(1);
+          NODE
+
+          node ./salon-r6-live-qa.mjs
+          rm -f salon-r6-live-qa.mjs
+
+      - name: Remove only this recheck workflow from newest main
+        id: cleanup
+        shell: bash
+        run: |
+          set -euo pipefail
+          success=0
+          for attempt in 1 2 3 4; do
+            git fetch origin main
+            git checkout -B r6-cleanup origin/main
+            git merge-base --is-ancestor "$R6_INTEGRATION_HEAD" HEAD
+            test -s "$TARGET_HTML"
+            test -s "$TARGET_TEXT"
+            cmp -s "$TARGET_HTML" "$TARGET_TEXT"
+            grep -Fq 'DPRO TUTORIAL SALON R6' "$TARGET_HTML"
+            test -f "$WORKFLOW_PATH"
+            test -f "$OLD_WORKFLOW_PATH"
+            git rm "$WORKFLOW_PATH" "$OLD_WORKFLOW_PATH"
+            mapfile -t changed < <(git diff --cached --name-only | sort)
+            expected="$(printf '%s\n' "$WORKFLOW_PATH" "$OLD_WORKFLOW_PATH" | sort)"
+            actual="$(printf '%s\n' "${changed[@]}" | sort)"
+            test "$actual" = "$expected"
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git commit -m "Remove SALON R6 recheck workflow [skip ci]"
+            if git push origin HEAD:main; then success=1; break; fi
+            sleep 3
+          done
+          test "$success" -eq 1
+          cleanup_head="$(git rev-parse HEAD)"
+          cleanup_tree="$(git rev-parse HEAD^{tree})"
+          printf '%s\n' "$cleanup_head" > qa-r6/r6-cleanup-head.txt
+          printf '%s\n' "$cleanup_tree" > qa-r6/r6-cleanup-tree.txt
+          echo "cleanup_head=$cleanup_head" >> "$GITHUB_OUTPUT"
+          echo "cleanup_tree=$cleanup_tree" >> "$GITHUB_OUTPUT"
+
+      - name: Record final forward-only state
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch origin main
+          final_head="$(git rev-parse origin/main)"
+          final_tree="$(git rev-parse "origin/main^{tree}")"
+          git merge-base --is-ancestor "$R6_INTEGRATION_HEAD" "$final_head"
+          git show "origin/main:$TARGET_HTML" > /tmp/r6-final-html
+          git show "origin/main:$TARGET_TEXT" > /tmp/r6-final-text
+          cmp -s /tmp/r6-final-html /tmp/r6-final-text
+          grep -Fq 'DPRO TUTORIAL SALON R6' /tmp/r6-final-html
+          sha256sum /tmp/r6-final-html /tmp/r6-final-text > qa-r6/target-sha256-final.txt
+          printf '%s\n' "$final_head" > qa-r6/product-site-final-head.txt
+          printf '%s\n' "$final_tree" > qa-r6/product-site-final-tree.txt
+          printf 'R5=PASS\nR6=PASS\nR7=NOT_AUTHORIZED\nBUSINESS_MUTATION=0\nFORWARD_ONLY=REQUIRED\n' > qa-r6/status.txt
+
+      - name: Upload R6 QA evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: salon-r6-product-site-evidence
+          path: |
+            qa-r6/
+            screenshots-r6/
+          if-no-files-found: error
+          retention-days: 14
