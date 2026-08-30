@@ -19,8 +19,8 @@ env:
   GUIDE_URL: https://dpromstk2000-lab.github.io/dpro-tax-accounting-line-liff/guide-center.html
   QUICK_PDF_URL: https://dpromstk2000-lab.github.io/dpro-tax-accounting-line-liff/DPRO_TUTORIAL_TAX_QUICK_START_V1.0.pdf
   DETAIL_PDF_URL: https://dpromstk2000-lab.github.io/dpro-tax-accounting-line-liff/DPRO_TUTORIAL_TAX_DETAILED_MANUAL_V1.0.pdf
-  QUICK_PDF_SHA256: bdcd83af39647fc7aab8aec3df45138427f5db7fb6efb4acdd9b173bd2783e7d
-  DETAIL_PDF_SHA256: e4d30690568f119f6e8f7844213782fdea9230c53c45cbf572f79938e927b4e9
+  QUICK_PDF_SHA256: 1979e6017eba458b9b5fdc8089a951c384edc4761423f29c96953cdce4e399e7
+  DETAIL_PDF_SHA256: b4b5f2d9ed60c58bc943eff824f088991266c3c1818169f3e691b45d93ecf44b
 
 jobs:
   patch-and-live-qa:
