@@ -1,4 +1,5 @@
 name: SALESNAVI R6 Product Site Live QA V1.0
+# DPRO_SALESNAVI_R6_PSDOCLINKS_ATTR_FIX_20260830_V1
 
 on:
   push:
@@ -74,7 +75,7 @@ jobs:
           set -euo pipefail
           python <<'PY'
           from pathlib import Path
-          import hashlib, json
+          import hashlib, json, re
 
           html_path = Path('systems/salesnavi.html')
           txt_path = Path('systems/salesnavi.html.txt')
@@ -83,9 +84,10 @@ jobs:
           if pre != pre_txt:
               raise SystemExit('R6 HOLD: pre HTML/TEXT mismatch')
 
-          open_tag = '<div class="ps-doclinks">'
-          if pre.count(open_tag) != 1:
-              raise SystemExit(f'R6 HOLD: expected exactly one ps-doclinks anchor, found {pre.count(open_tag)}')
+          matches = list(re.finditer(r'<div\s+class="ps-doclinks"[^>]*>', pre))
+          if len(matches) != 1:
+              raise SystemExit(f'R6 HOLD: expected exactly one ps-doclinks opening tag, found {len(matches)}')
+          open_tag = matches[0].group(0)
           if 'data-r6-salesnavi-link=' in pre:
               raise SystemExit('R6 HOLD: duplicate R6 integration marker')
 
