@@ -1,0 +1,418 @@
+name: SALESNAVI R6 Product Site Live QA V1.0
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/salesnavi-r6-product-site-live-qa.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+env:
+  START_PRODUCT_HEAD: 2e955a00f55b2591525e6c23767663bf21025bb2
+  PRODUCT_PUBLIC: https://dpromstk2000-lab.github.io/dpro-line-systems-site/systems/salesnavi.html
+  TUTORIAL_URL: https://dpro-salesnavi-demo.pages.dev/#dpro-salesnavi-tutorial-launcher
+  GUIDE_URL: https://dpro-salesnavi-demo.pages.dev/demo-guide#guideCenter
+  QUICK_URL: https://dpro-salesnavi-demo.pages.dev/DPRO_TUTORIAL_SALESNAVI_QUICK_START_V1.0.pdf
+  DETAIL_URL: https://dpro-salesnavi-demo.pages.dev/DPRO_TUTORIAL_SALESNAVI_DETAILED_MANUAL_V1.0.pdf
+  QUICK_SHA256: d4ceb5e73258ca1467dee7211092478ec4a2094158bcd38edc19b7ed007b05a2
+  DETAIL_SHA256: 528a37f657990d873edd99519dbfa35cff8e91e441a1baeef04b7bca483f3926
+  R6_MARKER: DPRO_SALESNAVI_R6_PRODUCT_SITE_20260830_V1
+
+jobs:
+  r6-product-site:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+
+    steps:
+      - name: Checkout newest Product Site main
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Canonical prewrite lock and protected boundary checks
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch origin main
+          test "$(git rev-parse HEAD)" = "$(git rev-parse origin/main)" || { echo "R6 HOLD: checkout is not newest main"; exit 1; }
+          git merge-base --is-ancestor "$START_PRODUCT_HEAD" HEAD || { echo "R6 HOLD: observed START head is not ancestor of newest main"; exit 1; }
+          test -f systems/salesnavi.html
+          test -f systems/salesnavi.html.txt
+          cmp -s systems/salesnavi.html systems/salesnavi.html.txt || { echo "R6 HOLD: existing HTML/TEXT mirror is not byte-identical"; exit 1; }
+          ! grep -Fq 'data-r6-salesnavi-link=' systems/salesnavi.html || { echo "R6 HOLD: R6 links already exist"; exit 1; }
+          echo "PREWRITE_HEAD=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
+          echo "PREWRITE_TREE=$(git rev-parse HEAD^{tree})" >> "$GITHUB_ENV"
+          sha256sum systems/salesnavi.html systems/salesnavi.html.txt
+          echo "Newest Product Site main: $(git rev-parse HEAD) / $(git rev-parse HEAD^{tree})"
+
+      - name: Reverify R5 public resources immediately before Product Site write
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fL --retry 4 --retry-delay 3 -o /tmp/quick.pdf "$QUICK_URL"
+          curl -fL --retry 4 --retry-delay 3 -o /tmp/detail.pdf "$DETAIL_URL"
+          echo "$QUICK_SHA256  /tmp/quick.pdf" | sha256sum -c -
+          echo "$DETAIL_SHA256  /tmp/detail.pdf" | sha256sum -c -
+          head -c 4 /tmp/quick.pdf | grep -q '%PDF'
+          head -c 4 /tmp/detail.pdf | grep -q '%PDF'
+          curl -fL --retry 4 --retry-delay 3 -o /tmp/tutorial.html "${TUTORIAL_URL%%#*}"
+          curl -fL --retry 4 --retry-delay 3 -o /tmp/guide.html "${GUIDE_URL%%#*}"
+          curl -fL --retry 4 --retry-delay 3 -o /tmp/tutorial.js "https://dpro-salesnavi-demo.pages.dev/tutorial.js"
+          grep -Fq 'DPRO_SALESNAVI_TUTORIAL_R3_CORRECT_SOURCE_20260830_V2' /tmp/tutorial.js
+          grep -Fq 'DPRO_SALESNAVI_GUIDE_CENTER_R4_20260830_V4' /tmp/tutorial.js
+          grep -Fq 'id="guideCenter"' /tmp/guide.html
+          echo "R5 public resource re-verification PASS"
+
+      - name: Prepare exact target-only R6 patch
+        shell: bash
+        run: |
+          set -euo pipefail
+          python <<'PY'
+          from pathlib import Path
+          import hashlib, json
+
+          html_path = Path('systems/salesnavi.html')
+          txt_path = Path('systems/salesnavi.html.txt')
+          pre = html_path.read_text(encoding='utf-8')
+          pre_txt = txt_path.read_text(encoding='utf-8')
+          if pre != pre_txt:
+              raise SystemExit('R6 HOLD: pre HTML/TEXT mismatch')
+
+          open_tag = '<div class="ps-doclinks">'
+          if pre.count(open_tag) != 1:
+              raise SystemExit(f'R6 HOLD: expected exactly one ps-doclinks anchor, found {pre.count(open_tag)}')
+          if 'data-r6-salesnavi-link=' in pre:
+              raise SystemExit('R6 HOLD: duplicate R6 integration marker')
+
+          links = [
+              ('tutorial', 'https://dpro-salesnavi-demo.pages.dev/#dpro-salesnavi-tutorial-launcher', 'チュートリアルを開始 ↗'),
+              ('guide', 'https://dpro-salesnavi-demo.pages.dev/demo-guide#guideCenter', 'ガイドセンター ↗'),
+              ('quick-pdf', 'https://dpro-salesnavi-demo.pages.dev/DPRO_TUTORIAL_SALESNAVI_QUICK_START_V1.0.pdf', 'クイックスタートPDF ↗'),
+              ('detail-pdf', 'https://dpro-salesnavi-demo.pages.dev/DPRO_TUTORIAL_SALESNAVI_DETAILED_MANUAL_V1.0.pdf', '詳細マニュアルPDF ↗'),
+          ]
+          block = ''.join(
+              f'<a data-r6-salesnavi-link="{key}" href="{url}" target="_blank" rel="noopener">{label}</a>'
+              for key, url, label in links
+          )
+          focus = '.ps-doclinks a[data-r6-salesnavi-link]:focus-visible{outline:3px solid #ffbf47;outline-offset:3px}\n'
+          if pre.count('</style>') != 1:
+              raise SystemExit('R6 HOLD: unexpected style boundary')
+
+          post = pre.replace('</style>', focus + '</style>', 1)
+          post = post.replace(open_tag, open_tag + block, 1)
+
+          reverse = post.replace(open_tag + block, open_tag, 1).replace(focus, '', 1)
+          if reverse != pre:
+              raise SystemExit('R6 HOLD: reverse-diff regression guard failed')
+
+          for key, url, _ in links:
+              if post.count(f'data-r6-salesnavi-link="{key}"') != 1:
+                  raise SystemExit(f'R6 HOLD: {key} link count invalid')
+              if post.count(f'href="{url}"') < 1:
+                  raise SystemExit(f'R6 HOLD: exact URL missing for {key}')
+
+          html_path.write_text(post, encoding='utf-8')
+          txt_path.write_text(post, encoding='utf-8')
+          Path('R6_PATCH_META.json').write_text(json.dumps({
+              'system': 'SALESNAVI',
+              'marker': 'DPRO_SALESNAVI_R6_PRODUCT_SITE_20260830_V1',
+              'target': 'systems/salesnavi.html',
+              'mirror': 'systems/salesnavi.html.txt',
+              'preSha256': hashlib.sha256(pre.encode()).hexdigest(),
+              'postSha256': hashlib.sha256(post.encode()).hexdigest(),
+              'reverseDiffEqual': True,
+              'links': [{'key':k,'url':u,'label':l} for k,u,l in links],
+          }, ensure_ascii=False, indent=2), encoding='utf-8')
+          PY
+
+          cmp -s systems/salesnavi.html systems/salesnavi.html.txt
+          test "$(grep -o 'data-r6-salesnavi-link=' systems/salesnavi.html | wc -l)" -eq 4
+          git diff --check
+          changed="$(git diff --name-only | sort)"
+          expected=$'systems/salesnavi.html\nsystems/salesnavi.html.txt'
+          test "$changed" = "$expected" || { echo "R6 HOLD: unexpected working-tree changes"; printf '%s\n' "$changed"; exit 1; }
+          echo "Target-only patch preparation PASS"
+
+      - name: Recheck newest main and commit only SALESNAVI target + mirror
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch origin main
+          test "$(git rev-parse origin/main)" = "$PREWRITE_HEAD" || { echo "R6 HOLD: Product Site main advanced after prewrite lock; rerun from newest main"; exit 1; }
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add systems/salesnavi.html systems/salesnavi.html.txt
+          git commit -m "Add SALESNAVI tutorial and manual links"
+          TARGET_COMMIT="$(git rev-parse HEAD)"
+          TARGET_TREE="$(git rev-parse HEAD^{tree})"
+          printf '%s' "$TARGET_COMMIT" > /tmp/r6-target-commit.txt
+          printf '%s' "$TARGET_TREE" > /tmp/r6-target-tree.txt
+          git push origin HEAD:main
+          git show --format='' --name-only "$TARGET_COMMIT" | sed '/^$/d' | sort > /tmp/r6-target-changed.txt
+          expected=$'systems/salesnavi.html\nsystems/salesnavi.html.txt'
+          test "$(cat /tmp/r6-target-changed.txt)" = "$expected" || { echo "R6 HOLD: target commit scope violation"; cat /tmp/r6-target-changed.txt; exit 1; }
+          echo "TARGET_COMMIT=$TARGET_COMMIT"
+          echo "TARGET_TREE=$TARGET_TREE"
+
+      - name: Wait for Product Site public deployment
+        shell: bash
+        run: |
+          set -euo pipefail
+          ok=0
+          for i in $(seq 1 60); do
+            BODY="$(curl -fsSL --max-time 20 "${PRODUCT_PUBLIC}?r6_deploy_check=$i" || true)"
+            if printf '%s' "$BODY" | grep -Fq 'data-r6-salesnavi-link="tutorial"' \
+              && printf '%s' "$BODY" | grep -Fq "$TUTORIAL_URL" \
+              && printf '%s' "$BODY" | grep -Fq "$GUIDE_URL" \
+              && printf '%s' "$BODY" | grep -Fq "$QUICK_URL" \
+              && printf '%s' "$BODY" | grep -Fq "$DETAIL_URL"; then
+              ok=1
+              break
+            fi
+            echo "Waiting for Product Site deployment... $i/60"
+            sleep 10
+          done
+          test "$ok" = "1" || { echo "R6 HOLD: public Product Site did not publish exact four links"; exit 1; }
+          echo "Public Product Site deployment PASS"
+
+      - name: Install Playwright
+        run: |
+          npm init -y >/dev/null 2>&1
+          npm install playwright@1.55.0 >/dev/null 2>&1
+          npx playwright install --with-deps chromium >/dev/null 2>&1
+
+      - name: Run exact public R6 LIVE QA
+        shell: bash
+        run: |
+          set -euo pipefail
+          node <<'NODE'
+          const fs = require('fs');
+          const { chromium, request } = require('playwright');
+
+          const PRODUCT = process.env.PRODUCT_PUBLIC;
+          const LINKS = {
+            tutorial: process.env.TUTORIAL_URL,
+            guide: process.env.GUIDE_URL,
+            'quick-pdf': process.env.QUICK_URL,
+            'detail-pdf': process.env.DETAIL_URL,
+          };
+          const viewports = [
+            ['1440x1000', 1440, 1000],
+            ['1024x768', 1024, 768],
+            ['390x844', 390, 844],
+            ['320x720', 320, 720],
+          ];
+
+          const report = {
+            system: 'SALESNAVI', phase: 'R6', marker: process.env.R6_MARKER,
+            generatedAt: new Date().toISOString(), productUrl: PRODUCT,
+            prewrite: { head: process.env.PREWRITE_HEAD, tree: process.env.PREWRITE_TREE },
+            links: LINKS, publicReachability: {}, viewport: {},
+            tutorialAttributablePageErrors: [], tutorialAttributableConsoleErrors: [],
+            nonTutorialPageErrors: [], nonTutorialConsoleErrors: [],
+            unsafeWrites: [], businessMutationCount: 0,
+            regression: { reverseDiffEqual: true, protectedPresence: true },
+            productRollbackCount: 0, forwardOnly: true, pass: false,
+          };
+
+          const isAttributable = (text='') => {
+            const s = String(text).toLowerCase();
+            return s.includes('dpro-salesnavi-demo.pages.dev') ||
+                   s.includes('dpro_tutorial_salesnavi') ||
+                   s.includes('data-r6-salesnavi-link');
+          };
+          const assert = (cond, msg) => { if (!cond) throw new Error(msg); };
+
+          (async () => {
+            const api = await request.newContext({ ignoreHTTPSErrors: false });
+            for (const [key, url] of Object.entries(LINKS)) {
+              const r = await api.get(url, { timeout: 30000 });
+              report.publicReachability[key] = { url, status: r.status(), ok: r.ok() };
+              assert(r.ok(), `${key} public URL status ${r.status()}`);
+            }
+            await api.dispose();
+
+            const browser = await chromium.launch({ headless: true });
+            try {
+              for (const [name, width, height] of viewports) {
+                const context = await browser.newContext({ viewport: { width, height } });
+                const page = await context.newPage();
+                const pageErrors = [];
+                const consoleErrors = [];
+                const unsafeWrites = [];
+
+                page.on('pageerror', e => pageErrors.push(String(e?.stack || e?.message || e)));
+                page.on('console', m => {
+                  if (m.type() === 'error') {
+                    const loc = m.location() || {};
+                    consoleErrors.push({ text: m.text(), url: loc.url || '' });
+                  }
+                });
+                page.on('request', req => {
+                  const method = req.method().toUpperCase();
+                  if (!['GET','HEAD','OPTIONS'].includes(method)) {
+                    unsafeWrites.push({ method, url: req.url() });
+                  }
+                });
+
+                await page.goto(`${PRODUCT}?r6qa=${encodeURIComponent(name)}`, { waitUntil: 'networkidle', timeout: 45000 });
+                await page.waitForSelector('a[data-r6-salesnavi-link="tutorial"]', { timeout: 20000 });
+
+                const dom = await page.evaluate((links) => {
+                  const out = {};
+                  for (const [key, expected] of Object.entries(links)) {
+                    const el = document.querySelector(`a[data-r6-salesnavi-link="${key}"]`);
+                    out[key] = el ? {
+                      href: el.href, visible: !!(el.offsetWidth || el.offsetHeight || el.getClientRects().length),
+                      target: el.target, rel: el.rel,
+                    } : null;
+                  }
+                  const iw = window.innerWidth;
+                  const de = document.documentElement.scrollWidth;
+                  const body = document.body.scrollWidth;
+                  return {
+                    links: out,
+                    innerWidth: iw,
+                    documentElementScrollWidth: de,
+                    bodyScrollWidth: body,
+                    overflow: Math.max(de, body) - iw,
+                    systemCode: document.body.dataset.systemCode || '',
+                    hasPrice: !!document.querySelector('#price'),
+                    hasLive: !!document.querySelector('#live'),
+                    hasFunctions: !!document.querySelector('#functions'),
+                    lineCtaCount: document.querySelectorAll('a[href*="lin.ee"]').length,
+                  };
+                }, LINKS);
+
+                for (const [key, expected] of Object.entries(LINKS)) {
+                  assert(dom.links[key], `${name} missing ${key}`);
+                  assert(dom.links[key].href === expected, `${name} ${key} href mismatch: ${dom.links[key].href}`);
+                  assert(dom.links[key].visible, `${name} ${key} not visible`);
+                  assert(dom.links[key].target === '_blank', `${name} ${key} target mismatch`);
+                  assert(dom.links[key].rel.includes('noopener'), `${name} ${key} rel noopener missing`);
+                }
+                assert(dom.systemCode === 'SALESNAVI', `${name} system code regression`);
+                assert(dom.hasPrice && dom.hasLive && dom.hasFunctions && dom.lineCtaCount > 0, `${name} protected Product Site content regression`);
+                assert(dom.overflow <= 0, `${name} positive horizontal overflow ${dom.overflow}`);
+
+                await page.evaluate(() => {
+                  const a = document.activeElement;
+                  if (a && typeof a.blur === 'function') a.blur();
+                });
+                const focused = new Set();
+                for (let i = 0; i < 220 && focused.size < 4; i++) {
+                  await page.keyboard.press('Tab');
+                  const info = await page.evaluate(() => {
+                    const el = document.activeElement;
+                    const key = el?.getAttribute?.('data-r6-salesnavi-link') || '';
+                    if (!key) return null;
+                    const s = getComputedStyle(el);
+                    const outline = s.outlineStyle !== 'none' && s.outlineStyle !== 'hidden' && parseFloat(s.outlineWidth || '0') > 0;
+                    return { key, outline, focusVisible: el.matches(':focus-visible') };
+                  });
+                  if (info) {
+                    assert(info.outline || info.focusVisible, `${name} ${info.key} keyboard focus not visible`);
+                    focused.add(info.key);
+                  }
+                }
+                assert(focused.size === 4, `${name} keyboard did not reach all four R6 links`);
+
+                for (const e of pageErrors) {
+                  if (isAttributable(e)) report.tutorialAttributablePageErrors.push({ viewport: name, error: e });
+                  else report.nonTutorialPageErrors.push({ viewport: name, error: e });
+                }
+                for (const e of consoleErrors) {
+                  const merged = `${e.text} ${e.url}`;
+                  if (isAttributable(merged)) report.tutorialAttributableConsoleErrors.push({ viewport: name, ...e });
+                  else report.nonTutorialConsoleErrors.push({ viewport: name, ...e });
+                }
+                report.unsafeWrites.push(...unsafeWrites.map(x => ({ viewport: name, ...x })));
+
+                report.viewport[name] = {
+                  innerWidth: dom.innerWidth,
+                  documentElementScrollWidth: dom.documentElementScrollWidth,
+                  bodyScrollWidth: dom.bodyScrollWidth,
+                  overflow: dom.overflow,
+                  fourLinksVisible: true,
+                  keyboardFocusVisible: true,
+                  protectedPresence: true,
+                  tutorialAttributablePageErrors: pageErrors.filter(isAttributable).length,
+                  tutorialAttributableConsoleErrors: consoleErrors.filter(e => isAttributable(`${e.text} ${e.url}`)).length,
+                  unsafeWrites: unsafeWrites.length,
+                  pass: true,
+                };
+                await context.close();
+              }
+
+              assert(report.tutorialAttributablePageErrors.length === 0, 'Tutorial-attributable page errors exist');
+              assert(report.tutorialAttributableConsoleErrors.length === 0, 'Tutorial-attributable console errors exist');
+              assert(report.unsafeWrites.length === 0, 'Unsafe write requests exist');
+              report.pass = true;
+            } catch (err) {
+              report.failure = String(err?.stack || err);
+              throw err;
+            } finally {
+              fs.writeFileSync('salesnavi-r6-product-site-live-qa.json', JSON.stringify(report, null, 2));
+              await browser.close();
+            }
+          })().catch(err => {
+            console.error(err);
+            process.exitCode = 1;
+          });
+          NODE
+
+      - name: Remove temporary R6 workflow and finalize forward-only source state
+        if: success()
+        shell: bash
+        run: |
+          set -euo pipefail
+          TARGET_COMMIT="$(cat /tmp/r6-target-commit.txt)"
+          TARGET_TREE="$(cat /tmp/r6-target-tree.txt)"
+          git fetch origin main
+          git reset --hard origin/main
+          git merge-base --is-ancestor "$START_PRODUCT_HEAD" HEAD || { echo "R6 HOLD: forward-only ancestor check failed before cleanup"; exit 1; }
+          test -f .github/workflows/salesnavi-r6-product-site-live-qa.yml
+          git rm .github/workflows/salesnavi-r6-product-site-live-qa.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Remove temporary SALESNAVI R6 QA workflow"
+          git push origin HEAD:main
+          FINAL_HEAD="$(git rev-parse HEAD)"
+          FINAL_TREE="$(git rev-parse HEAD^{tree})"
+          git merge-base --is-ancestor "$START_PRODUCT_HEAD" "$FINAL_HEAD"
+          cmp -s systems/salesnavi.html systems/salesnavi.html.txt
+          test "$(grep -o 'data-r6-salesnavi-link=' systems/salesnavi.html | wc -l)" -eq 4
+          python - <<PY
+          import json
+          from pathlib import Path
+          p=Path('salesnavi-r6-product-site-live-qa.json')
+          d=json.loads(p.read_text())
+          d['targetCommit']='$TARGET_COMMIT'
+          d['targetTree']='$TARGET_TREE'
+          d['finalHead']='$FINAL_HEAD'
+          d['finalTree']='$FINAL_TREE'
+          d['forwardOnly']=True
+          d['productRollbackCount']=0
+          d['finalHtmlTextByteIdentical']=True
+          d['temporaryWorkflowRemoved']=True
+          d['targetCommitChangedFiles']=Path('/tmp/r6-target-changed.txt').read_text().splitlines()
+          p.write_text(json.dumps(d, ensure_ascii=False, indent=2))
+          PY
+          cp R6_PATCH_META.json salesnavi-r6-patch-meta.json
+          echo "FINAL_HEAD=$FINAL_HEAD"
+          echo "FINAL_TREE=$FINAL_TREE"
+
+      - name: Upload R6 evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: salesnavi-r6-product-site-live-qa
+          path: |
+            salesnavi-r6-product-site-live-qa.json
+            salesnavi-r6-patch-meta.json
+          if-no-files-found: error
