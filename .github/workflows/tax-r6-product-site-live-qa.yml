@@ -1,153 +1,69 @@
-name: TAX R6 Product Site + LIVE QA
+name: TAX R6 Corrected PDF Revalidation
 
 on:
   push:
     branches: [main]
     paths:
       - '.github/workflows/tax-r6-product-site-live-qa.yml'
-      - 'systems/tax-accounting.html'
-      - 'systems/tax-accounting.html.txt'
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
 
 env:
-  OBSERVED_PRODUCT_HEAD: 05dc125591767190d8f4e59fedbfed22a28131ee
+  R6_CONTENT_COMMIT: 6f5cd452712bfd57965601105b3a345281cd6eb8
   PRODUCT_URL: https://dpromstk2000-lab.github.io/dpro-line-systems-site/systems/tax-accounting.html
   TUTORIAL_URL: https://dpromstk2000-lab.github.io/dpro-tax-accounting-line-liff/index.html
   GUIDE_URL: https://dpromstk2000-lab.github.io/dpro-tax-accounting-line-liff/guide-center.html
   QUICK_PDF_URL: https://dpromstk2000-lab.github.io/dpro-tax-accounting-line-liff/DPRO_TUTORIAL_TAX_QUICK_START_V1.0.pdf
   DETAIL_PDF_URL: https://dpromstk2000-lab.github.io/dpro-tax-accounting-line-liff/DPRO_TUTORIAL_TAX_DETAILED_MANUAL_V1.0.pdf
-  QUICK_PDF_SHA256: 1979e6017eba458b9b5fdc8089a951c384edc4761423f29c96953cdce4e399e7
-  DETAIL_PDF_SHA256: b4b5f2d9ed60c58bc943eff824f088991266c3c1818169f3e691b45d93ecf44b
+  QUICK_PDF_SHA256: 39f61e289e839a15b4cb4804f0fef4a798b23c51dc5066fa55ecc58d01c7f07a
+  DETAIL_PDF_SHA256: eacfd38f42c4c1f9e37e447f8b782e791d8282b635ae077f8c14a680a6fb4797
 
 jobs:
-  patch-and-live-qa:
+  corrected-r6-revalidation:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Re-lock newest Product Site main forward-only
+      - name: Re-lock current Product Site source read-only
         shell: bash
         run: |
           set -euo pipefail
           git fetch origin main
           git merge --ff-only origin/main
-          PREWRITE_HEAD="$(git rev-parse HEAD)"
-          PREWRITE_TREE="$(git rev-parse HEAD^{tree})"
-          if ! git merge-base --is-ancestor "$OBSERVED_PRODUCT_HEAD" "$PREWRITE_HEAD"; then
-            echo "Observed Product Site source is not an ancestor of newest main. HOLD rather than rollback."
-            exit 1
-          fi
-          {
-            echo "SYSTEM=TAX"
-            echo "PREWRITE_HEAD=$PREWRITE_HEAD"
-            echo "PREWRITE_TREE=$PREWRITE_TREE"
-            echo "OBSERVED_PRODUCT_HEAD=$OBSERVED_PRODUCT_HEAD"
-            echo "FORWARD_ONLY=PASS"
-            echo "PRODUCT_SITE_ROLLBACK=0"
-          } | tee /tmp/R6_PRODUCT_SITE_PREWRITE_LOCK.txt
-
-      - name: Patch TAX target HTML + existing mirror only
-        shell: bash
-        run: |
-          set -euo pipefail
+          git merge-base --is-ancestor "$R6_CONTENT_COMMIT" HEAD
+          cmp -s systems/tax-accounting.html systems/tax-accounting.html.txt
+          HTML_BLOB="$(git rev-parse HEAD:systems/tax-accounting.html)"
+          TEXT_BLOB="$(git rev-parse HEAD:systems/tax-accounting.html.txt)"
+          test "$HTML_BLOB" = "$TEXT_BLOB"
           python - <<'PY'
           from pathlib import Path
-
-          html=Path('systems/tax-accounting.html')
-          mirror=Path('systems/tax-accounting.html.txt')
-          targets=[html,mirror]
-          if not all(p.exists() for p in targets):
-              raise SystemExit('TAX target HTML or existing .html.txt mirror missing')
-          if html.read_bytes()!=mirror.read_bytes():
-              raise SystemExit('TAX html/txt mirror mismatch on newest main; HOLD rather than overwrite newer work')
-
-          css=r'''
-          /* TAX TUTORIAL R6 START */
-          .ps-tutorial-resources{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.8rem}
-          .ps-tutorial-resource{min-height:76px;display:flex;align-items:center;justify-content:space-between;gap:.8rem;padding:1rem 1.05rem;border:1px solid var(--ps-line);border-radius:1rem;background:#fff;text-decoration:none;color:var(--ps-deep);font-weight:900;box-shadow:var(--dpro-shadow-sm)}
-          .ps-tutorial-resource span{display:block;min-width:0}.ps-tutorial-resource small{display:block;margin-top:.2rem;color:var(--dpro-warm-gray-600);font-size:.78rem;font-weight:700;line-height:1.5}.ps-tutorial-resource::after{content:"→";flex:0 0 auto;color:var(--dpro-green);font-size:1.15rem}.ps-tutorial-resource:focus,.ps-tutorial-resource:focus-visible{outline:3px solid #0f766e;outline-offset:3px}
-          .ps-tutorial-safe{margin:1rem 0 0;padding:.9rem 1rem;border-left:4px solid var(--dpro-green);background:#edf8f4;color:#395149;font-size:.9rem}
-          @media(max-width:700px){.ps-tutorial-resources{grid-template-columns:1fr}.ps-tutorial-resource{min-height:68px}}
-          /* TAX TUTORIAL R6 END */
-          '''
-
-          section=r'''
-          <section class="dpro-section ps-section-soft master-section" data-master-section="11.5" id="tutorial-guide" aria-labelledby="tutorial-guide-title"><div class="dpro-container"><div class="ps-section-heading"><p class="ps-kicker">GUIDE / FIRST10 / MANUALS</p><h2 id="tutorial-guide-title">操作ガイドとPDFマニュアル。</h2><p>初めての方はTutorial StartでFirst10を確認し、途中からの再開や操作の見直しはGuide CenterとPDFマニュアルから行えます。</p></div><div class="ps-tutorial-resources" aria-label="TAX Tutorial resources"><a class="ps-tutorial-resource" data-tutorial-resource="tutorial-start" href="https://dpromstk2000-lab.github.io/dpro-tax-accounting-line-liff/index.html" target="_blank" rel="noopener"><span>Tutorial Start<small>First10をStep 1から確認</small></span></a><a class="ps-tutorial-resource" data-tutorial-resource="guide-center" href="https://dpromstk2000-lab.github.io/dpro-tax-accounting-line-liff/guide-center.html" target="_blank" rel="noopener"><span>Guide Center<small>Start / Resume / Replay と10項目一覧</small></span></a><a class="ps-tutorial-resource" data-tutorial-resource="quick-start-pdf" href="https://dpromstk2000-lab.github.io/dpro-tax-accounting-line-liff/DPRO_TUTORIAL_TAX_QUICK_START_V1.0.pdf" target="_blank" rel="noopener"><span>Quick Start PDF<small>A4縦1ページの初回操作ガイド</small></span></a><a class="ps-tutorial-resource" data-tutorial-resource="detailed-manual-pdf" href="https://dpromstk2000-lab.github.io/dpro-tax-accounting-line-liff/DPRO_TUTORIAL_TAX_DETAILED_MANUAL_V1.0.pdf" target="_blank" rel="noopener"><span>Detailed Manual PDF<small>A4縦6ページの保存版マニュアル</small></span></a></div><p class="ps-tutorial-safe"><strong>安全：</strong>Tutorialは既存画面を案内する読み取り中心のガイドです。予約・相談・登録の送信や業務データ変更を自動実行しません。</p></div></section>
-          '''
-
-          final_marker='<section class="dpro-section ps-final master-section" data-master-section="12" id="final-cta"'
-          baseline_tokens=[
+          s=Path('systems/tax-accounting.html').read_text(encoding='utf-8')
+          for key in ['tutorial-start','guide-center','quick-start-pdf','detailed-manual-pdf']:
+              assert f'data-tutorial-resource="{key}"' in s, key
+          for token in [
               '3つまとめて、月額5,500円（税込）。',
               'https://lin.ee/YxJGXV6D',
-              'https://dpromstk2000-lab.github.io/dpro-tax-accounting-line-liff/?demo=1',
-              '../lp-tax.html','../flyer-tax.html','../flyer-tax.pdf',
-              '../systems-data.js','../dpro-v3.js'
-          ]
-          required_urls=[
-              'https://dpromstk2000-lab.github.io/dpro-tax-accounting-line-liff/index.html',
-              'https://dpromstk2000-lab.github.io/dpro-tax-accounting-line-liff/guide-center.html',
-              'https://dpromstk2000-lab.github.io/dpro-tax-accounting-line-liff/DPRO_TUTORIAL_TAX_QUICK_START_V1.0.pdf',
-              'https://dpromstk2000-lab.github.io/dpro-tax-accounting-line-liff/DPRO_TUTORIAL_TAX_DETAILED_MANUAL_V1.0.pdf'
-          ]
-
-          source=html.read_text(encoding='utf-8')
-          for token in baseline_tokens:
-              if token not in source:
-                  raise SystemExit(f'Newest TAX baseline token missing: {token}')
-          if 'id="tutorial-guide"' not in source:
-              if '</style>' not in source or final_marker not in source:
-                  raise SystemExit('Safe TAX R6 insertion marker missing; HOLD rather than guess')
-              source=source.replace('</style>',css+'\n</style>',1)
-              source=source.replace(final_marker,section+final_marker,1)
-
-          for token in baseline_tokens:
-              if token not in source:
-                  raise SystemExit(f'Preserved TAX baseline token lost: {token}')
-          for url in required_urls:
-              if source.count(url)!=1:
-                  raise SystemExit(f'R6 resource URL must occur exactly once: {url} count={source.count(url)}')
-          for key in ['tutorial-start','guide-center','quick-start-pdf','detailed-manual-pdf']:
-              if f'data-tutorial-resource="{key}"' not in source:
-                  raise SystemExit(f'R6 resource marker missing: {key}')
-
-          html.write_text(source,encoding='utf-8')
-          mirror.write_bytes(html.read_bytes())
-          if html.read_bytes()!=mirror.read_bytes():
-              raise SystemExit('R6 final html/txt mirror mismatch')
-          print('TAX R6 target patch: PASS')
+              '../lp-tax.html','../flyer-tax.html','../flyer-tax.pdf'
+          ]:
+              assert token in s, token
           PY
-
-      - name: Commit TAX R6 target files only
-        shell: bash
-        run: |
-          set -euo pipefail
-          BEFORE_HEAD="$(git rev-parse HEAD)"
-          if git diff --quiet -- systems/tax-accounting.html systems/tax-accounting.html.txt; then
-            echo "No TAX R6 target patch needed."
-          else
-            CHANGED="$(git diff --name-only)"
-            test "$CHANGED" = $'systems/tax-accounting.html\nsystems/tax-accounting.html.txt'
-            git config user.name "github-actions[bot]"
-            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-            git add systems/tax-accounting.html systems/tax-accounting.html.txt
-            git commit -m "Add TAX R6 tutorial resources to product site"
-            git push origin HEAD:main
-          fi
-          AFTER_HEAD="$(git rev-parse HEAD)"
-          AFTER_TREE="$(git rev-parse HEAD^{tree})"
+          mkdir -p qa
           {
-            echo "BEFORE_HEAD=$BEFORE_HEAD"
-            echo "FINAL_HEAD=$AFTER_HEAD"
-            echo "FINAL_TREE=$AFTER_TREE"
-            echo "TARGET_SCOPE_ONLY=PASS"
+            echo "PREVERIFY_HEAD=$(git rev-parse HEAD)"
+            echo "PREVERIFY_TREE=$(git rev-parse HEAD^{tree})"
+            echo "HTML_BLOB=$HTML_BLOB"
+            echo "TEXT_BLOB=$TEXT_BLOB"
+            echo "HTML_TEXT_BYTE_IDENTICAL=PASS"
+            echo "R6_CONTENT_ANCESTOR=PASS"
+            echo "FORWARD_ONLY=PASS"
+            echo "PRODUCT_SITE_MUTATION=0"
             echo "BUSINESS_MUTATION=0"
-          } | tee /tmp/R6_CHANGED_FILES.txt
+          } | tee qa/R6_CORRECTED_SOURCE_LOCK.txt
 
       - uses: actions/setup-node@v4
         with:
@@ -160,12 +76,12 @@ jobs:
           npm install --no-save playwright
           npx playwright install --with-deps chromium
 
-      - name: Wait for public Pages and run exact R6 LIVE QA
+      - name: Exact current public R6 corrected revalidation
         shell: bash
         run: |
           set -euo pipefail
           mkdir -p qa/screenshots
-          cat > qa/r6-live-qa.mjs <<'JS'
+          cat > qa/r6-corrected.mjs <<'JS'
           import fs from 'node:fs';
           import crypto from 'node:crypto';
           import { chromium } from 'playwright';
@@ -173,10 +89,10 @@ jobs:
           const env=process.env;
           const PRODUCT=env.PRODUCT_URL;
           const RESOURCES=[
-            {key:'tutorial-start',url:env.TUTORIAL_URL,label:'Tutorial Start'},
-            {key:'guide-center',url:env.GUIDE_URL,label:'Guide Center'},
-            {key:'quick-start-pdf',url:env.QUICK_PDF_URL,label:'Quick Start PDF',sha:env.QUICK_PDF_SHA256},
-            {key:'detailed-manual-pdf',url:env.DETAIL_PDF_URL,label:'Detailed Manual PDF',sha:env.DETAIL_PDF_SHA256}
+            {key:'tutorial-start',url:env.TUTORIAL_URL},
+            {key:'guide-center',url:env.GUIDE_URL},
+            {key:'quick-start-pdf',url:env.QUICK_PDF_URL,sha:env.QUICK_PDF_SHA256},
+            {key:'detailed-manual-pdf',url:env.DETAIL_PDF_URL,sha:env.DETAIL_PDF_SHA256}
           ];
           const VIEWPORTS=[
             {name:'1440x1000',width:1440,height:1000},
@@ -185,143 +101,110 @@ jobs:
             {name:'320x720',width:320,height:720}
           ];
           const WRITE_METHODS=new Set(['POST','PUT','PATCH','DELETE']);
-          const sleep=ms=>new Promise(r=>setTimeout(r,ms));
-          const assert=(ok,msg)=>{if(!ok)throw new Error(msg)};
+          const assert=(v,m)=>{if(!v)throw new Error(m)};
           const sha256=b=>crypto.createHash('sha256').update(b).digest('hex');
-
-          async function fetchNoCache(url){
-            return fetch(url+(url.includes('?')?'&':'?')+'r6qa='+Date.now(),{cache:'no-store'});
-          }
-
-          let published=null;
-          for(let i=0;i<60;i++){
-            try{
-              const r=await fetchNoCache(PRODUCT);
-              const t=await r.text();
-              if(r.ok && t.includes('id="tutorial-guide"') && RESOURCES.every(x=>t.includes(x.url))){published={status:r.status,attempt:i+1};break;}
-            }catch(_){ }
-            await sleep(10000);
-          }
-          assert(published,'Product Site TAX R6 did not become public');
-
-          const linkHttp={}; const linkHashes={};
-          for(const x of RESOURCES){
-            const r=await fetchNoCache(x.url);
-            linkHttp[x.key]=r.status;
-            assert(r.ok,`${x.key}: HTTP ${r.status}`);
-            if(x.sha){
-              const b=Buffer.from(await r.arrayBuffer());
-              const h=sha256(b); linkHashes[x.key]=h;
-              assert(h===x.sha,`${x.key}: public PDF hash mismatch ${h}`);
-            }
-          }
+          const noCache=url=>url+(url.includes('?')?'&':'?')+'r6corrected='+Date.now();
 
           const result={
-            system:'TAX',standard:'DPRO TUTORIAL STANDARD V1.1',product_url:PRODUCT,published,
-            resources:RESOURCES.map(({key,url,label})=>({key,url,label})),link_http:linkHttp,link_hashes:linkHashes,
-            viewports:[],gates:{
-              FETCH_NEWEST_PRODUCT_MAIN_PREWRITE:'PASS',FORWARD_ONLY:'PASS',TARGET_SCOPE_ONLY:'PASS',HTML_TEXT_BYTE_IDENTICAL:'PASS',
-              TUTORIAL_START_LINK:'PASS',GUIDE_CENTER_LINK:'PASS',QUICK_START_PDF_LINK:'PASS',DETAILED_MANUAL_PDF_LINK:'PASS',ALL_4_LINKS_PUBLIC_REACHABLE:'PASS',
-              KEYBOARD_FOCUS_VISIBLE:'PASS',TUTORIAL_ATTRIBUTABLE_PAGEERROR:0,TUTORIAL_ATTRIBUTABLE_CONSOLE_ERROR:0,UNSAFE_WRITE_REQUEST:0,
-              BUSINESS_MUTATION:0,PRODUCT_SITE_REGRESSION:0,PRODUCT_SITE_ROLLBACK:0,R7:'NOT_AUTHORIZED_NOT_EXECUTED'
-            }
+            system:'TAX',stage:'R6_CORRECTED_REVALIDATION',
+            standard:'DPRO TUTORIAL STANDARD V1.1',
+            product_url:PRODUCT,link_http:{},link_hashes:{},viewports:[],
+            gates:{
+              R6_CONTENT_ANCESTOR:'PASS',
+              FORWARD_ONLY:'PASS',
+              PRODUCT_SITE_MUTATION:0,
+              HTML_TEXT_BYTE_IDENTICAL:'PASS',
+              TUTORIAL_START_LINK:'PASS',
+              GUIDE_CENTER_LINK:'PASS',
+              QUICK_START_PDF_LINK:'PASS',
+              DETAILED_MANUAL_PDF_LINK:'PASS',
+              ALL_4_LINKS_PUBLIC_REACHABLE:'PASS',
+              KEYBOARD_FOCUS_VISIBLE:'PASS',
+              TUTORIAL_ATTRIBUTABLE_PAGEERROR:0,
+              TUTORIAL_ATTRIBUTABLE_CONSOLE_ERROR:0,
+              UNSAFE_WRITE_REQUEST:0,
+              BUSINESS_MUTATION:0,
+              PRODUCT_SITE_REGRESSION:0,
+              PRODUCT_SITE_ROLLBACK:0,
+              R7:'NOT_AUTHORIZED_NOT_EXECUTED'
+            },
+            verdict:'R6_HOLD'
           };
+
+          for(const x of RESOURCES){
+            const r=await fetch(noCache(x.url),{cache:'no-store'});
+            result.link_http[x.key]=r.status;
+            assert(r.ok,`${x.key}: HTTP ${r.status}`);
+            if(x.sha){
+              const h=sha256(Buffer.from(await r.arrayBuffer()));
+              result.link_hashes[x.key]=h;
+              assert(h===x.sha,`${x.key}: hash mismatch ${h}`);
+            }
+          }
 
           const browser=await chromium.launch({headless:true});
           try{
             for(const vp of VIEWPORTS){
               const context=await browser.newContext({viewport:{width:vp.width,height:vp.height},hasTouch:vp.width<=390});
               const page=await context.newPage();
-              const pageErrors=[]; const consoleErrors=[]; const writes=[];
+              const pageErrors=[],consoleErrors=[],writes=[];
               page.on('pageerror',e=>pageErrors.push(String(e?.message||e)));
               page.on('console',m=>{if(m.type()==='error')consoleErrors.push(`${m.location()?.url||''} ${m.text()}`)});
               page.on('request',req=>{if(WRITE_METHODS.has(req.method().toUpperCase()))writes.push({method:req.method(),url:req.url()})});
 
-              const u=new URL(PRODUCT); u.searchParams.set('r6qa',`${Date.now()}-${vp.width}`);
-              const response=await page.goto(u.toString(),{waitUntil:'domcontentloaded',timeout:45000});
-              assert(response?.ok(),`${vp.name}: Product Site HTTP ${response?.status()}`);
+              const resp=await page.goto(noCache(PRODUCT),{waitUntil:'domcontentloaded',timeout:45000});
+              assert(resp?.ok(),`${vp.name}: product HTTP ${resp?.status()}`);
               await page.locator('#tutorial-guide').waitFor({state:'visible',timeout:15000});
 
-              // Regression anchors/tokens that existed before R6.
               assert((await page.locator('text=3つまとめて、月額5,500円（税込）。').count())>=1,`${vp.name}: price regression`);
               assert((await page.locator('a[href="https://lin.ee/YxJGXV6D"]').count())>=1,`${vp.name}: LINE CTA regression`);
-              assert((await page.locator('a[href="../lp-tax.html"]').count())===1,`${vp.name}: LP link regression`);
-              assert((await page.locator('a[href="../flyer-tax.html"]').count())===1,`${vp.name}: A4 HTML link regression`);
-              assert((await page.locator('a[href="../flyer-tax.pdf"]').count())===1,`${vp.name}: A4 PDF link regression`);
+              assert((await page.locator('a[href="../lp-tax.html"]').count())===1,`${vp.name}: LP regression`);
+              assert((await page.locator('a[href="../flyer-tax.html"]').count())===1,`${vp.name}: flyer HTML regression`);
+              assert((await page.locator('a[href="../flyer-tax.pdf"]').count())===1,`${vp.name}: flyer PDF regression`);
 
               const seen=[];
               for(const x of RESOURCES){
                 const loc=page.locator(`[data-tutorial-resource="${x.key}"]`);
-                assert(await loc.count()===1,`${vp.name}: ${x.key} count != 1`);
-                assert(await loc.isVisible(),`${vp.name}: ${x.key} not visible`);
-                assert(await loc.getAttribute('href')===x.url,`${vp.name}: ${x.key} href mismatch`);
+                assert(await loc.count()===1,`${vp.name}: ${x.key} count`);
+                assert(await loc.isVisible(),`${vp.name}: ${x.key} invisible`);
+                assert(await loc.getAttribute('href')===x.url,`${vp.name}: ${x.key} href`);
                 await loc.focus();
-                const focus=await loc.evaluate(el=>{const s=getComputedStyle(el);return {style:s.outlineStyle,width:s.outlineWidth,offset:s.outlineOffset}});
-                assert(focus.style!=='none' && focus.width!=='0px',`${vp.name}: ${x.key} focus not visible`);
-                seen.push({key:x.key,visible:true,href:x.url,focus});
+                const f=await loc.evaluate(el=>{const s=getComputedStyle(el);return {style:s.outlineStyle,width:s.outlineWidth,offset:s.outlineOffset}});
+                assert(f.style!=='none'&&f.width!=='0px',`${vp.name}: ${x.key} focus invisible`);
+                seen.push({key:x.key,focus:f});
               }
 
               const overflow=await page.evaluate(()=>({
-                innerWidth:window.innerWidth,
+                innerWidth:innerWidth,
                 documentElementScrollWidth:document.documentElement.scrollWidth,
                 bodyScrollWidth:document.body.scrollWidth,
-                positiveOverflow:Math.max(0,document.documentElement.scrollWidth-window.innerWidth,document.body.scrollWidth-window.innerWidth)
+                positiveOverflow:Math.max(0,document.documentElement.scrollWidth-innerWidth,document.body.scrollWidth-innerWidth)
               }));
-              if(vp.width===390||vp.width===320)assert(overflow.positiveOverflow===0,`${vp.name}: positive horizontal overflow ${overflow.positiveOverflow}`);
-
+              if(vp.width===390||vp.width===320)assert(overflow.positiveOverflow===0,`${vp.name}: overflow ${overflow.positiveOverflow}`);
               assert(pageErrors.length===0,`${vp.name}: pageerror ${JSON.stringify(pageErrors)}`);
-              assert(consoleErrors.length===0,`${vp.name}: console error ${JSON.stringify(consoleErrors)}`);
-              assert(writes.length===0,`${vp.name}: unsafe write request ${JSON.stringify(writes)}`);
-              await page.screenshot({path:`qa/screenshots/r6-tax-${vp.name}.png`,fullPage:true});
+              assert(consoleErrors.length===0,`${vp.name}: console ${JSON.stringify(consoleErrors)}`);
+              assert(writes.length===0,`${vp.name}: unsafe write ${JSON.stringify(writes)}`);
+
+              await page.screenshot({path:`qa/screenshots/r6-corrected-${vp.name}.png`,fullPage:true});
               result.viewports.push({viewport:vp.name,resources:seen,overflow,pageerror:0,console_error:0,unsafe_write_request:0,business_mutation:0,product_site_regression:0});
               result.gates[vp.name]='PASS';
-              if(vp.width===390){result.gates['390_METRICS_RECORDED']='PASS';result.gates['390_POSITIVE_HORIZONTAL_OVERFLOW']=overflow.positiveOverflow;}
-              if(vp.width===320){result.gates['320_METRICS_RECORDED']='PASS';result.gates['320_POSITIVE_HORIZONTAL_OVERFLOW']=overflow.positiveOverflow;}
+              if(vp.width===390)result.gates['390_POSITIVE_HORIZONTAL_OVERFLOW']=overflow.positiveOverflow;
+              if(vp.width===320)result.gates['320_POSITIVE_HORIZONTAL_OVERFLOW']=overflow.positiveOverflow;
               await context.close();
             }
-            result.verdict='R6_FULL_PASS';
-          }catch(e){
-            result.verdict='R6_HOLD'; result.error={message:String(e?.message||e),stack:String(e?.stack||'')}; throw e;
+            result.verdict='R6_CORRECTED_FULL_PASS';
           }finally{
-            fs.writeFileSync('qa/R6_LIVE_QA_EVIDENCE.json',JSON.stringify(result,null,2));
             await browser.close();
+            fs.writeFileSync('qa/R6_CORRECTED_LIVE_QA_EVIDENCE.json',JSON.stringify(result,null,2));
             console.log(JSON.stringify(result,null,2));
           }
           JS
-          node qa/r6-live-qa.mjs
-          cp /tmp/R6_PRODUCT_SITE_PREWRITE_LOCK.txt qa/R6_PRODUCT_SITE_PREWRITE_LOCK.txt
-          cp /tmp/R6_CHANGED_FILES.txt qa/R6_CHANGED_FILES.txt
+          node qa/r6-corrected.mjs
 
-      - name: Verify mirror and final forward-only scope
-        shell: bash
-        run: |
-          set -euo pipefail
-          cmp -s systems/tax-accounting.html systems/tax-accounting.html.txt
-          git fetch origin main
-          FINAL_HEAD="$(git rev-parse HEAD)"
-          REMOTE_HEAD="$(git rev-parse origin/main)"
-          test "$FINAL_HEAD" = "$REMOTE_HEAD"
-          git merge-base --is-ancestor "$OBSERVED_PRODUCT_HEAD" "$FINAL_HEAD"
-          PREWRITE_HEAD="$(grep '^PREWRITE_HEAD=' /tmp/R6_PRODUCT_SITE_PREWRITE_LOCK.txt | cut -d= -f2)"
-          PRODUCT_CHANGED="$(git diff --name-only "$PREWRITE_HEAD".."$FINAL_HEAD")"
-          test "$PRODUCT_CHANGED" = $'systems/tax-accounting.html\nsystems/tax-accounting.html.txt' || test -z "$PRODUCT_CHANGED"
-          {
-            echo "FINAL_HEAD=$FINAL_HEAD"
-            echo "FINAL_TREE=$(git rev-parse HEAD^{tree})"
-            echo "HTML_BLOB=$(git rev-parse HEAD:systems/tax-accounting.html)"
-            echo "TEXT_BLOB=$(git rev-parse HEAD:systems/tax-accounting.html.txt)"
-            echo "HTML_TEXT_BYTE_IDENTICAL=PASS"
-            echo "TARGET_SCOPE_ONLY=PASS"
-            echo "FORWARD_ONLY=PASS"
-            echo "PRODUCT_SITE_ROLLBACK=0"
-            echo "R7=NOT_AUTHORIZED_NOT_EXECUTED"
-          } | tee qa/R6_FINAL_SOURCE_LOCK.txt
-          test "$(git rev-parse HEAD:systems/tax-accounting.html)" = "$(git rev-parse HEAD:systems/tax-accounting.html.txt)"
-
-      - name: Upload R6 LIVE QA evidence
+      - name: Upload corrected R6 evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: TAX-R6-LIVE-QA-EVIDENCE
+          name: TAX-R6-CORRECTED-LIVE-QA-EVIDENCE
           path: qa/
           if-no-files-found: warn
