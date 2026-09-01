@@ -100,13 +100,13 @@
         demoUrl: "https://dpromstk2000-lab.github.io/dpro-medical-standard/medical-public-demo.html",
         status: "AVAILABLE",
         verificationStatus: "VERIFIED",
-        tagline: "予約・WEB問診・来院受付・院内進行・医院管理・医院HPまでを、一つの医療COREにつなぐ。",
-        summary: "医療機関向けに、患者スマホ、予約、WEB問診、受付、待ち状況、院内進行、医院管理PC、受付iPad、スタッフ画面、医院HPをONE CORE / ONE CONTRACTでまとめるDPROシステム。",
+        tagline: "予約・WEB問診・来院受付・院内進行・医院管理・医院HPまでを、ひとつの情報基盤につなぐ。",
+        summary: "医療機関向けに、患者スマホ、予約、WEB問診、受付、待ち状況、院内進行、医院管理PC、受付iPad、スタッフ画面、医院HPをひとつの流れでまとめるDPROシステム。",
         targets: Object.freeze([
           "医療機関","一般・内科","眼科","小児科","整形外科","美容医療","婦人科・女性医療"
         ]),
         features: Object.freeze([
-          "予約・当日受付","WEB問診","院内進行・待ち状況","患者スマホ","医院管理PC・受付iPad","医院HP・6診療PRESET"
+          "予約・当日受付","WEB問診","院内進行・待ち状況","患者スマホ","医院管理PC・受付iPad","医院HP・6つの診療パターン"
         ]),
         previewAsset: "systems/medical.html",
         experienceScreens: Object.freeze([])
