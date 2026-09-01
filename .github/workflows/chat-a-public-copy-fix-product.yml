@@ -1,0 +1,125 @@
+name: CHAT A Public Copy Fix - Product
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/chat-a-public-copy-fix-product.yml'
+permissions:
+  contents: write
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Apply source-safe product copy fixes
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+
+          changed = []
+          pricing_hits = []
+
+          def save(path, old, text):
+              if old != text:
+                  path.write_text(text, encoding='utf-8')
+                  changed.append(str(path))
+
+          # Assigned public claims and PRODUCT SITE naming.
+          replacements = {
+              'DPROで自動受付・管理': '受付情報をDPROへ集約・管理',
+              'DPRO本体リアルタイム連携': 'DPROシステムと連携',
+              '確認済みの安全設計': '安全性とプライバシーに配慮した設計',
+              'OFFICIAL PRODUCT SITE': 'DPRO LINE SYSTEMS / PRODUCT SITE',
+          }
+          for path in Path('.').rglob('*.html'):
+              if '.github' in path.parts:
+                  continue
+              old = path.read_text(encoding='utf-8')
+              text = old
+              for a,b in replacements.items():
+                  text = text.replace(a,b)
+
+              # Tax wording only when the exact price is shown without a tax qualifier.
+              text = re.sub(r'初期33,000円(?!（税込)', '初期33,000円（税込）', text)
+              text = re.sub(r'月額1,100円(?!（税込)', '月額1,100円（税込）', text)
+              if ('33,000円' in text or '1,100円' in text):
+                  pricing_hits.append(str(path))
+              save(path, old, text)
+
+          # Explain that the 7 Product Site categories are navigation groups, not a competing canonical taxonomy.
+          path = Path('index.html')
+          if path.exists():
+              old = path.read_text(encoding='utf-8')
+              text = old.replace(
+                  '51の業種別システムから、カテゴリ別に製品を探せます。',
+                  '51の業種別システムを、探しやすい7つのナビゲーション分類にまとめています。DPRO SHOP公式の10カテゴリを横断して探せます。'
+              )
+              save(path, old, text)
+
+          path = Path('systems.html')
+          if path.exists():
+              old = path.read_text(encoding='utf-8')
+              text = old.replace('aria-label="カテゴリ絞り込み"','aria-label="ナビゲーション分類で絞り込み"')
+              marker = '<div class="p36-filters" data-p36-filters aria-label="ナビゲーション分類で絞り込み"><span>カテゴリを読み込み中...</span></div>'
+              note = '<p class="p36-finder__result" data-chat-a-taxonomy-note>この7分類は、DPRO SHOP公式の10カテゴリを探しやすくまとめたナビゲーション分類です。</p>'
+              if marker in text and 'data-chat-a-taxonomy-note' not in text:
+                  text = text.replace(marker, marker + '\n ' + note)
+              save(path, old, text)
+
+          # Validation for assigned exact-risk wording and category clarification.
+          failures=[]
+          for path in Path('.').rglob('*.html'):
+              if '.github' in path.parts:
+                  continue
+              text=path.read_text(encoding='utf-8')
+              for phrase in ('DPROで自動受付・管理','DPRO本体リアルタイム連携','確認済みの安全設計','OFFICIAL PRODUCT SITE'):
+                  if phrase in text:
+                      failures.append(f'{path}: {phrase}')
+              if re.search(r'初期33,000円(?!（税込)', text):
+                  failures.append(f'{path}: 初期33,000円 without 税込')
+              if re.search(r'月額1,100円(?!（税込)', text):
+                  failures.append(f'{path}: 月額1,100円 without 税込')
+
+          if Path('index.html').exists():
+              t=Path('index.html').read_text(encoding='utf-8')
+              if '7つのナビゲーション分類' not in t or 'DPRO SHOP公式の10カテゴリ' not in t:
+                  failures.append('index.html: category taxonomy clarification missing')
+          if Path('systems.html').exists():
+              t=Path('systems.html').read_text(encoding='utf-8')
+              if 'data-chat-a-taxonomy-note' not in t:
+                  failures.append('systems.html: category taxonomy note missing')
+
+          print('CHANGED FILES:')
+          for p in sorted(set(changed)):
+              print(' -',p)
+          print('PRICING SURFACES (tax labels normalized; verify basic/extra-cost context):')
+          for p in sorted(set(pricing_hits)):
+              print(' -',p)
+          if failures:
+              print('VALIDATION FAILURES:')
+              for f in failures: print(' -',f)
+              raise SystemExit(1)
+          print('CHAT A PRODUCT validation: PASS')
+          PY
+      - name: Commit applied changes
+        shell: bash
+        run: |
+          set -euo pipefail
+          if git diff --quiet; then
+            echo 'No source changes required.'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -- ':!.github/workflows/chat-a-public-copy-fix-product.yml'
+          if git diff --cached --quiet; then
+            echo 'No business-source changes to commit.'
+            exit 0
+          fi
+          git commit -m 'fix(chat-a): product copy taxonomy and qualifiers'
+          git push
