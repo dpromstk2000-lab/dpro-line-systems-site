@@ -1,4 +1,4 @@
-/* DPRO LINE SYSTEMS / PRODUCT 52 ADDON V1.0
+/* DPRO LINE SYSTEMS / PRODUCT 52 ADDON HOTFIX V1.1
  * Loads the locked 51-product runtime at f956c7361b8ef0c719e3b9ae26672ad80b31dfd2,
  * then adds DPRO 訪問マッサージ・鍼灸 as product #52.
  */
@@ -110,7 +110,7 @@
   };
 
   if (document.readyState === "loading") {
-    document.write('<script src="' + CORE + '"><\\/script><script>window.__DPRO_VISIT_AHAKI_52_BOOT__();<\\/script>');
+    document.write('<script src="' + CORE + '"><' + '/script><script>window.__DPRO_VISIT_AHAKI_52_BOOT__();<' + '/script>');
   } else {
     const s = document.createElement("script");
     s.src = CORE; s.async = false;
