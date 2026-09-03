@@ -1,0 +1,225 @@
+name: Finalize DPRO PRODUCT SITE Canonical 52 Source
+on:
+  push:
+    paths:
+      - .github/workflows/finalize-visit-ahaki-canonical-52.yml
+permissions:
+  contents: write
+
+jobs:
+  finalize:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Staticize 52 catalog and normalize source
+        shell: bash
+        run: |
+          node - <<'NODE'
+          const fs = require('fs');
+          const vm = require('vm');
+
+          function load(path) {
+            const ctx = { console };
+            ctx.window = ctx;
+            vm.createContext(ctx);
+            vm.runInContext(fs.readFileSync(path, 'utf8'), ctx, { filename:path });
+            if (!ctx.DPROSystemsData) throw new Error('DPROSystemsData unavailable');
+            return ctx.DPROSystemsData;
+          }
+
+          const before = load('systems-data.js');
+          if (before.systems.length !== 52) throw new Error(`expected current 52, got ${before.systems.length}`);
+          if (new Set(before.systems.map(x => x.code)).size !== 52) throw new Error('duplicate system code');
+          if (!before.getByCode('MEDICAL') || !before.getByCode('VISIT_AHAKI')) throw new Error('required products missing');
+
+          fs.writeFileSync('/tmp/catalog-before.json', JSON.stringify({
+            categories: before.categories,
+            systems: before.systems
+          }));
+
+          const categories = JSON.stringify(before.categories, null, 2);
+          const systems = JSON.stringify(before.systems, null, 2);
+
+          const source = `/* DPRO PRODUCT SITE V3.0 — CANONICAL 52 PRODUCT DATA
+ * CANONICAL SOURCE: 52 products / 2026-09-03
+ * DPRO 訪問マッサージ・鍼灸 is product #52.
+ * This file directly contains all 52 catalog records.
+ * No external 50/51-product runtime, no addMedical/addVisitAhaki catalog augmentation.
+ */
+(function (global) {
+  "use strict";
+
+  function deepFreeze(value) {
+    if (!value || typeof value !== "object" || Object.isFrozen(value)) return value;
+    Object.keys(value).forEach((key) => deepFreeze(value[key]));
+    return Object.freeze(value);
+  }
+
+  const categories = deepFreeze(${categories});
+  const systems = deepFreeze(${systems});
+  const byCode = new Map(systems.map(item => [String(item.code || "").toUpperCase(), item]));
+
+  global.DPROSystemsData = Object.freeze({
+    categories,
+    systems,
+    systemCount: systems.length,
+    getByCode(code) {
+      return byCode.get(String(code == null ? "" : code).trim().toUpperCase()) || null;
+    },
+    getByCategory(category) {
+      const key = String(category || "").trim();
+      return systems.filter(item => item.category === key);
+    }
+  });
+})(typeof window !== "undefined" ? window : globalThis);
+`;
+          fs.writeFileSync('systems-data.js', source);
+          NODE
+
+          python - <<'PY'
+          from pathlib import Path
+          import json, re
+          from urllib.parse import urljoin
+
+          replacements = [
+              ('51の業種別DPROシステム', '52の業種別DPROシステム'),
+              ('51の業種専用DPROシステム', '52の業種専用DPROシステム'),
+              ('51の業種別システム', '52の業種別システム'),
+              ('51件の業種別の導入例', '52件の業種別の導入例'),
+              ('51製品データを読み込み中', '52製品データを読み込み中'),
+              ('51システムをすべて見る', '52システムをすべて見る'),
+              ('51システム一覧', '52システム一覧'),
+              ('51の完成', '52の完成'),
+              ('51システム', '52システム'),
+              ('51製品', '52製品'),
+          ]
+
+          def norm(s):
+              for a,b in replacements:
+                  s = s.replace(a,b)
+              s = s.replace('<b>51</b> 業種別完成システム', '<b>52</b> 業種別完成システム')
+              s = re.sub(r'(data-p36-visible[^>]*>)51(<)', r'\g<1>52\2', s)
+              s = re.sub(r'(data-p36-count[^>]*>)51(<)', r'\g<1>52\2', s)
+              return s
+
+          for p in Path('.').rglob('*.html'):
+              if '.github' in p.parts:
+                  continue
+              s = norm(p.read_text(encoding='utf-8'))
+
+              def patch_jsonld(m):
+                  try:
+                      obj = json.loads(m.group(2))
+                  except Exception:
+                      return m.group(0)
+                  def walk(x):
+                      if isinstance(x, dict):
+                          for k,v in list(x.items()):
+                              if k == 'numberOfItems' and v in (50,51):
+                                  x[k] = 52
+                              elif isinstance(v, str):
+                                  x[k] = norm(v)
+                              else:
+                                  walk(v)
+                      elif isinstance(x, list):
+                          for v in x:
+                              walk(v)
+                  walk(obj)
+                  return m.group(1)+json.dumps(obj,ensure_ascii=False,separators=(',',':'))+m.group(3)
+
+              s = re.sub(r'(<script type="application/ld\+json">)(.*?)(</script>)', patch_jsonld, s, flags=re.S)
+              s = re.sub(r'systems-data\.js\?v=[^"]+', 'systems-data.js?v=20260903-canonical52', s)
+              p.write_text(s, encoding='utf-8')
+
+          # Build canonical sitemap for PRODUCT SITE (it did not previously have one).
+          before = json.loads(Path('/tmp/catalog-before.json').read_text())
+          base = 'https://dpromstk2000-lab.github.io/dpro-line-systems-site/'
+          rels = ['','systems.html','proposal.html','dpro-system.html']
+          rels += [x['systemPage'] for x in before['systems'] if x.get('systemPage')]
+          seen=[]
+          for r in rels:
+              if r not in seen:
+                  seen.append(r)
+
+          lines=['<?xml version="1.0" encoding="UTF-8"?>',
+                 '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
+          for r in seen:
+              url = base if r == '' else urljoin(base, r)
+              lines.append(f'  <url><loc>{url}</loc><lastmod>2026-09-03</lastmod></url>')
+          lines.append('</urlset>')
+          Path('sitemap.xml').write_text('\n'.join(lines)+'\n', encoding='utf-8')
+
+          # Source consistency assertions.
+          idx = Path('index.html').read_text(encoding='utf-8')
+          hub = Path('systems.html').read_text(encoding='utf-8')
+          for name, s in [('index',idx),('systems',hub)]:
+              assert '51の業種' not in s, f'{name}: stale 51業種'
+              assert '51製品' not in s, f'{name}: stale 51製品'
+              assert '51システム' not in s, f'{name}: stale 51システム'
+          assert '<b>51</b> 業種別完成システム' not in idx
+          assert re.search(r'data-p36-count[^>]*>52<', idx)
+          assert re.search(r'data-p36-count[^>]*>52<', hub)
+          assert re.search(r'data-p36-visible[^>]*>52<', hub)
+          assert '"numberOfItems":52' in hub
+          assert 'systems-data.js?v=20260903-canonical52' in idx or 'systems-data.js?v=20260903-canonical52' in hub
+          assert 'systems/visit-ahaki.html' in Path('sitemap.xml').read_text()
+          PY
+
+          node --check systems-data.js
+
+          node - <<'NODE'
+          const fs = require('fs');
+          const vm = require('vm');
+          const assert = require('assert');
+
+          function load(path) {
+            const ctx={console}; ctx.window=ctx; vm.createContext(ctx);
+            vm.runInContext(fs.readFileSync(path,'utf8'),ctx,{filename:path});
+            return ctx.DPROSystemsData;
+          }
+
+          const before = JSON.parse(fs.readFileSync('/tmp/catalog-before.json','utf8'));
+          const after = load('systems-data.js');
+
+          assert.strictEqual(after.systems.length, 52);
+          assert.strictEqual(after.systemCount, 52);
+          assert.strictEqual(new Set(after.systems.map(x=>x.code)).size, 52);
+          assert(after.getByCode('MEDICAL'));
+          assert(after.getByCode('VISIT_AHAKI'));
+
+          // Full catalog regression: all 52 runtime records preserved exactly.
+          assert.strictEqual(JSON.stringify(after.categories), JSON.stringify(before.categories));
+          assert.strictEqual(JSON.stringify(after.systems), JSON.stringify(before.systems));
+
+          const old51 = before.systems.filter(x => x.code !== 'VISIT_AHAKI');
+          assert.strictEqual(old51.length, 51);
+          for (const old of old51) {
+            const now = after.getByCode(old.code);
+            assert(now, `missing old product ${old.code}`);
+            assert.strictEqual(JSON.stringify(now), JSON.stringify(old), `changed old product ${old.code}`);
+          }
+
+          const medCount = before.systems.filter(x => x.category === 'medical_pet').length;
+          assert.strictEqual(after.getByCategory('medical_pet').length, medCount);
+
+          const source=fs.readFileSync('systems-data.js','utf8');
+          assert(!source.includes('function addMedical'));
+          assert(!source.includes('function addVisitAhaki'));
+          assert(!source.includes('cdn.jsdelivr.net/gh/dpromstk2000-lab/dpro-line-systems-site@'));
+          assert(source.includes('CANONICAL 52 PRODUCT DATA'));
+
+          console.log(`PRODUCT_CANONICAL_52_FINAL_QA=PASS systems=52 medical_pet=${medCount} old51_preserved=51/51 static_catalog=52`);
+          NODE
+
+      - name: Commit finalized canonical source
+        shell: bash
+        run: |
+          rm -f .github/workflows/finalize-visit-ahaki-canonical-52.yml
+          git config user.name "DPRO SYSTEM FACTORY"
+          git config user.email "actions@users.noreply.github.com"
+          git add -A
+          git diff --cached --quiet || git commit -m "Finalize DPRO PRODUCT SITE canonical 52 static catalog"
+          git push
