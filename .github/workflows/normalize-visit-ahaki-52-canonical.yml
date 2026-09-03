@@ -133,7 +133,9 @@ jobs:
           assert.strictEqual(new Set(d52.systems.map(x=>x.code)).size,52);
           assert(d52.getByCode('MEDICAL'));
           assert(d52.getByCode('VISIT_AHAKI'));
-          assert.strictEqual(d52.getByCategory('medical_pet').length,6);
+          const oldMedicalPet=d51.getByCategory('medical_pet').length;
+          assert.strictEqual(oldMedicalPet,4);
+          assert.strictEqual(d52.getByCategory('medical_pet').length,oldMedicalPet+1);
           for(const old of d51.systems){
             const now=d52.getByCode(old.code); assert(now,`missing old code ${old.code}`);
             assert.strictEqual(now.name,old.name,`name changed ${old.code}`);
@@ -141,7 +143,7 @@ jobs:
             assert.strictEqual(now.systemPage,old.systemPage,`systemPage changed ${old.code}`);
             assert.strictEqual(now.demoUrl,old.demoUrl,`demoUrl changed ${old.code}`);
           }
-          console.log('PRODUCT_RENDER_DATA_QA=PASS systems=52 medical_pet=6 old51_preserved=51/51');
+          console.log('PRODUCT_RENDER_DATA_QA=PASS systems=52 medical_pet=5 old51_preserved=51/51');
           NODE
       - name: Commit normalized canonical source
         shell: bash
