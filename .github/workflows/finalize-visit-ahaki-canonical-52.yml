@@ -1,4 +1,4 @@
-name: Finalize DPRO PRODUCT SITE Canonical 52 Source V1.4
+name: Finalize DPRO PRODUCT SITE Canonical 52 Source V1.5
 on:
   push:
     paths:
@@ -20,6 +20,7 @@ jobs:
           python - <<'PY'
           from pathlib import Path
           import json, re, subprocess
+          from urllib.parse import urljoin
 
           def node_catalog(path):
               js = r"""
@@ -49,37 +50,41 @@ jobs:
           categories_json = json.dumps(categories, ensure_ascii=False, indent=2)
           systems_json = json.dumps(systems, ensure_ascii=False, indent=2)
 
-          source = (
-              "/* DPRO PRODUCT SITE V3.0 — CANONICAL 52 PRODUCT DATA\\n"
-              " * CANONICAL SOURCE: 52 products / 2026-09-03\\n"
-              " * DPRO 訪問マッサージ・鍼灸 is product #52.\\n"
-              " * All 52 product records are statically defined in this file.\\n"
-              " * No external 50/51-product runtime and no runtime catalog augmentation.\\n"
-              " */\\n"
-              "(function (global) {\\n"
-              '  "use strict";\\n\\n'
-              "  function deepFreeze(value) {\\n"
-              '    if (!value || typeof value !== "object" || Object.isFrozen(value)) return value;\\n'
-              "    Object.keys(value).forEach((key) => deepFreeze(value[key]));\\n"
-              "    return Object.freeze(value);\\n"
-              "  }\\n\\n"
-              f"  const categories = deepFreeze({categories_json});\\n"
-              f"  const systems = deepFreeze({systems_json});\\n"
-              '  const byCode = new Map(systems.map(item => [String(item.code || "").toUpperCase(), item]));\\n\\n'
-              "  global.DPROSystemsData = Object.freeze({\\n"
-              "    categories,\\n"
-              "    systems,\\n"
-              "    systemCount: systems.length,\\n"
-              "    getByCode(code) {\\n"
-              '      return byCode.get(String(code == null ? "" : code).trim().toUpperCase()) || null;\\n'
-              "    },\\n"
-              "    getByCategory(category) {\\n"
-              '      const key = String(category || "").trim();\\n'
-              "      return systems.filter(item => item.category === key);\\n"
-              "    }\\n"
-              "  });\\n"
-              '})(typeof window !== "undefined" ? window : globalThis);\\n'
-          )
+          # IMPORTANT: real newline characters are written here.
+          source = f"""/* DPRO PRODUCT SITE V3.0 — CANONICAL 52 PRODUCT DATA
+           * CANONICAL SOURCE: 52 products / 2026-09-03
+           * DPRO 訪問マッサージ・鍼灸 is product #52.
+           * All 52 product records are statically defined in this file.
+           * No external 50/51-product runtime and no runtime catalog augmentation.
+           */
+          (function (global) {{
+            "use strict";
+
+            function deepFreeze(value) {{
+              if (!value || typeof value !== "object" || Object.isFrozen(value)) return value;
+              Object.keys(value).forEach((key) => deepFreeze(value[key]));
+              return Object.freeze(value);
+            }}
+
+            const categories = deepFreeze({categories_json});
+            const systems = deepFreeze({systems_json});
+            const byCode = new Map(systems.map(item => [String(item.code || "").toUpperCase(), item]));
+
+            global.DPROSystemsData = Object.freeze({{
+              categories,
+              systems,
+              systemCount: systems.length,
+              getByCode(code) {{
+                return byCode.get(String(code == null ? "" : code).trim().toUpperCase()) || null;
+              }},
+              getByCategory(category) {{
+                const key = String(category || "").trim();
+                return systems.filter(item => item.category === key);
+              }}
+            }});
+          }})(typeof window !== "undefined" ? window : globalThis);
+          """
+          source = __import__('textwrap').dedent(source)
           Path('systems-data.js').write_text(source, encoding='utf-8')
 
           replacements = [
@@ -94,11 +99,11 @@ jobs:
               ('51システム','52システム'),
               ('51製品','52製品'),
           ]
+
           def norm(s):
               for a,b in replacements:
                   s=s.replace(a,b)
               s=s.replace('<b>51</b> 業種別完成システム','<b>52</b> 業種別完成システム')
-              # Canonical product-count normalization for all remaining central-copy forms.
               s=re.sub(r'51(?=(?:の?業種|製品|システム|件))','52',s)
               s=re.sub(r'(data-p36-visible[^>]*>)51(<)',r'\g<1>52\2',s)
               s=re.sub(r'(data-p36-count[^>]*>)51(<)',r'\g<1>52\2',s)
@@ -132,7 +137,6 @@ jobs:
               s=re.sub(r'systems-data\.js\?v=[^"]+','systems-data.js?v=20260903-canonical52',s)
               p.write_text(s,encoding='utf-8')
 
-          from urllib.parse import urljoin
           base='https://dpromstk2000-lab.github.io/dpro-line-systems-site/'
           rels=['','systems.html','proposal.html','dpro-system.html']
           rels += [x.get('systemPage') for x in systems if x.get('systemPage')]
@@ -182,7 +186,11 @@ jobs:
           assert sum(1 for x in after['systems'] if x.get('category')=='medical_pet')==med
 
           print(f'PRODUCT_CANONICAL_52_FINAL_QA=PASS systems=52 medical_pet={med} old51_preserved=51/51 static_catalog=52')
+
+          # local helper used only inside this step
           PY
+        env:
+          PYTHONSTARTUP: ""
 
       - name: Commit finalized canonical source
         shell: bash
