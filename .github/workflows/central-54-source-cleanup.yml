@@ -1,0 +1,101 @@
+name: DPRO CENTRAL 54 source cleanup
+on:
+  push:
+    paths:
+      - .github/workflows/central-54-source-cleanup.yml
+permissions:
+  contents: write
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Normalize PRODUCT SITE central 54 source
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import json, re, subprocess
+
+          central = [Path('index.html'), Path('systems.html'), Path('proposal.html')]
+          for p in central:
+              s = p.read_text(encoding='utf-8')
+              replacements = {
+                  '52の業種専用完成システム':'54の業種専用完成システム',
+                  '52の業種別DPRO':'54の業種別DPRO',
+                  '52の完成DPROシステム':'54の完成DPROシステム',
+                  '52業種別システム導入例':'54業種別システム導入例',
+                  '51のDPROシステム':'54のDPROシステム',
+                  '<b>52</b> 業種別完成システム':'<b>54</b> 業種別完成システム',
+                  'data-p36-proposal-visible>51<':'data-p36-proposal-visible>54<',
+                  '52件の業種別の導入例を読み込み中':'54件の業種別の導入例を読み込み中',
+                  'systems-data.js?v=20260903-canonical52':'systems-data.js?v=20260903-canonical54',
+                  'product-v3.6.js?v=20260903-canonical52-runtime':'product-v3.6.js?v=20260903-canonical54-runtime',
+                  '"dateModified":"2026-08-18"':'"dateModified":"2026-09-03"',
+                  '"dateModified":"2026-08-14"':'"dateModified":"2026-09-03"',
+              }
+              for a,b in replacements.items():
+                  s = s.replace(a,b)
+              p.write_text(s,encoding='utf-8')
+
+          # Update cache-bust refs in every HTML that uses the canonical central assets.
+          for p in Path('.').rglob('*.html'):
+              if '.github' in p.parts:
+                  continue
+              s = p.read_text(encoding='utf-8')
+              s = s.replace('systems-data.js?v=20260903-canonical52','systems-data.js?v=20260903-canonical54')
+              s = s.replace('product-v3.6.js?v=20260903-canonical52-runtime','product-v3.6.js?v=20260903-canonical54-runtime')
+              p.write_text(s,encoding='utf-8')
+
+          idx = Path('index.html').read_text(encoding='utf-8')
+          hub = Path('systems.html').read_text(encoding='utf-8')
+          prop = Path('proposal.html').read_text(encoding='utf-8')
+          data = Path('systems-data.js').read_text(encoding='utf-8')
+          runtime = Path('product-v3.6.js').read_text(encoding='utf-8')
+
+          assert '<b>54</b> 業種別完成システム' in idx
+          assert '52</b> 業種別完成システム' not in idx
+          assert '54の完成DPROシステム' in hub
+          assert '52の完成DPROシステム' not in hub
+          assert '54業種別システム導入例' in prop
+          assert '51のDPROシステム' not in prop
+          assert 'data-p36-proposal-visible>54<' in prop
+          assert '54件の業種別の導入例を読み込み中' in prop
+          assert 'CANONICAL 54 PRODUCT DATA' in data
+          assert 'CANONICAL 54 RUNTIME' in runtime
+          assert "LANDSCAPE_EXTERIOR:'landscape-exterior'" in runtime
+          assert "DPRO_PEST_ENV:'pest-env'" in runtime
+
+          # Parse catalog count.
+          js = r"""
+          const fs=require('fs'),vm=require('vm');
+          const ctx={console};ctx.window=ctx;vm.createContext(ctx);
+          vm.runInContext(fs.readFileSync('systems-data.js','utf8'),ctx);
+          process.stdout.write(JSON.stringify({
+            count:ctx.DPROSystemsData.systems.length,
+            codes:ctx.DPROSystemsData.systems.map(x=>x.code)
+          }));
+          """
+          catalog=json.loads(subprocess.check_output(['node','-e',js],text=True))
+          assert catalog['count']==54
+          assert len(set(catalog['codes']))==54
+          assert catalog['codes'][-2:]==['LANDSCAPE_EXTERIOR','DPRO_PEST_ENV']
+
+          subprocess.check_call(['node','--check','systems-data.js'])
+          subprocess.check_call(['node','--check','product-v3.6.js'])
+          print('PRODUCT_SITE_CENTRAL_54_SOURCE_CLEANUP=PASS')
+          PY
+
+      - name: Commit cleanup
+        shell: bash
+        run: |
+          rm -f .github/workflows/central-54-source-cleanup.yml
+          git config user.name "DPRO SYSTEM FACTORY"
+          git config user.email "actions@users.noreply.github.com"
+          git add -A
+          git diff --cached --quiet || git commit -m "Finalize PRODUCT SITE canonical 54 source"
+          git push
