@@ -1,7 +1,9 @@
-/* DPRO PRODUCT SITE V3.0 — CANONICAL 52 PRODUCT DATA
- * CANONICAL SOURCE: 52 products / 2026-09-03
+/* DPRO PRODUCT SITE V3.0 — CANONICAL 54 PRODUCT DATA
+ * CANONICAL SOURCE: 54 products / 2026-09-03
  * DPRO 訪問マッサージ・鍼灸 is product #52.
- * All 52 product records are statically defined in this file.
+ * DPRO 造園・外構 is product #53.
+ * DPRO ペストコントロール／環境衛生サービス is product #54.
+ * All 54 product records are statically defined in this file.
  * No external 50/51-product runtime and no runtime catalog augmentation.
  */
 (function (global) {
@@ -1510,7 +1512,45 @@
     ],
     "previewAsset": "systems/visit-ahaki.html",
     "experienceScreens": []
-  }
+  }  ,{
+  "code": "LANDSCAPE_EXTERIOR",
+  "assetSlug": "landscape-exterior",
+  "name": "造園・外構",
+  "category": "home_building",
+  "systemPage": "systems/landscape-exterior.html",
+  "lpUrl": "https://dpromstk2000-lab.github.io/dpro-landscape-exterior-standard/lp.html",
+  "flyerHtml": "systems/landscape-exterior.html#documents",
+  "flyerPdf": "https://dpromstk2000-lab.github.io/dpro-landscape-exterior-standard/DPRO_LANDSCAPE_EXTERIOR_A4_FLYER_V1.0_20260902.pdf",
+  "demoUrl": "https://dpromstk2000-lab.github.io/dpro-landscape-exterior-standard/",
+  "status": "AVAILABLE",
+  "verificationStatus": "VERIFIED",
+  "tagline": "写真相談から現調・見積・施工・Before→After完了承認・季節アフターまでを、一つの現場カルテでつなぐ。",
+  "summary": "造園・外構向けに、写真相談、現地調査、見積、施工予定、担当者、作業前後写真、進捗、完了承認、季節フォローまでを案件単位でまとめるDPROシステム。",
+  "targets": ["造園会社","外構・エクステリア事業者","庭・植栽メンテナンス事業者"],
+  "features": ["写真相談・現地調査","見積・案件管理","施工予定・担当者管理","Before→After写真","完了承認","季節フォロー・再依頼"],
+  "previewAsset": "systems/landscape-exterior.html",
+  "experienceScreens": []
+},
+{
+  "code": "DPRO_PEST_ENV",
+  "assetSlug": "pest-env",
+  "name": "ペストコントロール／環境衛生サービス",
+  "category": "education_life",
+  "systemPage": "systems/pest-env.html",
+  "lpUrl": "https://dpromstk2000-lab.github.io/dpro-pest-env-line/lp.html",
+  "flyerHtml": "systems/pest-env.html#documents",
+  "flyerPdf": "https://dpromstk2000-lab.github.io/dpro-pest-env-line/DPRO_PEST_ENV_A4_FLYER_FINAL_V1.1_G8.pdf",
+  "demoUrl": "https://dpromstk2000-lab.github.io/dpro-pest-env-line/demo-prepare.html?demo=1",
+  "status": "AVAILABLE",
+  "verificationStatus": "VERIFIED",
+  "tagline": "最初の相談写真から、調査・施工・報告・次回点検までをEvidence Chainで一つにつなぐ。",
+  "summary": "害虫・害獣の単発相談から飲食店・施設・管理物件の定期防除まで、受付、写真、現地調査、施工、安全確認、報告、再訪・次回点検を一つの現場カルテで管理するDPROシステム。",
+  "targets": ["ペストコントロール事業者","害虫・害獣駆除事業者","環境衛生・定期防除事業者"],
+  "features": ["WEB・LINE相談受付","写真・PDF Evidence","現地調査・施工記録","Field Map・Trap PIN","薬剤・安全確認","報告・再訪・定期点検"],
+  "previewAsset": "systems/pest-env.html",
+  "experienceScreens": []
+}
+
 ]);
   const byCode = new Map(systems.map(item => [String(item.code || "").toUpperCase(), item]));
 
