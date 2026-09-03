@@ -1,4 +1,4 @@
-name: Finalize DPRO PRODUCT SITE Canonical 52 Source V1.3
+name: Finalize DPRO PRODUCT SITE Canonical 52 Source V1.4
 on:
   push:
     paths:
@@ -98,6 +98,8 @@ jobs:
               for a,b in replacements:
                   s=s.replace(a,b)
               s=s.replace('<b>51</b> 業種別完成システム','<b>52</b> 業種別完成システム')
+              # Canonical product-count normalization for all remaining central-copy forms.
+              s=re.sub(r'51(?=(?:の?業種|製品|システム|件))','52',s)
               s=re.sub(r'(data-p36-visible[^>]*>)51(<)',r'\g<1>52\2',s)
               s=re.sub(r'(data-p36-count[^>]*>)51(<)',r'\g<1>52\2',s)
               return s
@@ -152,6 +154,7 @@ jobs:
               assert '51の業種' not in s, f'{name}: stale 51業種'
               assert '51製品' not in s, f'{name}: stale 51製品'
               assert '51システム' not in s, f'{name}: stale 51システム'
+              assert not re.search(r'51(?=(?:の?業種|製品|システム|件))', s), f'{name}: stale canonical product-count token'
           assert '<b>51</b> 業種別完成システム' not in idx
           assert re.search(r'data-p36-count[^>]*>52<',idx)
           assert re.search(r'data-p36-count[^>]*>52<',hub)
