@@ -1,0 +1,154 @@
+name: Normalize DPRO PRODUCT SITE Canonical 52
+on:
+  push:
+    paths:
+      - .github/workflows/normalize-visit-ahaki-52-canonical.yml
+permissions:
+  contents: write
+jobs:
+  normalize:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Flatten catalog and normalize canonical 52 source
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import json, re, subprocess
+
+          CORE50='d8ac2578c4b713493dd80315f8ba7e6d3bfcc269'
+          MED51='f956c7361b8ef0c719e3b9ae26672ad80b31dfd2'
+
+          def gitshow(ref,path):
+              return subprocess.check_output(['git','show',f'{ref}:{path}'], text=True)
+
+          def function_span(src, name):
+              start=src.find(f'function {name}(')
+              if start<0: raise RuntimeError(f'function not found: {name}')
+              brace=src.find('{',start); i=brace; depth=0; state='code'; quote=''
+              while i<len(src):
+                  c=src[i]; n=src[i+1] if i+1<len(src) else ''
+                  if state=='code':
+                      if c=='/' and n=='/': state='line'; i+=2; continue
+                      if c=='/' and n=='*': state='block'; i+=2; continue
+                      if c in "'\"": state='string'; quote=c; i+=1; continue
+                      if c=='`': state='template'; i+=1; continue
+                      if c=='{': depth+=1
+                      elif c=='}':
+                          depth-=1
+                          if depth==0: return start,i+1
+                      i+=1; continue
+                  if state=='line':
+                      if c=='\n': state='code'
+                      i+=1; continue
+                  if state=='block':
+                      if c=='*' and n=='/': state='code'; i+=2; continue
+                      i+=1; continue
+                  if state in ('string','template'):
+                      if c=='\\': i+=2; continue
+                      if (state=='string' and c==quote) or (state=='template' and c=='`'): state='code'
+                      i+=1; continue
+              raise RuntimeError(f'unclosed function: {name}')
+
+          def extract_function(src,name):
+              a,b=function_span(src,name); return src[a:b]
+
+          claim_pairs=[]
+          for n in ('50','51'):
+              claim_pairs += [
+                  (f'{n}の業種別システム','52の業種別システム'),
+                  (f'{n}の業種専用DPROシステム','52の業種専用DPROシステム'),
+                  (f'{n}製品データを読み込み中','52製品データを読み込み中'),
+                  (f'{n}件の業種別の導入例','52件の業種別の導入例'),
+                  (f'{n}システムをすべて見る','52システムをすべて見る'),
+                  (f'{n}システム一覧','52システム一覧'),
+                  (f'{n}システム','52システム'),(f'{n}製品','52製品'),
+                  (f'{n}の完成','52の完成'),(f'{n}の業種専用','52の業種専用')
+              ]
+          def normalize_claims(text):
+              for a,b in claim_pairs: text=text.replace(a,b)
+              text=re.sub(r'(data-p36-count[^>]*>)(?:50|51)(<)',r'\g<1>52\2',text)
+              return text
+
+          # Source-level count/meta/title normalization across the public site.
+          for p in Path('.').rglob('*.html'):
+              if '.github' in p.parts: continue
+              s=p.read_text(encoding='utf-8')
+              s=normalize_claims(s)
+              def patch_jsonld(m):
+                  try: obj=json.loads(m.group(2))
+                  except Exception: return m.group(0)
+                  def walk(x):
+                      if isinstance(x,dict):
+                          for k,v in list(x.items()):
+                              if k=='numberOfItems' and v in (50,51): x[k]=52
+                              elif isinstance(v,str): x[k]=normalize_claims(v)
+                              else: walk(v)
+                      elif isinstance(x,list):
+                          for v in x: walk(v)
+                  walk(obj)
+                  return m.group(1)+json.dumps(obj,ensure_ascii=False,separators=(',',':'))+m.group(3)
+              s=re.sub(r'(<script type="application/ld\+json">)(.*?)(</script>)',patch_jsonld,s,flags=re.S)
+              p.write_text(s,encoding='utf-8')
+
+          # Flatten 50 core + MEDICAL #51 + VISIT_AHAKI #52 into one canonical data source.
+          core=gitshow(CORE50,'systems-data.js')
+          med_src=gitshow(MED51,'systems-data.js')
+          cur=Path('systems-data.js').read_text(encoding='utf-8')
+          med_fn=extract_function(med_src,'addMedical').replace('patch51Copy();','')
+          med_fn=med_fn.replace('locked 50-system baseline unavailable','canonical 50-system core unavailable')
+          visit_fn=extract_function(cur,'addVisitAhaki').replace('patch52Copy();','')
+          visit_fn=visit_fn.replace('locked 51-product baseline unavailable','canonical 51-product base unavailable')
+          direct51=core.rstrip()+"\n\n(() => {\n  'use strict';\n"+med_fn+"\n  if (!addMedical(window)) throw new Error('DPRO MEDICAL canonical add failed');\n})();\n"
+          final=direct51+"\n(() => {\n  'use strict';\n"+visit_fn+"\n  if (!addVisitAhaki(window)) throw new Error('DPRO VISIT AHAKI canonical add failed');\n})();\n"
+          Path('/tmp/systems-data-51.js').write_text(direct51,encoding='utf-8')
+          Path('systems-data.js').write_text(final,encoding='utf-8')
+
+          # Static source QA.
+          sd=Path('systems-data.js').read_text(encoding='utf-8')
+          assert 'VISIT_AHAKI' in sd and 'code: "MEDICAL"' in sd
+          assert 'const CORE =' not in sd
+          assert f'@{MED51}/systems-data.js' not in sd and f'@{CORE50}/systems-data.js' not in sd
+          for p in (Path('index.html'),Path('systems.html')):
+              s=p.read_text(encoding='utf-8')
+              assert '51システム' not in s and '51製品' not in s and '50システム' not in s and '50製品' not in s
+              assert 'numberOfItems":51' not in s and 'numberOfItems":50' not in s
+          print('PRODUCT_SOURCE_52_STATIC_QA=PASS')
+          PY
+          node --check systems-data.js
+          node - <<'NODE'
+          const fs=require('fs'), vm=require('vm'), assert=require('assert');
+          function run(path){
+            const ctx={console}; ctx.window=ctx; vm.createContext(ctx);
+            vm.runInContext(fs.readFileSync(path,'utf8'),ctx,{filename:path});
+            return ctx.DPROSystemsData;
+          }
+          const d51=run('/tmp/systems-data-51.js');
+          const d52=run('systems-data.js');
+          assert.strictEqual(d51.systems.length,51);
+          assert.strictEqual(d52.systems.length,52);
+          assert.strictEqual(new Set(d52.systems.map(x=>x.code)).size,52);
+          assert(d52.getByCode('MEDICAL'));
+          assert(d52.getByCode('VISIT_AHAKI'));
+          assert.strictEqual(d52.getByCategory('medical_pet').length,6);
+          for(const old of d51.systems){
+            const now=d52.getByCode(old.code); assert(now,`missing old code ${old.code}`);
+            assert.strictEqual(now.name,old.name,`name changed ${old.code}`);
+            assert.strictEqual(now.category,old.category,`category changed ${old.code}`);
+            assert.strictEqual(now.systemPage,old.systemPage,`systemPage changed ${old.code}`);
+            assert.strictEqual(now.demoUrl,old.demoUrl,`demoUrl changed ${old.code}`);
+          }
+          console.log('PRODUCT_RENDER_DATA_QA=PASS systems=52 medical_pet=6 old51_preserved=51/51');
+          NODE
+      - name: Commit normalized canonical source
+        shell: bash
+        run: |
+          rm -f .github/workflows/normalize-visit-ahaki-52-canonical.yml
+          git config user.name "DPRO SYSTEM FACTORY"
+          git config user.email "actions@users.noreply.github.com"
+          git add -A
+          git diff --cached --quiet || git commit -m "Normalize DPRO PRODUCT SITE canonical source to 52 products"
+          git push
