@@ -1,12 +1,19 @@
-/* DPRO PRODUCT SITE V3.0 — FOUNDATION DATA R1
- * CANONICAL LOCK: CENTRAL RETURN R1 / 2026-08-13
- * Source of truth for the 50-system catalog.
- * Primary product information should still be statically rendered in final HTML for SEO/durability.
+/* DPRO PRODUCT SITE V3.0 — CANONICAL 52 PRODUCT DATA
+ * CANONICAL SOURCE: 52 products / 2026-09-03
+ * DPRO 訪問マッサージ・鍼灸 is product #52.
+ * All 52 product records are statically defined in this file.
+ * No external 50/51-product runtime and no runtime catalog augmentation.
  */
 (function (global) {
   "use strict";
 
-  const categories = Object.freeze({
+  function deepFreeze(value) {
+    if (!value || typeof value !== "object" || Object.isFrozen(value)) return value;
+    Object.keys(value).forEach((key) => deepFreeze(value[key]));
+    return Object.freeze(value);
+  }
+
+  const categories = deepFreeze({
   "beauty_health": {
     "label": "美容・健康",
     "description": "美容室、サロン、エステ、整体、ジム、ヨガなど"
@@ -36,8 +43,7 @@
     "description": "行政書士、司法書士、社労士、税理士、調査士、営業支援など"
   }
 });
-
-  const systems = Object.freeze([
+  const systems = deepFreeze([
   {
     "code": "HAIR",
     "assetSlug": "hair",
@@ -103,7 +109,7 @@
     "lpUrl": "lp-esthe.html",
     "flyerHtml": "flyer-esthe.html",
     "flyerPdf": "flyer-esthe.pdf",
-    "demoUrl": "https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/index-brush.html?v=esthe-next-10b",
+    "demoUrl": "https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/demo-guide.html",
     "status": "AVAILABLE",
     "verificationStatus": "VERIFIED",
     "tagline": "今日やることから再来店フォローまでを、一つの流れにつなぐ。",
@@ -131,7 +137,7 @@
     "lpUrl": "lp-seitai.html",
     "flyerHtml": "flyer-seitai.html",
     "flyerPdf": "flyer-seitai.pdf",
-    "demoUrl": "https://dpromstk2000-lab.github.io/dpro-seitai-line/index.html",
+    "demoUrl": "https://dpromstk2000-lab.github.io/dpro-seitai-line/demo-guide.html",
     "status": "AVAILABLE",
     "verificationStatus": "VERIFIED",
     "tagline": "LINE予約・来院受付から施術履歴・再来院フォローまでを、一つの流れにつなぐ。",
@@ -159,7 +165,7 @@
     "lpUrl": "lp-dental.html",
     "flyerHtml": "flyer-dental.html",
     "flyerPdf": "flyer-dental.pdf",
-    "demoUrl": "https://dpromstk2000-lab.github.io/DEGITAL-QR/hybrid.html?t=demo-dental-patient-001",
+    "demoUrl": "https://dpromstk2000-lab.github.io/DEGITAL-QR/demo-guide.html",
     "status": "AVAILABLE",
     "verificationStatus": "VERIFIED",
     "tagline": "家族で使えるデジタル診察券から予約・受付管理までを、一つの流れにつなぐ。",
@@ -179,6 +185,40 @@
     "experienceScreens": []
   },
   {
+    "code": "MEDICAL",
+    "assetSlug": "medical",
+    "name": "DPRO MEDICAL",
+    "category": "medical_pet",
+    "systemPage": "systems/medical.html",
+    "lpUrl": "systems/medical.html",
+    "flyerHtml": "flyer-medical.html",
+    "flyerPdf": "flyer-medical.pdf",
+    "demoUrl": "https://dpromstk2000-lab.github.io/dpro-medical-standard/medical-public-demo.html",
+    "status": "AVAILABLE",
+    "verificationStatus": "VERIFIED",
+    "tagline": "予約・WEB問診・来院受付・院内進行・医院管理・医院HPまでを、ひとつの情報基盤につなぐ。",
+    "summary": "医療機関向けに、患者スマホ、予約、WEB問診、受付、待ち状況、院内進行、医院管理PC、受付iPad、スタッフ画面、医院HPをひとつの流れでまとめるDPROシステム。",
+    "targets": [
+      "医療機関",
+      "一般・内科",
+      "眼科",
+      "小児科",
+      "整形外科",
+      "美容医療",
+      "婦人科・女性医療"
+    ],
+    "features": [
+      "予約・当日受付",
+      "WEB問診",
+      "院内進行・待ち状況",
+      "患者スマホ",
+      "医院管理PC・受付iPad",
+      "医院HP・6つの診療パターン"
+    ],
+    "previewAsset": "systems/medical.html",
+    "experienceScreens": []
+  },
+  {
     "code": "VET",
     "assetSlug": "vet",
     "name": "動物病院",
@@ -187,7 +227,7 @@
     "lpUrl": "lp-vet.html",
     "flyerHtml": "flyer-vet.html",
     "flyerPdf": "flyer-vet.pdf",
-    "demoUrl": "https://dpromstk2000-lab.github.io/DPRO-VET-QR/today-board.html?clinic_code=dpro_vet_demo&demo=ready&v=vet-today-board-1",
+    "demoUrl": "https://dpromstk2000-lab.github.io/DPRO-VET-QR/demo-guide.html",
     "status": "AVAILABLE",
     "verificationStatus": "VERIFIED",
     "tagline": "LINE診察券から多頭・家族管理までを、一つの流れにつなぐ。",
@@ -243,7 +283,7 @@
     "lpUrl": "lp-repair.html",
     "flyerHtml": "flyer-repair.html",
     "flyerPdf": "flyer-repair.pdf",
-    "demoUrl": "https://dpromstk2000-lab.github.io/dpro-repair-line-liff/owner.html?shop_code=repair_demo&v=repair-17",
+    "demoUrl": "https://dpromstk2000-lab.github.io/dpro-repair-line-liff/demo-guide.html",
     "status": "AVAILABLE",
     "verificationStatus": "VERIFIED",
     "tagline": "LINE相談・仮受付から引渡し・保証までを、一つの流れにつなぐ。",
@@ -272,7 +312,7 @@
     "lpUrl": "lp-takeout.html",
     "flyerHtml": "flyer-takeout.html",
     "flyerPdf": "flyer-takeout.pdf",
-    "demoUrl": "https://dpromstk2000-lab.github.io/dpro-takeout-line-liff/index.html?preview=1&v=takeout-18-check",
+    "demoUrl": "https://dpromstk2000-lab.github.io/dpro-takeout-line-liff/demo-guide.html",
     "status": "AVAILABLE",
     "verificationStatus": "VERIFIED",
     "tagline": "写真付きモバイルオーダーから商品・受取枠・営業時間管理までを、一つの流れにつなぐ。",
@@ -300,7 +340,7 @@
     "lpUrl": "lp-salon.html",
     "flyerHtml": "flyer-salon.html",
     "flyerPdf": "flyer-salon.pdf",
-    "demoUrl": "https://dpromstk2000-lab.github.io/liff-salon-reserve/?embed_demo=1",
+    "demoUrl": "https://dpromstk2000-lab.github.io/liff-salon-reserve/demo-guide.html",
     "status": "AVAILABLE",
     "verificationStatus": "VERIFIED",
     "tagline": "LINE・電話・店頭予約からPC・iPadでの店舗管理までを、一つの流れにつなぐ。",
@@ -328,7 +368,7 @@
     "lpUrl": "lp-bakery.html",
     "flyerHtml": "flyer-bakery.html",
     "flyerPdf": "flyer-bakery.pdf",
-    "demoUrl": "https://dpromstk2000-lab.github.io/bakery-line-system/catalog.html?shop_code=bakery_demo&catalog_api=https%3A%2F%2Fdpro-bakery-catalog-api.dpromstk2000.workers.dev&api=https%3A%2F%2Fdpro-bakery-wallet-api.dpromstk2000.workers.dev&v=32",
+    "demoUrl": "https://dpromstk2000-lab.github.io/bakery-line-system/demo-guide.html",
     "status": "AVAILABLE",
     "verificationStatus": "VERIFIED",
     "tagline": "写真付き商品管理からスタッフ受け渡しまでを、一つの流れにつなぐ。",
@@ -356,7 +396,7 @@
     "lpUrl": "lp-cake.html",
     "flyerHtml": "flyer-cake.html",
     "flyerPdf": "flyer-cake.pdf",
-    "demoUrl": "https://dpromstk2000-lab.github.io/dpro-cake-line-liff/index.html?demo=1&v=CAKE-16",
+    "demoUrl": "https://dpromstk2000-lab.github.io/dpro-cake-line-liff/demo-guide.html",
     "status": "AVAILABLE",
     "verificationStatus": "VERIFIED",
     "tagline": "写真付き公開カタログからオーナーPC商品管理までを、一つの流れにつなぐ。",
@@ -384,7 +424,7 @@
     "lpUrl": "lp-eye.html",
     "flyerHtml": "flyer-eye.html",
     "flyerPdf": "flyer-eye.pdf",
-    "demoUrl": "https://dpromstk2000-lab.github.io/dpro-eye-salon-line/index.html?demo=1",
+    "demoUrl": "https://dpromstk2000-lab.github.io/dpro-eye-salon-line/demo-guide.html",
     "status": "AVAILABLE",
     "verificationStatus": "VERIFIED",
     "tagline": "LINE予約・前回と同じ内容での再予約から施術カルテ・再来店フォローまでを、一つの流れにつなぐ。",
@@ -412,7 +452,7 @@
     "lpUrl": "lp-yoga.html",
     "flyerHtml": "flyer-yoga.html",
     "flyerPdf": "flyer-yoga.pdf",
-    "demoUrl": "https://dpromstk2000-lab.github.io/liff-yoga-reserve/owner.html?demo=1&v=yoga-next-10",
+    "demoUrl": "https://dpromstk2000-lab.github.io/liff-yoga-reserve/demo-guide.html",
     "status": "AVAILABLE",
     "verificationStatus": "VERIFIED",
     "tagline": "体験予約からPC・iPad管理までを、一つの流れにつなぐ。",
@@ -440,7 +480,7 @@
     "lpUrl": "lp-gym.html",
     "flyerHtml": "flyer-gym.html",
     "flyerPdf": "flyer-gym.pdf",
-    "demoUrl": "https://dpromstk2000-lab.github.io/liff-gym-demo/dashboard.html?demo=1&v=gym-next-10",
+    "demoUrl": "https://dpromstk2000-lab.github.io/liff-gym-demo/demo-guide.html",
     "status": "AVAILABLE",
     "verificationStatus": "VERIFIED",
     "tagline": "LINE予約から回数券・継続管理までを、一つの流れにつなぐ。",
@@ -468,7 +508,7 @@
     "lpUrl": "lp-estate.html",
     "flyerHtml": "flyer-estate.html",
     "flyerPdf": "flyer-estate.pdf",
-    "demoUrl": "https://dpromstk2000-lab.github.io/dpro-estate-line-liff/",
+    "demoUrl": "https://dpromstk2000-lab.github.io/dpro-estate-line-liff/demo-guide.html",
     "status": "AVAILABLE",
     "verificationStatus": "VERIFIED",
     "tagline": "希望条件・物件候補から再相談・内見後フォローまでを、一つの流れにつなぐ。",
@@ -496,7 +536,7 @@
     "lpUrl": "lp-buyback.html",
     "flyerHtml": "flyer-buyback.html",
     "flyerPdf": "flyer-buyback.pdf",
-    "demoUrl": "https://dpromstk2000-lab.github.io/dpro-buyback-line/index.html?demo=1&v=buyback-10",
+    "demoUrl": "https://dpromstk2000-lab.github.io/dpro-buyback-line/demo-guide.html",
     "status": "AVAILABLE",
     "verificationStatus": "VERIFIED",
     "tagline": "写真査定・複数商品の受付からPC・iPadでの査定管理までを、一つの流れにつなぐ。",
@@ -524,7 +564,7 @@
     "lpUrl": "lp-photo.html",
     "flyerHtml": "flyer-photo.html",
     "flyerPdf": "flyer-photo.pdf",
-    "demoUrl": "https://dpromstk2000-lab.github.io/dpro-photo-studio-line/owner.html?demo=1&v=STUDIO-11",
+    "demoUrl": "https://dpromstk2000-lab.github.io/dpro-photo-studio-line/demo-guide.html",
     "status": "AVAILABLE",
     "verificationStatus": "VERIFIED",
     "tagline": "撮影プラン・空き枠予約から納品・再注文フォローまでを、一つの流れにつなぐ。",
@@ -552,7 +592,7 @@
     "lpUrl": "lp-reform.html",
     "flyerHtml": "flyer-reform.html",
     "flyerPdf": "flyer-reform.pdf",
-    "demoUrl": "https://dpromstk2000-lab.github.io/dpro-reform-line-liff/owner.html?demo=1&v=reform-10",
+    "demoUrl": "https://dpromstk2000-lab.github.io/dpro-reform-line-liff/demo-guide.html",
     "status": "AVAILABLE",
     "verificationStatus": "VERIFIED",
     "tagline": "写真付き相談・現地調査から見積・工事進捗・お客様共有までを、一つの流れにつなぐ。",
@@ -581,7 +621,7 @@
     "lpUrl": "lp-tax.html",
     "flyerHtml": "flyer-tax.html",
     "flyerPdf": "flyer-tax.pdf",
-    "demoUrl": "https://dpromstk2000-lab.github.io/dpro-tax-accounting-line-liff/?demo=1",
+    "demoUrl": "https://dpromstk2000-lab.github.io/dpro-tax-accounting-line-liff/demo-guide.html",
     "status": "AVAILABLE",
     "verificationStatus": "VERIFIED",
     "tagline": "顧問先マイページからタスク・期限と電話検索までを、一つの流れにつなぐ。",
@@ -609,7 +649,7 @@
     "lpUrl": "lp-school.html",
     "flyerHtml": "flyer-school.html",
     "flyerPdf": "flyer-school.pdf",
-    "demoUrl": "https://dpromstk2000-lab.github.io/dpro-school-line/owner.html?v=school-next-10",
+    "demoUrl": "https://dpromstk2000-lab.github.io/dpro-school-line/demo-guide.html",
     "status": "AVAILABLE",
     "verificationStatus": "VERIFIED",
     "tagline": "体験・欠席・振替のLINE受付から授業進捗・保護者連絡までを、一つの流れにつなぐ。",
@@ -637,7 +677,7 @@
     "lpUrl": "lp-funeral.html",
     "flyerHtml": "flyer-funeral.html",
     "flyerPdf": "flyer-funeral.pdf",
-    "demoUrl": "https://dpromstk2000-lab.github.io/dpro-funeral-line/owner.html?demo=1&v=funeral-10-r1-check",
+    "demoUrl": "https://dpromstk2000-lab.github.io/dpro-funeral-line/demo-guide.html",
     "status": "AVAILABLE",
     "verificationStatus": "VERIFIED",
     "tagline": "事前相談・会館見学からPC・スタッフ・受付iPadまでを、一つの流れにつなぐ。",
@@ -665,7 +705,7 @@
     "lpUrl": "lp-stay.html",
     "flyerHtml": "flyer-stay.html",
     "flyerPdf": "flyer-stay.pdf",
-    "demoUrl": "https://dpromstk2000-lab.github.io/dpro-stay-line/owner.html?demo=1&v=STAY-11",
+    "demoUrl": "https://dpromstk2000-lab.github.io/dpro-stay-line/demo-guide.html",
     "status": "AVAILABLE",
     "verificationStatus": "VERIFIED",
     "tagline": "予約確認・到着時間から清掃・忘れ物管理までを、一つの流れにつなぐ。",
@@ -693,7 +733,7 @@
     "lpUrl": "lp-car.html",
     "flyerHtml": "flyer-car.html",
     "flyerPdf": "flyer-car.pdf",
-    "demoUrl": "https://dpromstk2000-lab.github.io/dpro-used-car-line-liff/?demo=1",
+    "demoUrl": "https://dpromstk2000-lab.github.io/dpro-used-car-line-liff/demo-guide.html",
     "status": "AVAILABLE",
     "verificationStatus": "VERIFIED",
     "tagline": "査定・買取・在庫管理から商談・販売・納車後フォローまでを、一つの流れにつなぐ。",
@@ -721,7 +761,7 @@
     "lpUrl": "lp-daycare.html",
     "flyerHtml": "flyer-daycare.html",
     "flyerPdf": "flyer-daycare.pdf",
-    "demoUrl": "https://dpromstk2000-lab.github.io/dpro-dayservice-line/owner.html?demo=1&v=daycare-11-r3",
+    "demoUrl": "https://dpromstk2000-lab.github.io/dpro-dayservice-line/demo-guide.html",
     "status": "AVAILABLE",
     "verificationStatus": "VERIFIED",
     "tagline": "家族向けLINE連絡から日常確認・送迎管理までを、一つの流れにつなぐ。",
@@ -749,7 +789,7 @@
     "lpUrl": "lp-caretaxi.html",
     "flyerHtml": "flyer-caretaxi.html",
     "flyerPdf": "flyer-caretaxi.pdf",
-    "demoUrl": "https://dpromstk2000-lab.github.io/dpro-caretaxi-line/owner-ipad.html?demo=1",
+    "demoUrl": "https://dpromstk2000-lab.github.io/dpro-caretaxi-line/demo-guide.html",
     "status": "AVAILABLE",
     "verificationStatus": "VERIFIED",
     "tagline": "送迎依頼フォームから料金・顧客台帳までを、一つの流れにつなぐ。",
@@ -777,7 +817,7 @@
     "lpUrl": "lp-haishoku.html",
     "flyerHtml": "flyer-haishoku.html",
     "flyerPdf": "flyer-haishoku.pdf",
-    "demoUrl": "https://dpromstk2000-lab.github.io/dpro-senior-meal-delivery-line/owner.html?demo=1",
+    "demoUrl": "https://dpromstk2000-lab.github.io/dpro-senior-meal-delivery-line/demo-guide.html",
     "status": "AVAILABLE",
     "verificationStatus": "VERIFIED",
     "tagline": "家族からのLINE申込から厨房・配達スタッフの管理までを、一つの流れにつなぐ。",
@@ -805,7 +845,7 @@
     "lpUrl": "lp-housekeep.html",
     "flyerHtml": "flyer-housekeep.html",
     "flyerPdf": "flyer-housekeep.pdf",
-    "demoUrl": "https://dpromstk2000-lab.github.io/dpro-housekeep-line-liff/?demo=1",
+    "demoUrl": "https://dpromstk2000-lab.github.io/dpro-housekeep-line-liff/demo-guide.html",
     "status": "AVAILABLE",
     "verificationStatus": "VERIFIED",
     "tagline": "LINE予約・見積り相談から作業チェック・写真までを、一つの流れにつなぐ。",
@@ -833,7 +873,7 @@
     "lpUrl": "lp-disposal.html",
     "flyerHtml": "flyer-disposal.html",
     "flyerPdf": "flyer-disposal.pdf",
-    "demoUrl": "https://dpromstk2000-lab.github.io/dpro-disposal-line-liff/index.html?demo=1&v=disposal-8-r2",
+    "demoUrl": "https://dpromstk2000-lab.github.io/dpro-disposal-line-liff/demo-guide.html",
     "status": "AVAILABLE",
     "verificationStatus": "VERIFIED",
     "tagline": "7段階の相談受付から現場スタッフ画面までを、一つの流れにつなぐ。",
@@ -861,7 +901,7 @@
     "lpUrl": "lp-gyosei.html",
     "flyerHtml": "flyer-gyosei.html",
     "flyerPdf": "flyer-gyosei.pdf",
-    "demoUrl": "https://dpromstk2000-lab.github.io/dpro-gyosei-permit-line/index.html?demo=1&v=GYOSEI-10",
+    "demoUrl": "https://dpromstk2000-lab.github.io/dpro-gyosei-permit-line/demo-guide.html",
     "status": "AVAILABLE",
     "verificationStatus": "VERIFIED",
     "tagline": "相談分野別受付から安全な書類案内までを、一つの流れにつなぐ。",
@@ -889,7 +929,7 @@
     "lpUrl": "lp-shiho.html",
     "flyerHtml": "flyer-shiho.html",
     "flyerPdf": "flyer-shiho.pdf",
-    "demoUrl": "https://dpromstk2000-lab.github.io/dpro-shiho-inheritance-line-liff/index.html?demo=1&v=SHIHO-12-R1",
+    "demoUrl": "https://dpromstk2000-lab.github.io/dpro-shiho-inheritance-line-liff/owner.html?demo=1",
     "status": "AVAILABLE",
     "verificationStatus": "VERIFIED",
     "tagline": "相談受付から面談・必要書類・進捗・期限管理までを、一つの流れにつなぐ。",
@@ -917,7 +957,7 @@
     "lpUrl": "lp-chosashi.html",
     "flyerHtml": "flyer-chosashi.html",
     "flyerPdf": "flyer-chosashi.pdf",
-    "demoUrl": "https://dpromstk2000-lab.github.io/dpro-chosashi-line-liff/index.html?demo=1&v=chosashi-8-r3-final",
+    "demoUrl": "https://dpromstk2000-lab.github.io/dpro-chosashi-line-liff/demo-guide.html",
     "status": "AVAILABLE",
     "verificationStatus": "VERIFIED",
     "tagline": "相談受付から現地調査・書類・案件進捗までを、一つの流れにつなぐ。",
@@ -945,7 +985,7 @@
     "lpUrl": "lp-cosmetics.html",
     "flyerHtml": "flyer-cosmetics.html",
     "flyerPdf": "flyer-cosmetics.pdf",
-    "demoUrl": "https://dpromstk2000-lab.github.io/dpro-cosmetics-line-liff/?demo=1",
+    "demoUrl": "https://dpromstk2000-lab.github.io/dpro-cosmetics-line-liff/demo-guide.html",
     "status": "AVAILABLE",
     "verificationStatus": "VERIFIED",
     "tagline": "LINE会員・既存顧客照合から問合せ・再購入・販促管理までを、一つの流れにつなぐ。",
@@ -973,7 +1013,7 @@
     "lpUrl": "lp-flower.html",
     "flyerHtml": "flyer-flower.html",
     "flyerPdf": "flyer-flower.pdf",
-    "demoUrl": "https://dpromstk2000-lab.github.io/dpro-flower-line-liff/catalog.html?v=FLOWER-NEXT-11-R1",
+    "demoUrl": "https://dpromstk2000-lab.github.io/dpro-flower-line-liff/demo-guide.html",
     "status": "AVAILABLE",
     "verificationStatus": "VERIFIED",
     "tagline": "写真付き商品カタログから配達ボード・配達履歴までを、一つの流れにつなぐ。",
@@ -1001,7 +1041,7 @@
     "lpUrl": "lp-homenursing.html",
     "flyerHtml": "flyer-homenursing.html",
     "flyerPdf": "flyer-homenursing.pdf",
-    "demoUrl": "https://dpromstk2000-lab.github.io/dpro-home-nursing-line/",
+    "demoUrl": "https://dpromstk2000-lab.github.io/dpro-home-nursing-line/demo-guide.html",
     "status": "AVAILABLE",
     "verificationStatus": "VERIFIED",
     "tagline": "新規相談・LINE連携から家族連絡・承認までを、一つの流れにつなぐ。",
@@ -1029,7 +1069,7 @@
     "lpUrl": "lp-careplan.html",
     "flyerHtml": "flyer-careplan.html",
     "flyerPdf": "flyer-careplan.pdf",
-    "demoUrl": "https://dpromstk2000-lab.github.io/dpro-careplan-line/owner.html?v=CAREPLAN-10",
+    "demoUrl": "https://dpromstk2000-lab.github.io/dpro-careplan-line/demo-guide.html",
     "status": "AVAILABLE",
     "verificationStatus": "VERIFIED",
     "tagline": "新規相談・利用者台帳からケアプラン・モニタリング・期限管理までを、一つの流れにつなぐ。",
@@ -1057,7 +1097,7 @@
     "lpUrl": "lp-welfare.html",
     "flyerHtml": "flyer-welfare.html",
     "flyerPdf": "flyer-welfare.pdf",
-    "demoUrl": "https://dpromstk2000-lab.github.io/dpro-welfare-equipment-line/member.html?demo=1&auto=1&office_code=dpro_welfare_equipment_demo&v=WELFARE-EQUIP-10-R1",
+    "demoUrl": "https://dpromstk2000-lab.github.io/dpro-welfare-equipment-line/demo-guide.html",
     "status": "AVAILABLE",
     "verificationStatus": "VERIFIED",
     "tagline": "相談・利用者管理から契約・配送・モニタリング・請求までを、一つの流れにつなぐ。",
@@ -1085,7 +1125,7 @@
     "lpUrl": "lp-yakiniku.html",
     "flyerHtml": "flyer-yakiniku.html",
     "flyerPdf": "flyer-yakiniku.pdf",
-    "demoUrl": "https://dpromstk2000-lab.github.io/dpro-yakiniku-line-liff/index.html?demo=1",
+    "demoUrl": "https://dpromstk2000-lab.github.io/dpro-yakiniku-line-liff/demo-guide.html",
     "status": "AVAILABLE",
     "verificationStatus": "VERIFIED",
     "tagline": "日時予約・順番受付から着席・会計・卓回転までを、一つの流れにつなぐ。",
@@ -1113,7 +1153,7 @@
     "lpUrl": "lp-houkago.html",
     "flyerHtml": "flyer-houkago.html",
     "flyerPdf": "flyer-houkago.pdf",
-    "demoUrl": "https://dpromstk2000-lab.github.io/dpro-houkago-dayservice-line/index.html?demo=1",
+    "demoUrl": "https://dpromstk2000-lab.github.io/dpro-houkago-dayservice-line/demo-guide.html",
     "status": "AVAILABLE",
     "verificationStatus": "VERIFIED",
     "tagline": "保護者LINE連絡から支援プログラム公開までを、一つの流れにつなぐ。",
@@ -1141,7 +1181,7 @@
     "lpUrl": "lp-gakudo.html",
     "flyerHtml": "flyer-gakudo.html",
     "flyerPdf": "flyer-gakudo.pdf",
-    "demoUrl": "https://dpromstk2000-lab.github.io/dpro-gakudo-line/?v=GAKUDO-10",
+    "demoUrl": "https://dpromstk2000-lab.github.io/dpro-gakudo-line/demo-guide.html",
     "status": "AVAILABLE",
     "verificationStatus": "VERIFIED",
     "tagline": "欠席・利用・お迎え連絡から安全警告までを、一つの流れにつなぐ。",
@@ -1170,7 +1210,7 @@
     "lpUrl": "lp-pet-salon.html",
     "flyerHtml": "flyer-pet-salon.html",
     "flyerPdf": "flyer-pet-salon.pdf",
-    "demoUrl": "https://dpromstk2000-lab.github.io/dpro-pet-salon-liff/member.html?phone=08000002004&v=petsalon-photo-1c",
+    "demoUrl": "https://dpromstk2000-lab.github.io/dpro-pet-salon-liff/demo-guide.html",
     "status": "AVAILABLE",
     "verificationStatus": "VERIFIED",
     "tagline": "LINE予約からiPad画面までを、一つの流れにつなぐ。",
@@ -1198,7 +1238,7 @@
     "lpUrl": "lp-btype.html",
     "flyerHtml": "flyer-btype.html",
     "flyerPdf": "flyer-btype.pdf",
-    "demoUrl": "https://dpromstk2000-lab.github.io/dpro-btype-line-liff/",
+    "demoUrl": "https://dpromstk2000-lab.github.io/dpro-btype-line-liff/demo-guide.html",
     "status": "AVAILABLE",
     "verificationStatus": "VERIFIED",
     "tagline": "利用相談・見学・体験から出欠・支援記録・個別支援計画までを、一つの流れにつなぐ。",
@@ -1226,7 +1266,7 @@
     "lpUrl": "lp-car-service.html",
     "flyerHtml": "flyer-car-service.html",
     "flyerPdf": "flyer-car-service.pdf",
-    "demoUrl": "https://dpromstk2000-lab.github.io/line-shaken-liff/index-product-demo.html?v=step-ksh-next-10",
+    "demoUrl": "https://dpromstk2000-lab.github.io/line-shaken-liff/demo-guide.html",
     "status": "AVAILABLE",
     "verificationStatus": "VERIFIED",
     "tagline": "LINE・電話・店頭受付から整備進捗・履歴・次回フォローまでを、一つの流れにつなぐ。",
@@ -1254,7 +1294,7 @@
     "lpUrl": "lp-green-rental.html",
     "flyerHtml": "flyer-green-rental.html",
     "flyerPdf": "flyer-green-rental.pdf",
-    "demoUrl": "https://dpromstk2000-lab.github.io/dpro-green-rental-line/",
+    "demoUrl": "https://dpromstk2000-lab.github.io/dpro-green-rental-line/demo-guide.html",
     "status": "AVAILABLE",
     "verificationStatus": "VERIFIED",
     "tagline": "写真相談・現地確認から交換・回収・養生までを、一つの流れにつなぐ。",
@@ -1282,7 +1322,7 @@
     "lpUrl": "lp-homecare.html",
     "flyerHtml": "flyer-homecare.html",
     "flyerPdf": "flyer-homecare.pdf",
-    "demoUrl": "https://dpromstk2000-lab.github.io/dpro-homecare-family-line/",
+    "demoUrl": "https://dpromstk2000-lab.github.io/dpro-homecare-family-line/demo-guide.html",
     "status": "AVAILABLE",
     "verificationStatus": "VERIFIED",
     "tagline": "本人・家族LINE連携から訪問予定・スタッフ記録・家族報告までを、一つの流れにつなぐ。",
@@ -1310,7 +1350,7 @@
     "lpUrl": "lp-izakaya.html",
     "flyerHtml": "flyer-izakaya.html",
     "flyerPdf": "flyer-izakaya.pdf",
-    "demoUrl": "https://izakaya-liff-demo.pages.dev/",
+    "demoUrl": "https://izakaya-liff-demo.pages.dev/demo-guide.html",
     "status": "AVAILABLE",
     "verificationStatus": "VERIFIED",
     "tagline": "LINE仮予約から営業日設定までを、一つの流れにつなぐ。",
@@ -1338,7 +1378,7 @@
     "lpUrl": "lp-sharoushi.html",
     "flyerHtml": "flyer-sharoushi.html",
     "flyerPdf": "flyer-sharoushi.pdf",
-    "demoUrl": "https://dpromstk2000-lab.github.io/dpro-consult-line/index.html?company_code=SR-COMPANY-001&phone=090-9999-1111&v=consult-15",
+    "demoUrl": "https://dpromstk2000-lab.github.io/dpro-consult-line/demo-guide.html",
     "status": "AVAILABLE",
     "verificationStatus": "VERIFIED",
     "tagline": "相談受付から顧問先対応・手続進捗・期限管理までを、一つの流れにつなぐ。",
@@ -1366,7 +1406,7 @@
     "lpUrl": "lp-sodan.html",
     "flyerHtml": "flyer-sodan.html",
     "flyerPdf": "flyer-sodan.pdf",
-    "demoUrl": "https://dpromstk2000-lab.github.io/dpro-sodan-line/",
+    "demoUrl": "https://dpromstk2000-lab.github.io/dpro-sodan-line/demo-guide.html",
     "status": "AVAILABLE",
     "verificationStatus": "VERIFIED",
     "tagline": "初回相談・面談から計画・モニタリング・書類管理までを、一つの流れにつなぐ。",
@@ -1394,7 +1434,7 @@
     "lpUrl": "lp-welfare-shuttle.html",
     "flyerHtml": "flyer-welfare-shuttle.html",
     "flyerPdf": "flyer-welfare-shuttle.pdf",
-    "demoUrl": "https://dpromstk2000-lab.github.io/dpro-welfare-shuttle-line/?demo=1",
+    "demoUrl": "https://dpromstk2000-lab.github.io/dpro-welfare-shuttle-line/demo-guide.html",
     "status": "AVAILABLE",
     "verificationStatus": "VERIFIED",
     "tagline": "利用開始ポータルから変更依頼・履歴管理までを、一つの流れにつなぐ。",
@@ -1422,7 +1462,7 @@
     "lpUrl": "lp-salesnavi.html",
     "flyerHtml": "flyer-salesnavi.html",
     "flyerPdf": "flyer-salesnavi.pdf",
-    "demoUrl": "https://dpro-salesnavi-demo.pages.dev",
+    "demoUrl": "https://dpro-salesnavi-demo.pages.dev/demo-guide.html",
     "status": "AVAILABLE",
     "verificationStatus": "VERIFIED",
     "tagline": "営業先の検索から訪問ルート・営業結果・再訪管理までを、一つの流れにつなぐ。",
@@ -1440,201 +1480,50 @@
     ],
     "previewAsset": "flyer-salesnavi.html",
     "experienceScreens": []
+  },
+  {
+    "code": "VISIT_AHAKI",
+    "assetSlug": "visit-ahaki",
+    "name": "訪問マッサージ・鍼灸",
+    "category": "medical_pet",
+    "systemPage": "systems/visit-ahaki.html",
+    "lpUrl": "systems/visit-ahaki.html",
+    "flyerHtml": "systems/visit-ahaki.html#documents",
+    "flyerPdf": "https://dpromstk2000-lab.github.io/dpro-visit-ahaki/DPRO_VISIT_AHAKI_A4_FLYER_V1.0_20260902.pdf",
+    "demoUrl": "https://dpromstk2000-lab.github.io/dpro-visit-ahaki/demo.html",
+    "status": "AVAILABLE",
+    "verificationStatus": "VERIFIED",
+    "tagline": "毎日の訪問予定・患者・施術者・施術記録・家族連絡を、一つの流れで回す。",
+    "summary": "訪問マッサージ・訪問鍼灸向けに、新規問い合わせ、患者情報、訪問予定、施術者割当、継続予約、施術記録、家族連絡、変更・キャンセル、担当引継ぎを役割別権限でまとめるDPROシステム。",
+    "targets": [
+      "訪問マッサージ事業所",
+      "訪問鍼灸事業所",
+      "在宅施術事業者"
+    ],
+    "features": [
+      "問い合わせ・患者情報",
+      "訪問予定・継続予約",
+      "施術者割当・訪問ルート",
+      "施術記録・担当引継ぎ",
+      "家族連絡・変更受付",
+      "権限分離・監査・Demo/Production Guard"
+    ],
+    "previewAsset": "systems/visit-ahaki.html",
+    "experienceScreens": []
   }
-].map((item) => Object.freeze({
-    ...item,
-    targets: Object.freeze(item.targets.slice()),
-    features: Object.freeze(item.features.slice()),
-    experienceScreens: Object.freeze(item.experienceScreens.slice())
-  })));
+]);
+  const byCode = new Map(systems.map(item => [String(item.code || "").toUpperCase(), item]));
 
-  const byCode = new Map(systems.map((item) => [item.code, item]));
-
-  function normalize(value) {
-    return String(value == null ? "" : value).trim().toUpperCase();
-  }
-
-  const api = Object.freeze({
+  global.DPROSystemsData = Object.freeze({
     categories,
     systems,
     systemCount: systems.length,
     getByCode(code) {
-      return byCode.get(normalize(code)) || null;
+      return byCode.get(String(code == null ? "" : code).trim().toUpperCase()) || null;
     },
     getByCategory(category) {
       const key = String(category || "").trim();
-      return systems.filter((item) => item.category === key);
+      return systems.filter(item => item.category === key);
     }
   });
-
-  global.DPROSystemsData = api;
-  if (typeof module !== "undefined" && module.exports) module.exports = api;
 })(typeof window !== "undefined" ? window : globalThis);
-
-(() => {
-  'use strict';
-function addMedical(global) {
-    const base = global.DPROSystemsData;
-    if (!base || !Array.isArray(base.systems)) {
-      console.error("DPRO MEDICAL addon: locked baseline unavailable.");
-      return false;
-    }
-
-    if (!(typeof base.getByCode === "function" && base.getByCode("MEDICAL"))) {
-      const medical = Object.freeze({
-        code: "MEDICAL",
-        assetSlug: "medical",
-        name: "DPRO MEDICAL",
-        category: "medical_pet",
-        systemPage: "systems/medical.html",
-        lpUrl: "systems/medical.html",
-        flyerHtml: "flyer-medical.html",
-        flyerPdf: "flyer-medical.pdf",
-        demoUrl: "https://dpromstk2000-lab.github.io/dpro-medical-standard/medical-public-demo.html",
-        status: "AVAILABLE",
-        verificationStatus: "VERIFIED",
-        tagline: "予約・WEB問診・来院受付・院内進行・医院管理・医院HPまでを、ひとつの情報基盤につなぐ。",
-        summary: "医療機関向けに、患者スマホ、予約、WEB問診、受付、待ち状況、院内進行、医院管理PC、受付iPad、スタッフ画面、医院HPをひとつの流れでまとめるDPROシステム。",
-        targets: Object.freeze([
-          "医療機関","一般・内科","眼科","小児科","整形外科","美容医療","婦人科・女性医療"
-        ]),
-        features: Object.freeze([
-          "予約・当日受付","WEB問診","院内進行・待ち状況","患者スマホ","医院管理PC・受付iPad","医院HP・6つの診療パターン"
-        ]),
-        previewAsset: "systems/medical.html",
-        experienceScreens: Object.freeze([])
-      });
-
-      /* DPRO LIVE DEMO ALL49 CENTRAL OVERRIDES START */
-      const liveDemoOverrides = Object.freeze({
-        "BAKERY": "https://dpromstk2000-lab.github.io/bakery-line-system/demo-guide.html",
-        "BTYPE": "https://dpromstk2000-lab.github.io/dpro-btype-line-liff/demo-guide.html",
-        "BUYBACK": "https://dpromstk2000-lab.github.io/dpro-buyback-line/demo-guide.html",
-        "CAKE": "https://dpromstk2000-lab.github.io/dpro-cake-line-liff/demo-guide.html",
-        "CAR": "https://dpromstk2000-lab.github.io/dpro-used-car-line-liff/demo-guide.html",
-        "CAREPLAN": "https://dpromstk2000-lab.github.io/dpro-careplan-line/demo-guide.html",
-        "CARETAXI": "https://dpromstk2000-lab.github.io/dpro-caretaxi-line/demo-guide.html",
-        "CHOSASHI": "https://dpromstk2000-lab.github.io/dpro-chosashi-line-liff/demo-guide.html",
-        "CONSULT": "https://dpromstk2000-lab.github.io/dpro-consult-line/demo-guide.html",
-        "COSMETICS": "https://dpromstk2000-lab.github.io/dpro-cosmetics-line-liff/demo-guide.html",
-        "DAYCARE": "https://dpromstk2000-lab.github.io/dpro-dayservice-line/demo-guide.html",
-        "DENTAL": "https://dpromstk2000-lab.github.io/DEGITAL-QR/demo-guide.html",
-        "DISPOSAL": "https://dpromstk2000-lab.github.io/dpro-disposal-line-liff/demo-guide.html",
-        "ESTATE": "https://dpromstk2000-lab.github.io/dpro-estate-line-liff/demo-guide.html",
-        "ESTHE": "https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/demo-guide.html",
-        "EYE": "https://dpromstk2000-lab.github.io/dpro-eye-salon-line/demo-guide.html",
-        "FLOWER": "https://dpromstk2000-lab.github.io/dpro-flower-line-liff/demo-guide.html",
-        "FUNERAL": "https://dpromstk2000-lab.github.io/dpro-funeral-line/demo-guide.html",
-        "GAKUDO": "https://dpromstk2000-lab.github.io/dpro-gakudo-line/demo-guide.html",
-        "GREEN": "https://dpromstk2000-lab.github.io/dpro-green-rental-line/demo-guide.html",
-        "GYM": "https://dpromstk2000-lab.github.io/liff-gym-demo/demo-guide.html",
-        "GYOSEI": "https://dpromstk2000-lab.github.io/dpro-gyosei-permit-line/demo-guide.html",
-        "HAISHOKU": "https://dpromstk2000-lab.github.io/dpro-senior-meal-delivery-line/demo-guide.html",
-        "HOMECARE": "https://dpromstk2000-lab.github.io/dpro-homecare-family-line/demo-guide.html",
-        "HOMENURSING": "https://dpromstk2000-lab.github.io/dpro-home-nursing-line/demo-guide.html",
-        "HOUKAGO": "https://dpromstk2000-lab.github.io/dpro-houkago-dayservice-line/demo-guide.html",
-        "HOUSEKEEP": "https://dpromstk2000-lab.github.io/dpro-housekeep-line-liff/demo-guide.html",
-        "IZAKAYA": "https://izakaya-liff-demo.pages.dev/demo-guide.html",
-        "KSH": "https://dpromstk2000-lab.github.io/line-shaken-liff/demo-guide.html",
-        "PETSALON": "https://dpromstk2000-lab.github.io/dpro-pet-salon-liff/demo-guide.html",
-        "PHOTO": "https://dpromstk2000-lab.github.io/dpro-photo-studio-line/demo-guide.html",
-        "REFORM": "https://dpromstk2000-lab.github.io/dpro-reform-line-liff/demo-guide.html",
-        "REPAIR": "https://dpromstk2000-lab.github.io/dpro-repair-line-liff/demo-guide.html",
-        "SALESNAVI": "https://dpro-salesnavi-demo.pages.dev/demo-guide.html",
-        "SALON": "https://dpromstk2000-lab.github.io/liff-salon-reserve/demo-guide.html",
-        "SCHOOL": "https://dpromstk2000-lab.github.io/dpro-school-line/demo-guide.html",
-        "SEITAI": "https://dpromstk2000-lab.github.io/dpro-seitai-line/demo-guide.html",
-        "SHIHO": "https://dpromstk2000-lab.github.io/dpro-shiho-inheritance-line-liff/owner.html?demo=1",
-        "SHUTTLE": "https://dpromstk2000-lab.github.io/dpro-welfare-shuttle-line/demo-guide.html",
-        "SODAN": "https://dpromstk2000-lab.github.io/dpro-sodan-line/demo-guide.html",
-        "STAY": "https://dpromstk2000-lab.github.io/dpro-stay-line/demo-guide.html",
-        "TAKEOUT": "https://dpromstk2000-lab.github.io/dpro-takeout-line-liff/demo-guide.html",
-        "TAX": "https://dpromstk2000-lab.github.io/dpro-tax-accounting-line-liff/demo-guide.html",
-        "VET": "https://dpromstk2000-lab.github.io/DPRO-VET-QR/demo-guide.html",
-        "WELFARE": "https://dpromstk2000-lab.github.io/dpro-welfare-equipment-line/demo-guide.html",
-        "YAKINIKU": "https://dpromstk2000-lab.github.io/dpro-yakiniku-line-liff/demo-guide.html",
-        "YOGA": "https://dpromstk2000-lab.github.io/liff-yoga-reserve/demo-guide.html"
-      });
-      const sourceCodes = new Set(base.systems.map(item => String((item && item.code) || "").toUpperCase()));
-      const missingOverrideCodes = Object.keys(liveDemoOverrides).filter(code => !sourceCodes.has(code));
-      if (missingOverrideCodes.length) {
-        throw new Error("DPRO LIVE DEMO override codes missing from locked CORE: " + missingOverrideCodes.join(", "));
-      }
-      const systems = base.systems.map((item) => {
-        const code = String((item && item.code) || "").toUpperCase();
-        const overrideDemoUrl = liveDemoOverrides[code];
-        return overrideDemoUrl ? Object.freeze({ ...item, demoUrl: overrideDemoUrl }) : item;
-      });
-      /* DPRO LIVE DEMO ALL49 CENTRAL OVERRIDES END */
-      const dentalIndex = systems.findIndex(item => item && item.code === "DENTAL");
-      systems.splice(dentalIndex >= 0 ? dentalIndex + 1 : systems.length, 0, medical);
-
-      const frozenSystems = Object.freeze(systems);
-      const byCode = new Map(frozenSystems.map(item => [String(item.code || "").toUpperCase(), item]));
-
-      global.DPROSystemsData = Object.freeze({
-        categories: base.categories,
-        systems: frozenSystems,
-        systemCount: frozenSystems.length,
-        getByCode(code) {
-          return byCode.get(String(code == null ? "" : code).trim().toUpperCase()) || null;
-        },
-        getByCategory(category) {
-          const key = String(category || "").trim();
-          return frozenSystems.filter(item => item.category === key);
-        }
-      });
-    }
-
-    
-    return global.DPROSystemsData?.systems?.length === 51;
-  }
-  if (!addMedical(window)) throw new Error('DPRO MEDICAL canonical add failed');
-})();
-
-(() => {
-  'use strict';
-function addVisitAhaki(global) {
-    const base = global.DPROSystemsData;
-    if (!base || !Array.isArray(base.systems)) {
-      console.error("DPRO VISIT AHAKI addon: canonical 51-product base unavailable.");
-      
-      return false;
-    }
-    const exists = typeof base.getByCode === "function" && base.getByCode("VISIT_AHAKI");
-    if (!exists) {
-      const item = Object.freeze({
-        code: "VISIT_AHAKI",
-        assetSlug: "visit-ahaki",
-        name: "訪問マッサージ・鍼灸",
-        category: "medical_pet",
-        systemPage: "systems/visit-ahaki.html",
-        lpUrl: "systems/visit-ahaki.html",
-        flyerHtml: "systems/visit-ahaki.html#documents",
-        flyerPdf: "https://dpromstk2000-lab.github.io/dpro-visit-ahaki/DPRO_VISIT_AHAKI_A4_FLYER_V1.0_20260902.pdf",
-        demoUrl: "https://dpromstk2000-lab.github.io/dpro-visit-ahaki/demo.html",
-        status: "AVAILABLE",
-        verificationStatus: "VERIFIED",
-        tagline: "毎日の訪問予定・患者・施術者・施術記録・家族連絡を、一つの流れで回す。",
-        summary: "訪問マッサージ・訪問鍼灸向けに、新規問い合わせ、患者情報、訪問予定、施術者割当、継続予約、施術記録、家族連絡、変更・キャンセル、担当引継ぎを役割別権限でまとめるDPROシステム。",
-        targets: Object.freeze(["訪問マッサージ事業所","訪問鍼灸事業所","在宅施術事業者"]),
-        features: Object.freeze(["問い合わせ・患者情報","訪問予定・継続予約","施術者割当・訪問ルート","施術記録・担当引継ぎ","家族連絡・変更受付","権限分離・監査・Demo/Production Guard"]),
-        previewAsset: "systems/visit-ahaki.html",
-        experienceScreens: Object.freeze([])
-      });
-      const systems = [...base.systems, item];
-      const frozen = Object.freeze(systems);
-      const byCode = new Map(frozen.map(x => [String(x.code || "").toUpperCase(), x]));
-      global.DPROSystemsData = Object.freeze({
-        categories: base.categories,
-        systems: frozen,
-        systemCount: frozen.length,
-        getByCode(code) { return byCode.get(String(code == null ? "" : code).trim().toUpperCase()) || null; },
-        getByCategory(category) { const key = String(category || "").trim(); return frozen.filter(x => x.category === key); }
-      });
-    }
-    
-    return global.DPROSystemsData?.systems?.length === 52;
-  }
-  if (!addVisitAhaki(window)) throw new Error('DPRO VISIT AHAKI canonical add failed');
-})();
