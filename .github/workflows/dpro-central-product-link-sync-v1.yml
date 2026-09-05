@@ -1,0 +1,172 @@
+name: DPRO CENTRAL Product Link Sync V1
+
+on:
+  push:
+    paths:
+      - '.github/workflows/dpro-central-product-link-sync-v1.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  central-link-sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Apply canonical CENTRAL links
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+
+          def replace_record_field(text, code, field, new_value):
+              pattern = re.compile(
+                  r'(\{\s*"code":\s*"' + re.escape(code) + r'".*?\n\s*\})',
+                  re.S
+              )
+              match = pattern.search(text)
+              if not match:
+                  raise SystemExit(f"{code}: record not found")
+              block = match.group(1)
+              field_pattern = re.compile(
+                  r'("' + re.escape(field) + r'"\s*:\s*)"[^"]*"'
+              )
+              new_block, count = field_pattern.subn(
+                  lambda m: m.group(1) + '"' + new_value + '"',
+                  block,
+                  count=1
+              )
+              if count != 1:
+                  raise SystemExit(f"{code}.{field}: expected exactly 1 field, got {count}")
+              return text[:match.start(1)] + new_block + text[match.end(1):]
+
+          # 1) Canonical 54 catalog links only. Never add a 55th product.
+          data_path = Path("systems-data.js")
+          data = data_path.read_text(encoding="utf-8")
+
+          before_count = data.count('"code":')
+          if before_count != 54:
+              raise SystemExit(f"BLOCK: catalog must be exactly 54 before edit; got {before_count}")
+
+          protected_53 = '"code": "LANDSCAPE_EXTERIOR"' in data
+          protected_54 = '"code": "DPRO_PEST_ENV"' in data
+          if not (protected_53 and protected_54):
+              raise SystemExit("BLOCK: protected #53/#54 records are missing")
+
+          data = replace_record_field(
+              data, "MEDICAL", "lpUrl",
+              "https://dpromstk2000-lab.github.io/dpro-medical-standard/lp.html"
+          )
+          data = replace_record_field(
+              data, "MEDICAL", "flyerHtml",
+              "https://dpromstk2000-lab.github.io/dpro-medical-standard/DPRO_MEDICAL_A4_FLYER_MASTER_V2.0.html"
+          )
+          data = replace_record_field(
+              data, "MEDICAL", "flyerPdf",
+              "https://dpromstk2000-lab.github.io/dpro-medical-standard/DPRO_MEDICAL_A4_FLYER_MASTER_V2.0.pdf"
+          )
+          data = replace_record_field(
+              data, "VISIT_AHAKI", "lpUrl",
+              "https://dpromstk2000-lab.github.io/dpro-visit-ahaki/lp.html"
+          )
+
+          after_count = data.count('"code":')
+          if after_count != 54:
+              raise SystemExit(f"BLOCK: catalog count changed; got {after_count}")
+          if '"code": "RESERVATION"' in data:
+              raise SystemExit("BLOCK: DPRO予約システム must not become product #55")
+
+          data_path.write_text(data, encoding="utf-8")
+
+          # 2) MEDICAL central detail page: use product-repo canonical A4 MASTER V2.0.
+          medical_path = Path("systems/medical.html")
+          medical_page = medical_path.read_text(encoding="utf-8")
+          old_a4 = 'href="../flyer-medical.html"'
+          new_a4 = (
+              'href="https://dpromstk2000-lab.github.io/'
+              'dpro-medical-standard/DPRO_MEDICAL_A4_FLYER_MASTER_V2.0.html"'
+          )
+          old_count = medical_page.count(old_a4)
+          if old_count == 1:
+              medical_page = medical_page.replace(old_a4, new_a4, 1)
+          elif new_a4 not in medical_page:
+              raise SystemExit(
+                  f"BLOCK: MEDICAL A4 link baseline drift; old match count={old_count}"
+              )
+          medical_path.write_text(medical_page, encoding="utf-8")
+
+          # 3) Product Site home: add one cross-industry reservation CTA.
+          #    This is a capability route, NOT a product record.
+          index_path = Path("index.html")
+          index = index_path.read_text(encoding="utf-8")
+          reservation_url = "https://dpro-shop.com/reservation"
+          reservation_label = "DPRO予約システムを詳しく見る"
+
+          if reservation_label not in index:
+              web_article = (
+                  '<article class="p36-flow-card"><b>WEB ENTRY</b>'
+                  '<strong>WEB予約・問い合わせ</strong>'
+                  '<p>検索・情報確認から予約・問い合わせへ。'
+                  '連携内容は構成により異なります。</p></article>'
+              )
+              marker_pos = index.find(web_article)
+              if marker_pos < 0:
+                  raise SystemExit("BLOCK: reservation flow baseline drift; WEB ENTRY not found")
+
+              flow_close = index.find("\n </div>", marker_pos + len(web_article))
+              if flow_close < 0:
+                  raise SystemExit("BLOCK: reservation flow closing div not found")
+              insert_at = flow_close + len("\n </div>")
+
+              cta = (
+                  '\n <div class="p36-actions" '
+                  'style="justify-content:center;margin-top:24px">'
+                  f'<a class="p36-btn p36-btn--official" href="{reservation_url}" '
+                  'target="_blank" rel="noopener">'
+                  f'{reservation_label} ↗</a></div>'
+              )
+              index = index[:insert_at] + cta + index[insert_at:]
+
+          index_path.write_text(index, encoding="utf-8")
+
+          # FINAL QA
+          checks = {
+              "catalog_exactly_54": data.count('"code":') == 54,
+              "reservation_not_55": '"code": "RESERVATION"' not in data,
+              "protected_53": '"code": "LANDSCAPE_EXTERIOR"' in data,
+              "protected_54": '"code": "DPRO_PEST_ENV"' in data,
+              "medical_lp": "https://dpromstk2000-lab.github.io/dpro-medical-standard/lp.html" in data,
+              "medical_a4_html": "DPRO_MEDICAL_A4_FLYER_MASTER_V2.0.html" in data,
+              "medical_a4_pdf": "DPRO_MEDICAL_A4_FLYER_MASTER_V2.0.pdf" in data,
+              "visit_ahaki_lp": "https://dpromstk2000-lab.github.io/dpro-visit-ahaki/lp.html" in data,
+              "reservation_cta": reservation_url in index and reservation_label in index,
+              "medical_detail_a4": "DPRO_MEDICAL_A4_FLYER_MASTER_V2.0.html" in medical_page,
+          }
+          print("CENTRAL QA:", checks)
+          failed = [k for k, v in checks.items() if not v]
+          if failed:
+              raise SystemExit("QA FAILED: " + ", ".join(failed))
+          PY
+
+      - name: Show protected diff
+        run: |
+          git diff -- systems-data.js systems/medical.html index.html
+
+      - name: Commit CENTRAL sync
+        shell: bash
+        run: |
+          if git diff --quiet -- systems-data.js systems/medical.html index.html; then
+            echo "No changes required"
+            exit 0
+          fi
+          git config user.name "DPRO CENTRAL"
+          git config user.email "actions@users.noreply.github.com"
+          git add systems-data.js systems/medical.html index.html
+          git commit -m "Sync MEDICAL VISIT links and reservation entry"
+          git push origin HEAD:main
