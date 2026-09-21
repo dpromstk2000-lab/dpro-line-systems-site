@@ -1,0 +1,86 @@
+name: DPRO Clinic Shuttle Official Link Hotfix R8
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/clinic-shuttle-official-link-hotfix-r8.yml"
+      - ".github/workflows/clinic-shuttle-official-link-hotfix-r8.py"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: dpro-clinic-shuttle-official-link-hotfix-r8
+  cancel-in-progress: false
+
+jobs:
+  official-link-hotfix-r8:
+    runs-on: ubuntu-latest
+    timeout-minutes: 16
+    steps:
+      - name: Checkout PRODUCT
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 3
+
+      - name: Guard PRODUCT SYSTEM FINAL LOCK and OFFICIAL
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD^)" = "7bfb6ae44e53aeb470664aeec2991752ae5c3cbc" || {
+            echo "PRODUCT parent drift"; exit 1;
+          }
+          SYSTEM_HEAD="$(git ls-remote https://github.com/dpromstk2000-lab/dpro-clinic-shuttle-line.git refs/heads/main | awk '{print $1}')"
+          test "$SYSTEM_HEAD" = "3fc09f4b5c6781d6038dc280de5c58752ce60b51" || {
+            echo "SYSTEM FINAL LOCK drift: $SYSTEM_HEAD"; exit 1;
+          }
+          OFFICIAL_HEAD="$(git ls-remote https://github.com/dpromstk2000-lab/dpro-shop-official-site.git refs/heads/main | awk '{print $1}')"
+          test "$OFFICIAL_HEAD" = "b92a4d6444375aefc481db267d626c5a712164a5" || {
+            echo "OFFICIAL head drift: $OFFICIAL_HEAD"; exit 1;
+          }
+
+      - name: Patch CLINIC_SHUTTLE official slug
+        run: python .github/workflows/clinic-shuttle-official-link-hotfix-r8.py patch
+
+      - name: Commit official link hotfix
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add product-v3.6.js assets/clinic-shuttle-next/R8_OFFICIAL_LINK_FIX_SOURCE.json
+          git commit -m "Fix clinic shuttle official product link"
+          git push origin main
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install browser QA
+        run: |
+          python -m pip install --upgrade pip
+          pip install playwright
+          python -m playwright install --with-deps chromium
+
+      - name: Verify catalog proposal and detail official links
+        run: python .github/workflows/clinic-shuttle-official-link-hotfix-r8.py qa
+
+      - name: Commit R8 link QA evidence
+        shell: bash
+        run: |
+          set -euo pipefail
+          git add assets/clinic-shuttle-next
+          git commit -m "Verify clinic shuttle official links R8"
+          git push origin main
+
+      - name: Remove R8 one-shot workflow
+        shell: bash
+        run: |
+          set -euo pipefail
+          git pull --rebase origin main
+          git rm -f .github/workflows/clinic-shuttle-official-link-hotfix-r8.yml .github/workflows/clinic-shuttle-official-link-hotfix-r8.py
+          git commit -m "Remove clinic shuttle R8 link workflow"
+          git push origin main
