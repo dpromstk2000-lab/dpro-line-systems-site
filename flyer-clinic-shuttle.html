@@ -46,7 +46,21 @@ h1{margin:2.3mm 0 2mm;font-size:8.1mm;line-height:1.1;letter-spacing:-.04em}
 .action-copy{min-width:0;align-self:stretch;display:flex;flex-direction:column;justify-content:center}.action-kicker{display:flex;align-items:center;gap:1.1mm;margin-bottom:.8mm;color:#0b7557;font-size:1.55mm;font-weight:900}.action-num{width:4.9mm;height:4.9mm;border-radius:50%;display:grid;place-items:center;background:var(--deep);color:#fff;font-size:1.65mm}.action-card h4{font-size:2.95mm;margin:0 0 .8mm}.action-card p{font-size:1.53mm;line-height:1.28;margin:0;color:var(--muted);font-weight:700}.official-web{margin-top:auto;padding-top:1.1mm;border-top:1px solid #cfe3da}.official-web .ow-label{font-size:1.35mm;line-height:1.15;color:#5a7b70;font-weight:900;letter-spacing:.035em;margin-bottom:.7mm}.official-web .ow-url{display:flex;align-items:center;min-height:7.8mm;padding:.45mm 1.4mm;border:1px solid #9fd9c1;border-radius:2.2mm;background:#ecfaf4;color:#0b5844;font-size:3.95mm;line-height:1;font-weight:950;letter-spacing:-.045em;white-space:nowrap}
 .action-qr{text-align:center}.action-qr img{width:17.8mm;height:17.8mm;display:block;margin:0 auto .55mm}.action-qr .qlabel{font-size:2.15mm;font-weight:900;color:#123c31}
 .footer{position:absolute;left:0;right:0;bottom:0;height:8.6mm;background:var(--deep);display:flex;align-items:center;justify-content:space-between;padding:0 10mm;color:#fff}.footer .fbrand{display:flex;align-items:center;gap:3mm;font-size:2.35mm;font-weight:900}.footer .shop{color:#68e7b8}.footer .note{font-size:1.48mm;color:#b8d2c9;text-align:right;line-height:1.22}
-@page{size:A4 portrait;margin:0}@media print{html,body{background:#fff}.toolbar{display:none!important}.sheet{margin:0;box-shadow:none}}@media screen and (max-width:900px){.sheet{transform-origin:top center;transform:scale(.72);margin-bottom:-76mm}}
+@page{size:A4 portrait;margin:0}
+@media print{
+  html,body{background:#fff}
+  .toolbar{display:none!important}
+  .sheet{margin:0;box-shadow:none;transform:none!important;zoom:1!important}
+}
+@media screen and (max-width:900px){
+  .sheet{transform:none;zoom:.72;margin:12px auto}
+}
+@media screen and (max-width:600px){
+  .sheet{zoom:.50}
+}
+@media screen and (max-width:400px){
+  .sheet{zoom:.44}
+}
 </style>
 </head>
 <body>
