@@ -42,7 +42,7 @@
   }
 
   function fillCounts(){
-    const count = DATA().systems.length || 54;
+    const count = DATA().systems.length || 55;
     document.querySelectorAll('[data-p36-count]').forEach(node => node.textContent = String(count));
     document.querySelectorAll('[data-p36-year]').forEach(node => node.textContent = String(new Date().getFullYear()));
   }
@@ -81,7 +81,7 @@
     script.type = 'application/ld+json';
     script.id = 'p36-itemlist-jsonld';
     script.textContent = JSON.stringify({
-      '@context':'https://schema.org', '@type':'ItemList', name:'DPRO LINE SYSTEMS 54製品',
+      '@context':'https://schema.org', '@type':'ItemList', name:'DPRO LINE SYSTEMS 55製品',
       numberOfItems: systems.length,
       itemListElement: systems.map((s,i)=>({'@type':'ListItem', position:i+1, name:s.name, url:new URL(s.systemPage, /^https?:$/.test(location.protocol) ? location.href : 'https://dpromstk2000-lab.github.io/dpro-line-systems-site/').href}))
     });
