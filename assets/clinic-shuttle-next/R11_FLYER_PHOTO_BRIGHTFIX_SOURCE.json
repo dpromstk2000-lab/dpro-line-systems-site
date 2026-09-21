@@ -1,0 +1,10 @@
+{
+  "stage": "R11_FLYER_PHOTO_BRIGHTFIX_SOURCE",
+  "pass": true,
+  "changes": [
+    "hero photo replaced with bright Japanese clinic image",
+    "overall tone brightened",
+    "bottom clipping reduced"
+  ],
+  "image": "assets/clinic-shuttle-next/clinic-care-bright.png"
+}

@@ -1,0 +1,11 @@
+{
+  "stage": "R11_FLYER_PDF_QA",
+  "pass": true,
+  "pages": 1,
+  "bytes": 2939454,
+  "qrDecoded": [
+    "https://dpro-shop.com/systems/clinic-shuttle",
+    "https://dpromstk2000-lab.github.io/dpro-clinic-shuttle-line/",
+    "https://lin.ee/YxJGXV6D"
+  ]
+}
