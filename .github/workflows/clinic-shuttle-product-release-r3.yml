@@ -1,0 +1,92 @@
+name: DPRO Clinic Shuttle Product Release R3
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/clinic-shuttle-product-release-r3.yml'
+      - '.github/workflows/clinic-shuttle-product-release-r3.py'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: clinic-shuttle-product-release-r3
+  cancel-in-progress: false
+
+jobs:
+  product-release:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - name: Checkout product site
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Guard SYSTEM FINAL LOCK
+        shell: bash
+        run: |
+          set -euo pipefail
+          EXPECTED='3fc09f4b5c6781d6038dc280de5c58752ce60b51'
+          ACTUAL="$(git ls-remote https://github.com/dpromstk2000-lab/dpro-clinic-shuttle-line.git refs/heads/main | awk '{print $1}')"
+          echo "SYSTEM expected=$EXPECTED"
+          echo "SYSTEM actual=$ACTUAL"
+          test "$ACTUAL" = "$EXPECTED"
+
+      - name: Prepare product sources
+        run: python .github/workflows/clinic-shuttle-product-release-r3.py sources
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install QA dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install playwright qrcode pillow pymupdf opencv-python-headless zxing-cpp
+          python -m playwright install --with-deps chromium
+
+      - name: Generate real screenshots QR PDFs and QA
+        run: python .github/workflows/clinic-shuttle-product-release-r3.py assets
+
+      - name: Commit product release assets
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add systems/clinic-shuttle.html lp-clinic-shuttle.html flyer-clinic-shuttle.html flyer-clinic-shuttle.pdf \
+            DPRO_TUTORIAL_CLINIC_SHUTTLE_QUICK_START_V1.0.pdf \
+            DPRO_TUTORIAL_CLINIC_SHUTTLE_DETAILED_MANUAL_V1.0.pdf \
+            systems-data.js index.html systems.html proposal.html sitemap.xml assets/clinic-shuttle-next
+          git commit -m 'Add DPRO clinic shuttle product release assets'
+          git push origin main
+
+      - name: Wait for GitHub Pages and initial public QA
+        run: python .github/workflows/clinic-shuttle-product-release-r3.py liveqa
+
+      - name: Build product-side evidence manifest
+        run: python .github/workflows/clinic-shuttle-product-release-r3.py manifest
+
+      - name: Commit public QA evidence
+        shell: bash
+        run: |
+          set -euo pipefail
+          git add assets/clinic-shuttle-next/PRODUCT_PUBLIC_QA.json assets/clinic-shuttle-next/PRODUCT_SITE_RELEASE_MANIFEST_R1.json
+          git commit -m 'Record clinic shuttle product public QA evidence'
+          git push origin main
+
+      - name: Remove one-shot release workflow
+        shell: bash
+        run: |
+          set -euo pipefail
+          git rm -f --ignore-unmatch \
+            .github/workflows/clinic-shuttle-product-release-r1.yml .github/workflows/clinic-shuttle-product-release-r1.py \
+            .github/workflows/clinic-shuttle-product-release-r2.yml .github/workflows/clinic-shuttle-product-release-r2.py \
+            .github/workflows/clinic-shuttle-product-release-r3.yml .github/workflows/clinic-shuttle-product-release-r3.py
+          git commit -m 'Remove completed clinic shuttle product release workflow'
+          git push origin main
