@@ -1,0 +1,56 @@
+{
+  "stage": "R9_OFFICIAL_LINK_FINAL_QA",
+  "status": "PASS",
+  "runtime": {
+    "status": 200,
+    "attempt": 1,
+    "marker": true
+  },
+  "systemFinalLock": "3fc09f4b5c6781d6038dc280de5c58752ce60b51",
+  "systemProtected": true,
+  "officialHead": "b92a4d6444375aefc481db267d626c5a712164a5",
+  "productR8Head": "fd3d18716ad4cfb57121ed240d7c2dc9f61bbd76",
+  "checks": {
+    "officialTarget": {
+      "url": "https://dpro-shop.com/systems/clinic-shuttle",
+      "status": 200,
+      "contentPass": true
+    },
+    "catalogCard": {
+      "url": "https://dpromstk2000-lab.github.io/dpro-line-systems-site/systems.html",
+      "links": [
+        {
+          "href": "https://dpro-shop.com/systems/clinic-shuttle",
+          "text": "DPRO SHOPで詳しく ↗"
+        }
+      ]
+    },
+    "proposalCard": {
+      "url": "https://dpromstk2000-lab.github.io/dpro-line-systems-site/proposal.html?code=CLINIC_SHUTTLE#proposals",
+      "links": [
+        {
+          "href": "https://dpro-shop.com/systems/clinic-shuttle",
+          "text": "DPRO SHOPで詳しく ↗"
+        }
+      ]
+    },
+    "detailPage": {
+      "url": "https://dpromstk2000-lab.github.io/dpro-line-systems-site/systems/clinic-shuttle.html",
+      "links": [
+        {
+          "href": "https://dpro-shop.com/systems/clinic-shuttle",
+          "text": "DPRO SHOP ↗"
+        },
+        {
+          "href": "https://dpro-shop.com/systems/clinic-shuttle",
+          "text": "公式説明・導入条件 ↗"
+        },
+        {
+          "href": "https://dpro-shop.com/systems/clinic-shuttle",
+          "text": "DPRO SHOP公式説明 ↗"
+        }
+      ]
+    }
+  },
+  "blockers": []
+}
