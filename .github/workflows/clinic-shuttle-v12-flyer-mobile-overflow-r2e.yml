@@ -1,0 +1,80 @@
+name: DPRO Clinic Shuttle V1.2 Flyer Mobile Overflow R2E
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/clinic-shuttle-v12-flyer-mobile-overflow-r2e.yml"
+      - ".github/workflows/clinic-shuttle-v12-flyer-mobile-overflow-r2e.py"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: dpro-clinic-shuttle-v12-flyer-mobile-overflow-r2e
+  cancel-in-progress: false
+
+jobs:
+  flyer-mobile-fix:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - name: Checkout PRODUCT
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 6
+
+      - name: Guard PRODUCT parent and SYSTEM FINAL LOCK
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD^)" = "3a09e8b8843f105e5ea5833c58fa36b7ba281127" || {
+            echo "PRODUCT drift before R2E"; exit 1;
+          }
+          SYSTEM_HEAD="$(git ls-remote https://github.com/dpromstk2000-lab/dpro-clinic-shuttle-line.git refs/heads/main | awk '{print $1}')"
+          test "$SYSTEM_HEAD" = "3fc09f4b5c6781d6038dc280de5c58752ce60b51" || {
+            echo "SYSTEM FINAL LOCK drift: $SYSTEM_HEAD"; exit 1;
+          }
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Preserve runner
+        run: cp .github/workflows/clinic-shuttle-v12-flyer-mobile-overflow-r2e.py /tmp/clinic-shuttle-v12-r2e.py
+
+      - name: Fix flyer mobile layout footprint
+        run: python /tmp/clinic-shuttle-v12-r2e.py patch
+
+      - name: Commit flyer screen-only fix and remove one-shot workflow
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add flyer-clinic-shuttle.html
+          git rm -f \
+            .github/workflows/clinic-shuttle-v12-flyer-mobile-overflow-r2e.yml \
+            .github/workflows/clinic-shuttle-v12-flyer-mobile-overflow-r2e.py
+          git commit -m "Fix clinic shuttle flyer mobile overflow"
+          FINAL_HEAD="$(git rev-parse HEAD)"
+          echo "FINAL_PRODUCT_HEAD=$FINAL_HEAD" >> "$GITHUB_ENV"
+          git push origin main
+
+      - name: Install browser QA
+        run: |
+          pip install playwright
+          python -m playwright install --with-deps chromium
+
+      - name: Verify mobile and print layout
+        run: python /tmp/clinic-shuttle-v12-r2e.py publicqa
+
+      - name: Upload R2E evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: clinic-shuttle-v12-flyer-mobile-overflow-r2e-evidence
+          path: release-evidence-v12/
+          if-no-files-found: error
+          retention-days: 30
