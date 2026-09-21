@@ -1,0 +1,12 @@
+{
+  "stage": "R13_FLYER_OFFICIAL_CARD_PDF_QA",
+  "pass": true,
+  "pages": 1,
+  "bytes": 2927097,
+  "displayedOfficialUrl": "https://dpro-shop.com/",
+  "qrDecoded": [
+    "https://dpro-shop.com/",
+    "https://dpromstk2000-lab.github.io/dpro-clinic-shuttle-line/",
+    "https://lin.ee/YxJGXV6D"
+  ]
+}

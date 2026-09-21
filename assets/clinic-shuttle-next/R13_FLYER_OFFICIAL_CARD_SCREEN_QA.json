@@ -1,0 +1,29 @@
+{
+  "title": "DPRO CLINIC SHUTTLE A4 FLYER MASTER V2.2",
+  "cards": [
+    {
+      "index": 0,
+      "top": 974.296875,
+      "bottom": 1091.453125,
+      "height": 117.15625
+    },
+    {
+      "index": 1,
+      "top": 974.296875,
+      "bottom": 1091.453125,
+      "height": 117.15625
+    },
+    {
+      "index": 2,
+      "top": 974.296875,
+      "bottom": 1091.453125,
+      "height": 117.15625
+    }
+  ],
+  "cardHeightSpread": 0,
+  "footerOverlap": 0,
+  "urlText": "https://dpro-shop.com/",
+  "urlFontPx": 14.9291,
+  "urlWidth": 179.53125,
+  "brokenImages": []
+}

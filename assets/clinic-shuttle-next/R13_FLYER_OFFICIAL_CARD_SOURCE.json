@@ -1,0 +1,10 @@
+{
+  "stage": "R13_FLYER_OFFICIAL_CARD_SOURCE",
+  "pass": true,
+  "displayedOfficialUrl": "https://dpro-shop.com/",
+  "officialQrTarget": "https://dpro-shop.com/",
+  "productSpecificUrlRemovedFromFlyerCard": true,
+  "master": "DPRO A4 FLYER MASTER V2.2",
+  "systemFinalLock": "3fc09f4b5c6781d6038dc280de5c58752ce60b51",
+  "officialHead": "b92a4d6444375aefc481db267d626c5a712164a5"
+}
