@@ -1,5 +1,5 @@
-/* DPRO LINE SYSTEMS PRODUCT SITE — CANONICAL 54 RUNTIME
- * CANONICAL SOURCE: 54 products / 2026-09-03
+/* DPRO LINE SYSTEMS PRODUCT SITE — CANONICAL 55 RUNTIME
+ * CANONICAL SOURCE: 55 products / 2026-09-03
  * Stable V3.6 core is flattened into this repository source.
  * No old core CDN loader and no runtime 50→51→52 SEO/count patch.
  */
@@ -19,7 +19,7 @@
     FLOWER:'flower-shop', HOMENURSING:'home-nursing', CAREPLAN:'careplan', WELFARE:'welfare-equipment',
     YAKINIKU:'yakiniku', HOUKAGO:'houkago-dayservice', GAKUDO:'gakudo', PETSALON:'pet-salon', BTYPE:'btype',
     KSH:'car-service', GREEN:'green-rental', HOMECARE:'homecare', IZAKAYA:'izakaya', CONSULT:'sharoushi',
-    SODAN:'sodan', SHUTTLE:'shuttle', SALESNAVI:'salesnavi', MEDICAL:'medical', VISIT_AHAKI:'visit-ahaki', LANDSCAPE_EXTERIOR:'landscape-exterior', DPRO_PEST_ENV:'pest-env'
+    SODAN:'sodan', SHUTTLE:'shuttle', SALESNAVI:'salesnavi', MEDICAL:'medical', VISIT_AHAKI:'visit-ahaki', LANDSCAPE_EXTERIOR:'landscape-exterior', DPRO_PEST_ENV:'pest-env', CLINIC_SHUTTLE:'clinic-shuttle'
   });
 
   const esc = (value) => String(value ?? '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));

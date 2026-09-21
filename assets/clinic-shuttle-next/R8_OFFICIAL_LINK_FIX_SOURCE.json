@@ -1,0 +1,9 @@
+{
+  "stage": "R8_OFFICIAL_LINK_FIX_SOURCE",
+  "pass": true,
+  "cause": "CLINIC_SHUTTLE was missing from product-v3.6.js officialSlugs, fallback lowercased code to clinic_shuttle",
+  "fix": "CLINIC_SHUTTLE -> clinic-shuttle",
+  "correctOfficialUrl": "https://dpro-shop.com/systems/clinic-shuttle",
+  "systemFinalLock": "3fc09f4b5c6781d6038dc280de5c58752ce60b51",
+  "officialHead": "b92a4d6444375aefc481db267d626c5a712164a5"
+}
