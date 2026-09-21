@@ -1,0 +1,20 @@
+{
+  "stage": "R11_FLYER_PUBLIC_QA",
+  "pass": true,
+  "html": {
+    "390": {
+      "title": "DPRO CLINIC SHUTTLE A4 FLYER MASTER V2.1",
+      "broken": [],
+      "overlap": 0
+    },
+    "1440": {
+      "title": "DPRO CLINIC SHUTTLE A4 FLYER MASTER V2.1",
+      "broken": [],
+      "overlap": 0
+    }
+  },
+  "pdf": {
+    "status": 200,
+    "bytes": 2939454
+  }
+}
