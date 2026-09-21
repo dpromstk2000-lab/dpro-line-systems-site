@@ -1,0 +1,27 @@
+{
+  "stage": "R13_FLYER_OFFICIAL_CARD_PUBLIC_QA",
+  "status": "PASS",
+  "viewports": {
+    "390": {
+      "title": "DPRO CLINIC SHUTTLE A4 FLYER MASTER V2.2",
+      "displayedUrl": "https://dpro-shop.com/",
+      "urlFontPx": 14.9291,
+      "brokenImages": [],
+      "footerOverlap": 0,
+      "cardHeightSpread": 0
+    },
+    "1440": {
+      "title": "DPRO CLINIC SHUTTLE A4 FLYER MASTER V2.2",
+      "displayedUrl": "https://dpro-shop.com/",
+      "urlFontPx": 14.9291,
+      "brokenImages": [],
+      "footerOverlap": 0,
+      "cardHeightSpread": 0
+    }
+  },
+  "blockers": [],
+  "publicPdf": {
+    "status": 200,
+    "bytes": 2927097
+  }
+}
