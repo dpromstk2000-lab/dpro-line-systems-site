@@ -1,0 +1,63 @@
+{
+  "product": "DPRO 診療所送迎予約",
+  "systemCode": "CLINIC_SHUTTLE",
+  "productNumber": 55,
+  "phase": "REL-02_TO_REL-09_PRODUCT_SIDE",
+  "productSiteInitialPublicQA": true,
+  "systemProtected": true,
+  "systemFinalLock": "3fc09f4b5c6781d6038dc280de5c58752ce60b51",
+  "files": [
+    {
+      "path": "systems/clinic-shuttle.html",
+      "bytes": 21356,
+      "sha256": "f583540e1cfa3c5a6f7812d1aeaecfb867b481aac8f3748aa0f815f1a1f1a9e4"
+    },
+    {
+      "path": "lp-clinic-shuttle.html",
+      "bytes": 10686,
+      "sha256": "8a61af6a37370e901b59c203fee18da767429d551c457b54edfdeb24d72ab901"
+    },
+    {
+      "path": "flyer-clinic-shuttle.html",
+      "bytes": 5715,
+      "sha256": "4052d9f1184411f56b254fc825a26cd8fac880db9b51bc39aed76d7a7634ddd6"
+    },
+    {
+      "path": "flyer-clinic-shuttle.pdf",
+      "bytes": 3793645,
+      "sha256": "41db42b5230c3b52ad755f1484a51fb0de08f4d75eecb5e7ce6e6ad2207359a9"
+    },
+    {
+      "path": "DPRO_TUTORIAL_CLINIC_SHUTTLE_QUICK_START_V1.0.pdf",
+      "bytes": 295232,
+      "sha256": "d0b5559fedad9811fd1d6082c73f0c79aa9a1872821f39189c521b7f700673f2"
+    },
+    {
+      "path": "DPRO_TUTORIAL_CLINIC_SHUTTLE_DETAILED_MANUAL_V1.0.pdf",
+      "bytes": 456669,
+      "sha256": "8f03a7453191e1a803e9fca931e9235eace6a000d2794a849cf897b4fc31e772"
+    },
+    {
+      "path": "assets/clinic-shuttle-next/operation-sheet.html",
+      "bytes": 4772,
+      "sha256": "bff18990266b02fb2ae8ec23cf53da6bd7395f39f1912572cf87de93aa1d390c"
+    },
+    {
+      "path": "assets/clinic-shuttle-next/DPRO_CLINIC_SHUTTLE_OPERATION_EXPERIENCE_SHEET_V1.0.pdf",
+      "bytes": 1327442,
+      "sha256": "1496e151b6a98547ec1e3fb05cbcdeadffb08b9b219017e1f4991ee74895b1c2"
+    },
+    {
+      "path": "assets/clinic-shuttle-next/DPRO_CLINIC_SHUTTLE_OPERATION_EXPERIENCE_SHEET_V1.0.png",
+      "bytes": 406081,
+      "sha256": "0a566e4ec31095a48fb61e98ddb84fecc48f0876417aa8f69aefe6b4466eb372"
+    }
+  ],
+  "pending": [
+    "REL-03 OFFICIAL SITE",
+    "REL-B1..B4",
+    "REL-F1..F4",
+    "REL-LOCK",
+    "REL-RETURN"
+  ]
+}
