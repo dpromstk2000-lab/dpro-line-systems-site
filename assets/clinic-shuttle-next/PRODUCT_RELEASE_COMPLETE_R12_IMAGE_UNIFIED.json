@@ -1,0 +1,14 @@
+{
+  "status": "PRODUCT RELEASE COMPLETE",
+  "releaseRevision": "R12_IMAGE_UNIFIED",
+  "product": "DPRO 診療所送迎予約",
+  "systemCode": "CLINIC_SHUTTLE",
+  "productNumber": 55,
+  "flyerHero": "clinic-care-bright.png",
+  "lpHero": "clinic-care-bright.png",
+  "productDetail": "real system screenshot retained",
+  "officialPage": "real system screenshots retained",
+  "systemFinalLock": "3fc09f4b5c6781d6038dc280de5c58752ce60b51",
+  "systemProtected": true,
+  "blockers": []
+}

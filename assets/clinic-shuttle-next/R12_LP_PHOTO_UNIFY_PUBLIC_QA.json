@@ -1,0 +1,35 @@
+{
+  "stage": "R12_LP_PHOTO_UNIFY_PUBLIC_QA",
+  "status": "PASS",
+  "publicUrl": "https://dpromstk2000-lab.github.io/dpro-line-systems-site/lp-clinic-shuttle.html",
+  "viewports": {
+    "390": {
+      "title": "DPRO 診療所送迎予約｜通院送迎を一つの流れに",
+      "backgroundImage": "linear-gradient(90deg, rgba(12, 65, 52, 0.9), rgba(12, 65, 52, 0.58) 55%, rgba(12, 65, 52, 0.14)), url(\"https://dpromstk2000-lab.github.io/dpro-line-systems-site/assets/clinic-shuttle-next/clinic-care-bright.png\")",
+      "brokenImages": [],
+      "overflow": false,
+      "heroHeight": 640,
+      "h1": "通院送迎を、\n予約から帰宅まで一つに。",
+      "hasPexels": false
+    },
+    "768": {
+      "title": "DPRO 診療所送迎予約｜通院送迎を一つの流れに",
+      "backgroundImage": "linear-gradient(90deg, rgba(12, 65, 52, 0.9), rgba(12, 65, 52, 0.58) 55%, rgba(12, 65, 52, 0.14)), url(\"https://dpromstk2000-lab.github.io/dpro-line-systems-site/assets/clinic-shuttle-next/clinic-care-bright.png\")",
+      "brokenImages": [],
+      "overflow": false,
+      "heroHeight": 720,
+      "h1": "通院送迎を、\n予約から帰宅まで一つに。",
+      "hasPexels": false
+    },
+    "1440": {
+      "title": "DPRO 診療所送迎予約｜通院送迎を一つの流れに",
+      "backgroundImage": "linear-gradient(90deg, rgba(12, 65, 52, 0.9), rgba(12, 65, 52, 0.58) 55%, rgba(12, 65, 52, 0.14)), url(\"https://dpromstk2000-lab.github.io/dpro-line-systems-site/assets/clinic-shuttle-next/clinic-care-bright.png\")",
+      "brokenImages": [],
+      "overflow": false,
+      "heroHeight": 720,
+      "h1": "通院送迎を、\n予約から帰宅まで一つに。",
+      "hasPexels": false
+    }
+  },
+  "blockers": []
+}
