@@ -1,9 +1,9 @@
-/* DPRO PRODUCT SITE V3.0 — CANONICAL 54 PRODUCT DATA
- * CANONICAL SOURCE: 54 products / 2026-09-03
+/* DPRO PRODUCT SITE V3.0 — CANONICAL 55 PRODUCT DATA
+ * CANONICAL SOURCE: 55 products / 2026-09-03
  * DPRO 訪問マッサージ・鍼灸 is product #52.
  * DPRO 造園・外構 is product #53.
  * DPRO ペストコントロール／環境衛生サービス is product #54.
- * All 54 product records are statically defined in this file.
+ * All 55 product records are statically defined in this file.
  * No external 50/51-product runtime and no runtime catalog augmentation.
  */
 (function (global) {
@@ -1548,6 +1548,26 @@
   "targets": ["ペストコントロール事業者","害虫・害獣駆除事業者","環境衛生・定期防除事業者"],
   "features": ["WEB・LINE相談受付","写真・PDF Evidence","現地調査・施工記録","Field Map・Trap PIN","薬剤・安全確認","報告・再訪・定期点検"],
   "previewAsset": "systems/pest-env.html",
+  "experienceScreens": []
+}
+
+,{
+  "code": "CLINIC_SHUTTLE",
+  "assetSlug": "clinic-shuttle",
+  "name": "診療所送迎予約",
+  "category": "medical_pet",
+  "systemPage": "systems/clinic-shuttle.html",
+  "lpUrl": "lp-clinic-shuttle.html",
+  "flyerHtml": "flyer-clinic-shuttle.html",
+  "flyerPdf": "flyer-clinic-shuttle.pdf",
+  "demoUrl": "https://dpromstk2000-lab.github.io/dpro-clinic-shuttle-line/",
+  "status": "AVAILABLE",
+  "verificationStatus": "VERIFIED",
+  "tagline": "予約・家族連絡から配車・通院・診療後の帰宅便までを、一つの送迎情報でつなぐ。",
+  "summary": "診療所の通院送迎向けに、WEB・LINE予約、電話代理登録、患者・ご家族画面、管理・配車PC、iPad、運転員画面、帰宅便・履歴までをまとめるDPROシステム。",
+  "targets": ["送迎を行う診療所","通院送迎を運用する医療機関"],
+  "features": ["WEB・LINE送迎予約","電話代理登録","予約・変更一覧","車両・運転員割当","乗降・到着記録","診療後の帰宅便"],
+  "previewAsset": "flyer-clinic-shuttle.html",
   "experienceScreens": []
 }
 

@@ -1,0 +1,141 @@
+{
+  "pageCounts": {
+    "flyer-clinic-shuttle.pdf": 1,
+    "assets/clinic-shuttle-next/DPRO_CLINIC_SHUTTLE_OPERATION_EXPERIENCE_SHEET_V1.0.pdf": 1,
+    "DPRO_TUTORIAL_CLINIC_SHUTTLE_QUICK_START_V1.0.pdf": 3,
+    "DPRO_TUTORIAL_CLINIC_SHUTTLE_DETAILED_MANUAL_V1.0.pdf": 9
+  },
+  "pdfBytes": {
+    "flyer-clinic-shuttle.pdf": 3793645,
+    "assets/clinic-shuttle-next/DPRO_CLINIC_SHUTTLE_OPERATION_EXPERIENCE_SHEET_V1.0.pdf": 1327442,
+    "DPRO_TUTORIAL_CLINIC_SHUTTLE_QUICK_START_V1.0.pdf": 295232,
+    "DPRO_TUTORIAL_CLINIC_SHUTTLE_DETAILED_MANUAL_V1.0.pdf": 456669
+  },
+  "textChecks": {
+    "flyer-clinic-shuttle.pdf": {
+      "markers": [
+        "DPRO CLINIC SHUTTLE",
+        "OFFICIAL PRICE"
+      ],
+      "matched": [
+        "OFFICIAL PRICE"
+      ],
+      "extractedChars": 698
+    },
+    "assets/clinic-shuttle-next/DPRO_CLINIC_SHUTTLE_OPERATION_EXPERIENCE_SHEET_V1.0.pdf": {
+      "markers": [
+        "OPERATION EXPERIENCE",
+        "PUBLIC DEMO"
+      ],
+      "matched": [
+        "PUBLIC DEMO"
+      ],
+      "extractedChars": 847
+    },
+    "DPRO_TUTORIAL_CLINIC_SHUTTLE_QUICK_START_V1.0.pdf": {
+      "markers": [
+        "QUICK START V1.0",
+        "FIRST10"
+      ],
+      "matched": [
+        "QUICK START V1.0",
+        "FIRST10"
+      ],
+      "extractedChars": 1078
+    },
+    "DPRO_TUTORIAL_CLINIC_SHUTTLE_DETAILED_MANUAL_V1.0.pdf": {
+      "markers": [
+        "DETAILED MANUAL V1.0",
+        "CHAPTER 1"
+      ],
+      "matched": [
+        "DETAILED MANUAL V1.0",
+        "CHAPTER 1"
+      ],
+      "extractedChars": 2073
+    }
+  },
+  "sourceChecks": {
+    "flyer-clinic-shuttle.pdf": {
+      "markers": [
+        "DPRO CLINIC SHUTTLE",
+        "OFFICIAL PRICE"
+      ],
+      "matched": [
+        "DPRO CLINIC SHUTTLE",
+        "OFFICIAL PRICE"
+      ]
+    },
+    "assets/clinic-shuttle-next/DPRO_CLINIC_SHUTTLE_OPERATION_EXPERIENCE_SHEET_V1.0.pdf": {
+      "markers": [
+        "OPERATION EXPERIENCE",
+        "PUBLIC DEMO"
+      ],
+      "matched": [
+        "OPERATION EXPERIENCE",
+        "PUBLIC DEMO"
+      ]
+    },
+    "DPRO_TUTORIAL_CLINIC_SHUTTLE_QUICK_START_V1.0.pdf": {
+      "markers": [
+        "QUICK START V1.0",
+        "FIRST10"
+      ],
+      "matched": [
+        "QUICK START V1.0",
+        "FIRST10"
+      ]
+    },
+    "DPRO_TUTORIAL_CLINIC_SHUTTLE_DETAILED_MANUAL_V1.0.pdf": {
+      "markers": [
+        "DETAILED MANUAL V1.0",
+        "CHAPTER 1"
+      ],
+      "matched": [
+        "DETAILED MANUAL V1.0",
+        "CHAPTER 1"
+      ]
+    }
+  },
+  "qrSourceDecode": {
+    "line": [
+      "https://lin.ee/YxJGXV6D"
+    ],
+    "official": [
+      "https://dpro-shop.com/systems/clinic-shuttle"
+    ],
+    "demo": [
+      "https://dpromstk2000-lab.github.io/dpro-clinic-shuttle-line/"
+    ],
+    "product": [
+      "https://dpromstk2000-lab.github.io/dpro-line-systems-site/systems/clinic-shuttle.html"
+    ],
+    "member": [
+      "https://dpromstk2000-lab.github.io/dpro-clinic-shuttle-line/member.html"
+    ],
+    "owner": [
+      "https://dpromstk2000-lab.github.io/dpro-clinic-shuttle-line/owner.html"
+    ],
+    "ipad": [
+      "https://dpromstk2000-lab.github.io/dpro-clinic-shuttle-line/owner-ipad.html"
+    ],
+    "staff": [
+      "https://dpromstk2000-lab.github.io/dpro-clinic-shuttle-line/staff.html"
+    ]
+  },
+  "qrPdfDecode": {
+    "flyer": [
+      "https://dpro-shop.com/systems/clinic-shuttle",
+      "https://lin.ee/YxJGXV6D",
+      "https://dpromstk2000-lab.github.io/dpro-clinic-shuttle-line/"
+    ],
+    "operation": [
+      "https://dpromstk2000-lab.github.io/dpro-line-systems-site/systems/clinic-shuttle.html",
+      "https://dpromstk2000-lab.github.io/dpro-clinic-shuttle-line/member.html",
+      "https://dpromstk2000-lab.github.io/dpro-clinic-shuttle-line/owner.html",
+      "https://dpromstk2000-lab.github.io/dpro-clinic-shuttle-line/owner-ipad.html",
+      "https://dpromstk2000-lab.github.io/dpro-clinic-shuttle-line/staff.html",
+      "https://lin.ee/YxJGXV6D"
+    ]
+  }
+}
