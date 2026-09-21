@@ -1,0 +1,10 @@
+{
+  "stage": "R10_FLYER_MASTER_V2_SOURCE",
+  "pass": true,
+  "master": "DPRO A4 FLYER MASTER V2.0",
+  "product": "DPRO 診療所送迎予約",
+  "officialUrl": "https://dpro-shop.com/systems/clinic-shuttle",
+  "demoUrl": "https://dpromstk2000-lab.github.io/dpro-clinic-shuttle-line/",
+  "systemFinalLock": "3fc09f4b5c6781d6038dc280de5c58752ce60b51",
+  "officialHead": "b92a4d6444375aefc481db267d626c5a712164a5"
+}

@@ -1,0 +1,16 @@
+{
+  "stage": "R10_FLYER_PDF_QA",
+  "pass": true,
+  "pages": 1,
+  "bytes": 4400610,
+  "qrDecoded": [
+    "https://dpro-shop.com/systems/clinic-shuttle",
+    "https://dpromstk2000-lab.github.io/dpro-clinic-shuttle-line/",
+    "https://lin.ee/YxJGXV6D"
+  ],
+  "expected": [
+    "https://lin.ee/YxJGXV6D",
+    "https://dpro-shop.com/systems/clinic-shuttle",
+    "https://dpromstk2000-lab.github.io/dpro-clinic-shuttle-line/"
+  ]
+}
