@@ -1,0 +1,95 @@
+name: DPRO Clinic Shuttle Flyer Official Card R13
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/clinic-shuttle-flyer-official-card-r13.yml"
+      - ".github/workflows/clinic-shuttle-flyer-official-card-r13.py"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: dpro-clinic-shuttle-flyer-official-card-r13
+  cancel-in-progress: false
+
+jobs:
+  flyer-official-card-r13:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout PRODUCT
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 4
+
+      - name: Guard PRODUCT SYSTEM FINAL LOCK and OFFICIAL
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD^)" = "42f6cb648023a95d42c107a9294bc0d0bdac335d" || {
+            echo "PRODUCT parent drift"; exit 1;
+          }
+          SYSTEM_HEAD="$(git ls-remote https://github.com/dpromstk2000-lab/dpro-clinic-shuttle-line.git refs/heads/main | awk '{print $1}')"
+          test "$SYSTEM_HEAD" = "3fc09f4b5c6781d6038dc280de5c58752ce60b51" || {
+            echo "SYSTEM FINAL LOCK drift: $SYSTEM_HEAD"; exit 1;
+          }
+          OFFICIAL_HEAD="$(git ls-remote https://github.com/dpromstk2000-lab/dpro-shop-official-site.git refs/heads/main | awk '{print $1}')"
+          test "$OFFICIAL_HEAD" = "b92a4d6444375aefc481db267d626c5a712164a5" || {
+            echo "OFFICIAL head drift: $OFFICIAL_HEAD"; exit 1;
+          }
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install QR dependency
+        run: pip install qrcode[pil]
+
+      - name: Patch center OFFICIAL SITE card to DPRO master standard
+        run: python .github/workflows/clinic-shuttle-flyer-official-card-r13.py patch
+
+      - name: Install flyer QA dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install playwright pymupdf opencv-python-headless zxing-cpp numpy
+          python -m playwright install --with-deps chromium
+
+      - name: Build updated flyer and PDF
+        run: python .github/workflows/clinic-shuttle-flyer-official-card-r13.py build
+
+      - name: Verify one-page PDF and all QR targets
+        run: python .github/workflows/clinic-shuttle-flyer-official-card-r13.py pdfqa
+
+      - name: Commit flyer card update
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add flyer-clinic-shuttle.html flyer-clinic-shuttle.pdf assets/clinic-shuttle-next
+          git commit -m "Align clinic shuttle flyer official card with DPRO master"
+          git push origin main
+
+      - name: Verify public flyer card
+        run: python .github/workflows/clinic-shuttle-flyer-official-card-r13.py publicqa
+
+      - name: Commit R13 public QA evidence
+        shell: bash
+        run: |
+          set -euo pipefail
+          git add assets/clinic-shuttle-next
+          git commit -m "Verify clinic shuttle flyer official card R13"
+          git push origin main
+
+      - name: Remove R13 one-shot workflow
+        shell: bash
+        run: |
+          set -euo pipefail
+          git pull --rebase origin main
+          git rm -f .github/workflows/clinic-shuttle-flyer-official-card-r13.yml .github/workflows/clinic-shuttle-flyer-official-card-r13.py
+          git commit -m "Remove completed clinic shuttle flyer card workflow"
+          git push origin main
