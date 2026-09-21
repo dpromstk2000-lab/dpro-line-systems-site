@@ -1,0 +1,10 @@
+{
+  "stage": "R12_LP_PHOTO_UNIFY_SOURCE",
+  "pass": true,
+  "oldImage": "assets/clinic-shuttle-next/clinic-care.jpg",
+  "newImage": "assets/clinic-shuttle-next/clinic-care-bright.png",
+  "obsoleteCreditRemoved": true,
+  "heroOverlayBrightened": true,
+  "systemFinalLock": "3fc09f4b5c6781d6038dc280de5c58752ce60b51",
+  "officialHead": "b92a4d6444375aefc481db267d626c5a712164a5"
+}
