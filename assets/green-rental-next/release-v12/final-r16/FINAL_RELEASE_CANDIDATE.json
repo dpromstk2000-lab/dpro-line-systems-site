@@ -1,0 +1,12 @@
+{
+  "schema": "DPRO-GREEN-FINAL-RELEASE-CANDIDATE-R16",
+  "pass": true,
+  "release_id": "GREEN-PR-V12-20260925-R1",
+  "public_marker": "GREEN-PRODUCT-RELEASE-R16-CANDIDATE-20260926",
+  "final_release_1_of_4": "PASS",
+  "final_release_2_of_4": "PASS",
+  "final_release_3_of_4": "PASS",
+  "human_acceptance": "PASS",
+  "system_final_lock": "6e359937a28e32380e0c4b2e3cd5ca5fbcbbab59",
+  "official_head": "0031e9c8eacc81529df5244403afab71c5077514"
+}
