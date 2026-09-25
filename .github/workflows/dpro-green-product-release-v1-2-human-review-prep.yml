@@ -48,10 +48,10 @@ jobs:
           set -euo pipefail
           wait_marker(){
             local url="$1" marker="$2" name="$3"
-            for i in $(seq 1 30); do
-              body="$(curl -fsSL --retry 2 --retry-delay 2 "$url" || true)"
+            for i in $(seq 1 90); do
+              body="$(curl -fsSL --retry 2 --retry-delay 2 -H 'Cache-Control: no-cache' -H 'Pragma: no-cache' "${url}?dpro_release=${RELEASE_ID}&attempt=${i}" || true)"
               if printf '%s' "$body" | grep -Fq "$marker"; then echo "$name PUBLIC: PASS"; return 0; fi
-              echo "$name not ready ($i/30)"; sleep 10
+              echo "$name not ready ($i/90)"; sleep 10
             done
             echo "$name PUBLIC marker timeout"; return 1
           }
