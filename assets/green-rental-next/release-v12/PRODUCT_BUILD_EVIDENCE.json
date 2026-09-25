@@ -1,0 +1,25 @@
+{
+  "schema": "DPRO-GREEN-PRODUCT-BUILD-EVIDENCE-R1",
+  "release_id": "GREEN-PR-V12-20260925-R1",
+  "pass": true,
+  "assertions": {
+    "system_final_lock_untouched": true,
+    "product_release_marker": true,
+    "lp_release_marker": true,
+    "flyer_release_marker": true,
+    "product_canonical": true,
+    "product_integrated_monthly": true,
+    "product_dpro_initial": true,
+    "product_exact_cta": true,
+    "lp_exact_cta": true,
+    "product_initial_iframe_zero": true,
+    "lp_initial_iframe_zero": true,
+    "flyer_master": true,
+    "product_count_55": true
+  },
+  "history_preservation": {
+    "assessed": true,
+    "applicable": true,
+    "status": "PUBLIC_HARD_GATE_PENDING"
+  }
+}

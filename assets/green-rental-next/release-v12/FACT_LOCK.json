@@ -1,0 +1,61 @@
+{
+  "schema_version": "DPRO-PRODUCT-FACT-LOCK-R2",
+  "locked": true,
+  "release_id": "GREEN-PR-V12-20260925-R1",
+  "product_dev_id": "c9d11f3a-de31-4efe-8dc5-fc4a20d18725",
+  "system_code": "GREEN",
+  "product_number": 45,
+  "product_name_ja": "グリーンレンタル",
+  "product_name_catalog": "観葉植物レンタル・グリーンレンタル",
+  "product_name_en": "DPRO GREEN RENTAL LINE",
+  "category": "教育・生活サービス",
+  "system_final_lock_head": "6e359937a28e32380e0c4b2e3cd5ca5fbcbbab59",
+  "product_count": 55,
+  "urls": {
+    "official": "https://dpro-shop.com/systems/green-rental",
+    "product": "https://dpromstk2000-lab.github.io/dpro-line-systems-site/systems/green-rental.html",
+    "lp": "https://dpromstk2000-lab.github.io/dpro-line-systems-site/lp-green-rental.html",
+    "demo": "https://dpromstk2000-lab.github.io/dpro-green-rental-line/demo-guide.html",
+    "line": "https://lin.ee/YxJGXV6D"
+  },
+  "prices_tax_included": {
+    "line_build_initial": 77000,
+    "line_operation_monthly": 3300,
+    "website_initial_from": 33000,
+    "website_maintenance_standalone_monthly": 3300,
+    "website_maintenance_contract_store_monthly": 1100,
+    "dpro_initial": 33000,
+    "dpro_operation_monthly": 1100,
+    "integrated_monthly": 5500
+  },
+  "pricing_condition": "DPRO is an add-on for stores contracted for LINE official account build and operation. Initial production/build fees are separate from the integrated monthly 5,500 JPY.",
+  "features": [
+    "写真相談・現地確認",
+    "顧客・拠点・設置場所",
+    "植物・鉢・現在地",
+    "定期巡回・担当・順番",
+    "作業・状態・写真報告",
+    "交換・回収・養生"
+  ],
+  "scope_out": [
+    "料金計算・見積金額の自動計算",
+    "請求書発行・入金消込",
+    "原価・利益・会計処理",
+    "給与・勤怠・シフト計算",
+    "ポイント・回数券",
+    "お客様による定期巡回日時の自由予約"
+  ],
+  "roles": {
+    "owner": "管理PC",
+    "owner_ipad": "管理iPad",
+    "staff": "スタッフスマホ",
+    "member": "お客様マイページ"
+  },
+  "flyer_master_id": "DPRO A4 FLYER MASTER V2.0",
+  "lp_master_id": "DPRO-LP-MASTER-V1.4",
+  "history_preservation": {
+    "assessed": true,
+    "applicable": true,
+    "reason": "GREEN provides persistent LINE/contact thread and message history and customer inquiry history; hard-gate verification is required before lock."
+  }
+}
