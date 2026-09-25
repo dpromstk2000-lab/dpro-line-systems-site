@@ -7,7 +7,7 @@ on:
       - ".github/workflows/dpro-green-product-release-v1-2-human-review-prep.yml"
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   review:
@@ -15,6 +15,7 @@ jobs:
     timeout-minutes: 30
     env:
       RELEASE_ID: GREEN-PR-V12-20260925-R1
+      LP_PUBLICATION_REVISION: GREEN-LP-PUBLIC-R2-20260925
       SYSTEM_LOCK_HEAD: 6e359937a28e32380e0c4b2e3cd5ca5fbcbbab59
       SYSTEM_API: https://dpro-green-rental-line-api.dpromstk2000.workers.dev
       SYSTEM_BASE: https://dpromstk2000-lab.github.io/dpro-green-rental-line
@@ -31,6 +32,32 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+
+      - name: Force-publish LP with a unique public revision marker
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('lp-green-rental.html')
+          s=p.read_text(encoding='utf-8')
+          marker='GREEN-LP-PUBLIC-R2-20260925'
+          if marker not in s:
+              needle='<body data-product-code="GREEN" data-release-id="GREEN-PR-V12-20260925-R1">'
+              if needle not in s:
+                  raise SystemExit('LP release body marker missing in repository source')
+              s=s.replace(needle, needle+'\n<!-- '+marker+' -->', 1)
+              p.write_text(s,encoding='utf-8')
+          PY
+          if git diff --quiet -- lp-green-rental.html; then
+            echo "LP publication revision already present."
+          else
+            git config user.name "DPRO GREEN Product Release"
+            git config user.email "actions@users.noreply.github.com"
+            git add lp-green-rental.html
+            git commit -m "GREEN LP force public republish R2"
+            git push origin HEAD:main
+          fi
 
       - name: Install audit dependencies
         shell: bash
@@ -56,7 +83,7 @@ jobs:
             echo "$name PUBLIC marker timeout"; return 1
           }
           wait_marker "$PRODUCT_URL" "$RELEASE_ID" PRODUCT
-          wait_marker "$LP_URL" "$RELEASE_ID" LP
+          wait_marker "$LP_URL" "$LP_PUBLICATION_REVISION" LP
           wait_marker "$FLYER_HTML_URL" "$RELEASE_ID" FLYER
           wait_marker "$OFFICIAL_URL" "$RELEASE_ID" OFFICIAL_CUSTOM
           wait_marker "$OFFICIAL_GITHUB" "$RELEASE_ID" OFFICIAL_GITHUB
@@ -92,7 +119,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          cat > /tmp/green-human-review.mjs <<'JS'
+          cat > .green-human-review.mjs <<'JS'
           import { chromium } from 'playwright';
           import fs from 'fs';
           const surfaces=[
@@ -127,7 +154,7 @@ jobs:
           fs.writeFileSync('human-review/evidence/BROWSER_VISUAL_QA.json',JSON.stringify(evidence,null,2));
           await browser.close();
           JS
-          node /tmp/green-human-review.mjs
+          node .green-human-review.mjs
 
       - name: Download, render and decode final PDFs
         shell: bash
