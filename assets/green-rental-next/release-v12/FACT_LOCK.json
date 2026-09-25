@@ -14,7 +14,7 @@
   "urls": {
     "official": "https://dpro-shop.com/systems/green-rental",
     "product": "https://dpromstk2000-lab.github.io/dpro-line-systems-site/systems/green-rental.html",
-    "lp": "https://dpromstk2000-lab.github.io/dpro-line-systems-site/lp-green-rental.html",
+    "lp": "https://dpromstk2000-lab.github.io/dpro-line-systems-site/lp-green-rental-v12.html",
     "demo": "https://dpromstk2000-lab.github.io/dpro-green-rental-line/demo-guide.html",
     "line": "https://lin.ee/YxJGXV6D"
   },
@@ -57,5 +57,6 @@
     "assessed": true,
     "applicable": true,
     "reason": "GREEN provides persistent LINE/contact thread and message history and customer inquiry history; hard-gate verification is required before lock."
-  }
+  },
+  "lp_publication_revision": "GREEN-LP-V12-PUBLIC-R3-20260925"
 }
