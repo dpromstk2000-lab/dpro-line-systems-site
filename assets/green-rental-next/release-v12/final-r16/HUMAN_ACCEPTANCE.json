@@ -1,0 +1,23 @@
+{
+  "schema_version": "DPRO-PRODUCT-RELEASE-HUMAN-ACCEPTANCE-R1",
+  "pass": true,
+  "approver": "DPRO Owner",
+  "approved_at": "2026-09-26T01:01:00+09:00",
+  "approval_phrase": "HUMAN ACCEPTANCE OK",
+  "approval_source": "explicit ChatGPT conversation approval after R15 real-screen revalidation",
+  "checks": {
+    "official_visual": true,
+    "product_visual": true,
+    "lp_visual": true,
+    "flyer_visual": true,
+    "operation_pdf_visual": true,
+    "mobile_readability": true,
+    "japanese_copy_breaks": true,
+    "hero_media_suitability": true,
+    "dpro_series_consistency": true,
+    "five_minute_sales_journey": true
+  },
+  "notes": [
+    "White-screen defect was rejected during prior human review, corrected via R10/R13/R14, then R15 revalidated before explicit approval."
+  ]
+}

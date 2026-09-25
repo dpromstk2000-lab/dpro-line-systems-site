@@ -1,0 +1,15 @@
+{
+  "schema": "DPRO-GREEN-FINAL-RELEASE-4-OF-4-R16",
+  "pass": true,
+  "gate": "HEAD / ACTIONS / PAGES / PUBLIC + RETURN EVIDENCE",
+  "candidate_head": "e6ae0b3cdda72e353a7e56f7cdaad621a70db734",
+  "candidate_pages_run_id": 36160988816,
+  "public_signature": "GREEN-PRODUCT-RELEASE-R16-CANDIDATE-20260926",
+  "official_head": "0031e9c8eacc81529df5244403afab71c5077514",
+  "official_pages_run_id": 36155555287,
+  "r15_human_review_run_id": 36158038282,
+  "r14_official_workflow_run_id": 36155535712,
+  "history_preservation": "PASS",
+  "blocker": 0,
+  "high": 0
+}

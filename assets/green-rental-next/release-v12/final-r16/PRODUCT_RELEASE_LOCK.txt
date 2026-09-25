@@ -1,0 +1,17 @@
+DPRO GREEN PRODUCT RELEASE LOCK R16
+PRODUCT_RELEASE_LOCK: PASS
+release_id: GREEN-PR-V12-20260925-R1
+system_code: GREEN
+product_dev_id: c9d11f3a-de31-4efe-8dc5-fc4a20d18725
+system_final_lock_head: 6e359937a28e32380e0c4b2e3cd5ca5fbcbbab59
+official_final_head: 0031e9c8eacc81529df5244403afab71c5077514
+release_candidate_head: e6ae0b3cdda72e353a7e56f7cdaad621a70db734
+human_acceptance: PASS
+final_release_1_of_4: PASS
+final_release_2_of_4: PASS
+final_release_3_of_4: PASS
+final_release_4_of_4: PASS
+open_blocker: 0
+open_high: 0
+locked_at: 2026-09-26T01:30:28+09:00
+NOTE: authoritative PRODUCT lock commit SHA is recorded in PRODUCT_RELEASE_RETURN.json after this lock commit is pushed and its Pages deployment succeeds.

@@ -1,0 +1,23 @@
+{
+  "schema": "DPRO-GREEN-PRODUCT-RELEASE-EVIDENCE-R16",
+  "pass": true,
+  "release_id": "GREEN-PR-V12-20260925-R1",
+  "system_final_lock": "6e359937a28e32380e0c4b2e3cd5ca5fbcbbab59",
+  "official_head": "0031e9c8eacc81529df5244403afab71c5077514",
+  "release_candidate_head": "e6ae0b3cdda72e353a7e56f7cdaad621a70db734",
+  "r15_human_review_run_id": 36158038282,
+  "r14_official_workflow_run_id": 36155535712,
+  "r14_official_pages_run_id": 36155555287,
+  "human_acceptance": true,
+  "history_preservation": true,
+  "final_release_4_of_4": true,
+  "open_blocker": 0,
+  "open_high": 0,
+  "public_urls": {
+    "official": "https://dpro-shop.com/systems/green-rental",
+    "product": "https://dpromstk2000-lab.github.io/dpro-line-systems-site/systems/green-rental.html",
+    "lp": "https://dpromstk2000-lab.github.io/dpro-line-systems-site/systems/green-rental-lp-v12.html",
+    "flyer_pdf": "https://dpromstk2000-lab.github.io/dpro-line-systems-site/flyer-green-rental.pdf",
+    "operation_experience_pdf": "https://dpromstk2000-lab.github.io/dpro-line-systems-site/assets/green-rental-next/DPRO_GREEN_RENTAL_OPERATION_EXPERIENCE_SHEET_V1.0.pdf"
+  }
+}

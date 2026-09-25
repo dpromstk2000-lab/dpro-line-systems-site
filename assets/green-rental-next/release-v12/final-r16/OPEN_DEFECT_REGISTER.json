@@ -1,0 +1,33 @@
+{
+  "schema_version": "DPRO-PRODUCT-RELEASE-OPEN-DEFECT-REGISTER-R1",
+  "defects": [
+    {
+      "id": "GREEN-REL-001",
+      "severity": "blocker",
+      "status": "resolved",
+      "title": "Blank/stale screenshots captured before data load",
+      "resolution": "R10 recapture + content HARD GATE"
+    },
+    {
+      "id": "GREEN-REL-002",
+      "severity": "high",
+      "status": "resolved",
+      "title": "OFFICIAL cross-origin screenshot blocked by CSP",
+      "resolution": "R13 same-origin screenshot package"
+    },
+    {
+      "id": "GREEN-REL-003",
+      "severity": "high",
+      "status": "resolved",
+      "title": "Lower OFFICIAL screenshots remained blank under lazy loading/full capture",
+      "resolution": "R14 eager same-origin loading + browser proof"
+    }
+  ],
+  "summary": {
+    "open_blocker": 0,
+    "open_high": 0,
+    "open_medium": 0,
+    "open_low": 0
+  },
+  "lock_rule": "open_blocker + open_high must equal 0"
+}

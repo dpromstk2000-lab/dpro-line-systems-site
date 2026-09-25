@@ -1,0 +1,37 @@
+{
+  "schema": "DPRO-GREEN-HISTORY-PRESERVATION-FINAL-R16",
+  "assessed": true,
+  "applicable": true,
+  "reason": "GREEN persistent customer inquiry/contact history requires preservation gate.",
+  "pass": true,
+  "evidence": {
+    "persistent_store_verified": true,
+    "thread_identity_stable": true,
+    "no_destructive_reset_path": true,
+    "upgrade_migration_preserves_history": true,
+    "stale_response_guard": true,
+    "before_after_count_verified": true,
+    "before_count": 4,
+    "after_count": 4,
+    "representative_ids_before": [
+      "inquiry:df073b66-da02-4eb7-8565-53259ec58d68",
+      "change:19f333b0-5b6d-4cc3-8e3f-049e35f66154",
+      "beb91c05-76c1-4b4f-9e2a-7276200f93ae",
+      "f5d98bdd-aacd-4dbf-b814-3da23826f5b3"
+    ],
+    "representative_ids_after": [
+      "inquiry:df073b66-da02-4eb7-8565-53259ec58d68",
+      "change:19f333b0-5b6d-4cc3-8e3f-049e35f66154",
+      "beb91c05-76c1-4b4f-9e2a-7276200f93ae",
+      "f5d98bdd-aacd-4dbf-b814-3da23826f5b3"
+    ],
+    "cross_device_consistency_result": "NOT_APPLICABLE_WHILE_LINE_DISABLED",
+    "backup_or_export_policy": "Do not claim automatic recoverability. Preserve before/after counts and representative IDs; require export or plan-supported recovery before future DB/LINE migrations.",
+    "evidence_refs": [
+      "member-overview-before.json",
+      "member-overview-after.json",
+      "SYSTEM FINAL LOCK",
+      "R15 HUMAN REVIEW"
+    ]
+  }
+}

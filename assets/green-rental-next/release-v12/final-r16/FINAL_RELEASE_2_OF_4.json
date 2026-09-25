@@ -1,0 +1,210 @@
+{
+  "schema": "DPRO-GREEN-FINAL-RELEASE-2-OF-4-R16",
+  "pass": true,
+  "gate": "WEB / EXACT SALES JOURNEY",
+  "viewports": {
+    "official": {
+      "390": {
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "title": "DPRO グリーンレンタル LINE｜植物台帳・定期巡回・写真報告・交換・養生｜DPRO SHOP",
+        "status": 200,
+        "console_error_count": 0
+      },
+      "768": {
+        "scrollWidth": 768,
+        "clientWidth": 768,
+        "title": "DPRO グリーンレンタル LINE｜植物台帳・定期巡回・写真報告・交換・養生｜DPRO SHOP",
+        "status": 200,
+        "console_error_count": 0
+      },
+      "1440": {
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "title": "DPRO グリーンレンタル LINE｜植物台帳・定期巡回・写真報告・交換・養生｜DPRO SHOP",
+        "status": 200,
+        "console_error_count": 0
+      }
+    },
+    "product": {
+      "390": {
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "title": "DPRO 観葉植物レンタル・グリーンレンタル｜業種特化型LINE・業務管理システム",
+        "status": 200,
+        "console_error_count": 0
+      },
+      "768": {
+        "scrollWidth": 768,
+        "clientWidth": 768,
+        "title": "DPRO 観葉植物レンタル・グリーンレンタル｜業種特化型LINE・業務管理システム",
+        "status": 200,
+        "console_error_count": 0
+      },
+      "1440": {
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "title": "DPRO 観葉植物レンタル・グリーンレンタル｜業種特化型LINE・業務管理システム",
+        "status": 200,
+        "console_error_count": 0
+      }
+    },
+    "lp": {
+      "390": {
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "title": "DPRO GREEN｜観葉植物レンタル・グリーンレンタル",
+        "status": 200,
+        "console_error_count": 0
+      },
+      "768": {
+        "scrollWidth": 768,
+        "clientWidth": 768,
+        "title": "DPRO GREEN｜観葉植物レンタル・グリーンレンタル",
+        "status": 200,
+        "console_error_count": 0
+      },
+      "1440": {
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "title": "DPRO GREEN｜観葉植物レンタル・グリーンレンタル",
+        "status": 200,
+        "console_error_count": 0
+      }
+    }
+  },
+  "ctas": [
+    {
+      "surface": "official",
+      "role": "official-nav-line",
+      "href": "https://lin.ee/YxJGXV6D",
+      "text": "LINEで無料相談"
+    },
+    {
+      "surface": "official",
+      "role": "official-hero-demo-modal",
+      "href": null,
+      "text": "実際の操作デモ"
+    },
+    {
+      "surface": "official",
+      "role": "official-hero-demo-tab",
+      "href": "https://dpromstk2000-lab.github.io/dpro-green-rental-line/owner.html?demo=1&view=dashboard&v=GREEN-OFFICIAL-DEMO-R2",
+      "text": "別タブで体験する ↗"
+    },
+    {
+      "surface": "official",
+      "role": "official-hero-line",
+      "href": "https://lin.ee/YxJGXV6D",
+      "text": "LINEで導入相談"
+    },
+    {
+      "surface": "official",
+      "role": "official-final-line",
+      "href": "https://lin.ee/YxJGXV6D",
+      "text": "LINEで無料相談 →"
+    },
+    {
+      "surface": "official",
+      "role": "official-final-demo",
+      "href": "https://dpromstk2000-lab.github.io/dpro-green-rental-line/owner.html?demo=1&view=dashboard&v=GREEN-OFFICIAL-DEMO-R2",
+      "text": "別タブで体験する ↗"
+    },
+    {
+      "surface": "product",
+      "role": "product-nav-line",
+      "href": "https://lin.ee/YxJGXV6D",
+      "text": "LINE相談"
+    },
+    {
+      "surface": "product",
+      "role": "product-hero-demo",
+      "href": "https://dpromstk2000-lab.github.io/dpro-line-systems-site/systems/green-rental.html?final=f2-1440#live",
+      "text": "LIVE DEMO"
+    },
+    {
+      "surface": "product",
+      "role": "product-hero-line",
+      "href": "https://lin.ee/YxJGXV6D",
+      "text": "LINE相談"
+    },
+    {
+      "surface": "product",
+      "role": "product-demo-tab",
+      "href": "https://dpromstk2000-lab.github.io/dpro-green-rental-line/",
+      "text": "別タブで開く"
+    },
+    {
+      "surface": "product",
+      "role": "product-guide",
+      "href": "https://dpromstk2000-lab.github.io/dpro-green-rental-line/guide-center.html",
+      "text": "Guide Centerを開く"
+    },
+    {
+      "surface": "product",
+      "role": "product-quick-start",
+      "href": "https://dpromstk2000-lab.github.io/dpro-line-systems-site/assets/pdfs/dpro-green-rental-tutorial-quick-start-v1.0.pdf",
+      "text": "Quick Start｜最初の10分"
+    },
+    {
+      "surface": "product",
+      "role": "product-detailed-manual",
+      "href": "https://dpromstk2000-lab.github.io/dpro-line-systems-site/assets/pdfs/dpro-green-rental-tutorial-detailed-manual-v1.0.pdf",
+      "text": "Detailed Manual｜詳しい操作"
+    },
+    {
+      "surface": "product",
+      "role": "product-official",
+      "href": "https://dpro-shop.com/systems/green-rental",
+      "text": "DPRO SHOP"
+    },
+    {
+      "surface": "product",
+      "role": "product-lp",
+      "href": "https://dpromstk2000-lab.github.io/dpro-line-systems-site/systems/green-rental-lp-v12.html",
+      "text": "詳しい紹介を見る"
+    },
+    {
+      "surface": "product",
+      "role": "product-flyer-html",
+      "href": "https://dpromstk2000-lab.github.io/dpro-line-systems-site/flyer-green-rental.html",
+      "text": "A4チラシを見る"
+    },
+    {
+      "surface": "product",
+      "role": "product-flyer-pdf",
+      "href": "https://dpromstk2000-lab.github.io/dpro-line-systems-site/flyer-green-rental.pdf",
+      "text": "PDF資料を開く"
+    },
+    {
+      "surface": "product",
+      "role": "product-operation-sheet",
+      "href": "https://dpromstk2000-lab.github.io/dpro-line-systems-site/assets/green-rental-next/DPRO_GREEN_RENTAL_OPERATION_EXPERIENCE_SHEET_V1.0.pdf",
+      "text": "操作体験シート"
+    },
+    {
+      "surface": "lp",
+      "role": "lp-hero-demo",
+      "href": "https://dpromstk2000-lab.github.io/dpro-green-rental-line/demo-guide.html",
+      "text": "LIVE DEMOを見る"
+    },
+    {
+      "surface": "lp",
+      "role": "lp-hero-line",
+      "href": "https://lin.ee/YxJGXV6D",
+      "text": "LINEで相談"
+    },
+    {
+      "surface": "lp",
+      "role": "lp-final-line",
+      "href": "https://lin.ee/YxJGXV6D",
+      "text": "LINEで無料相談"
+    },
+    {
+      "surface": "lp",
+      "role": "lp-final-product",
+      "href": "https://dpromstk2000-lab.github.io/dpro-line-systems-site/systems/green-rental.html",
+      "text": "PRODUCT SITEを見る"
+    }
+  ]
+}
