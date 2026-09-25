@@ -52,7 +52,7 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p assets/green-rental-next/screens
-          cat > /tmp/green-system-shots.mjs <<'JS'
+          cat > .dpro-green-system-shots.mjs <<'JS'
           import { chromium } from 'playwright';
           import fs from 'fs';
           const base = process.env.SYSTEM_BASE;
@@ -79,7 +79,8 @@ jobs:
             if (!fs.existsSync(`assets/green-rental-next/screens/${name}`)) throw new Error(`missing ${name}`);
           }
           JS
-          node /tmp/green-system-shots.mjs
+          node .dpro-green-system-shots.mjs
+          rm -f .dpro-green-system-shots.mjs
 
       - name: Apply FACT LOCK to PRODUCT page and flyer source
         shell: bash
@@ -191,7 +192,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          cat > /tmp/render-green-pdfs.mjs <<'JS'
+          cat > .dpro-render-green-pdfs.mjs <<'JS'
           import { chromium } from 'playwright';
           import path from 'path';
           import { pathToFileURL } from 'url';
@@ -209,7 +210,8 @@ jobs:
           await render('assets/green-rental-next/operation-sheet.html','assets/green-rental-next/DPRO_GREEN_RENTAL_OPERATION_EXPERIENCE_SHEET_V1.0.pdf','assets/green-rental-next/DPRO_GREEN_RENTAL_OPERATION_EXPERIENCE_SHEET_V1.0.png');
           await browser.close();
           JS
-          node /tmp/render-green-pdfs.mjs
+          node .dpro-render-green-pdfs.mjs
+          rm -f .dpro-render-green-pdfs.mjs
           pdfinfo flyer-green-rental.pdf | grep -E '^Pages:|^Page size:'
           pdfinfo assets/green-rental-next/DPRO_GREEN_RENTAL_OPERATION_EXPERIENCE_SHEET_V1.0.pdf | grep -E '^Pages:|^Page size:'
 
