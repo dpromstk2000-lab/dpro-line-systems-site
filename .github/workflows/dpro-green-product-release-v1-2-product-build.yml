@@ -1,0 +1,318 @@
+name: DPRO GREEN PRODUCT RELEASE V1.2 PRODUCT BUILD
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/dpro-green-product-release-v1-2-product-build.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      RELEASE_ID: GREEN-PR-V12-20260925-R1
+      SYSTEM_LOCK_HEAD: 6e359937a28e32380e0c4b2e3cd5ca5fbcbbab59
+      LINE_URL: https://lin.ee/YxJGXV6D
+      SYSTEM_BASE: https://dpromstk2000-lab.github.io/dpro-green-rental-line
+      PRODUCT_BASE: https://dpromstk2000-lab.github.io/dpro-line-systems-site
+      OFFICIAL_URL: https://dpro-shop.com/systems/green-rental
+
+    steps:
+      - name: Checkout PRODUCT repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Guard SYSTEM FINAL LOCK and baseline ancestry
+        shell: bash
+        run: |
+          set -euo pipefail
+          remote_system="$(git ls-remote https://github.com/dpromstk2000-lab/dpro-green-rental-line.git refs/heads/main | awk '{print $1}')"
+          test "$remote_system" = "$SYSTEM_LOCK_HEAD"
+          git merge-base --is-ancestor a1fc0ee49518d1deb71990df8a4c31624225ccbe HEAD
+          echo "SYSTEM FINAL LOCK PROTECTED: $remote_system"
+
+      - name: Install visual and PDF QA dependencies
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m pip install --disable-pip-version-check --quiet 'qrcode[pil]' pillow pymupdf
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq poppler-utils zbar-tools >/dev/null
+          npm install --no-audit --no-fund --silent playwright@1.55.0
+          npx playwright install --with-deps chromium >/dev/null
+
+      - name: Capture FINAL LOCK real-screen assets
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p assets/green-rental-next/screens
+          cat > /tmp/green-system-shots.mjs <<'JS'
+          import { chromium } from 'playwright';
+          import fs from 'fs';
+          const base = process.env.SYSTEM_BASE;
+          const shots = [
+            ['owner-dashboard.png', `${base}/owner.html?demo=1&view=dashboard&v=GREEN-PR-V12`],
+            ['owner-assets.png', `${base}/owner.html?demo=1&view=assets&v=GREEN-PR-V12`],
+            ['owner-visits.png', `${base}/owner.html?demo=1&view=visits&v=GREEN-PR-V12`],
+            ['owner-replacements.png', `${base}/owner.html?demo=1&view=replacements&v=GREEN-PR-V12`],
+            ['member-reports.png', `${base}/member.html?demo=1&tab=reports&v=GREEN-PR-V12`],
+            ['owner-ipad.png', `${base}/owner-ipad.html?demo=1&v=GREEN-PR-V12`],
+            ['staff.png', `${base}/staff.html?demo=1&v=GREEN-PR-V12`]
+          ];
+          const browser = await chromium.launch({headless:true});
+          for (const [name,url] of shots) {
+            const page = await browser.newPage({viewport:{width:1365,height:900}, deviceScaleFactor:1});
+            const response = await page.goto(url,{waitUntil:'domcontentloaded',timeout:60000});
+            if (!response || !response.ok()) throw new Error(`${url} HTTP ${response?.status()}`);
+            await page.waitForTimeout(1800);
+            await page.screenshot({path:`assets/green-rental-next/screens/${name}`,fullPage:true});
+            await page.close();
+          }
+          await browser.close();
+          for (const [name] of shots) {
+            if (!fs.existsSync(`assets/green-rental-next/screens/${name}`)) throw new Error(`missing ${name}`);
+          }
+          JS
+          node /tmp/green-system-shots.mjs
+
+      - name: Apply FACT LOCK to PRODUCT page and flyer source
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+
+          release = "GREEN-PR-V12-20260925-R1"
+          path = Path("systems/green-rental.html")
+          s = path.read_text(encoding="utf-8")
+          if 'data-release-id="GREEN-PR-V12-20260925-R1"' not in s:
+              s = s.replace('<body data-system-code="GREEN"', f'<body data-product-code="GREEN" data-release-id="{release}" data-system-code="GREEN"', 1)
+          if 'rel="canonical" href="https://dpromstk2000-lab.github.io/dpro-line-systems-site/systems/green-rental.html"' not in s:
+              s = s.replace('</title>', '</title><link rel="canonical" href="https://dpromstk2000-lab.github.io/dpro-line-systems-site/systems/green-rental.html"><meta property="og:type" content="website"><meta property="og:title" content="DPRO 観葉植物レンタル・グリーンレンタル"><meta property="og:description" content="写真相談・現地確認から定期巡回、写真報告、交換・回収・養生までを一つにつなぐDPRO GREEN。"><meta property="og:url" content="https://dpromstk2000-lab.github.io/dpro-line-systems-site/systems/green-rental.html">', 1)
+
+          replacements = {
+            '<a class="ps-nav-cta dpro-button dpro-button--line" href="https://lin.ee/YxJGXV6D"': '<a class="ps-nav-cta dpro-button dpro-button--line" data-product-code="GREEN" data-cta-role="product-nav-line" href="https://lin.ee/YxJGXV6D"',
+            '<a class="dpro-button dpro-button--primary" href="#live">LIVE DEMO</a>': '<a class="dpro-button dpro-button--primary" data-product-code="GREEN" data-cta-role="product-hero-demo" href="#live">LIVE DEMO</a>',
+            '<a class="dpro-button dpro-button--line" href="https://lin.ee/YxJGXV6D" target="_blank" rel="noopener">LINE相談</a>': '<a class="dpro-button dpro-button--line" data-product-code="GREEN" data-cta-role="product-hero-line" href="https://lin.ee/YxJGXV6D" target="_blank" rel="noopener">LINE相談</a>',
+            '<a class="dpro-button dpro-button--secondary" href="https://dpromstk2000-lab.github.io/dpro-green-rental-line/" target="_blank" rel="noopener">別タブで開く</a>': '<a class="dpro-button dpro-button--secondary" data-product-code="GREEN" data-cta-role="product-demo-tab" href="https://dpromstk2000-lab.github.io/dpro-green-rental-line/" target="_blank" rel="noopener">別タブで開く</a>',
+            '<a class="dpro-button dpro-button--flyer" href="https://dpro-shop.com/" target="_blank" rel="noopener">DPRO SHOP</a>': '<a class="dpro-button dpro-button--flyer" data-product-code="GREEN" data-cta-role="product-official" href="https://dpro-shop.com/systems/green-rental" target="_blank" rel="noopener">DPRO SHOP</a>',
+            '<a href="../lp-green-rental.html">詳しい紹介を見る</a>': '<a data-product-code="GREEN" data-cta-role="product-lp" href="../lp-green-rental.html">詳しい紹介を見る</a>',
+            '<a href="../flyer-green-rental.html">A4チラシを見る</a>': '<a data-product-code="GREEN" data-cta-role="product-flyer-html" href="../flyer-green-rental.html">A4チラシを見る</a>',
+            '<a href="../flyer-green-rental.pdf">PDF資料を開く</a>': '<a data-product-code="GREEN" data-cta-role="product-flyer-pdf" href="../flyer-green-rental.pdf">PDF資料を開く</a>',
+            '<a class="ps-tutorial-link" href="https://dpromstk2000-lab.github.io/dpro-green-rental-line/guide-center.html"': '<a class="ps-tutorial-link" data-product-code="GREEN" data-cta-role="product-guide" href="https://dpromstk2000-lab.github.io/dpro-green-rental-line/guide-center.html"',
+            '<a class="ps-tutorial-link" href="../assets/pdfs/dpro-green-rental-tutorial-quick-start-v1.0.pdf"': '<a class="ps-tutorial-link" data-product-code="GREEN" data-cta-role="product-quick-start" href="../assets/pdfs/dpro-green-rental-tutorial-quick-start-v1.0.pdf"',
+            '<a class="ps-tutorial-link" href="../assets/pdfs/dpro-green-rental-tutorial-detailed-manual-v1.0.pdf"': '<a class="ps-tutorial-link" data-product-code="GREEN" data-cta-role="product-detailed-manual" href="../assets/pdfs/dpro-green-rental-tutorial-detailed-manual-v1.0.pdf"'
+          }
+          for old,new in replacements.items():
+              if old in s and new not in s:
+                  s = s.replace(old,new,1)
+
+          if 'DPRO構築初期33,000円' not in s:
+              marker = '<section class="dpro-section master-section" data-master-section="10" id="install"'
+              note = '<p class="ps-install-note"><strong>初期費用：</strong>DPRO構築初期33,000円（税込）。LINE公式アカウント構築・ホームページ制作などの初期費用は別途です。DPROはLINE構築・運用契約店舗向け追加サービスです。</p>'
+              s = s.replace(marker, note + marker, 1)
+
+          if 'product-operation-sheet' not in s:
+              old = '<a data-product-code="GREEN" data-cta-role="product-flyer-pdf" href="../flyer-green-rental.pdf">PDF資料を開く</a>'
+              new = old + '<a data-product-code="GREEN" data-cta-role="product-operation-sheet" href="../assets/green-rental-next/DPRO_GREEN_RENTAL_OPERATION_EXPERIENCE_SHEET_V1.0.pdf">操作体験シート</a>'
+              s = s.replace(old,new,1)
+
+          path.write_text(s,encoding="utf-8")
+
+          flyer = Path("flyer-green-rental.html")
+          f = flyer.read_text(encoding="utf-8")
+          if 'data-release-id="GREEN-PR-V12-20260925-R1"' not in f:
+              f = f.replace('<body>', '<body data-product-code="GREEN" data-release-id="GREEN-PR-V12-20260925-R1">', 1)
+          flyer.write_text(f,encoding="utf-8")
+          PY
+
+      - name: Build lean LP MASTER V1.4
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          flyer = Path('flyer-green-rental.html').read_text(encoding='utf-8')
+          m = re.search(r'data:image/jpeg;base64,[A-Za-z0-9+/=]+', flyer)
+          if not m:
+              raise SystemExit('hero JPEG not found in flyer source')
+          hero = m.group(0)
+          html = r'''<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="DPRO GREENは観葉植物レンタルの写真相談・設置・植物台帳・定期巡回・写真報告・交換・回収・養生までを一つにつなぐ業務システムです。"><meta property="og:type" content="website"><meta property="og:title" content="DPRO GREEN｜観葉植物レンタルの巡回・植物台帳・写真報告"><meta property="og:url" content="https://dpromstk2000-lab.github.io/dpro-line-systems-site/lp-green-rental.html"><link rel="canonical" href="https://dpromstk2000-lab.github.io/dpro-line-systems-site/lp-green-rental.html"><title>DPRO GREEN｜観葉植物レンタル・グリーンレンタル</title><style>
+          :root{--g:#176342;--g2:#2e8058;--ink:#153b2b;--muted:#65776d;--soft:#eef7f0;--deep:#061e15;--line:#d6e7da;--orange:#ff9f2f}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans JP",sans-serif;color:var(--ink);background:#fff}a{color:inherit}.wrap{width:min(1120px,calc(100% - 32px));margin:auto}.section{padding:84px 0}.soft{background:var(--soft)}.dark{background:linear-gradient(145deg,#04130d,#0b3c29);color:#fff}.eyebrow{font-size:12px;font-weight:900;letter-spacing:.13em;color:var(--g2)}.dark .eyebrow{color:#b9e790}h1,h2,h3,p{margin-top:0}h1{font-size:clamp(42px,6vw,82px);line-height:1.04;letter-spacing:-.055em}h2{font-size:clamp(31px,4.6vw,56px);line-height:1.1;letter-spacing:-.04em}.lead{font-size:17px;line-height:1.9;color:#d9e7df;max-width:700px}.hero{min-height:780px;padding:125px 0 82px;background:radial-gradient(circle at 70% 15%,rgba(169,220,112,.18),transparent 27%),linear-gradient(145deg,#03110b,#08281c);color:#fff}.hero-grid{display:grid;grid-template-columns:1fr 1fr;gap:52px;align-items:center}.photo{height:570px;border-radius:30px;overflow:hidden;box-shadow:0 35px 90px rgba(0,0,0,.45)}.photo img{width:100%;height:100%;object-fit:cover}.actions{display:flex;gap:11px;flex-wrap:wrap;margin-top:28px}.btn{display:inline-flex;min-height:52px;padding:0 21px;align-items:center;justify-content:center;border-radius:999px;text-decoration:none;font-weight:900}.primary{background:var(--orange);color:#171008}.ghost{border:1px solid rgba(255,255,255,.26);color:#fff}.grid3,.grid6,.screens{display:grid;gap:16px;margin-top:34px}.grid3{grid-template-columns:repeat(3,1fr)}.grid6{grid-template-columns:repeat(3,1fr)}.screens{grid-template-columns:repeat(2,1fr)}.card{padding:27px;border:1px solid var(--line);border-radius:22px;background:#fff;box-shadow:0 15px 38px rgba(12,64,38,.07)}.card small{font-weight:900;color:var(--g2)}.card h3{margin:12px 0 8px;font-size:20px}.card p{color:var(--muted);line-height:1.75;font-size:14px}.screen{overflow:hidden;border-radius:24px;border:1px solid var(--line);background:#fff}.screen img{display:block;width:100%;height:360px;object-fit:cover;object-position:top}.screen div{padding:18px}.flow{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:32px}.flow .card{text-align:center}.price{display:grid;grid-template-columns:.8fr 1.2fr;gap:22px;align-items:center}.total{font-size:clamp(42px,7vw,76px);font-weight:950;color:#fff}.breakdown{display:grid;gap:10px}.breakdown div{display:flex;justify-content:space-between;padding:15px 17px;border:1px solid rgba(255,255,255,.14);border-radius:14px;background:rgba(255,255,255,.06)}.faq{display:grid;gap:10px;margin-top:30px}.faq details{padding:19px 21px;border:1px solid var(--line);border-radius:16px;background:#fff}.faq summary{font-weight:900;cursor:pointer}.faq p{margin:12px 0 0;color:var(--muted);line-height:1.8}.final-photo{position:relative;min-height:520px;display:grid;place-items:center;overflow:hidden;color:#fff}.final-photo>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:brightness(.42)}.final-inner{position:relative;z-index:1;text-align:center;max-width:850px}.final-inner .actions{justify-content:center}.badge-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:20px}.badge-row span{padding:8px 11px;border:1px solid rgba(255,255,255,.18);border-radius:999px;font-size:12px}.sticky{display:none}@media(max-width:820px){.hero{min-height:auto;padding-top:90px}.hero-grid,.price{grid-template-columns:1fr}.photo{height:420px}.grid3,.grid6,.screens,.flow{grid-template-columns:1fr 1fr}.section{padding:64px 0}}@media(max-width:520px){body{padding-bottom:68px}h1{font-size:44px}.photo{height:350px}.grid3,.grid6,.screens,.flow{grid-template-columns:1fr}.screen img{height:300px}.actions .btn{width:100%}.sticky{position:fixed;z-index:50;bottom:0;left:0;right:0;display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:8px;background:#fff;border-top:1px solid var(--line)}.sticky a{min-height:48px;border-radius:12px;display:grid;place-items:center;text-decoration:none;font-weight:900}.sticky a:first-child{background:var(--g);color:#fff}.sticky a:last-child{background:var(--orange);color:#171008}}</style></head><body data-product-code="GREEN" data-release-id="GREEN-PR-V12-20260925-R1">
+          <section class="hero" id="p1"><div class="wrap hero-grid"><div><p class="eyebrow">P1 / GREEN RENTAL OPERATIONS</p><h1>植物を設置して、<br>終わりにしない。</h1><p class="lead">写真相談、顧客・拠点、植物・鉢、定期巡回、作業写真、交換、回収・養生・再利用まで。観葉植物レンタルの日常業務を、同じ履歴へつなぎます。</p><div class="actions"><a class="btn primary" data-product-code="GREEN" data-cta-role="lp-hero-demo" href="https://dpromstk2000-lab.github.io/dpro-green-rental-line/demo-guide.html">LIVE DEMOを見る</a><a class="btn ghost" data-product-code="GREEN" data-cta-role="lp-hero-line" href="https://lin.ee/YxJGXV6D">LINEで相談</a></div><div class="badge-row"><span>植物・鉢台帳</span><span>巡回管理</span><span>写真報告</span><span>交換・養生</span></div></div><div class="photo"><img src="__HERO__" alt="観葉植物レンタルのメンテナンスイメージ"></div></div></section>
+          <section class="section" id="p2"><div class="wrap"><p class="eyebrow">P2 / PROBLEM</p><h2>植物が増えるほど、管理の抜けを増やさない。</h2><div class="grid3"><article class="card"><small>01</small><h3>現在地が曖昧</h3><p>植物・鉢・鉢カバーと設置場所を同じ台帳で追跡。</p></article><article class="card"><small>02</small><h3>巡回予定が分散</h3><p>担当、訪問順、到着、作業、完了を一つの状態へ。</p></article><article class="card"><small>03</small><h3>交換後が追えない</h3><p>回収、帰庫、養生、再利用・廃棄まで履歴を残します。</p></article></div></div></section>
+          <section class="section soft" id="p3"><div class="wrap"><p class="eyebrow">P3 / 6 FUNCTIONS</p><h2>観葉植物レンタルの現場に必要な6機能。</h2><div class="grid6">__FEATURES__</div></div></section>
+          <section class="section" id="p4"><div class="wrap"><p class="eyebrow">P4 / FLOW</p><h2>相談から交換後まで、業務を途中で切らさない。</h2><div class="flow"><article class="card"><small>STEP 01</small><h3>写真相談</h3><p>現地確認へ</p></article><article class="card"><small>STEP 02</small><h3>設置・台帳</h3><p>植物と鉢を登録</p></article><article class="card"><small>STEP 03</small><h3>定期巡回</h3><p>担当・順番・作業</p></article><article class="card"><small>STEP 04</small><h3>交換・養生</h3><p>回収後も追跡</p></article></div></div></section>
+          <section class="section soft" id="p5"><div class="wrap"><p class="eyebrow">P5 / REAL SCREENS</p><h2>説明画像ではなく、FINAL LOCKの実画面。</h2><div class="screens">__SCREENS__</div></div></section>
+          <section class="section" id="p6"><div class="wrap"><p class="eyebrow">P6 / ROLES</p><h2>必要な人に、必要な情報だけ。</h2><div class="grid3"><article class="card"><h3>管理PC / iPad</h3><p>顧客・植物・巡回・交換・設定を管理。</p></article><article class="card"><h3>スタッフスマホ</h3><p>当日の訪問と作業記録を現場で更新。</p></article><article class="card"><h3>お客様マイページ</h3><p>公開された作業報告や相談状況を確認。</p></article></div></div></section>
+          <section class="section dark" id="p7"><div class="wrap price"><div><p class="eyebrow">P7 / PRICE</p><h2>LINE + HP + DPROを、ひとつの運用へ。</h2><div class="total">月額 5,500円</div><p>税込。各初期制作・構築費は別途。</p></div><div class="breakdown"><div><span>LINE公式運用</span><strong>3,300円</strong></div><div><span>契約店舗HP基本保守</span><strong>1,100円</strong></div><div><span>DPRO利用・基本保守</span><strong>1,100円</strong></div><div><span>DPRO構築初期</span><strong>33,000円</strong></div></div></div></section>
+          <section class="section" id="p8"><div class="wrap"><p class="eyebrow">P8 / SUPPORT</p><h2>導入後も、「最初の10分」から迷わず。</h2><div class="grid3"><article class="card"><h3>Guide Center</h3><p>必要な操作をPC・スマホから確認。</p></article><article class="card"><h3>Quick Start</h3><p>最初に覚える流れを短く確認。</p></article><article class="card"><h3>Detailed Manual</h3><p>詳しい操作を印刷して手元に。</p></article></div><div class="actions"><a class="btn primary" style="background:var(--g);color:#fff" href="https://dpromstk2000-lab.github.io/dpro-green-rental-line/guide-center.html">Guide Center</a></div></div></section>
+          <section class="section soft" id="p9"><div class="wrap"><p class="eyebrow">P9 / FAQ</p><h2>導入前に確認したいこと。</h2><div class="faq"><details open><summary>DPROだけ契約できますか？</summary><p>DPROはLINE公式アカウント構築・運用契約店舗向けの追加サービスです。</p></details><details><summary>請求や会計も含まれますか？</summary><p>GREEN標準範囲は受付・顧客・植物資産・巡回・作業報告・交換・養生です。請求・入金・原価・利益・会計は対象外です。</p></details><details><summary>実画面を試せますか？</summary><p>はい。公開LIVE DEMOからFINAL LOCK済みのデモ画面を確認できます。</p></details></div></div></section>
+          <section class="final-photo" id="p10"><img src="__HERO__" alt="観葉植物のある空間"><div class="wrap final-inner"><p class="eyebrow">P10 / NEXT STEP</p><h2>相談する。知る。試す。<br>DPRO GREENを、もっと近くに。</h2><p>現在の巡回方法や管理項目を確認し、必要な範囲だけを整理します。</p><div class="actions"><a class="btn primary" data-product-code="GREEN" data-cta-role="lp-final-line" href="https://lin.ee/YxJGXV6D">LINEで無料相談</a><a class="btn ghost" data-product-code="GREEN" data-cta-role="lp-final-product" href="systems/green-rental.html">PRODUCT SITEを見る</a></div></div></section>
+          <nav class="sticky"><a href="https://dpromstk2000-lab.github.io/dpro-green-rental-line/demo-guide.html">DEMO</a><a href="https://lin.ee/YxJGXV6D">LINE相談</a></nav></body></html>'''
+          features = ["写真相談・現地確認","顧客・拠点・設置場所","植物・鉢・現在地","定期巡回・担当・順番","作業・状態・写真報告","交換・回収・養生"]
+          feat_html=''.join(f'<article class="card"><small>{i:02d}</small><h3>{x}</h3><p>日々の運用に必要な情報を同じDPROへつなぎます。</p></article>' for i,x in enumerate(features,1))
+          screens=[('owner-dashboard.png','管理PC・ダッシュボード'),('owner-assets.png','植物・鉢台帳'),('owner-visits.png','巡回・訪問管理'),('member-reports.png','お客様・作業報告')]
+          screen_html=''.join(f'<article class="screen"><img src="assets/green-rental-next/screens/{fn}" alt="{label}"><div><strong>{label}</strong></div></article>' for fn,label in screens)
+          html=html.replace('__HERO__',hero).replace('__FEATURES__',feat_html).replace('__SCREENS__',screen_html)
+          Path('lp-green-rental.html').write_text(html,encoding='utf-8')
+          PY
+
+      - name: Create QR assets and A4 operation experience sheet
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p assets/green-rental-next/qr
+          python3 - <<'PY'
+          from pathlib import Path
+          import qrcode, html
+          targets={
+            'official':'https://dpro-shop.com/systems/green-rental',
+            'product':'https://dpromstk2000-lab.github.io/dpro-line-systems-site/systems/green-rental.html',
+            'demo':'https://dpromstk2000-lab.github.io/dpro-green-rental-line/demo-guide.html',
+            'line':'https://lin.ee/YxJGXV6D'
+          }
+          for name,url in targets.items():
+              img=qrcode.make(url)
+              img.save(f'assets/green-rental-next/qr/{name}.png')
+          sheet='''<!doctype html><html lang="ja"><head><meta charset="utf-8"><style>@page{size:A4 portrait;margin:0}*{box-sizing:border-box}body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans JP",sans-serif;color:#16392a;background:#fff}.page{width:210mm;height:297mm;padding:12mm 12mm 10mm;position:relative;overflow:hidden}.head{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:1px solid #cfe0d5;padding-bottom:6mm}.brand{font-size:4mm;font-weight:950}.brand span{color:#24724f}.kicker{font-size:2.4mm;font-weight:900;letter-spacing:.14em;color:#397e5c}.head h1{font-size:8.5mm;line-height:1.08;margin:2mm 0 0;letter-spacing:-.04em}.head p{font-size:2.8mm;line-height:1.6;color:#62766b;margin:2mm 0 0;max-width:125mm}.badge{padding:2mm 3mm;border-radius:99mm;background:#e9f5ec;color:#176342;font-size:2.3mm;font-weight:900}.screen-grid{display:grid;grid-template-columns:1fr 1fr;gap:4mm;margin-top:6mm}.screen{border:1px solid #d5e4da;border-radius:3mm;overflow:hidden;background:#fff}.screen img{width:100%;height:54mm;object-fit:cover;object-position:top;display:block}.screen strong{display:block;padding:2.3mm 3mm;font-size:3mm}.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:2.5mm;margin-top:5mm}.step{background:#eff7f1;border-radius:2.6mm;padding:3mm;min-height:22mm}.step b{display:block;color:#176342;font-size:2.3mm}.step strong{display:block;font-size:3mm;margin-top:1mm;line-height:1.3}.step p{font-size:2.15mm;line-height:1.45;color:#61756a;margin:1mm 0 0}.qrgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:3mm;margin-top:5mm}.qr{border:1px solid #d5e4da;border-radius:3mm;padding:2.8mm;text-align:center}.qr img{width:23mm;height:23mm}.qr strong{display:block;font-size:2.7mm}.qr small{display:block;font-size:1.8mm;color:#6c8075;margin-top:.8mm}.foot{position:absolute;left:12mm;right:12mm;bottom:7mm;display:flex;justify-content:space-between;align-items:center;border-top:1px solid #d5e4da;padding-top:3mm;font-size:2mm;color:#6f8177}.foot b{color:#176342}</style></head><body><main class="page"><header class="head"><div><div class="brand">DPRO <span>GREEN</span></div><div class="kicker">OPERATION EXPERIENCE SHEET / V1.0</div><h1>実画面を見ながら、<br>最初の操作を確認。</h1><p>観葉植物レンタルの管理PC・巡回・お客様報告を、FINAL LOCK済みデモ画面で体験できます。</p></div><div class="badge">A4 / 実画面</div></header><section class="screen-grid"><article class="screen"><img src="screens/owner-dashboard.png"><strong>01 管理PC・全体ダッシュボード</strong></article><article class="screen"><img src="screens/owner-visits.png"><strong>02 巡回・訪問管理</strong></article><article class="screen"><img src="screens/owner-assets.png"><strong>03 植物・鉢台帳</strong></article><article class="screen"><img src="screens/member-reports.png"><strong>04 お客様・作業報告</strong></article></section><section class="steps"><div class="step"><b>STEP 01</b><strong>今日の状況を見る</strong><p>訪問予定・対応状況を確認。</p></div><div class="step"><b>STEP 02</b><strong>植物と設置先を見る</strong><p>植物・鉢・現在地を確認。</p></div><div class="step"><b>STEP 03</b><strong>巡回を記録する</strong><p>担当・順番・作業状態を更新。</p></div><div class="step"><b>STEP 04</b><strong>報告・交換へつなぐ</strong><p>写真報告と交換後の履歴へ。</p></div></section><section class="qrgrid"><div class="qr"><img src="qr/official.png"><strong>公式説明</strong><small>DPRO SHOP</small></div><div class="qr"><img src="qr/product.png"><strong>製品ページ</strong><small>PRODUCT SITE</small></div><div class="qr"><img src="qr/demo.png"><strong>LIVE DEMO</strong><small>実画面を操作</small></div><div class="qr"><img src="qr/line.png"><strong>LINE相談</strong><small>導入相談</small></div></section><footer class="foot"><span><b>DPRO GREEN</b> / 観葉植物レンタル・グリーンレンタル</span><span>2026-09-25 / PRODUCT RELEASE MASTER V1.2</span></footer></main></body></html>'''
+          Path('assets/green-rental-next/operation-sheet.html').write_text(sheet,encoding='utf-8')
+          PY
+
+      - name: Render final flyer and operation PDFs
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat > /tmp/render-green-pdfs.mjs <<'JS'
+          import { chromium } from 'playwright';
+          import path from 'path';
+          import { pathToFileURL } from 'url';
+          const browser=await chromium.launch({headless:true});
+          async function render(html,pdf,png){
+            const page=await browser.newPage({viewport:{width:1100,height:1500},deviceScaleFactor:1});
+            await page.goto(pathToFileURL(path.resolve(html)).href,{waitUntil:'load',timeout:60000});
+            await page.emulateMedia({media:'print'});
+            await page.pdf({path:pdf,format:'A4',printBackground:true,preferCSSPageSize:true,margin:{top:'0',right:'0',bottom:'0',left:'0'}});
+            await page.emulateMedia({media:'screen'});
+            await page.screenshot({path:png,fullPage:true});
+            await page.close();
+          }
+          await render('flyer-green-rental.html','flyer-green-rental.pdf','assets/green-rental-next/flyer-final-screen.png');
+          await render('assets/green-rental-next/operation-sheet.html','assets/green-rental-next/DPRO_GREEN_RENTAL_OPERATION_EXPERIENCE_SHEET_V1.0.pdf','assets/green-rental-next/DPRO_GREEN_RENTAL_OPERATION_EXPERIENCE_SHEET_V1.0.png');
+          await browser.close();
+          JS
+          node /tmp/render-green-pdfs.mjs
+          pdfinfo flyer-green-rental.pdf | grep -E '^Pages:|^Page size:'
+          pdfinfo assets/green-rental-next/DPRO_GREEN_RENTAL_OPERATION_EXPERIENCE_SHEET_V1.0.pdf | grep -E '^Pages:|^Page size:'
+
+      - name: Decode QR from final rendered PDFs
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf /tmp/green-qr && mkdir -p /tmp/green-qr/flyer /tmp/green-qr/operation
+          pdftoppm -png -r 220 flyer-green-rental.pdf /tmp/green-qr/flyer/page >/dev/null 2>&1
+          pdftoppm -png -r 220 assets/green-rental-next/DPRO_GREEN_RENTAL_OPERATION_EXPERIENCE_SHEET_V1.0.pdf /tmp/green-qr/operation/page >/dev/null 2>&1
+          (zbarimg --quiet --raw /tmp/green-qr/flyer/*.png || true) | sort -u > /tmp/flyer_qr.txt
+          (zbarimg --quiet --raw /tmp/green-qr/operation/*.png || true) | sort -u > /tmp/operation_qr.txt
+          echo "FLYER QR:"; cat /tmp/flyer_qr.txt
+          echo "OPERATION QR:"; cat /tmp/operation_qr.txt
+          test "$(grep -c '^http' /tmp/flyer_qr.txt || true)" -ge 3
+          test "$(grep -c '^http' /tmp/operation_qr.txt || true)" -ge 4
+
+      - name: Generate FACT LOCK and pre-public evidence
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p assets/green-rental-next/release-v12
+          python3 - <<'PY'
+          from pathlib import Path
+          import json, hashlib, re, subprocess
+          fact={
+            "schema_version":"DPRO-PRODUCT-FACT-LOCK-R2",
+            "locked":True,
+            "release_id":"GREEN-PR-V12-20260925-R1",
+            "product_dev_id":"c9d11f3a-de31-4efe-8dc5-fc4a20d18725",
+            "system_code":"GREEN",
+            "product_number":45,
+            "product_name_ja":"グリーンレンタル",
+            "product_name_catalog":"観葉植物レンタル・グリーンレンタル",
+            "product_name_en":"DPRO GREEN RENTAL LINE",
+            "category":"教育・生活サービス",
+            "system_final_lock_head":"6e359937a28e32380e0c4b2e3cd5ca5fbcbbab59",
+            "product_count":55,
+            "urls":{
+              "official":"https://dpro-shop.com/systems/green-rental",
+              "product":"https://dpromstk2000-lab.github.io/dpro-line-systems-site/systems/green-rental.html",
+              "lp":"https://dpromstk2000-lab.github.io/dpro-line-systems-site/lp-green-rental.html",
+              "demo":"https://dpromstk2000-lab.github.io/dpro-green-rental-line/demo-guide.html",
+              "line":"https://lin.ee/YxJGXV6D"
+            },
+            "prices_tax_included":{
+              "line_build_initial":77000,"line_operation_monthly":3300,
+              "website_initial_from":33000,"website_maintenance_standalone_monthly":3300,
+              "website_maintenance_contract_store_monthly":1100,
+              "dpro_initial":33000,"dpro_operation_monthly":1100,"integrated_monthly":5500
+            },
+            "pricing_condition":"DPRO is an add-on for stores contracted for LINE official account build and operation. Initial production/build fees are separate from the integrated monthly 5,500 JPY.",
+            "features":["写真相談・現地確認","顧客・拠点・設置場所","植物・鉢・現在地","定期巡回・担当・順番","作業・状態・写真報告","交換・回収・養生"],
+            "scope_out":["料金計算・見積金額の自動計算","請求書発行・入金消込","原価・利益・会計処理","給与・勤怠・シフト計算","ポイント・回数券","お客様による定期巡回日時の自由予約"],
+            "roles":{"owner":"管理PC","owner_ipad":"管理iPad","staff":"スタッフスマホ","member":"お客様マイページ"},
+            "flyer_master_id":"DPRO A4 FLYER MASTER V2.0",
+            "lp_master_id":"DPRO-LP-MASTER-V1.4",
+            "history_preservation":{"assessed":True,"applicable":True,"reason":"GREEN provides persistent LINE/contact thread and message history and customer inquiry history; hard-gate verification is required before lock."}
+          }
+          out=Path('assets/green-rental-next/release-v12')
+          (out/'FACT_LOCK.json').write_text(json.dumps(fact,ensure_ascii=False,indent=2)+"\n",encoding='utf-8')
+
+          product=Path('systems/green-rental.html').read_text(encoding='utf-8')
+          lp=Path('lp-green-rental.html').read_text(encoding='utf-8')
+          flyer=Path('flyer-green-rental.html').read_text(encoding='utf-8')
+          assertions={
+            "system_final_lock_untouched": subprocess.check_output(['git','ls-remote','https://github.com/dpromstk2000-lab/dpro-green-rental-line.git','refs/heads/main'],text=True).split()[0]==fact['system_final_lock_head'],
+            "product_release_marker": fact['release_id'] in product,
+            "lp_release_marker": fact['release_id'] in lp,
+            "flyer_release_marker": fact['release_id'] in flyer,
+            "product_canonical": fact['urls']['product'] in product,
+            "product_integrated_monthly": '5,500円' in product,
+            "product_dpro_initial": '33,000円' in product,
+            "product_exact_cta": 'data-cta-role=' in product,
+            "lp_exact_cta": 'data-cta-role=' in lp,
+            "product_initial_iframe_zero": len(re.findall(r'<iframe\b',product,re.I))==0,
+            "lp_initial_iframe_zero": len(re.findall(r'<iframe\b',lp,re.I))==0,
+            "flyer_master": 'DPRO GREEN A4 FLYER MASTER V2.0' in flyer,
+            "product_count_55": Path('systems-data.js').read_text(encoding='utf-8').count('"code":')==55,
+          }
+          if not all(assertions.values()):
+              raise SystemExit('PREPUBLIC QA FAIL '+repr({k:v for k,v in assertions.items() if not v}))
+          evidence={"schema":"DPRO-GREEN-PRODUCT-BUILD-EVIDENCE-R1","release_id":fact['release_id'],"pass":True,"assertions":assertions,"history_preservation":{"assessed":True,"applicable":True,"status":"PUBLIC_HARD_GATE_PENDING"}}
+          (out/'PRODUCT_BUILD_EVIDENCE.json').write_text(json.dumps(evidence,ensure_ascii=False,indent=2)+"\n",encoding='utf-8')
+          PY
+          git diff --check
+
+      - name: Commit PRODUCT build
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add systems/green-rental.html lp-green-rental.html flyer-green-rental.html flyer-green-rental.pdf assets/green-rental-next
+          if git diff --cached --quiet; then
+            echo "No PRODUCT changes required."
+          else
+            git commit -m "GREEN PRODUCT RELEASE V1.2 build and prepublic QA"
+            git push
+          fi
+
+      - name: PRODUCT build complete
+        run: |
+          echo "PRODUCT BUILD: PASS"
+          echo "SYSTEM FINAL LOCK: PROTECTED"
+          echo "NEXT: run OFFICIAL apply workflow"
