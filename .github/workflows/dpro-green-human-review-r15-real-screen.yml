@@ -1,0 +1,621 @@
+name: DPRO GREEN HUMAN REVIEW R15 REAL SCREEN
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/dpro-green-human-review-r15-real-screen.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  review:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    env:
+      RELEASE_ID: GREEN-PR-V12-20260925-R1
+      R15_REVISION: GREEN-HR-R15-REAL-SCREEN-20260925
+      SYSTEM_LOCK_HEAD: 6e359937a28e32380e0c4b2e3cd5ca5fbcbbab59
+      PRODUCT_CONTENT_HEAD: e2fb0c4773290e7edd8948379165577625d019e6
+      OFFICIAL_CONTENT_HEAD: 0031e9c8eacc81529df5244403afab71c5077514
+      SCREEN_QA_REVISION: GREEN-SCREEN-R10-20260925
+      OFFICIAL_R14_MARKER: GREEN-OFFICIAL-LOCAL-SCREEN-R14-20260925
+      PRODUCT_PUBLICATION_REVISION: GREEN-PRODUCT-LP-PATH-R4-20260925
+      FLYER_PUBLICATION_REVISION: GREEN-FLYER-SCREEN-R9-20260925
+      SYSTEM_API: https://dpro-green-rental-line-api.dpromstk2000.workers.dev
+      OFFICIAL_URL: https://dpro-shop.com/systems/green-rental
+      PRODUCT_URL: https://dpromstk2000-lab.github.io/dpro-line-systems-site/systems/green-rental.html
+      LP_URL: https://dpromstk2000-lab.github.io/dpro-line-systems-site/systems/green-rental-lp-v12.html
+      FLYER_HTML_URL: https://dpromstk2000-lab.github.io/dpro-line-systems-site/flyer-green-rental.html
+      FLYER_PDF_URL: https://dpromstk2000-lab.github.io/dpro-line-systems-site/flyer-green-rental.pdf
+      OPERATION_PDF_URL: https://dpromstk2000-lab.github.io/dpro-line-systems-site/assets/green-rental-next/DPRO_GREEN_RENTAL_OPERATION_EXPERIENCE_SHEET_V1.0.pdf
+
+    steps:
+      - name: Checkout PRODUCT evidence source
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Guard locked baselines
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p human-review-r15/{screens,pdf-renders,evidence,raw}
+
+          system_head="$(git ls-remote https://github.com/dpromstk2000-lab/dpro-green-rental-line.git refs/heads/main | awk '{print $1}')"
+          test "$system_head" = "$SYSTEM_LOCK_HEAD"
+          printf '%s\n' "$system_head" > human-review-r15/raw/system-head-before.txt
+
+          official_head="$(git ls-remote https://github.com/dpromstk2000-lab/dpro-shop-official-site.git refs/heads/main | awk '{print $1}')"
+          test "$official_head" = "$OFFICIAL_CONTENT_HEAD"
+          printf '%s\n' "$official_head" > human-review-r15/raw/official-head-before.txt
+
+          git merge-base --is-ancestor "$PRODUCT_CONTENT_HEAD" HEAD
+          printf '%s\n' "$(git rev-parse HEAD)" > human-review-r15/raw/product-workflow-head.txt
+
+          echo "SYSTEM FINAL LOCK: PASS $system_head"
+          echo "OFFICIAL R14 CONTENT HEAD: PASS $official_head"
+          echo "PRODUCT R10 SCREEN CONTENT ANCESTRY: PASS"
+
+      - name: Install audit dependencies
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq poppler-utils zbar-tools jq >/dev/null
+          npm install --no-audit --no-fund --silent playwright@1.55.0
+          npx playwright install --with-deps chromium >/dev/null
+
+      - name: Verify all public release markers
+        shell: bash
+        run: |
+          set -euo pipefail
+          wait_marker(){
+            local url="$1" marker="$2" name="$3"
+            for i in $(seq 1 45); do
+              body="$(curl -fsSL --retry 2 --retry-delay 2 -H 'Cache-Control: no-cache' -H 'Pragma: no-cache' "${url}?r15=${i}" || true)"
+              if [[ "$body" == *"$marker"* ]]; then
+                echo "$name PUBLIC: PASS"
+                return 0
+              fi
+              echo "$name not ready ($i/45)"
+              sleep 10
+            done
+            echo "$name PUBLIC marker timeout"
+            return 1
+          }
+
+          wait_marker "$PRODUCT_URL" "$PRODUCT_PUBLICATION_REVISION" PRODUCT
+          wait_marker "$LP_URL" "$RELEASE_ID" LP
+          wait_marker "$FLYER_HTML_URL" "$FLYER_PUBLICATION_REVISION" FLYER
+          wait_marker "$OFFICIAL_URL" "$OFFICIAL_R14_MARKER" OFFICIAL_R14
+
+      - name: Verify SYSTEM 53-check
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          login="$(curl -fsS -H 'content-type: application/json' \
+            -d '{"facilityCode":"dpro_green_rental_demo","code":"1234"}' \
+            "$SYSTEM_API/api/admin/login")"
+          printf '%s' "$login" > human-review-r15/raw/admin-login.json
+
+          admin_token="$(printf '%s' "$login" | jq -r '.data.sessionToken // empty')"
+          csrf_token="$(printf '%s' "$login" | jq -r '.data.csrfToken // empty')"
+          test -n "$admin_token"
+
+          fetch_check(){
+            local outfile="$1"
+            local code
+            code="$(curl -sS -o "$outfile" -w '%{http_code}' \
+              -H "Authorization: Bearer $admin_token" \
+              "$SYSTEM_API/api/admin/system-check")"
+            echo "SYSTEM CHECK HTTP: $code"
+            test "$code" = "200" || test "$code" = "409"
+            jq -e '.data and (.data.total // 0) >= 53' "$outfile" >/dev/null
+          }
+
+          fetch_check human-review-r15/raw/system-check-before.json
+
+          demo_prepared="$(jq -r '.data.demoPrepared // false' human-review-r15/raw/system-check-before.json)"
+          today_visit_fail="$(jq -r '[.data.checks[]? | select(.status=="fail" and .label=="本日の訪問")] | length' human-review-r15/raw/system-check-before.json)"
+
+          if [ "$demo_prepared" != "true" ] || [ "$today_visit_fail" -gt 0 ]; then
+            headers=(-H 'content-type: application/json' -H "Authorization: Bearer $admin_token")
+            if [ -n "$csrf_token" ]; then headers+=(-H "X-CSRF-Token: $csrf_token"); fi
+            prepare_code="$(curl -sS -o human-review-r15/raw/demo-prepare.json -w '%{http_code}' \
+              "${headers[@]}" \
+              -d '{"confirmed":true,"confirmation":"DEMO"}' \
+              "$SYSTEM_API/api/admin/demo/prepare")"
+            test "$prepare_code" -ge 200
+            test "$prepare_code" -lt 300
+            jq -e '.ok == true' human-review-r15/raw/demo-prepare.json >/dev/null
+            sleep 3
+          fi
+
+          fetch_check human-review-r15/raw/system-check.json
+          jq -e '.ok == true and (.data.total // 0) >= 53 and (.data.failed // 999) == 0 and (.data.warnings // 999) == 0' \
+            human-review-r15/raw/system-check.json >/dev/null
+
+          jq -r '"SYSTEM 53-CHECK: PASS total=\(.data.total) passed=\(.data.passed) failed=\(.data.failed) warnings=\(.data.warnings)"' \
+            human-review-r15/raw/system-check.json
+
+      - name: Verify R10 screenshot content HARD GATE
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          import json, struct
+
+          root=Path('assets/green-rental-next/screens')
+          qa=json.loads((root/'SCREENSHOT_CONTENT_QA.json').read_text(encoding='utf-8'))
+
+          assert qa.get('schema') == 'DPRO-GREEN-REAL-SCREEN-CONTENT-QA-R1', qa
+          assert qa.get('revision') == 'GREEN-SCREEN-R10-20260925', qa
+          assert qa.get('pass') is True, qa
+
+          s=qa['screens']
+          assert len(s) == 7, s
+          assert len(s['owner-dashboard.png'].get('stats',[])) >= 8
+          assert any(int(x) > 0 for x in s['owner-dashboard.png']['stats'])
+          assert s['owner-assets.png']['rows'] >= 15
+          assert s['owner-visits.png']['rows'] >= 3
+          assert s['owner-replacements.png']['rows'] >= 1
+          assert s['member-reports.png']['reports'] >= 1
+          assert s['owner-ipad.png']['visits'] >= 3
+          assert s['staff.png']['visits'] >= 1
+
+          for name,meta in s.items():
+              p=root/name
+              b=p.read_bytes()
+              assert b[:8] == b'\x89PNG\r\n\x1a\n', name
+              w,h=struct.unpack('>II',b[16:24])
+              assert w >= 900 and h >= 600, (name,w,h)
+              assert len(b) >= 50000, (name,len(b))
+              assert meta['bytes'] == len(b), (name,meta['bytes'],len(b))
+
+          Path('human-review-r15/evidence/SCREENSHOT_CONTENT_HARD_GATE.json').write_text(
+              json.dumps({
+                  'schema':'DPRO-GREEN-R15-SCREENSHOT-CONTENT-HARD-GATE-R1',
+                  'pass':True,
+                  'source_revision':qa['revision'],
+                  'screens':s
+              },ensure_ascii=False,indent=2)+'\n',
+              encoding='utf-8'
+          )
+          print('R10 SCREENSHOT CONTENT HARD GATE: PASS')
+          PY
+
+      - name: History preservation before snapshot
+        shell: bash
+        run: |
+          set -euo pipefail
+          member_login="$(curl -fsS -H 'content-type: application/json' \
+            -d '{"mode":"demo","facilityCode":"dpro_green_rental_demo","token":"GREEN-DEMO","customerNumber":"DEMO-GREEN-001"}' \
+            "$SYSTEM_API/api/member/login")"
+          printf '%s' "$member_login" > human-review-r15/raw/member-login-before.json
+          member_token="$(printf '%s' "$member_login" | jq -r '.data.sessionToken // empty')"
+          test -n "$member_token"
+          curl -fsS -H "Authorization: Bearer $member_token" \
+            "$SYSTEM_API/api/member/overview" > human-review-r15/raw/member-overview-before.json
+          jq -e '.ok == true' human-review-r15/raw/member-overview-before.json >/dev/null
+
+      - name: Browser visual QA including R14 real screens
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat > .green-r15-visual.mjs <<'JS'
+          import { chromium } from 'playwright';
+          import fs from 'fs';
+
+          const surfaces=[
+            ['official',process.env.OFFICIAL_URL],
+            ['product',process.env.PRODUCT_URL],
+            ['lp',process.env.LP_URL],
+            ['flyer',process.env.FLYER_HTML_URL]
+          ];
+          const widths=[390,768,1440];
+          const browser=await chromium.launch({headless:true});
+          const evidence={
+            schema:'DPRO-GREEN-R15-BROWSER-VISUAL-QA-R1',
+            revision:process.env.R15_REVISION,
+            release_id:process.env.RELEASE_ID,
+            pass:false,
+            surfaces:{},
+            exact_cta:[],
+            official_real_screens:null
+          };
+
+          for(const [name,url] of surfaces){
+            evidence.surfaces[name]={url,widths:{}};
+            for(const width of widths){
+              const page=await browser.newPage({viewport:{width,height:1000},deviceScaleFactor:1});
+              const errors=[];
+              page.on('console',m=>{ if(m.type()==='error') errors.push(m.text()); });
+
+              const response=await page.goto(`${url}?r15visual=${width}`,{
+                waitUntil:'networkidle',
+                timeout:90000
+              });
+              if(!response || !response.ok()) throw new Error(`${name} HTTP ${response?.status()}`);
+
+              const release=await page.locator(`[data-release-id="${process.env.RELEASE_ID}"]`).count();
+              if(!release) throw new Error(`${name}: release marker missing`);
+
+              const metrics=await page.evaluate(()=>({
+                scrollWidth:document.documentElement.scrollWidth,
+                clientWidth:document.documentElement.clientWidth,
+                title:document.title
+              }));
+              if(metrics.scrollWidth > metrics.clientWidth + 3){
+                throw new Error(`${name} ${width}px horizontal overflow ${JSON.stringify(metrics)}`);
+              }
+
+              if(name==='official'){
+                const marker=await page.locator('body').evaluate(
+                  el=>el.outerHTML.includes('GREEN-OFFICIAL-LOCAL-SCREEN-R14-20260925')
+                );
+                if(!marker) throw new Error('official R14 marker missing');
+
+                await page.waitForFunction(()=>{
+                  const imgs=[...document.querySelectorAll('img.green-screen-shot')];
+                  return imgs.length>=6 && imgs.every(img=>
+                    img.complete && img.naturalWidth>=900 && img.naturalHeight>=600
+                  );
+                },null,{timeout:90000});
+
+                const imgs=await page.locator('img.green-screen-shot').evaluateAll(nodes=>nodes.map(img=>({
+                  src:img.currentSrc||img.src,
+                  loading:img.loading,
+                  complete:img.complete,
+                  naturalWidth:img.naturalWidth,
+                  naturalHeight:img.naturalHeight
+                })));
+
+                const bad=imgs.filter(x=>!x.complete || x.naturalWidth<900 || x.naturalHeight<600);
+                if(bad.length) throw new Error('official real screens failed '+JSON.stringify(bad));
+
+                const external=imgs.filter(x=>new URL(x.src).hostname!=='dpro-shop.com');
+                if(external.length) throw new Error('official external screen remains '+JSON.stringify(external));
+
+                const lazy=imgs.filter(x=>x.loading==='lazy');
+                if(lazy.length) throw new Error('official real screen still lazy '+JSON.stringify(lazy));
+
+                const csp=errors.filter(x=>/refused to load.*image|content security policy|content-security-policy/i.test(x));
+                if(csp.length) throw new Error('official CSP image error '+JSON.stringify(csp));
+
+                if(width===1440) evidence.official_real_screens=imgs;
+              }
+
+              if(width===1440){
+                const rows=await page.locator('[data-product-code="GREEN"][data-cta-role]').evaluateAll(els=>els.map(el=>({
+                  role:el.getAttribute('data-cta-role'),
+                  href:el.href||null,
+                  text:(el.textContent||'').trim().replace(/\s+/g,' ')
+                })));
+                evidence.exact_cta.push(...rows.map(r=>({surface:name,...r})));
+              }
+
+              await page.screenshot({
+                path:`human-review-r15/screens/${name}-${width}.png`,
+                fullPage:true
+              });
+
+              evidence.surfaces[name].widths[width]={
+                ...metrics,
+                status:response.status(),
+                console_error_count:errors.length
+              };
+              await page.close();
+            }
+          }
+
+          const roles=new Set(evidence.exact_cta.map(x=>x.role).filter(Boolean));
+          if(roles.size < 8) throw new Error(`only ${roles.size} distinct CTA roles`);
+          if(!evidence.official_real_screens || evidence.official_real_screens.length < 6){
+            throw new Error('official real screen evidence missing');
+          }
+
+          evidence.pass=true;
+          fs.writeFileSync(
+            'human-review-r15/evidence/BROWSER_VISUAL_QA.json',
+            JSON.stringify(evidence,null,2)+'\n'
+          );
+          console.log(JSON.stringify({
+            pass:true,
+            cta_roles:[...roles].sort(),
+            official_real_screen_count:evidence.official_real_screens.length
+          },null,2));
+
+          await browser.close();
+          JS
+
+          node .green-r15-visual.mjs
+          rm -f .green-r15-visual.mjs
+
+      - name: Download render and decode final PDFs
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 5 --retry-delay 3 "$FLYER_PDF_URL" \
+            -o human-review-r15/raw/flyer.pdf
+          curl -fsSL --retry 5 --retry-delay 3 "$OPERATION_PDF_URL" \
+            -o human-review-r15/raw/operation.pdf
+
+          pdfinfo human-review-r15/raw/flyer.pdf > human-review-r15/raw/flyer-pdfinfo.txt
+          pdfinfo human-review-r15/raw/operation.pdf > human-review-r15/raw/operation-pdfinfo.txt
+
+          test "$(pdfinfo human-review-r15/raw/flyer.pdf | awk '/^Pages:/{print $2}')" = "1"
+          test "$(pdfinfo human-review-r15/raw/operation.pdf | awk '/^Pages:/{print $2}')" = "1"
+
+          pdftoppm -png -singlefile -r 180 \
+            human-review-r15/raw/flyer.pdf human-review-r15/pdf-renders/flyer >/dev/null 2>&1
+          pdftoppm -png -singlefile -r 180 \
+            human-review-r15/raw/operation.pdf human-review-r15/pdf-renders/operation >/dev/null 2>&1
+
+          (zbarimg --quiet --raw human-review-r15/pdf-renders/flyer.png || true) \
+            | sort -u > human-review-r15/raw/flyer-qr.txt
+          (zbarimg --quiet --raw human-review-r15/pdf-renders/operation.png || true) \
+            | sort -u > human-review-r15/raw/operation-qr.txt
+
+          test "$(grep -c '^http' human-review-r15/raw/flyer-qr.txt || true)" -ge 3
+          test "$(grep -c '^http' human-review-r15/raw/operation-qr.txt || true)" -ge 4
+
+          echo "A4 PDF + QR QA: PASS"
+
+      - name: History preservation after snapshot
+        shell: bash
+        run: |
+          set -euo pipefail
+          member_login="$(curl -fsS -H 'content-type: application/json' \
+            -d '{"mode":"demo","facilityCode":"dpro_green_rental_demo","token":"GREEN-DEMO","customerNumber":"DEMO-GREEN-001"}' \
+            "$SYSTEM_API/api/member/login")"
+          member_token="$(printf '%s' "$member_login" | jq -r '.data.sessionToken // empty')"
+          test -n "$member_token"
+          curl -fsS -H "Authorization: Bearer $member_token" \
+            "$SYSTEM_API/api/member/overview" > human-review-r15/raw/member-overview-after.json
+          jq -e '.ok == true' human-review-r15/raw/member-overview-after.json >/dev/null
+
+          python3 - <<'PY'
+          from pathlib import Path
+          import json
+
+          before=json.loads(Path('human-review-r15/raw/member-overview-before.json').read_text())
+          after=json.loads(Path('human-review-r15/raw/member-overview-after.json').read_text())
+          b=(before.get('data') or {}).get('activeIssues') or []
+          a=(after.get('data') or {}).get('activeIssues') or []
+
+          def ident(x):
+              return str(x.get('id') or x.get('issue_number') or x.get('issueNumber') or '')
+
+          bi=[ident(x) for x in b if ident(x)]
+          ai=[ident(x) for x in a if ident(x)]
+          missing=[x for x in bi if x not in ai]
+
+          result={
+              'schema':'DPRO-GREEN-R15-HISTORY-PRESERVATION-R1',
+              'pass':len(missing)==0 and len(a)>=len(b),
+              'before_count':len(b),
+              'after_count':len(a),
+              'representative_ids_before':bi[:5],
+              'representative_ids_after':ai[:5],
+              'unexpected_missing':missing,
+              'hp7_multi_device_status':'NOT_APPLICABLE_WHILE_LINE_DISABLED'
+          }
+          if not result['pass']:
+              raise SystemExit('HISTORY PRESERVATION FAIL '+repr(result))
+
+          Path('human-review-r15/evidence/HISTORY_PRESERVATION_QA.json').write_text(
+              json.dumps(result,ensure_ascii=False,indent=2)+'\n',
+              encoding='utf-8'
+          )
+          print('HISTORY PRESERVATION: PASS')
+          PY
+
+      - name: Cross-surface FACT and real-screen checks
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL "${OFFICIAL_URL}?r15source=1" -o human-review-r15/raw/official.html
+          curl -fsSL "${PRODUCT_URL}?r15source=1" -o human-review-r15/raw/product.html
+          curl -fsSL "${LP_URL}?r15source=1" -o human-review-r15/raw/lp.html
+          curl -fsSL https://dpro-shop.com/404.html -o human-review-r15/raw/official-404.html
+          curl -fsSL https://dpro-shop.com/sitemap.xml -o human-review-r15/raw/official-sitemap.xml
+          curl -fsSL https://dpromstk2000-lab.github.io/dpro-line-systems-site/sitemap.xml \
+            -o human-review-r15/raw/product-sitemap.xml
+
+          python3 - <<'PY'
+          from pathlib import Path
+          import json,re
+
+          O=Path('human-review-r15/raw/official.html').read_text(errors='ignore')
+          P=Path('human-review-r15/raw/product.html').read_text(errors='ignore')
+          L=Path('human-review-r15/raw/lp.html').read_text(errors='ignore')
+
+          checks={
+              'official_release_marker':'GREEN-PR-V12-20260925-R1' in O,
+              'official_r14_marker':'GREEN-OFFICIAL-LOCAL-SCREEN-R14-20260925' in O,
+              'official_local_screens':'/assets/green-rental-next/screens/' in O,
+              'official_external_screen_origin_removed':'https://dpromstk2000-lab.github.io/dpro-line-systems-site/assets/green-rental-next/screens/' not in O,
+              'official_real_screens_eager':'class="green-screen-shot"' in O and 'class="green-screen-shot"' not in O.replace(' loading="lazy"',''),
+              'product_release_marker':'GREEN-PR-V12-20260925-R1' in P,
+              'lp_release_marker':'GREEN-PR-V12-20260925-R1' in L,
+              'official_initial_iframe_zero':not bool(re.search(r'<iframe\b',O,re.I)),
+              'product_initial_iframe_zero':not bool(re.search(r'<iframe\b',P,re.I)),
+              'lp_initial_iframe_zero':not bool(re.search(r'<iframe\b',L,re.I)),
+              'official_dpro_price':'33,000' in O and '1,100' in O,
+              'official_integrated_monthly':'5,500' in O,
+              'product_integrated_monthly':'5,500' in P and '33,000' in P,
+              'product_new_lp_path':'green-rental-lp-v12.html' in P,
+              'lp_versioned_path':'systems/green-rental-lp-v12.html' in L,
+              'line_url_all':all('https://lin.ee/YxJGXV6D' in x for x in [O,P,L]),
+              'official_55':'55システム' in Path('human-review-r15/raw/official-404.html').read_text(errors='ignore'),
+              'official_sitemap_green':'green-rental' in Path('human-review-r15/raw/official-sitemap.xml').read_text(errors='ignore'),
+              'product_sitemap_green':'green-rental' in Path('human-review-r15/raw/product-sitemap.xml').read_text(errors='ignore'),
+              'product_sitemap_lp':'systems/green-rental-lp-v12.html' in Path('human-review-r15/raw/product-sitemap.xml').read_text(errors='ignore')
+          }
+
+          # Correct eager check: no GREEN screenshot tag may contain loading="lazy".
+          tags=re.findall(r'<img\b[^>]*class="[^"]*\bgreen-screen-shot\b[^"]*"[^>]*>',O,re.I)
+          checks['official_real_screens_eager']=len(tags)>=6 and all('loading="lazy"' not in t for t in tags)
+
+          bad={k:v for k,v in checks.items() if not v}
+          if bad:
+              raise SystemExit('CROSS SURFACE QA FAIL '+repr(bad))
+
+          Path('human-review-r15/evidence/SOURCE_FACT_SCAN.json').write_text(
+              json.dumps({
+                  'schema':'DPRO-GREEN-R15-SOURCE-FACT-SCAN-R1',
+                  'pass':True,
+                  'checks':checks
+              },ensure_ascii=False,indent=2)+'\n',
+              encoding='utf-8'
+          )
+          print('CROSS-SURFACE FACT QA: PASS')
+          PY
+
+      - name: Recheck locked heads after review
+        shell: bash
+        run: |
+          set -euo pipefail
+          system_after="$(git ls-remote https://github.com/dpromstk2000-lab/dpro-green-rental-line.git refs/heads/main | awk '{print $1}')"
+          official_after="$(git ls-remote https://github.com/dpromstk2000-lab/dpro-shop-official-site.git refs/heads/main | awk '{print $1}')"
+
+          test "$system_after" = "$SYSTEM_LOCK_HEAD"
+          test "$official_after" = "$OFFICIAL_CONTENT_HEAD"
+
+          printf '%s\n' "$system_after" > human-review-r15/raw/system-head-after.txt
+          printf '%s\n' "$official_after" > human-review-r15/raw/official-head-after.txt
+
+          echo "SYSTEM FINAL LOCK AFTER HUMAN REVIEW: PASS"
+          echo "OFFICIAL CONTENT HEAD AFTER HUMAN REVIEW: PASS"
+
+      - name: Build BRUSHUP 4 of 4 and HUMAN ACCEPTANCE pending packet
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          import json, datetime
+
+          e=Path('human-review-r15/evidence')
+          browser=json.loads((e/'BROWSER_VISUAL_QA.json').read_text())
+          screen=json.loads((e/'SCREENSHOT_CONTENT_HARD_GATE.json').read_text())
+          history=json.loads((e/'HISTORY_PRESERVATION_QA.json').read_text())
+          fact=json.loads((e/'SOURCE_FACT_SCAN.json').read_text())
+
+          roles=sorted({x.get('role') for x in browser.get('exact_cta',[]) if x.get('role')})
+
+          b1={
+              'schema':'DPRO-GREEN-BRUSHUP-1-OF-4-R15',
+              'pass':fact['pass'],
+              'gate':'FACT / copy / site-wide scan',
+              'evidence':['SOURCE_FACT_SCAN.json']
+          }
+          b2={
+              'schema':'DPRO-GREEN-BRUSHUP-2-OF-4-R15',
+              'pass':len(roles)>=8,
+              'gate':'exact CTA / sales journey',
+              'cta_roles':roles,
+              'evidence':['BROWSER_VISUAL_QA.json']
+          }
+          b3={
+              'schema':'DPRO-GREEN-BRUSHUP-3-OF-4-R15',
+              'pass':browser['pass'] and screen['pass'],
+              'gate':'390 / 768 / 1440 + loaded real screens + A4 PDF / QR',
+              'official_real_screen_count':len(browser.get('official_real_screens') or []),
+              'screenshot_content_revision':screen['source_revision'],
+              'screenshots':sorted(str(p.relative_to('human-review-r15')) for p in Path('human-review-r15/screens').glob('*.png')),
+              'pdf_renders':['pdf-renders/flyer.png','pdf-renders/operation.png'],
+              'qr_decode':['raw/flyer-qr.txt','raw/operation-qr.txt']
+          }
+          b4={
+              'schema':'DPRO-GREEN-BRUSHUP-4-OF-4-R15',
+              'pass':history['pass'],
+              'gate':'live public + SYSTEM / history guard',
+              'system_final_lock':'6e359937a28e32380e0c4b2e3cd5ca5fbcbbab59',
+              'official_content_head':'0031e9c8eacc81529df5244403afab71c5077514',
+              'history_preservation':'PASS'
+          }
+
+          if not all(x['pass'] for x in [b1,b2,b3,b4]):
+              raise SystemExit('BRUSHUP 4/4 FAIL')
+
+          for name,obj in [
+              ('BRUSHUP_1_OF_4.json',b1),
+              ('BRUSHUP_2_OF_4.json',b2),
+              ('BRUSHUP_3_OF_4.json',b3),
+              ('BRUSHUP_4_OF_4.json',b4),
+          ]:
+              (e/name).write_text(json.dumps(obj,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
+
+          pending={
+              'schema_version':'DPRO-PRODUCT-RELEASE-HUMAN-ACCEPTANCE-R2',
+              'release_id':'GREEN-PR-V12-20260925-R1',
+              'r15_revision':'GREEN-HR-R15-REAL-SCREEN-20260925',
+              'pass':False,
+              'status':'AWAITING_EXPLICIT_DPRO_OWNER_APPROVAL',
+              'approval_phrase_required':'HUMAN ACCEPTANCE OK',
+              'automated_brushup_4_of_4':'PASS',
+              'real_screen_content_hard_gate':'PASS',
+              'official_r14_browser_render':'PASS',
+              'checks_to_review':[
+                  'official_visual',
+                  'product_visual',
+                  'lp_visual',
+                  'flyer_visual',
+                  'operation_pdf_visual',
+                  'mobile_readability',
+                  'japanese_copy_breaks',
+                  'hero_media_suitability',
+                  'dpro_series_consistency',
+                  'five_minute_sales_journey'
+              ],
+              'note':'FINAL RELEASE 1/4..4/4 and PRODUCT RELEASE LOCK must not execute until the owner explicitly sends HUMAN ACCEPTANCE OK.'
+          }
+          (e/'HUMAN_ACCEPTANCE_PENDING.json').write_text(
+              json.dumps(pending,ensure_ascii=False,indent=2)+'\n',
+              encoding='utf-8'
+          )
+
+          Path('human-review-r15/STATUS.txt').write_text(
+              'DPRO GREEN PRODUCT RELEASE MASTER V1.2\n'
+              'R15 REAL-SCREEN REVALIDATION: PASS\n'
+              'BRUSHUP 1/4: PASS\n'
+              'BRUSHUP 2/4: PASS\n'
+              'BRUSHUP 3/4: PASS\n'
+              'BRUSHUP 4/4: PASS\n'
+              'R10 SCREENSHOT CONTENT HARD GATE: PASS\n'
+              'OFFICIAL R14 REAL-SCREEN BROWSER RENDER: PASS\n'
+              'SYSTEM FINAL LOCK: PROTECTED\n'
+              'HISTORY PRESERVATION: PASS\n'
+              'HUMAN ACCEPTANCE: PENDING EXPLICIT DPRO OWNER APPROVAL\n'
+              'FINAL RELEASE 1/4..4/4: NOT EXECUTED\n'
+              'PRODUCT RELEASE LOCK: NOT EXECUTED\n',
+              encoding='utf-8'
+          )
+
+          print('BRUSHUP 1/4: PASS')
+          print('BRUSHUP 2/4: PASS')
+          print('BRUSHUP 3/4: PASS')
+          print('BRUSHUP 4/4: PASS')
+          print('HUMAN ACCEPTANCE: PENDING')
+          PY
+
+      - name: Upload R15 HUMAN ACCEPTANCE packet
+        uses: actions/upload-artifact@v4
+        with:
+          name: DPRO_GREEN_HUMAN_ACCEPTANCE_PACKET_R2_20260925
+          path: human-review-r15/
+          if-no-files-found: error
+
+      - name: Human review R15 summary
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat human-review-r15/STATUS.txt
+          echo "R15 HUMAN REVIEW AUTOMATION: PASS"
+          echo "NEXT REQUIRED HUMAN PHRASE: HUMAN ACCEPTANCE OK"
