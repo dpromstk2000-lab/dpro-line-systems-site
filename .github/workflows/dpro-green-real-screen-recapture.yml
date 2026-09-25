@@ -1,0 +1,292 @@
+name: DPRO GREEN REAL SCREEN RECAPTURE V1.0
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/dpro-green-real-screen-recapture.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  recapture:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      SYSTEM_LOCK_HEAD: 6e359937a28e32380e0c4b2e3cd5ca5fbcbbab59
+      SYSTEM_API: https://dpro-green-rental-line-api.dpromstk2000.workers.dev
+      SYSTEM_BASE: https://dpromstk2000-lab.github.io/dpro-green-rental-line
+      SCREEN_REVISION: GREEN-SCREEN-R10-20260925
+
+    steps:
+      - name: Checkout PRODUCT repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Guard SYSTEM FINAL LOCK
+        shell: bash
+        run: |
+          set -euo pipefail
+          system_head="$(git ls-remote https://github.com/dpromstk2000-lab/dpro-green-rental-line.git refs/heads/main | awk '{print $1}')"
+          test "$system_head" = "$SYSTEM_LOCK_HEAD"
+          echo "SYSTEM FINAL LOCK: PASS $system_head"
+
+      - name: Install Playwright
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm install --no-audit --no-fund --silent playwright@1.55.0
+          npx playwright install --with-deps chromium >/dev/null
+
+      - name: Prepare current-day demo data and verify 53-check
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p assets/green-rental-next/screens
+
+          login="$(curl -fsS -H 'content-type: application/json' \
+            -d '{"facilityCode":"dpro_green_rental_demo","code":"1234"}' \
+            "$SYSTEM_API/api/admin/login")"
+
+          admin_token="$(printf '%s' "$login" | python3 -c 'import sys,json; print(json.load(sys.stdin)["data"]["sessionToken"])')"
+          csrf_token="$(printf '%s' "$login" | python3 -c 'import sys,json; print(json.load(sys.stdin)["data"].get("csrfToken",""))')"
+          test -n "$admin_token"
+
+          headers=(-H 'content-type: application/json' -H "Authorization: Bearer $admin_token")
+          if [ -n "$csrf_token" ]; then headers+=(-H "X-CSRF-Token: $csrf_token"); fi
+
+          prepare_code="$(curl -sS -o /tmp/green-demo-prepare.json -w '%{http_code}' \
+            "${headers[@]}" \
+            -d '{"confirmed":true,"confirmation":"DEMO"}' \
+            "$SYSTEM_API/api/admin/demo/prepare")"
+          echo "DEMO PREPARE HTTP: $prepare_code"
+          cat /tmp/green-demo-prepare.json
+          test "$prepare_code" -ge 200
+          test "$prepare_code" -lt 300
+
+          check_code="$(curl -sS -o /tmp/green-system-check.json -w '%{http_code}' \
+            -H "Authorization: Bearer $admin_token" \
+            "$SYSTEM_API/api/admin/system-check")"
+          echo "SYSTEM CHECK HTTP: $check_code"
+          cat /tmp/green-system-check.json
+
+          python3 - <<'PY'
+          import json
+          p=json.load(open('/tmp/green-system-check.json',encoding='utf-8'))
+          d=p.get('data') or {}
+          assert d.get('total',0) >= 53, d
+          assert d.get('failed',999) == 0, d
+          checks=d.get('checks') or []
+          today=[x for x in checks if x.get('label')=='本日の訪問']
+          assert today and today[0].get('status')=='pass', today
+          print(f"SYSTEM 53-CHECK: PASS total={d.get('total')} failed={d.get('failed')}")
+          PY
+
+      - name: Capture only loaded populated real screens
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          cat > .dpro-green-real-screen-recapture.mjs <<'JS'
+          import { chromium } from 'playwright';
+          import fs from 'fs';
+
+          const base=process.env.SYSTEM_BASE;
+          const rev=process.env.SCREEN_REVISION;
+          const out='assets/green-rental-next/screens';
+          const evidence={schema:'DPRO-GREEN-REAL-SCREEN-CONTENT-QA-R1',revision:rev,pass:false,screens:{}};
+
+          const browser=await chromium.launch({headless:true});
+
+          async function freshPage(){
+            const page=await browser.newPage({viewport:{width:1365,height:900},deviceScaleFactor:1});
+            page.on('pageerror',e=>console.log('PAGEERROR',e.message));
+            page.on('console',m=>{ if(m.type()==='error') console.log('CONSOLE_ERROR',m.text()); });
+            return page;
+          }
+
+          async function goto(page,url){
+            const sep=url.includes('?')?'&':'?';
+            const response=await page.goto(`${url}${sep}shot=${encodeURIComponent(rev)}`,{
+              waitUntil:'domcontentloaded',
+              timeout:60000
+            });
+            if(!response || !response.ok()) throw new Error(`${url} HTTP ${response?.status()}`);
+          }
+
+          async function waitOwner(page,view,readyFn){
+            await goto(page,`${base}/owner.html?demo=1&view=${view}&v=${rev}`);
+            await page.waitForFunction(()=>{
+              const app=document.querySelector('#owner-app');
+              const login=document.querySelector('#login-view');
+              return !!app && app.hidden===false && !!login && login.hidden===true;
+            },null,{timeout:60000});
+            await page.waitForFunction(readyFn,null,{timeout:60000});
+            const loginVisible=await page.locator('#login-view').isVisible().catch(()=>false);
+            if(loginVisible) throw new Error(`owner ${view}: login screen still visible`);
+            const body=(await page.locator('body').innerText()).replace(/\s+/g,' ');
+            if(body.includes('読み込み中です…') || body.includes('読み込み中です。')){
+              throw new Error(`owner ${view}: loading text remains`);
+            }
+          }
+
+          async function save(name,page,meta={}){
+            const p=`${out}/${name}`;
+            await page.screenshot({path:p,fullPage:true});
+            const size=fs.statSync(p).size;
+            if(size<50000) throw new Error(`${name}: suspiciously small PNG ${size}`);
+            evidence.screens[name]={...meta,bytes:size};
+            await page.close();
+          }
+
+          // OWNER dashboard
+          {
+            const p=await freshPage();
+            await waitOwner(p,'dashboard',()=>{
+              const date=document.querySelector('#dashboard-date')?.textContent||'';
+              const stats=[...document.querySelectorAll('#dashboard-stats .owner-stat strong')]
+                .map(x=>Number((x.textContent||'').trim())).filter(Number.isFinite);
+              return !date.includes('読み込み') && stats.length>=8 && stats.some(x=>x>0);
+            });
+            const stats=await p.locator('#dashboard-stats .owner-stat strong').allTextContents();
+            await save('owner-dashboard.png',p,{kind:'owner-dashboard',stats});
+          }
+
+          // OWNER plant assets
+          {
+            const p=await freshPage();
+            await waitOwner(p,'assets',()=>document.querySelectorAll('#plant-asset-rows .owner-code-badge').length>0);
+            const rows=await p.locator('#plant-asset-rows .owner-code-badge').count();
+            if(rows<1) throw new Error('owner assets: zero plant rows');
+            await save('owner-assets.png',p,{kind:'owner-assets',rows});
+          }
+
+          // OWNER visits
+          {
+            const p=await freshPage();
+            await waitOwner(p,'visits',()=>document.querySelectorAll('#visit-rows [data-visit]').length>=3);
+            const rows=await p.locator('#visit-rows [data-visit]').count();
+            if(rows<3) throw new Error(`owner visits: only ${rows} rows`);
+            await save('owner-visits.png',p,{kind:'owner-visits',rows});
+          }
+
+          // OWNER replacements
+          {
+            const p=await freshPage();
+            await waitOwner(p,'replacements',()=>document.querySelectorAll('#replacement-rows [data-replacement]').length>0);
+            const rows=await p.locator('#replacement-rows [data-replacement]').count();
+            if(rows<1) throw new Error('owner replacements: zero rows');
+            await save('owner-replacements.png',p,{kind:'owner-replacements',rows});
+          }
+
+          // MEMBER reports: explicitly perform demo login, then open Reports tab.
+          {
+            const p=await freshPage();
+            await goto(p,`${base}/member.html?demo=1&v=${rev}`);
+            await p.waitForSelector('#demo-login',{state:'visible',timeout:60000});
+            await p.click('#demo-login');
+            await p.waitForFunction(()=>{
+              const portal=document.querySelector('#portal');
+              const login=document.querySelector('#login-panel');
+              const name=(document.querySelector('#member-name')?.textContent||'').trim();
+              return !!portal && portal.hidden===false && !!login && login.hidden===true && name && name!=='お客様';
+            },null,{timeout:60000});
+            await p.click('[data-tab="reports"]');
+            await p.waitForFunction(()=>{
+              const c=document.querySelector('#tab-content');
+              return !!c && !c.innerText.includes('読み込み中') && c.querySelectorAll('.report-card').length>0;
+            },null,{timeout:60000});
+            const reports=await p.locator('#tab-content .report-card').count();
+            if(reports<1) throw new Error('member reports: zero published reports');
+            await save('member-reports.png',p,{kind:'member-reports',reports});
+          }
+
+          // OWNER iPad board
+          {
+            const p=await freshPage();
+            await goto(p,`${base}/owner-ipad.html?demo=1&v=${rev}`);
+            await p.waitForFunction(()=>{
+              const app=document.querySelector('#ipad-app');
+              const login=document.querySelector('#ipad-login');
+              return !!app && app.hidden===false && !!login && login.hidden===true &&
+                document.querySelectorAll('.ipad-card').length>=3;
+            },null,{timeout:60000});
+            const visits=await p.locator('.ipad-card').count();
+            if(visits<3) throw new Error(`owner ipad: only ${visits} visit cards`);
+            await save('owner-ipad.png',p,{kind:'owner-ipad',visits});
+          }
+
+          // STAFF today's route
+          {
+            const p=await freshPage();
+            await goto(p,`${base}/staff.html?demo=1&v=${rev}`);
+            await p.waitForFunction(()=>{
+              const app=document.querySelector('#staff-app');
+              const login=document.querySelector('#staff-login-view');
+              return !!app && app.hidden===false && !!login && login.hidden===true &&
+                document.querySelectorAll('#staff-route-list .staff-visit-card').length>0;
+            },null,{timeout:60000});
+            const visits=await p.locator('#staff-route-list .staff-visit-card').count();
+            if(visits<1) throw new Error('staff: zero assigned visits');
+            await save('staff.png',p,{kind:'staff',visits});
+          }
+
+          await browser.close();
+
+          // Strong final content guard.
+          for(const [name,x] of Object.entries(evidence.screens)){
+            if(!x.bytes || x.bytes<50000) throw new Error(`${name}: invalid evidence`);
+          }
+          if(evidence.screens['owner-visits.png'].rows<3) throw new Error('visit content gate failed');
+          if(evidence.screens['owner-ipad.png'].visits<3) throw new Error('ipad content gate failed');
+          if(evidence.screens['member-reports.png'].reports<1) throw new Error('member content gate failed');
+          if(evidence.screens['staff.png'].visits<1) throw new Error('staff content gate failed');
+
+          evidence.pass=true;
+          fs.writeFileSync(`${out}/SCREENSHOT_CONTENT_QA.json`,JSON.stringify(evidence,null,2)+'\n');
+          console.log(JSON.stringify(evidence,null,2));
+          JS
+
+          node .dpro-green-real-screen-recapture.mjs
+          rm -f .dpro-green-real-screen-recapture.mjs
+
+      - name: Guard screenshot contents and commit
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path('assets/green-rental-next/screens/SCREENSHOT_CONTENT_QA.json')
+          d=json.loads(p.read_text(encoding='utf-8'))
+          assert d.get('pass') is True, d
+          required=[
+            'owner-dashboard.png','owner-assets.png','owner-visits.png',
+            'owner-replacements.png','member-reports.png','owner-ipad.png','staff.png'
+          ]
+          for name in required:
+            f=Path('assets/green-rental-next/screens')/name
+            assert f.exists() and f.stat().st_size>=50000, (name,f.stat().st_size if f.exists() else 0)
+          print('REAL SCREEN CONTENT QA: PASS')
+          PY
+
+          git config user.name "DPRO GREEN Product Release"
+          git config user.email "actions@users.noreply.github.com"
+          git add assets/green-rental-next/screens/
+          if git diff --cached --quiet; then
+            echo "No screenshot changes."
+          else
+            git commit -m "GREEN replace blank screenshots with loaded real screens"
+            git push origin HEAD:main
+          fi
+
+      - name: Recheck SYSTEM FINAL LOCK
+        shell: bash
+        run: |
+          set -euo pipefail
+          system_head="$(git ls-remote https://github.com/dpromstk2000-lab/dpro-green-rental-line.git refs/heads/main | awk '{print $1}')"
+          test "$system_head" = "$SYSTEM_LOCK_HEAD"
+          echo "SYSTEM FINAL LOCK AFTER RECAPTURE: PASS $system_head"
