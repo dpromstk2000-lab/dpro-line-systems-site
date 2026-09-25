@@ -1,0 +1,55 @@
+{
+  "schema": "DPRO-GREEN-REAL-SCREEN-CONTENT-QA-R1",
+  "revision": "GREEN-SCREEN-R10-20260925",
+  "pass": true,
+  "screens": {
+    "owner-dashboard.png": {
+      "kind": "owner-dashboard",
+      "stats": [
+        "4",
+        "6",
+        "0",
+        "1",
+        "4",
+        "5",
+        "3",
+        "2",
+        "16",
+        "1",
+        "0",
+        "1"
+      ],
+      "bytes": 206639
+    },
+    "owner-assets.png": {
+      "kind": "owner-assets",
+      "rows": 21,
+      "bytes": 576554
+    },
+    "owner-visits.png": {
+      "kind": "owner-visits",
+      "rows": 5,
+      "bytes": 219584
+    },
+    "owner-replacements.png": {
+      "kind": "owner-replacements",
+      "rows": 2,
+      "bytes": 185641
+    },
+    "member-reports.png": {
+      "kind": "member-reports",
+      "reports": 1,
+      "bytes": 203517
+    },
+    "owner-ipad.png": {
+      "kind": "owner-ipad",
+      "visits": 3,
+      "bytes": 111891
+    },
+    "staff.png": {
+      "kind": "staff",
+      "visits": 2,
+      "bytes": 98813
+    }
+  }
+}
