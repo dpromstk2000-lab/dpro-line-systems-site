@@ -15,7 +15,7 @@ jobs:
     timeout-minutes: 30
     env:
       RELEASE_ID: GREEN-PR-V12-20260925-R1
-      HUMAN_REVIEW_FIX_REVISION: GREEN-HR-FIX-R7-SYSTEM-CHECK-409
+      HUMAN_REVIEW_FIX_REVISION: GREEN-HR-FIX-R8-TODAY-DEMO-PREPARE
       LP_PUBLICATION_REVISION: GREEN-LP-SYSTEMS-PUBLIC-R4-20260925
       PRODUCT_PUBLICATION_REVISION: GREEN-PRODUCT-LP-PATH-R4-20260925
       SYSTEM_LOCK_HEAD: 6e359937a28e32380e0c4b2e3cd5ca5fbcbbab59
@@ -179,8 +179,15 @@ jobs:
           jq -r '.data.checks[]? | select(.status=="fail") | "FAIL | \(.label) | \(.detail // "")"' human-review/raw/system-check-before.json || true
 
           demo_prepared="$(jq -r '.data.demoPrepared // false' human-review/raw/system-check-before.json)"
-          if [ "$demo_prepared" != "true" ]; then
-            echo "DEMO basic data is not prepared. Running demo_prepare..."
+          failed_count="$(jq -r '.data.failed // 999' human-review/raw/system-check-before.json)"
+          today_visit_fail="$(jq -r '[.data.checks[]? | select(.status=="fail" and .label=="本日の訪問")] | length' human-review/raw/system-check-before.json)"
+
+          if [ "$demo_prepared" != "true" ] || [ "$today_visit_fail" -gt 0 ]; then
+            if [ "$demo_prepared" != "true" ]; then
+              echo "DEMO basic data is not prepared. Running demo_prepare..."
+            else
+              echo "Today's demo visits are insufficient. Running demo_prepare to regenerate current-day demo data..."
+            fi
             headers=(-H 'content-type: application/json' -H "Authorization: Bearer $admin_token")
             if [ -n "$csrf_token" ]; then headers+=(-H "X-CSRF-Token: $csrf_token"); fi
             prepare_code="$(curl -sS -o human-review/raw/demo-prepare.json -w '%{http_code}'               "${headers[@]}"               -d '{"confirmed":true,"confirmation":"DEMO"}'               "$SYSTEM_API/api/admin/demo/prepare")"
@@ -190,9 +197,13 @@ jobs:
               exit 1
             fi
             jq -e '.ok == true' human-review/raw/demo-prepare.json >/dev/null
-            sleep 2
+            echo "DEMO PREPARE RESULT:"
+            jq -c '.data // {}' human-review/raw/demo-prepare.json || true
+            sleep 3
+          elif [ "$failed_count" -gt 0 ]; then
+            echo "SYSTEM CHECK has non-demo-data failures; do not mutate data automatically."
           else
-            echo "DEMO basic data already prepared."
+            echo "DEMO basic data and current-day visits are already prepared."
           fi
 
           fetch_check human-review/raw/system-check.json
