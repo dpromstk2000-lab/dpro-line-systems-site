@@ -15,7 +15,8 @@ jobs:
     timeout-minutes: 30
     env:
       RELEASE_ID: GREEN-PR-V12-20260925-R1
-      HUMAN_REVIEW_FIX_REVISION: GREEN-HR-FIX-R8-TODAY-DEMO-PREPARE
+      HUMAN_REVIEW_FIX_REVISION: GREEN-HR-FIX-R9-FLYER-RESPONSIVE
+      FLYER_PUBLICATION_REVISION: GREEN-FLYER-SCREEN-R9-20260925
       LP_PUBLICATION_REVISION: GREEN-LP-SYSTEMS-PUBLIC-R4-20260925
       PRODUCT_PUBLICATION_REVISION: GREEN-PRODUCT-LP-PATH-R4-20260925
       SYSTEM_LOCK_HEAD: 6e359937a28e32380e0c4b2e3cd5ca5fbcbbab59
@@ -101,15 +102,32 @@ jobs:
               entry=f'  <url><loc>{new_url}</loc><lastmod>2026-09-25</lastmod></url>\n'
               sm=sm.replace('</urlset>',entry+'</urlset>')
           sitemap.write_text(sm,encoding='utf-8')
+
+          # 5) Keep A4/print layout untouched, but make the public HTML preview fit mobile/tablet.
+          flyer_path=Path('flyer-green-rental.html')
+          flyer=flyer_path.read_text(encoding='utf-8')
+          old_screen='@media screen and (max-width:900px){.sheet{transform-origin:top center;transform:scale(.72);margin-bottom:-72mm}}'
+          new_screen='@media screen and (max-width:600px){html,body{overflow-x:hidden}.toolbar{position:relative;flex-wrap:wrap}.sheet{transform:none;zoom:.46;margin:12px auto}}@media screen and (min-width:601px) and (max-width:900px){html,body{overflow-x:hidden}.sheet{transform:none;zoom:.86;margin:12px auto}}'
+          if old_screen in flyer:
+              flyer=flyer.replace(old_screen,new_screen,1)
+          elif new_screen not in flyer:
+              raise SystemExit('FLYER screen media rule not found')
+          flyer_marker='GREEN-FLYER-SCREEN-R9-20260925'
+          if flyer_marker not in flyer:
+              body=f'<body data-product-code="GREEN" data-release-id="{release}">'
+              if body not in flyer:
+                  raise SystemExit('FLYER release body marker missing')
+              flyer=flyer.replace(body, body+'\n<!-- '+flyer_marker+' -->',1)
+          flyer_path.write_text(flyer,encoding='utf-8')
           PY
 
-          if git diff --quiet -- systems/green-rental-lp-v12.html systems/green-rental.html assets/green-rental-next/release-v12/FACT_LOCK.json sitemap.xml; then
+          if git diff --quiet -- systems/green-rental-lp-v12.html systems/green-rental.html assets/green-rental-next/release-v12/FACT_LOCK.json sitemap.xml flyer-green-rental.html; then
             echo "Systems-route LP already published."
           else
             git config user.name "DPRO GREEN Product Release"
             git config user.email "actions@users.noreply.github.com"
-            git add systems/green-rental-lp-v12.html systems/green-rental.html assets/green-rental-next/release-v12/FACT_LOCK.json sitemap.xml
-            git commit -m "GREEN publish LP under systems route for release review"
+            git add systems/green-rental-lp-v12.html systems/green-rental.html assets/green-rental-next/release-v12/FACT_LOCK.json sitemap.xml flyer-green-rental.html
+            git commit -m "GREEN responsive flyer preview and release review"
             git push origin HEAD:main
           fi
 
@@ -140,7 +158,7 @@ jobs:
           echo "LP public diagnostic:"
           curl -sSIL --max-time 20 "$LP_URL" | sed -n '1,12p' || true
           wait_marker "$LP_URL" "$RELEASE_ID" LP
-          wait_marker "$FLYER_HTML_URL" "$RELEASE_ID" FLYER
+          wait_marker "$FLYER_HTML_URL" "$FLYER_PUBLICATION_REVISION" FLYER
           wait_marker "$OFFICIAL_URL" "$RELEASE_ID" OFFICIAL_CUSTOM
           wait_marker "$OFFICIAL_GITHUB" "$RELEASE_ID" OFFICIAL_GITHUB
 
