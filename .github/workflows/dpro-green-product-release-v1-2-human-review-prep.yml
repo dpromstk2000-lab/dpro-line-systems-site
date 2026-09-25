@@ -15,15 +15,15 @@ jobs:
     timeout-minutes: 30
     env:
       RELEASE_ID: GREEN-PR-V12-20260925-R1
-      LP_PUBLICATION_REVISION: GREEN-LP-V12-PUBLIC-R3-20260925
-      PRODUCT_PUBLICATION_REVISION: GREEN-PRODUCT-LP-PATH-R3-20260925
+      LP_PUBLICATION_REVISION: GREEN-LP-SYSTEMS-PUBLIC-R4-20260925
+      PRODUCT_PUBLICATION_REVISION: GREEN-PRODUCT-LP-PATH-R4-20260925
       SYSTEM_LOCK_HEAD: 6e359937a28e32380e0c4b2e3cd5ca5fbcbbab59
       SYSTEM_API: https://dpro-green-rental-line-api.dpromstk2000.workers.dev
       SYSTEM_BASE: https://dpromstk2000-lab.github.io/dpro-green-rental-line
       OFFICIAL_URL: https://dpro-shop.com/systems/green-rental
       OFFICIAL_GITHUB: https://dpromstk2000-lab.github.io/dpro-shop-official-site/systems/green-rental.html
       PRODUCT_URL: https://dpromstk2000-lab.github.io/dpro-line-systems-site/systems/green-rental.html
-      LP_URL: https://dpromstk2000-lab.github.io/dpro-line-systems-site/lp-green-rental-v12.html
+      LP_URL: https://dpromstk2000-lab.github.io/dpro-line-systems-site/systems/green-rental-lp-v12.html
       FLYER_HTML_URL: https://dpromstk2000-lab.github.io/dpro-line-systems-site/flyer-green-rental.html
       FLYER_PDF_URL: https://dpromstk2000-lab.github.io/dpro-line-systems-site/flyer-green-rental.pdf
       OPERATION_PDF_URL: https://dpromstk2000-lab.github.io/dpro-line-systems-site/assets/green-rental-next/DPRO_GREEN_RENTAL_OPERATION_EXPERIENCE_SHEET_V1.0.pdf
@@ -34,7 +34,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Publish versioned LP path and update PRODUCT release references
+      - name: Publish LP under proven systems route and update PRODUCT references
         shell: bash
         run: |
           set -euo pipefail
@@ -43,30 +43,44 @@ jobs:
           import json, re
 
           release='GREEN-PR-V12-20260925-R1'
-          lp_revision='GREEN-LP-V12-PUBLIC-R3-20260925'
-          product_revision='GREEN-PRODUCT-LP-PATH-R3-20260925'
-          old_url='https://dpromstk2000-lab.github.io/dpro-line-systems-site/lp-green-rental.html'
-          new_url='https://dpromstk2000-lab.github.io/dpro-line-systems-site/lp-green-rental-v12.html'
+          lp_revision='GREEN-LP-SYSTEMS-PUBLIC-R4-20260925'
+          product_revision='GREEN-PRODUCT-LP-PATH-R4-20260925'
+          new_url='https://dpromstk2000-lab.github.io/dpro-line-systems-site/systems/green-rental-lp-v12.html'
 
-          # 1) Create a fresh public LP object at a versioned path.
-          src=Path('lp-green-rental.html')
-          dst=Path('lp-green-rental-v12.html')
-          lp=src.read_text(encoding='utf-8')
+          source=Path('lp-green-rental-v12.html')
+          if not source.exists():
+              source=Path('lp-green-rental.html')
+          lp=source.read_text(encoding='utf-8')
           if release not in lp:
               raise SystemExit('SOURCE LP release marker missing')
-          lp=lp.replace(old_url,new_url)
-          if lp_revision not in lp:
-              body=f'<body data-product-code="GREEN" data-release-id="{release}">'
-              if body not in lp:
-                  raise SystemExit('SOURCE LP body release marker missing')
-              lp=lp.replace(body, body+'\n<!-- '+lp_revision+' -->', 1)
+
+          lp=re.sub(
+              r'https://dpromstk2000-lab\.github\.io/dpro-line-systems-site/lp-green-rental(?:-v12)?\.html',
+              new_url,
+              lp
+          )
+          lp=lp.replace('src="assets/green-rental-next/', 'src="../assets/green-rental-next/')
+          lp=lp.replace("src='assets/green-rental-next/", "src='../assets/green-rental-next/")
+          lp=lp.replace('href="systems/green-rental.html"', 'href="green-rental.html"')
+
+          lp=re.sub(r'<!-- GREEN-LP-[^>]+ -->\s*', '', lp)
+          body=f'<body data-product-code="GREEN" data-release-id="{release}">'
+          if body not in lp:
+              raise SystemExit('SOURCE LP body release marker missing')
+          lp=lp.replace(body, body+'\n<!-- '+lp_revision+' -->', 1)
+
+          dst=Path('systems/green-rental-lp-v12.html')
           dst.write_text(lp,encoding='utf-8')
 
-          # 2) Point the PRODUCT CTA to the fresh LP path and add a deployment marker.
           product=Path('systems/green-rental.html')
           p=product.read_text(encoding='utf-8')
-          p=p.replace('../lp-green-rental.html','../lp-green-rental-v12.html')
-          if product_revision not in p:
+          p=p.replace('../lp-green-rental-v12.html','green-rental-lp-v12.html')
+          p=p.replace('../lp-green-rental.html','green-rental-lp-v12.html')
+          if 'green-rental-lp-v12.html' not in p:
+              raise SystemExit('PRODUCT LP CTA path not updated')
+          if re.search(r'data-lp-publication="[^"]*"', p):
+              p=re.sub(r'data-lp-publication="[^"]*"', f'data-lp-publication="{product_revision}"', p, count=1)
+          else:
               p=p.replace(
                   f'data-release-id="{release}"',
                   f'data-release-id="{release}" data-lp-publication="{product_revision}"',
@@ -74,14 +88,12 @@ jobs:
               )
           product.write_text(p,encoding='utf-8')
 
-          # 3) Update FACT LOCK URL without touching the locked SYSTEM.
           fact_path=Path('assets/green-rental-next/release-v12/FACT_LOCK.json')
           fact=json.loads(fact_path.read_text(encoding='utf-8'))
           fact['urls']['lp']=new_url
           fact['lp_publication_revision']=lp_revision
           fact_path.write_text(json.dumps(fact,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
 
-          # 4) Register the fresh LP path in PRODUCT sitemap.
           sitemap=Path('sitemap.xml')
           sm=sitemap.read_text(encoding='utf-8')
           if new_url not in sm:
@@ -90,13 +102,13 @@ jobs:
           sitemap.write_text(sm,encoding='utf-8')
           PY
 
-          if git diff --quiet -- lp-green-rental-v12.html systems/green-rental.html assets/green-rental-next/release-v12/FACT_LOCK.json sitemap.xml; then
-            echo "Versioned LP path already published."
+          if git diff --quiet -- systems/green-rental-lp-v12.html systems/green-rental.html assets/green-rental-next/release-v12/FACT_LOCK.json sitemap.xml; then
+            echo "Systems-route LP already published."
           else
             git config user.name "DPRO GREEN Product Release"
             git config user.email "actions@users.noreply.github.com"
-            git add lp-green-rental-v12.html systems/green-rental.html assets/green-rental-next/release-v12/FACT_LOCK.json sitemap.xml
-            git commit -m "GREEN publish versioned LP path for release review"
+            git add systems/green-rental-lp-v12.html systems/green-rental.html assets/green-rental-next/release-v12/FACT_LOCK.json sitemap.xml
+            git commit -m "GREEN publish LP under systems route for release review"
             git push origin HEAD:main
           fi
 
@@ -116,10 +128,10 @@ jobs:
           set -euo pipefail
           wait_marker(){
             local url="$1" marker="$2" name="$3"
-            for i in $(seq 1 90); do
+            for i in $(seq 1 45); do
               body="$(curl -fsSL --retry 2 --retry-delay 2 -H 'Cache-Control: no-cache' -H 'Pragma: no-cache' "${url}?dpro_release=${RELEASE_ID}&attempt=${i}" || true)"
               if printf '%s' "$body" | grep -Fq "$marker"; then echo "$name PUBLIC: PASS"; return 0; fi
-              echo "$name not ready ($i/90)"; sleep 10
+              echo "$name not ready ($i/45)"; sleep 10
             done
             echo "$name PUBLIC marker timeout"; return 1
           }
@@ -289,13 +301,13 @@ jobs:
             'official_dpro_initial':'33,000' in O and '1,100' in O,
             'official_integrated_monthly':'月額5,500円' in O,
             'product_integrated_monthly':'5,500円' in P and '33,000円' in P,
-            'product_new_lp_path':'lp-green-rental-v12.html' in P,
-            'lp_versioned_canonical':'lp-green-rental-v12.html' in L,
+            'product_new_lp_path':'green-rental-lp-v12.html' in P,
+            'lp_versioned_canonical':'systems/green-rental-lp-v12.html' in L,
             'line_url_all':all('https://lin.ee/YxJGXV6D' in x for x in [O,P,L]),
             'official_55': '55システム' in Path('human-review/raw/official-404.html').read_text(errors='ignore'),
             'official_sitemap_green':'green-rental' in Path('human-review/raw/official-sitemap.xml').read_text(errors='ignore'),
             'product_sitemap_green':'green-rental' in Path('human-review/raw/product-sitemap.xml').read_text(errors='ignore'),
-            'product_sitemap_versioned_lp':'lp-green-rental-v12.html' in Path('human-review/raw/product-sitemap.xml').read_text(errors='ignore')
+            'product_sitemap_versioned_lp':'systems/green-rental-lp-v12.html' in Path('human-review/raw/product-sitemap.xml').read_text(errors='ignore')
           }
           bad={k:v for k,v in checks.items() if not v}
           if bad: raise SystemExit('CROSS SURFACE QA FAIL '+repr(bad))
