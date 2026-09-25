@@ -136,7 +136,9 @@ jobs:
             echo "$name PUBLIC marker timeout"; return 1
           }
           wait_marker "$PRODUCT_URL" "$PRODUCT_PUBLICATION_REVISION" PRODUCT
-          wait_marker "$LP_URL" "$LP_PUBLICATION_REVISION" LP
+          echo "LP public diagnostic:"
+          curl -sSIL --max-time 20 "$LP_URL" | sed -n '1,12p' || true
+          wait_marker "$LP_URL" "$RELEASE_ID" LP
           wait_marker "$FLYER_HTML_URL" "$RELEASE_ID" FLYER
           wait_marker "$OFFICIAL_URL" "$RELEASE_ID" OFFICIAL_CUSTOM
           wait_marker "$OFFICIAL_GITHUB" "$RELEASE_ID" OFFICIAL_GITHUB
