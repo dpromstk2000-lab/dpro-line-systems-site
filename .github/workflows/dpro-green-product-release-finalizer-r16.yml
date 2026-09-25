@@ -24,6 +24,7 @@ jobs:
 
       SYSTEM_LOCK_HEAD: 6e359937a28e32380e0c4b2e3cd5ca5fbcbbab59
       PREFINAL_PRODUCT_HEAD: d3a4c1aec4b81a1a8e48b16f3d16fa39ea512e32
+      FINALIZER_V1_UPLOAD_HEAD: f9245e29960c06f6cc703ff1893602da0fbdc09b
       OFFICIAL_FINAL_HEAD: 0031e9c8eacc81529df5244403afab71c5077514
       CONTROL_CENTER_HEAD: ceb417ba71eb1532cd28e4049bc7d7bf84714c1f
 
@@ -65,7 +66,8 @@ jobs:
           mkdir -p "$FINAL_DIR" finalizer-r16/{screens,pdf-renders,raw,evidence} return-r2
 
           parent="$(git rev-parse HEAD^)"
-          test "$parent" = "$PREFINAL_PRODUCT_HEAD"
+          test "$parent" = "$FINALIZER_V1_UPLOAD_HEAD"
+          git merge-base --is-ancestor "$PREFINAL_PRODUCT_HEAD" "$parent"
 
           changed="$(git diff-tree --no-commit-id --name-only -r HEAD)"
           test "$changed" = ".github/workflows/dpro-green-product-release-finalizer-r16.yml"
@@ -451,7 +453,8 @@ jobs:
           test "$(printf '%s' "$opages" | jq -r '.conclusion')" = "success"
           test "$(printf '%s' "$opages" | jq -r '.head_sha')" = "$OFFICIAL_FINAL_HEAD"
 
-          curl -fsSL "${OFFICIAL_URL}?final=official-attest" | grep -Fq "$OFFICIAL_R14_MARKER"
+          official_body="$(curl -fsSL "${OFFICIAL_URL}?final=official-attest")"
+          [[ "$official_body" == *"$OFFICIAL_R14_MARKER"* ]]
 
           printf '%s' "$r15" > finalizer-r16/raw/r15-run.json
           printf '%s' "$r14" > finalizer-r16/raw/r14-official-run.json
