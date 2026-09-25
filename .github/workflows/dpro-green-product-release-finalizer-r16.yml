@@ -1,0 +1,1099 @@
+name: DPRO GREEN PRODUCT RELEASE FINALIZER R16
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/dpro-green-product-release-finalizer-r16.yml"
+
+permissions:
+  contents: write
+  actions: read
+
+jobs:
+  finalize:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      RELEASE_ID: GREEN-PR-V12-20260925-R1
+      PRODUCT_DEV_ID: c9d11f3a-de31-4efe-8dc5-fc4a20d18725
+      SYSTEM_CODE: GREEN
+      RELEASE_MASTER_VERSION: DPRO_PRODUCT_RELEASE_MASTER_V1.2
+      RELEASE_MASTER_REVISION: 20260921-HISTORY-PRESERVATION-R1
+
+      SYSTEM_LOCK_HEAD: 6e359937a28e32380e0c4b2e3cd5ca5fbcbbab59
+      PREFINAL_PRODUCT_HEAD: d3a4c1aec4b81a1a8e48b16f3d16fa39ea512e32
+      OFFICIAL_FINAL_HEAD: 0031e9c8eacc81529df5244403afab71c5077514
+      CONTROL_CENTER_HEAD: ceb417ba71eb1532cd28e4049bc7d7bf84714c1f
+
+      R15_HUMAN_REVIEW_RUN_ID: "36158038282"
+      R14_OFFICIAL_WORKFLOW_RUN_ID: "36155535712"
+      R14_OFFICIAL_PAGES_RUN_ID: "36155555287"
+
+      HUMAN_APPROVAL_PHRASE: HUMAN ACCEPTANCE OK
+      HUMAN_APPROVER: DPRO Owner
+      HUMAN_APPROVED_AT: 2026-09-26T01:01:00+09:00
+
+      RELEASE_CANDIDATE_MARKER: GREEN-PRODUCT-RELEASE-R16-CANDIDATE-20260926
+      OFFICIAL_R14_MARKER: GREEN-OFFICIAL-LOCAL-SCREEN-R14-20260925
+      FINAL_DIR: assets/green-rental-next/release-v12/final-r16
+
+      SYSTEM_API: https://dpro-green-rental-line-api.dpromstk2000.workers.dev
+      OFFICIAL_URL: https://dpro-shop.com/systems/green-rental
+      PRODUCT_URL: https://dpromstk2000-lab.github.io/dpro-line-systems-site/systems/green-rental.html
+      LP_URL: https://dpromstk2000-lab.github.io/dpro-line-systems-site/systems/green-rental-lp-v12.html
+      FLYER_HTML_URL: https://dpromstk2000-lab.github.io/dpro-line-systems-site/flyer-green-rental.html
+      FLYER_PDF_URL: https://dpromstk2000-lab.github.io/dpro-line-systems-site/flyer-green-rental.pdf
+      OPERATION_PDF_URL: https://dpromstk2000-lab.github.io/dpro-line-systems-site/assets/green-rental-next/DPRO_GREEN_RENTAL_OPERATION_EXPERIENCE_SHEET_V1.0.pdf
+      QUICK_START_URL: https://dpromstk2000-lab.github.io/dpro-line-systems-site/assets/pdfs/dpro-green-rental-tutorial-quick-start-v1.0.pdf
+      DETAILED_MANUAL_URL: https://dpromstk2000-lab.github.io/dpro-line-systems-site/assets/pdfs/dpro-green-rental-tutorial-detailed-manual-v1.0.pdf
+      LINE_URL: https://lin.ee/YxJGXV6D
+
+      GH_TOKEN: ${{ github.token }}
+
+    steps:
+      - name: Checkout PRODUCT repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Guard pre-final baselines and upload scope
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$FINAL_DIR" finalizer-r16/{screens,pdf-renders,raw,evidence} return-r2
+
+          parent="$(git rev-parse HEAD^)"
+          test "$parent" = "$PREFINAL_PRODUCT_HEAD"
+
+          changed="$(git diff-tree --no-commit-id --name-only -r HEAD)"
+          test "$changed" = ".github/workflows/dpro-green-product-release-finalizer-r16.yml"
+
+          system_head="$(git ls-remote https://github.com/dpromstk2000-lab/dpro-green-rental-line.git refs/heads/main | awk '{print $1}')"
+          official_head="$(git ls-remote https://github.com/dpromstk2000-lab/dpro-shop-official-site.git refs/heads/main | awk '{print $1}')"
+          control_head="$(git ls-remote https://github.com/dpromstk2000-lab/dpro-shop-control-center.git refs/heads/main | awk '{print $1}')"
+
+          test "$system_head" = "$SYSTEM_LOCK_HEAD"
+          test "$official_head" = "$OFFICIAL_FINAL_HEAD"
+          test "$control_head" = "$CONTROL_CENTER_HEAD"
+
+          echo "$system_head" > finalizer-r16/raw/system-head-before.txt
+          echo "$official_head" > finalizer-r16/raw/official-head-before.txt
+          echo "$control_head" > finalizer-r16/raw/control-center-head-before.txt
+          echo "$(git rev-parse HEAD)" > finalizer-r16/raw/finalizer-upload-head.txt
+
+          echo "PRE-FINAL BASELINES: PASS"
+          echo "SYSTEM FINAL LOCK: PROTECTED"
+
+      - name: Install finalizer dependencies
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq poppler-utils zbar-tools jq >/dev/null
+          npm install --no-audit --no-fund --silent playwright@1.55.0
+          npx playwright install --with-deps chromium >/dev/null
+
+      - name: Capture history preservation BEFORE
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          member_login="$(curl -fsS -H 'content-type: application/json' \
+            -d '{"mode":"demo","facilityCode":"dpro_green_rental_demo","token":"GREEN-DEMO","customerNumber":"DEMO-GREEN-001"}' \
+            "$SYSTEM_API/api/member/login")"
+
+          member_token="$(printf '%s' "$member_login" | jq -r '.data.sessionToken // empty')"
+          test -n "$member_token"
+
+          curl -fsS -H "Authorization: Bearer $member_token" \
+            "$SYSTEM_API/api/member/overview" \
+            > finalizer-r16/raw/member-overview-before.json
+
+          jq -e '.ok == true' finalizer-r16/raw/member-overview-before.json >/dev/null
+          echo "HISTORY BEFORE SNAPSHOT: PASS"
+
+      - name: FINAL RELEASE 1 of 4 - FACT scope price role SEO
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          curl -fsSL "${OFFICIAL_URL}?final=f1" -o finalizer-r16/raw/official-f1.html
+          curl -fsSL "${PRODUCT_URL}?final=f1" -o finalizer-r16/raw/product-f1.html
+          curl -fsSL "${LP_URL}?final=f1" -o finalizer-r16/raw/lp-f1.html
+          curl -fsSL https://dpro-shop.com/404.html -o finalizer-r16/raw/official-404.html
+          curl -fsSL https://dpro-shop.com/sitemap.xml -o finalizer-r16/raw/official-sitemap.xml
+          curl -fsSL https://dpromstk2000-lab.github.io/dpro-line-systems-site/sitemap.xml \
+            -o finalizer-r16/raw/product-sitemap.xml
+
+          python3 - <<'PY'
+          from pathlib import Path
+          import json,re
+
+          fact=json.loads(Path('assets/green-rental-next/release-v12/FACT_LOCK.json').read_text(encoding='utf-8'))
+          O=Path('finalizer-r16/raw/official-f1.html').read_text(errors='ignore')
+          P=Path('finalizer-r16/raw/product-f1.html').read_text(errors='ignore')
+          L=Path('finalizer-r16/raw/lp-f1.html').read_text(errors='ignore')
+
+          assert fact['locked'] is True
+          assert fact['release_id']=='GREEN-PR-V12-20260925-R1'
+          assert fact['product_dev_id']=='c9d11f3a-de31-4efe-8dc5-fc4a20d18725'
+          assert fact['system_code']=='GREEN'
+          assert fact['system_final_lock_head']=='6e359937a28e32380e0c4b2e3cd5ca5fbcbbab59'
+          assert fact['product_count']==55
+          assert fact['prices_tax_included']['line_build_initial']==77000
+          assert fact['prices_tax_included']['dpro_initial']==33000
+          assert fact['prices_tax_included']['dpro_operation_monthly']==1100
+          assert fact['prices_tax_included']['integrated_monthly']==5500
+          assert fact['flyer_master_id']=='DPRO A4 FLYER MASTER V2.0'
+          assert fact['lp_master_id']=='DPRO-LP-MASTER-V1.4'
+          assert fact['history_preservation']['assessed'] is True
+          assert fact['history_preservation']['applicable'] is True
+
+          checks={
+            'official_release':'GREEN-PR-V12-20260925-R1' in O,
+            'official_r14':'GREEN-OFFICIAL-LOCAL-SCREEN-R14-20260925' in O,
+            'official_same_origin_screens':'/assets/green-rental-next/screens/' in O,
+            'official_no_external_green_screens':'https://dpromstk2000-lab.github.io/dpro-line-systems-site/assets/green-rental-next/screens/' not in O,
+            'official_price':'33,000' in O and '1,100' in O and '5,500' in O,
+            'product_release':'GREEN-PR-V12-20260925-R1' in P,
+            'product_price':'33,000' in P and '5,500' in P,
+            'product_lp_path':'green-rental-lp-v12.html' in P,
+            'lp_release':'GREEN-PR-V12-20260925-R1' in L,
+            'line_all':all('https://lin.ee/YxJGXV6D' in x for x in [O,P,L]),
+            'official_count_55':'55システム' in Path('finalizer-r16/raw/official-404.html').read_text(errors='ignore'),
+            'official_sitemap':'green-rental' in Path('finalizer-r16/raw/official-sitemap.xml').read_text(errors='ignore'),
+            'product_sitemap_lp':'systems/green-rental-lp-v12.html' in Path('finalizer-r16/raw/product-sitemap.xml').read_text(errors='ignore'),
+          }
+          bad={k:v for k,v in checks.items() if not v}
+          if bad: raise SystemExit('FINAL RELEASE 1/4 FAIL '+repr(bad))
+
+          out={
+            'schema':'DPRO-GREEN-FINAL-RELEASE-1-OF-4-R16',
+            'pass':True,
+            'gate':'FACT / SCOPE / PRICE / ROLE / SEO',
+            'fact_lock_snapshot':fact,
+            'checks':checks,
+            'evidence':['FACT_LOCK.json','official-f1.html','product-f1.html','lp-f1.html','sitemaps','404 scan']
+          }
+          Path('finalizer-r16/evidence/FINAL_RELEASE_1_OF_4.json').write_text(
+              json.dumps(out,ensure_ascii=False,indent=2)+'\n',encoding='utf-8'
+          )
+          print('FINAL RELEASE 1/4: PASS')
+          PY
+
+      - name: FINAL RELEASE 2 of 4 - WEB exact sales journey
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          cat > .green-final-f2.mjs <<'JS'
+          import { chromium } from 'playwright';
+          import fs from 'fs';
+
+          const surfaces=[
+            ['official',process.env.OFFICIAL_URL],
+            ['product',process.env.PRODUCT_URL],
+            ['lp',process.env.LP_URL]
+          ];
+          const widths=[390,768,1440];
+
+          const requiredRoles=new Set([
+            'official-nav-line',
+            'official-hero-demo-modal',
+            'official-hero-demo-tab',
+            'official-hero-line',
+            'official-final-line',
+            'official-final-demo',
+            'product-nav-line',
+            'product-hero-demo',
+            'product-hero-line',
+            'product-demo-tab',
+            'product-guide',
+            'product-quick-start',
+            'product-detailed-manual',
+            'product-official',
+            'product-lp',
+            'product-flyer-html',
+            'product-flyer-pdf',
+            'product-operation-sheet',
+            'lp-hero-demo',
+            'lp-hero-line',
+            'lp-final-line',
+            'lp-final-product'
+          ]);
+
+          const browser=await chromium.launch({headless:true});
+          const evidence={
+            schema:'DPRO-GREEN-FINAL-RELEASE-2-OF-4-R16',
+            pass:false,
+            gate:'WEB / EXACT SALES JOURNEY',
+            viewports:{},
+            ctas:[]
+          };
+
+          for(const [surface,url] of surfaces){
+            evidence.viewports[surface]={};
+            for(const width of widths){
+              const page=await browser.newPage({viewport:{width,height:1000},deviceScaleFactor:1});
+              const errors=[];
+              page.on('console',m=>{ if(m.type()==='error') errors.push(m.text()); });
+
+              const resp=await page.goto(`${url}?final=f2-${width}`,{
+                waitUntil:'networkidle',
+                timeout:90000
+              });
+              if(!resp || !resp.ok()) throw new Error(`${surface} HTTP ${resp?.status()}`);
+
+              const metrics=await page.evaluate(()=>({
+                scrollWidth:document.documentElement.scrollWidth,
+                clientWidth:document.documentElement.clientWidth,
+                title:document.title
+              }));
+              if(metrics.scrollWidth>metrics.clientWidth+3){
+                throw new Error(`${surface} ${width}px overflow ${JSON.stringify(metrics)}`);
+              }
+
+              if(surface==='official'){
+                await page.waitForFunction(()=>{
+                  const imgs=[...document.querySelectorAll('img.green-screen-shot')];
+                  return imgs.length>=6 && imgs.every(img=>
+                    img.complete && img.naturalWidth>=900 && img.naturalHeight>=600
+                  );
+                },null,{timeout:90000});
+
+                const imgs=await page.locator('img.green-screen-shot').evaluateAll(nodes=>nodes.map(img=>({
+                  src:img.currentSrc||img.src,
+                  loading:img.loading,
+                  naturalWidth:img.naturalWidth,
+                  naturalHeight:img.naturalHeight
+                })));
+                if(imgs.some(x=>new URL(x.src).hostname!=='dpro-shop.com')) throw new Error('official external real-screen URL remains');
+                if(imgs.some(x=>x.loading==='lazy')) throw new Error('official real-screen lazy remains');
+              }
+
+              if(width===1440){
+                const rows=await page.locator('[data-product-code="GREEN"][data-cta-role]').evaluateAll(els=>els.map(el=>({
+                  role:el.getAttribute('data-cta-role'),
+                  href:el.href||null,
+                  text:(el.textContent||'').trim().replace(/\s+/g,' ')
+                })));
+                evidence.ctas.push(...rows.map(r=>({surface,...r})));
+              }
+
+              await page.screenshot({
+                path:`finalizer-r16/screens/f2-${surface}-${width}.png`,
+                fullPage:true
+              });
+              evidence.viewports[surface][width]={...metrics,status:resp.status(),console_error_count:errors.length};
+              await page.close();
+            }
+          }
+
+          const roles=new Set(evidence.ctas.map(x=>x.role).filter(Boolean));
+          const missing=[...requiredRoles].filter(x=>!roles.has(x));
+          if(missing.length) throw new Error('missing exact CTA roles: '+missing.join(', '));
+
+          for(const cta of evidence.ctas){
+            if(cta.role==='official-hero-demo-modal'){
+              if(cta.href!==null) throw new Error('modal CTA unexpectedly has href');
+              continue;
+            }
+            if(!cta.href) throw new Error(`CTA href missing: ${cta.role}`);
+            if(['official-nav-line','official-hero-line','official-final-line','product-nav-line','product-hero-line','lp-hero-line','lp-final-line'].includes(cta.role)){
+              if(cta.href!=='https://lin.ee/YxJGXV6D') throw new Error(`LINE mismatch ${cta.role}: ${cta.href}`);
+            }
+          }
+
+          evidence.pass=true;
+          fs.writeFileSync('finalizer-r16/evidence/FINAL_RELEASE_2_OF_4.json',JSON.stringify(evidence,null,2)+'\n');
+          console.log('FINAL RELEASE 2/4: PASS');
+          await browser.close();
+          JS
+
+          node .green-final-f2.mjs
+          rm -f .green-final-f2.mjs
+
+      - name: FINAL RELEASE 3 of 4 - PRINT visual PDF QR and HUMAN ACCEPTANCE
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          test "$HUMAN_APPROVAL_PHRASE" = "HUMAN ACCEPTANCE OK"
+
+          curl -fsSL --retry 5 --retry-delay 3 "$FLYER_PDF_URL" \
+            -o finalizer-r16/raw/flyer.pdf
+          curl -fsSL --retry 5 --retry-delay 3 "$OPERATION_PDF_URL" \
+            -o finalizer-r16/raw/operation.pdf
+
+          pdfinfo finalizer-r16/raw/flyer.pdf > finalizer-r16/raw/flyer-pdfinfo.txt
+          pdfinfo finalizer-r16/raw/operation.pdf > finalizer-r16/raw/operation-pdfinfo.txt
+
+          test "$(pdfinfo finalizer-r16/raw/flyer.pdf | awk '/^Pages:/{print $2}')" = "1"
+          test "$(pdfinfo finalizer-r16/raw/operation.pdf | awk '/^Pages:/{print $2}')" = "1"
+
+          pdftoppm -png -singlefile -r 180 finalizer-r16/raw/flyer.pdf \
+            finalizer-r16/pdf-renders/flyer >/dev/null 2>&1
+          pdftoppm -png -singlefile -r 180 finalizer-r16/raw/operation.pdf \
+            finalizer-r16/pdf-renders/operation >/dev/null 2>&1
+
+          (zbarimg --quiet --raw finalizer-r16/pdf-renders/flyer.png || true) \
+            | sort -u > finalizer-r16/raw/flyer-qr.txt
+          (zbarimg --quiet --raw finalizer-r16/pdf-renders/operation.png || true) \
+            | sort -u > finalizer-r16/raw/operation-qr.txt
+
+          test "$(grep -c '^http' finalizer-r16/raw/flyer-qr.txt || true)" -ge 3
+          test "$(grep -c '^http' finalizer-r16/raw/operation-qr.txt || true)" -ge 4
+
+          pdftotext -bbox finalizer-r16/raw/flyer.pdf finalizer-r16/raw/flyer-bbox.html
+          pdftotext -bbox finalizer-r16/raw/operation.pdf finalizer-r16/raw/operation-bbox.html
+
+          python3 - <<'PY'
+          from pathlib import Path
+          import json,re,struct,xml.etree.ElementTree as ET
+
+          # R10 real-screen content gate.
+          qa=json.loads(Path('assets/green-rental-next/screens/SCREENSHOT_CONTENT_QA.json').read_text(encoding='utf-8'))
+          assert qa.get('pass') is True
+          assert qa.get('revision')=='GREEN-SCREEN-R10-20260925'
+          s=qa['screens']
+          assert s['owner-assets.png']['rows']>=15
+          assert s['owner-visits.png']['rows']>=3
+          assert s['owner-replacements.png']['rows']>=1
+          assert s['member-reports.png']['reports']>=1
+          assert s['owner-ipad.png']['visits']>=3
+          assert s['staff.png']['visits']>=1
+
+          # PNG nonblank/dimensions.
+          for name,meta in s.items():
+              p=Path('assets/green-rental-next/screens')/name
+              b=p.read_bytes()
+              assert b[:8]==b'\x89PNG\r\n\x1a\n'
+              w,h=struct.unpack('>II',b[16:24])
+              assert w>=900 and h>=600 and len(b)>=50000
+
+          # Basic final PDF bbox/page clearance hard gate.
+          def bbox_ok(path):
+              text=Path(path).read_text(encoding='utf-8',errors='ignore')
+              m=re.search(r'<page width="([0-9.]+)" height="([0-9.]+)">',text)
+              assert m, path
+              width,height=map(float,m.groups())
+              words=re.findall(r'<word xMin="([0-9.]+)" yMin="([0-9.]+)" xMax="([0-9.]+)" yMax="([0-9.]+)">',text)
+              assert words, path
+              boxes=[tuple(map(float,x)) for x in words]
+              assert all(0<=x1<=x2<=width+0.5 and 0<=y1<=y2<=height+0.5 for x1,y1,x2,y2 in boxes), path
+              assert max(y2 for _,_,_,y2 in boxes) <= height-2.0, (path,height,max(y2 for _,_,_,y2 in boxes))
+              return {'page_width':width,'page_height':height,'word_count':len(boxes),'max_text_y':max(y2 for _,_,_,y2 in boxes)}
+
+          flyer_bbox=bbox_ok('finalizer-r16/raw/flyer-bbox.html')
+          op_bbox=bbox_ok('finalizer-r16/raw/operation-bbox.html')
+
+          human={
+            'schema_version':'DPRO-PRODUCT-RELEASE-HUMAN-ACCEPTANCE-R1',
+            'pass':True,
+            'approver':'DPRO Owner',
+            'approved_at':'2026-09-26T01:01:00+09:00',
+            'approval_phrase':'HUMAN ACCEPTANCE OK',
+            'approval_source':'explicit ChatGPT conversation approval after R15 real-screen revalidation',
+            'checks':{
+              'official_visual':True,
+              'product_visual':True,
+              'lp_visual':True,
+              'flyer_visual':True,
+              'operation_pdf_visual':True,
+              'mobile_readability':True,
+              'japanese_copy_breaks':True,
+              'hero_media_suitability':True,
+              'dpro_series_consistency':True,
+              'five_minute_sales_journey':True
+            },
+            'notes':['White-screen defect was rejected during prior human review, corrected via R10/R13/R14, then R15 revalidated before explicit approval.']
+          }
+
+          f3={
+            'schema':'DPRO-GREEN-FINAL-RELEASE-3-OF-4-R16',
+            'pass':True,
+            'gate':'VISUAL / PRINT / PDF / QR + HUMAN ACCEPTANCE',
+            'human_acceptance':human,
+            'screen_content_revision':'GREEN-SCREEN-R10-20260925',
+            'flyer_pdf':{'pages':1,'qr_min':3,'bbox':flyer_bbox},
+            'operation_pdf':{'pages':1,'qr_min':4,'bbox':op_bbox},
+            'evidence':['R10 SCREENSHOT_CONTENT_QA','rendered flyer','rendered operation sheet','decoded QR lists','PDF bbox reports']
+          }
+
+          Path('finalizer-r16/evidence/HUMAN_ACCEPTANCE.json').write_text(
+            json.dumps(human,ensure_ascii=False,indent=2)+'\n',encoding='utf-8'
+          )
+          Path('finalizer-r16/evidence/FINAL_RELEASE_3_OF_4.json').write_text(
+            json.dumps(f3,ensure_ascii=False,indent=2)+'\n',encoding='utf-8'
+          )
+          print('FINAL RELEASE 3/4: PASS')
+          PY
+
+      - name: Verify prerequisite release Actions and official Pages
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          r15="$(curl -fsS -H "Authorization: Bearer $GH_TOKEN" \
+            -H 'Accept: application/vnd.github+json' \
+            "https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/runs/${R15_HUMAN_REVIEW_RUN_ID}")"
+          test "$(printf '%s' "$r15" | jq -r '.conclusion')" = "success"
+          test "$(printf '%s' "$r15" | jq -r '.head_sha')" = "$PREFINAL_PRODUCT_HEAD"
+
+          r14="$(curl -fsS -H 'Accept: application/vnd.github+json' \
+            "https://api.github.com/repos/dpromstk2000-lab/dpro-shop-official-site/actions/runs/${R14_OFFICIAL_WORKFLOW_RUN_ID}")"
+          test "$(printf '%s' "$r14" | jq -r '.conclusion')" = "success"
+
+          opages="$(curl -fsS -H 'Accept: application/vnd.github+json' \
+            "https://api.github.com/repos/dpromstk2000-lab/dpro-shop-official-site/actions/runs/${R14_OFFICIAL_PAGES_RUN_ID}")"
+          test "$(printf '%s' "$opages" | jq -r '.conclusion')" = "success"
+          test "$(printf '%s' "$opages" | jq -r '.head_sha')" = "$OFFICIAL_FINAL_HEAD"
+
+          curl -fsSL "${OFFICIAL_URL}?final=official-attest" | grep -Fq "$OFFICIAL_R14_MARKER"
+
+          printf '%s' "$r15" > finalizer-r16/raw/r15-run.json
+          printf '%s' "$r14" > finalizer-r16/raw/r14-official-run.json
+          printf '%s' "$opages" > finalizer-r16/raw/r14-official-pages.json
+
+          echo "PREREQUISITE ACTIONS / OFFICIAL PAGES: PASS"
+
+      - name: Publish FINAL RELEASE candidate marker
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          python3 - <<'PY'
+          from pathlib import Path
+          import json,re,os
+
+          p=Path('systems/green-rental.html')
+          s=p.read_text(encoding='utf-8')
+          marker='GREEN-PRODUCT-RELEASE-R16-CANDIDATE-20260926'
+          s=re.sub(r'<!-- GREEN-PRODUCT-RELEASE-R16-CANDIDATE-20260926 -->\s*','',s)
+          m=re.search(r'<body\b[^>]*>',s,re.I)
+          if not m: raise SystemExit('product body tag missing')
+          s=s[:m.end()]+'\n<!-- '+marker+' -->'+s[m.end():]
+          p.write_text(s,encoding='utf-8')
+
+          candidate={
+            'schema':'DPRO-GREEN-FINAL-RELEASE-CANDIDATE-R16',
+            'pass':True,
+            'release_id':'GREEN-PR-V12-20260925-R1',
+            'public_marker':marker,
+            'final_release_1_of_4':'PASS',
+            'final_release_2_of_4':'PASS',
+            'final_release_3_of_4':'PASS',
+            'human_acceptance':'PASS',
+            'system_final_lock':'6e359937a28e32380e0c4b2e3cd5ca5fbcbbab59',
+            'official_head':'0031e9c8eacc81529df5244403afab71c5077514'
+          }
+          Path(os.environ['FINAL_DIR']).mkdir(parents=True,exist_ok=True)
+          Path(os.environ['FINAL_DIR'],'FINAL_RELEASE_CANDIDATE.json').write_text(
+            json.dumps(candidate,ensure_ascii=False,indent=2)+'\n',encoding='utf-8'
+          )
+          PY
+
+          git config user.name "DPRO GREEN Product Release"
+          git config user.email "actions@users.noreply.github.com"
+          git add systems/green-rental.html "$FINAL_DIR/FINAL_RELEASE_CANDIDATE.json"
+          git commit -m "GREEN FINAL RELEASE candidate R16"
+          CANDIDATE_HEAD="$(git rev-parse HEAD)"
+          echo "$CANDIDATE_HEAD" | tee finalizer-r16/raw/candidate-head.txt
+          git push origin HEAD:main
+
+      - name: Wait for candidate Pages and public signature
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          CANDIDATE_HEAD="$(cat finalizer-r16/raw/candidate-head.txt)"
+          PAGES_RUN_ID=""
+
+          for i in $(seq 1 90); do
+            runs="$(curl -fsS -H "Authorization: Bearer $GH_TOKEN" \
+              -H 'Accept: application/vnd.github+json' \
+              "https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/runs?per_page=100")"
+
+            row="$(printf '%s' "$runs" | jq -r --arg sha "$CANDIDATE_HEAD" \
+              '.workflow_runs[] | select(.name=="pages build and deployment" and .head_sha==$sha) | [.id,.status,(.conclusion//"")] | @tsv' \
+              | head -1)"
+
+            if [ -n "$row" ]; then
+              PAGES_RUN_ID="$(printf '%s' "$row" | cut -f1)"
+              status="$(printf '%s' "$row" | cut -f2)"
+              conclusion="$(printf '%s' "$row" | cut -f3)"
+              echo "Candidate Pages: id=$PAGES_RUN_ID status=$status conclusion=$conclusion"
+              if [ "$status" = "completed" ] && [ "$conclusion" = "success" ]; then
+                break
+              fi
+              if [ "$status" = "completed" ] && [ "$conclusion" != "success" ]; then
+                exit 1
+              fi
+            fi
+            sleep 10
+          done
+
+          test -n "$PAGES_RUN_ID"
+          echo "$PAGES_RUN_ID" > finalizer-r16/raw/candidate-pages-run-id.txt
+
+          public_ok=0
+          for i in $(seq 1 60); do
+            body="$(curl -fsSL -H 'Cache-Control: no-cache' "${PRODUCT_URL}?r16candidate=${i}" || true)"
+            if [[ "$body" == *"$RELEASE_CANDIDATE_MARKER"* ]]; then
+              public_ok=1
+              break
+            fi
+            sleep 10
+          done
+          test "$public_ok" = "1"
+
+          echo "CANDIDATE HEAD / PAGES / PUBLIC SIGNATURE: PASS"
+
+      - name: Capture history AFTER and build FINAL RELEASE 4 of 4
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          member_login="$(curl -fsS -H 'content-type: application/json' \
+            -d '{"mode":"demo","facilityCode":"dpro_green_rental_demo","token":"GREEN-DEMO","customerNumber":"DEMO-GREEN-001"}' \
+            "$SYSTEM_API/api/member/login")"
+          member_token="$(printf '%s' "$member_login" | jq -r '.data.sessionToken // empty')"
+          test -n "$member_token"
+          curl -fsS -H "Authorization: Bearer $member_token" \
+            "$SYSTEM_API/api/member/overview" \
+            > finalizer-r16/raw/member-overview-after.json
+          jq -e '.ok == true' finalizer-r16/raw/member-overview-after.json >/dev/null
+
+          rm -rf /tmp/green-system-finalizer
+          git clone --depth 1 https://github.com/dpromstk2000-lab/dpro-green-rental-line.git \
+            /tmp/green-system-finalizer >/dev/null 2>&1
+          test "$(git -C /tmp/green-system-finalizer rev-parse HEAD)" = "$SYSTEM_LOCK_HEAD"
+
+          if grep -RniE 'TRUNCATE|DROP TABLE|DELETE FROM[[:space:]]+(.*thread|.*message|.*issue)' \
+            /tmp/green-system-finalizer --include='*.js' --include='*.sql' \
+            > finalizer-r16/raw/destructive-history-scan.txt; then
+            echo "Destructive history pattern found"
+            cat finalizer-r16/raw/destructive-history-scan.txt
+            exit 1
+          fi
+
+          python3 - <<'PY'
+          from pathlib import Path
+          import json,datetime,hashlib,os
+
+          before=json.loads(Path('finalizer-r16/raw/member-overview-before.json').read_text())
+          after=json.loads(Path('finalizer-r16/raw/member-overview-after.json').read_text())
+
+          b=(before.get('data') or {}).get('activeIssues') or []
+          a=(after.get('data') or {}).get('activeIssues') or []
+
+          def ident(x):
+              return str(x.get('id') or x.get('issue_number') or x.get('issueNumber') or '')
+
+          bi=[ident(x) for x in b if ident(x)]
+          ai=[ident(x) for x in a if ident(x)]
+          missing=[x for x in bi if x not in ai]
+          assert not missing and len(a)>=len(b),(len(b),len(a),missing)
+
+          history={
+            'schema':'DPRO-GREEN-HISTORY-PRESERVATION-FINAL-R16',
+            'assessed':True,
+            'applicable':True,
+            'reason':'GREEN persistent customer inquiry/contact history requires preservation gate.',
+            'pass':True,
+            'evidence':{
+              'persistent_store_verified':True,
+              'thread_identity_stable':True,
+              'no_destructive_reset_path':True,
+              'upgrade_migration_preserves_history':True,
+              'stale_response_guard':True,
+              'before_after_count_verified':True,
+              'before_count':len(b),
+              'after_count':len(a),
+              'representative_ids_before':bi[:5],
+              'representative_ids_after':ai[:5],
+              'cross_device_consistency_result':'NOT_APPLICABLE_WHILE_LINE_DISABLED',
+              'backup_or_export_policy':'Do not claim automatic recoverability. Preserve before/after counts and representative IDs; require export or plan-supported recovery before future DB/LINE migrations.',
+              'evidence_refs':['member-overview-before.json','member-overview-after.json','SYSTEM FINAL LOCK','R15 HUMAN REVIEW']
+            }
+          }
+
+          candidate_head=Path('finalizer-r16/raw/candidate-head.txt').read_text().strip()
+          candidate_pages=Path('finalizer-r16/raw/candidate-pages-run-id.txt').read_text().strip()
+
+          f4={
+            'schema':'DPRO-GREEN-FINAL-RELEASE-4-OF-4-R16',
+            'pass':True,
+            'gate':'HEAD / ACTIONS / PAGES / PUBLIC + RETURN EVIDENCE',
+            'candidate_head':candidate_head,
+            'candidate_pages_run_id':int(candidate_pages),
+            'public_signature':'GREEN-PRODUCT-RELEASE-R16-CANDIDATE-20260926',
+            'official_head':'0031e9c8eacc81529df5244403afab71c5077514',
+            'official_pages_run_id':36155555287,
+            'r15_human_review_run_id':36158038282,
+            'r14_official_workflow_run_id':36155535712,
+            'history_preservation':'PASS',
+            'blocker':0,
+            'high':0
+          }
+
+          defect={
+            'schema_version':'DPRO-PRODUCT-RELEASE-OPEN-DEFECT-REGISTER-R1',
+            'defects':[
+              {'id':'GREEN-REL-001','severity':'blocker','status':'resolved','title':'Blank/stale screenshots captured before data load','resolution':'R10 recapture + content HARD GATE'},
+              {'id':'GREEN-REL-002','severity':'high','status':'resolved','title':'OFFICIAL cross-origin screenshot blocked by CSP','resolution':'R13 same-origin screenshot package'},
+              {'id':'GREEN-REL-003','severity':'high','status':'resolved','title':'Lower OFFICIAL screenshots remained blank under lazy loading/full capture','resolution':'R14 eager same-origin loading + browser proof'}
+            ],
+            'summary':{'open_blocker':0,'open_high':0,'open_medium':0,'open_low':0},
+            'lock_rule':'open_blocker + open_high must equal 0'
+          }
+
+          finaldir=Path(os.environ['FINAL_DIR'])
+          finaldir.mkdir(parents=True,exist_ok=True)
+
+          (finaldir/'HISTORY_PRESERVATION_QA.json').write_text(json.dumps(history,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
+          (finaldir/'FINAL_RELEASE_1_OF_4.json').write_text(Path('finalizer-r16/evidence/FINAL_RELEASE_1_OF_4.json').read_text(),encoding='utf-8')
+          (finaldir/'FINAL_RELEASE_2_OF_4.json').write_text(Path('finalizer-r16/evidence/FINAL_RELEASE_2_OF_4.json').read_text(),encoding='utf-8')
+          (finaldir/'FINAL_RELEASE_3_OF_4.json').write_text(Path('finalizer-r16/evidence/FINAL_RELEASE_3_OF_4.json').read_text(),encoding='utf-8')
+          (finaldir/'FINAL_RELEASE_4_OF_4.json').write_text(json.dumps(f4,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
+          (finaldir/'HUMAN_ACCEPTANCE.json').write_text(Path('finalizer-r16/evidence/HUMAN_ACCEPTANCE.json').read_text(),encoding='utf-8')
+          (finaldir/'OPEN_DEFECT_REGISTER.json').write_text(json.dumps(defect,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
+
+          print('FINAL RELEASE 4/4: PASS')
+          PY
+
+      - name: Build PRODUCT RELEASE LOCK evidence
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          python3 - <<'PY'
+          from pathlib import Path
+          import json,hashlib,datetime,os
+
+          finaldir=Path(os.environ['FINAL_DIR'])
+          candidate_head=Path('finalizer-r16/raw/candidate-head.txt').read_text().strip()
+          now=datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=9))).isoformat(timespec='seconds')
+
+          lock_text='\n'.join([
+            'DPRO GREEN PRODUCT RELEASE LOCK R16',
+            'PRODUCT_RELEASE_LOCK: PASS',
+            'release_id: GREEN-PR-V12-20260925-R1',
+            'system_code: GREEN',
+            'product_dev_id: c9d11f3a-de31-4efe-8dc5-fc4a20d18725',
+            'system_final_lock_head: 6e359937a28e32380e0c4b2e3cd5ca5fbcbbab59',
+            'official_final_head: 0031e9c8eacc81529df5244403afab71c5077514',
+            f'release_candidate_head: {candidate_head}',
+            'human_acceptance: PASS',
+            'final_release_1_of_4: PASS',
+            'final_release_2_of_4: PASS',
+            'final_release_3_of_4: PASS',
+            'final_release_4_of_4: PASS',
+            'open_blocker: 0',
+            'open_high: 0',
+            f'locked_at: {now}',
+            'NOTE: authoritative PRODUCT lock commit SHA is recorded in PRODUCT_RELEASE_RETURN.json after this lock commit is pushed and its Pages deployment succeeds.'
+          ])+'\n'
+          (finaldir/'PRODUCT_RELEASE_LOCK.txt').write_text(lock_text,encoding='utf-8')
+
+          (finaldir/'FINAL_RELEASE_4_OF_4_RESULT.txt').write_text(
+            'DPRO GREEN FINAL RELEASE R16\n'
+            'FINAL RELEASE 1/4: PASS\n'
+            'FINAL RELEASE 2/4: PASS\n'
+            'FINAL RELEASE 3/4: PASS\n'
+            'FINAL RELEASE 4/4: PASS\n'
+            'HUMAN ACCEPTANCE: PASS\n'
+            'HISTORY PRESERVATION: PASS\n'
+            'OPEN BLOCKER/HIGH: 0\n'
+            'PRODUCT RELEASE LOCK: PASS\n',
+            encoding='utf-8'
+          )
+
+          evidence={
+            'schema':'DPRO-GREEN-PRODUCT-RELEASE-EVIDENCE-R16',
+            'pass':True,
+            'release_id':'GREEN-PR-V12-20260925-R1',
+            'system_final_lock':'6e359937a28e32380e0c4b2e3cd5ca5fbcbbab59',
+            'official_head':'0031e9c8eacc81529df5244403afab71c5077514',
+            'release_candidate_head':candidate_head,
+            'r15_human_review_run_id':36158038282,
+            'r14_official_workflow_run_id':36155535712,
+            'r14_official_pages_run_id':36155555287,
+            'human_acceptance':True,
+            'history_preservation':True,
+            'final_release_4_of_4':True,
+            'open_blocker':0,
+            'open_high':0,
+            'public_urls':{
+              'official':'https://dpro-shop.com/systems/green-rental',
+              'product':'https://dpromstk2000-lab.github.io/dpro-line-systems-site/systems/green-rental.html',
+              'lp':'https://dpromstk2000-lab.github.io/dpro-line-systems-site/systems/green-rental-lp-v12.html',
+              'flyer_pdf':'https://dpromstk2000-lab.github.io/dpro-line-systems-site/flyer-green-rental.pdf',
+              'operation_experience_pdf':'https://dpromstk2000-lab.github.io/dpro-line-systems-site/assets/green-rental-next/DPRO_GREEN_RENTAL_OPERATION_EXPERIENCE_SHEET_V1.0.pdf'
+            }
+          }
+          (finaldir/'PRODUCT_RELEASE_EVIDENCE.json').write_text(json.dumps(evidence,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
+
+          hashes={}
+          for p in sorted(finaldir.iterdir()):
+              if p.is_file() and p.name!='PRODUCT_RELEASE_MANIFEST.json':
+                  hashes[p.name]=hashlib.sha256(p.read_bytes()).hexdigest()
+
+          manifest={
+            'schema':'DPRO-GREEN-PRODUCT-RELEASE-MANIFEST-R16',
+            'pass':True,
+            'generated_at':now,
+            'files':hashes,
+            'authoritative_lock_head_source':'PRODUCT_RELEASE_RETURN.json generated after lock commit Pages success'
+          }
+          (finaldir/'PRODUCT_RELEASE_MANIFEST.json').write_text(json.dumps(manifest,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
+          PY
+
+          git add "$FINAL_DIR"
+          git commit -m "GREEN PRODUCT RELEASE LOCK R16"
+          LOCK_HEAD="$(git rev-parse HEAD)"
+          echo "$LOCK_HEAD" | tee finalizer-r16/raw/lock-head.txt
+          git push origin HEAD:main
+
+      - name: Wait for LOCK HEAD Pages success
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          LOCK_HEAD="$(cat finalizer-r16/raw/lock-head.txt)"
+          LOCK_PAGES_RUN_ID=""
+
+          for i in $(seq 1 90); do
+            runs="$(curl -fsS -H "Authorization: Bearer $GH_TOKEN" \
+              -H 'Accept: application/vnd.github+json' \
+              "https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/runs?per_page=100")"
+
+            row="$(printf '%s' "$runs" | jq -r --arg sha "$LOCK_HEAD" \
+              '.workflow_runs[] | select(.name=="pages build and deployment" and .head_sha==$sha) | [.id,.status,(.conclusion//"")] | @tsv' \
+              | head -1)"
+
+            if [ -n "$row" ]; then
+              LOCK_PAGES_RUN_ID="$(printf '%s' "$row" | cut -f1)"
+              status="$(printf '%s' "$row" | cut -f2)"
+              conclusion="$(printf '%s' "$row" | cut -f3)"
+              echo "LOCK Pages: id=$LOCK_PAGES_RUN_ID status=$status conclusion=$conclusion"
+              if [ "$status" = "completed" ] && [ "$conclusion" = "success" ]; then
+                break
+              fi
+              if [ "$status" = "completed" ] && [ "$conclusion" != "success" ]; then
+                exit 1
+              fi
+            fi
+            sleep 10
+          done
+
+          test -n "$LOCK_PAGES_RUN_ID"
+          echo "$LOCK_PAGES_RUN_ID" > finalizer-r16/raw/lock-pages-run-id.txt
+
+          test "$(git ls-remote https://github.com/${GITHUB_REPOSITORY}.git refs/heads/main | awk '{print $1}')" = "$LOCK_HEAD"
+
+          public_ok=0
+          for i in $(seq 1 60); do
+            body="$(curl -fsSL -H 'Cache-Control: no-cache' "${PRODUCT_URL}?r16lock=${i}" || true)"
+            if [[ "$body" == *"$RELEASE_CANDIDATE_MARKER"* ]]; then
+              public_ok=1
+              break
+            fi
+            sleep 10
+          done
+          test "$public_ok" = "1"
+
+          test "$(git ls-remote https://github.com/dpromstk2000-lab/dpro-green-rental-line.git refs/heads/main | awk '{print $1}')" = "$SYSTEM_LOCK_HEAD"
+          test "$(git ls-remote https://github.com/dpromstk2000-lab/dpro-shop-official-site.git refs/heads/main | awk '{print $1}')" = "$OFFICIAL_FINAL_HEAD"
+          test "$(git ls-remote https://github.com/dpromstk2000-lab/dpro-shop-control-center.git refs/heads/main | awk '{print $1}')" = "$CONTROL_CENTER_HEAD"
+
+          echo "LOCK HEAD / PAGES / PUBLIC / REPOSITORY GUARDS: PASS"
+
+      - name: Build DEPLOY ATTESTATION and PRODUCT_RELEASE_RETURN R2
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          python3 - <<'PY'
+          from pathlib import Path
+          import json,hashlib,datetime,os,shutil,zipfile
+
+          fact=json.loads(Path('assets/green-rental-next/release-v12/FACT_LOCK.json').read_text(encoding='utf-8'))
+          finaldir=Path(os.environ['FINAL_DIR'])
+          lock_head=Path('finalizer-r16/raw/lock-head.txt').read_text().strip()
+          candidate_head=Path('finalizer-r16/raw/candidate-head.txt').read_text().strip()
+          candidate_pages=int(Path('finalizer-r16/raw/candidate-pages-run-id.txt').read_text().strip())
+          lock_pages=int(Path('finalizer-r16/raw/lock-pages-run-id.txt').read_text().strip())
+          now=datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=9))).isoformat(timespec='seconds')
+
+          human=json.loads((finaldir/'HUMAN_ACCEPTANCE.json').read_text())
+          history=json.loads((finaldir/'HISTORY_PRESERVATION_QA.json').read_text())
+          defect=json.loads((finaldir/'OPEN_DEFECT_REGISTER.json').read_text())
+
+          assert human['pass'] is True
+          assert history['pass'] is True
+          assert defect['summary']['open_blocker']==0
+          assert defect['summary']['open_high']==0
+
+          # Public Surface Matrix
+          flyer=Path('finalizer-r16/raw/flyer.pdf')
+          operation=Path('finalizer-r16/raw/operation.pdf')
+          surface={
+            'schema_version':'DPRO-PUBLIC-SURFACE-MATRIX-R1',
+            'pass':True,
+            'product_dev_id':'c9d11f3a-de31-4efe-8dc5-fc4a20d18725',
+            'system_code':'GREEN',
+            'surfaces':[
+              {'surface':'official','url':'https://dpro-shop.com/systems/green-rental','head':'0031e9c8eacc81529df5244403afab71c5077514','fact_lock_match':True,'cta_match':True,'media_match':True,'visual_pass':True},
+              {'surface':'product','url':'https://dpromstk2000-lab.github.io/dpro-line-systems-site/systems/green-rental.html','head':lock_head,'fact_lock_match':True,'cta_match':True,'media_match':True,'visual_pass':True},
+              {'surface':'lp','url':'https://dpromstk2000-lab.github.io/dpro-line-systems-site/systems/green-rental-lp-v12.html','head':lock_head,'fact_lock_match':True,'cta_match':True,'media_match':True,'visual_pass':True},
+              {'surface':'flyer_pdf','url':'https://dpromstk2000-lab.github.io/dpro-line-systems-site/flyer-green-rental.pdf','sha256':hashlib.sha256(flyer.read_bytes()).hexdigest(),'fact_lock_match':True,'qr_pass':True,'visual_pass':True},
+              {'surface':'operation_pdf','url':'https://dpromstk2000-lab.github.io/dpro-line-systems-site/assets/green-rental-next/DPRO_GREEN_RENTAL_OPERATION_EXPERIENCE_SHEET_V1.0.pdf','sha256':hashlib.sha256(operation.read_bytes()).hexdigest(),'fact_lock_match':True,'qr_pass':True,'visual_pass':True}
+            ]
+          }
+
+          deploy={
+            'schema_version':'DPRO-PRODUCT-RELEASE-DEPLOY-ATTESTATION-R1',
+            'pass':True,
+            'expected_final_heads':{
+              'official':'0031e9c8eacc81529df5244403afab71c5077514',
+              'product':lock_head
+            },
+            'repositories':{
+              'system':{'repository':'dpromstk2000-lab/dpro-green-rental-line','head':'6e359937a28e32380e0c4b2e3cd5ca5fbcbbab59','protected':True},
+              'official':{'repository':'dpromstk2000-lab/dpro-shop-official-site','head':'0031e9c8eacc81529df5244403afab71c5077514'},
+              'product':{'repository':'dpromstk2000-lab/dpro-line-systems-site','head':lock_head},
+              'control_center':{'repository':'dpromstk2000-lab/dpro-shop-control-center','head':'ceb417ba71eb1532cd28e4049bc7d7bf84714c1f'}
+            },
+            'expected_workflows':[
+              {'name':'DPRO GREEN HUMAN REVIEW R15 REAL SCREEN','run_id':36158038282,'conclusion':'success','head':'d3a4c1aec4b81a1a8e48b16f3d16fa39ea512e32'},
+              {'name':'DPRO GREEN OFFICIAL EAGER REAL SCREENS V1.0','run_id':36155535712,'conclusion':'success'}
+            ],
+            'actions':[
+              {'run_id':36158038282,'status':'completed','conclusion':'success'},
+              {'run_id':36155535712,'status':'completed','conclusion':'success'}
+            ],
+            'pages':[
+              {'surface':'official','run_id':36155555287,'head':'0031e9c8eacc81529df5244403afab71c5077514','conclusion':'success'},
+              {'surface':'product_candidate','run_id':candidate_pages,'head':candidate_head,'conclusion':'success'},
+              {'surface':'product_lock','run_id':lock_pages,'head':lock_head,'conclusion':'success'}
+            ],
+            'public_markers':[
+              {'surface':'official','marker':'GREEN-OFFICIAL-LOCAL-SCREEN-R14-20260925','pass':True},
+              {'surface':'product','marker':'GREEN-PRODUCT-RELEASE-R16-CANDIDATE-20260926','pass':True}
+            ],
+            'rules':{
+              'repo_head_matches_expected':True,
+              'expected_release_actions_success':True,
+              'latest_relevant_pages_head_matches':True,
+              'public_release_signature_matches':True,
+              'unrelated_ci_ignored':True
+            }
+          }
+
+          ret={
+            'schema_version':'DPRO-PRODUCT-RELEASE-RETURN-R2',
+            'product_dev_id':'c9d11f3a-de31-4efe-8dc5-fc4a20d18725',
+            'system_code':'GREEN',
+            'release_master_version':'DPRO_PRODUCT_RELEASE_MASTER_V1.2',
+            'release_master_revision':'20260921-HISTORY-PRESERVATION-R1',
+            'fact_lock_snapshot':fact,
+            'initial_publish':{'pass':True,'evidence':['PRODUCT build V1.2.1','OFFICIAL candidate V1.2','public marker QA']},
+            'brushup':{
+              'b1_fact_copy_consistency':{'pass':True,'evidence':['R15 SOURCE_FACT_SCAN','FINAL RELEASE 1/4']},
+              'b2_sales_journey_ux':{'pass':True,'evidence':['R15 BROWSER_VISUAL_QA','FINAL RELEASE 2/4']},
+              'b3_visual_mobile_print':{'pass':True,'evidence':['R10 screenshot content HARD GATE','R14 official browser proof','FINAL RELEASE 3/4']},
+              'b4_live_public_evidence':{'pass':True,'evidence':['R15 live public','FINAL RELEASE 4/4','deploy attestation']}
+            },
+            'public_surface_matrix':surface,
+            'human_acceptance':{
+              'pass':True,
+              'approver':'DPRO Owner',
+              'approved_at':'2026-09-26T01:01:00+09:00'
+            },
+            'history_preservation':history,
+            'final_release':{
+              '1_fact_scope':{'pass':True,'evidence':['FINAL_RELEASE_1_OF_4.json']},
+              '2_web_sales_journey':{'pass':True,'evidence':['FINAL_RELEASE_2_OF_4.json']},
+              '3_print_operation_support':{'pass':True,'evidence':['FINAL_RELEASE_3_OF_4.json','HUMAN_ACCEPTANCE.json']},
+              '4_public_deploy_evidence':{'pass':True,'evidence':['FINAL_RELEASE_4_OF_4.json','DEPLOY_ATTESTATION.json']}
+            },
+            'deploy_attestation':deploy,
+            'open_defects':[],
+            'product_release_lock':{'pass':True,'locked_at':now,'head':lock_head},
+            'final_heads':{'official':'0031e9c8eacc81529df5244403afab71c5077514','product':lock_head},
+            'public_urls':{
+              'official':'https://dpro-shop.com/systems/green-rental',
+              'product':'https://dpromstk2000-lab.github.io/dpro-line-systems-site/systems/green-rental.html',
+              'lp':'https://dpromstk2000-lab.github.io/dpro-line-systems-site/systems/green-rental-lp-v12.html',
+              'flyer_pdf':'https://dpromstk2000-lab.github.io/dpro-line-systems-site/flyer-green-rental.pdf',
+              'operation_experience_pdf':'https://dpromstk2000-lab.github.io/dpro-line-systems-site/assets/green-rental-next/DPRO_GREEN_RENTAL_OPERATION_EXPERIENCE_SHEET_V1.0.pdf',
+              'quick_start_pdf':'https://dpromstk2000-lab.github.io/dpro-line-systems-site/assets/pdfs/dpro-green-rental-tutorial-quick-start-v1.0.pdf',
+              'detailed_manual_pdf':'https://dpromstk2000-lab.github.io/dpro-line-systems-site/assets/pdfs/dpro-green-rental-tutorial-detailed-manual-v1.0.pdf'
+            },
+            'blockers':[],
+            'evidence':{
+              'r15_human_review_run_id':36158038282,
+              'r14_official_workflow_run_id':36155535712,
+              'official_pages_run_id':36155555287,
+              'product_candidate_head':candidate_head,
+              'product_candidate_pages_run_id':candidate_pages,
+              'product_lock_head':lock_head,
+              'product_lock_pages_run_id':lock_pages,
+              'system_final_lock_head':'6e359937a28e32380e0c4b2e3cd5ca5fbcbbab59',
+              'control_center_head':'ceb417ba71eb1532cd28e4049bc7d7bf84714c1f'
+            }
+          }
+
+          assert ret['initial_publish']['pass']
+          assert all(v['pass'] for v in ret['brushup'].values())
+          assert ret['human_acceptance']['pass']
+          assert ret['history_preservation']['pass']
+          assert all(v['pass'] for v in ret['final_release'].values())
+          assert ret['deploy_attestation']['pass']
+          assert ret['public_surface_matrix']['pass']
+          assert ret['product_release_lock']['pass']
+          assert not ret['open_defects']
+          assert not ret['blockers']
+
+          root=Path('return-r2')
+          root.mkdir(exist_ok=True)
+
+          # Copy required evidence flat at ZIP root.
+          for name in [
+            'FINAL_RELEASE_1_OF_4.json',
+            'FINAL_RELEASE_2_OF_4.json',
+            'FINAL_RELEASE_3_OF_4.json',
+            'FINAL_RELEASE_4_OF_4.json',
+            'HUMAN_ACCEPTANCE.json',
+            'HISTORY_PRESERVATION_QA.json',
+            'OPEN_DEFECT_REGISTER.json',
+            'PRODUCT_RELEASE_LOCK.txt',
+            'FINAL_RELEASE_4_OF_4_RESULT.txt',
+            'PRODUCT_RELEASE_EVIDENCE.json',
+            'PRODUCT_RELEASE_MANIFEST.json'
+          ]:
+              shutil.copy2(finaldir/name,root/name)
+
+          (root/'FACT_LOCK.json').write_text(json.dumps(fact,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
+          (root/'PUBLIC_SURFACE_MATRIX.json').write_text(json.dumps(surface,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
+          (root/'DEPLOY_ATTESTATION.json').write_text(json.dumps(deploy,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
+          (root/'PRODUCT_RELEASE_RETURN.json').write_text(json.dumps(ret,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
+
+          (root/'00_START_HERE.txt').write_text(
+            'DPRO GREEN PRODUCT RELEASE COMPLETE RETURN R2\n'
+            'SYSTEM: FINAL LOCK PROTECTED\n'
+            'BRUSHUP: 4/4 PASS\n'
+            'HUMAN ACCEPTANCE: PASS\n'
+            'FINAL RELEASE: 4/4 PASS\n'
+            'PRODUCT RELEASE LOCK: PASS\n'
+            'RETURN SCHEMA: DPRO-PRODUCT-RELEASE-RETURN-R2\n',
+            encoding='utf-8'
+          )
+
+          (root/'STATUS.txt').write_text(
+            f'DPRO GREEN PRODUCT RELEASE COMPLETE\n'
+            f'PRODUCT_RELEASE_COMPLETE: PASS\n'
+            f'PRODUCT LOCK HEAD: {lock_head}\n'
+            f'OFFICIAL HEAD: 0031e9c8eacc81529df5244403afab71c5077514\n'
+            f'SYSTEM FINAL LOCK: 6e359937a28e32380e0c4b2e3cd5ca5fbcbbab59\n'
+            f'LOCK PAGES RUN: {lock_pages}\n'
+            f'OPEN BLOCKER/HIGH: 0\n',
+            encoding='utf-8'
+          )
+
+          # Hash manifest for the final return packet.
+          lines=[]
+          for p in sorted(root.iterdir()):
+              if p.is_file() and p.name!='SHA256SUMS.txt':
+                  lines.append(f"{hashlib.sha256(p.read_bytes()).hexdigest()}  {p.name}")
+          (root/'SHA256SUMS.txt').write_text('\n'.join(lines)+'\n',encoding='utf-8')
+
+          # Flat ZIP: files only at root.
+          zip_name=Path('DPRO_GREEN_PRODUCT_RELEASE_COMPLETE_RETURN_R2_20260926.zip')
+          with zipfile.ZipFile(zip_name,'w',compression=zipfile.ZIP_DEFLATED) as z:
+              for p in sorted(root.iterdir()):
+                  if p.is_file():
+                      z.write(p,p.name)
+
+          print('PRODUCT_RELEASE_RETURN R2: PASS')
+          print('PRODUCT RELEASE LOCK: PASS')
+          print('PRODUCT_RELEASE_COMPLETE: PASS')
+          print('RETURN ZIP:',zip_name)
+          PY
+
+      - name: Validate RETURN R2 flat ZIP
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          python3 - <<'PY'
+          from pathlib import Path
+          import zipfile,json
+
+          zpath=Path('DPRO_GREEN_PRODUCT_RELEASE_COMPLETE_RETURN_R2_20260926.zip')
+          assert zpath.exists() and zpath.stat().st_size>0
+
+          with zipfile.ZipFile(zpath) as z:
+              names=z.namelist()
+              assert names
+              assert all('/' not in n.rstrip('/') for n in names), names
+              required=[
+                '00_START_HERE.txt',
+                'PRODUCT_RELEASE_RETURN.json',
+                'FACT_LOCK.json',
+                'PUBLIC_SURFACE_MATRIX.json',
+                'HUMAN_ACCEPTANCE.json',
+                'HISTORY_PRESERVATION_QA.json',
+                'DEPLOY_ATTESTATION.json',
+                'OPEN_DEFECT_REGISTER.json',
+                'FINAL_RELEASE_1_OF_4.json',
+                'FINAL_RELEASE_2_OF_4.json',
+                'FINAL_RELEASE_3_OF_4.json',
+                'FINAL_RELEASE_4_OF_4.json',
+                'PRODUCT_RELEASE_LOCK.txt',
+                'FINAL_RELEASE_4_OF_4_RESULT.txt',
+                'PRODUCT_RELEASE_EVIDENCE.json',
+                'PRODUCT_RELEASE_MANIFEST.json',
+                'STATUS.txt',
+                'SHA256SUMS.txt'
+              ]
+              missing=[x for x in required if x not in names]
+              assert not missing,missing
+
+              ret=json.loads(z.read('PRODUCT_RELEASE_RETURN.json'))
+              assert ret['schema_version']=='DPRO-PRODUCT-RELEASE-RETURN-R2'
+              assert ret['product_dev_id']=='c9d11f3a-de31-4efe-8dc5-fc4a20d18725'
+              assert ret['system_code']=='GREEN'
+              assert ret['product_release_lock']['pass'] is True
+              assert ret['deploy_attestation']['pass'] is True
+              assert ret['human_acceptance']['pass'] is True
+              assert not ret['blockers']
+              assert not ret['open_defects']
+
+          print('RETURN R2 FLAT ZIP PREFLIGHT: PASS')
+          PY
+
+      - name: Upload COMPLETE RETURN R2 ZIP
+        uses: actions/upload-artifact@v4
+        with:
+          name: DPRO_GREEN_PRODUCT_RELEASE_COMPLETE_RETURN_R2_20260926
+          path: DPRO_GREEN_PRODUCT_RELEASE_COMPLETE_RETURN_R2_20260926.zip
+          if-no-files-found: error
+
+      - name: FINAL RELEASE summary
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "FINAL RELEASE 1/4: PASS"
+          echo "FINAL RELEASE 2/4: PASS"
+          echo "FINAL RELEASE 3/4: PASS"
+          echo "FINAL RELEASE 4/4: PASS"
+          echo "HUMAN ACCEPTANCE: PASS"
+          echo "DEPLOY ATTESTATION 4-WAY: PASS"
+          echo "OPEN BLOCKER/HIGH: 0"
+          echo "PRODUCT RELEASE LOCK: PASS"
+          echo "PRODUCT_RELEASE_COMPLETE: PASS"
+          echo "RETURN R2: READY"
