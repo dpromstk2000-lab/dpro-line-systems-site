@@ -15,6 +15,7 @@ jobs:
     timeout-minutes: 30
     env:
       RELEASE_ID: GREEN-PR-V12-20260925-R1
+      HUMAN_REVIEW_FIX_REVISION: GREEN-HR-FIX-R6-BROKEN-PIPE
       LP_PUBLICATION_REVISION: GREEN-LP-SYSTEMS-PUBLIC-R4-20260925
       PRODUCT_PUBLICATION_REVISION: GREEN-PRODUCT-LP-PATH-R4-20260925
       SYSTEM_LOCK_HEAD: 6e359937a28e32380e0c4b2e3cd5ca5fbcbbab59
@@ -130,7 +131,7 @@ jobs:
             local url="$1" marker="$2" name="$3"
             for i in $(seq 1 45); do
               body="$(curl -fsSL --retry 2 --retry-delay 2 -H 'Cache-Control: no-cache' -H 'Pragma: no-cache' "${url}?dpro_release=${RELEASE_ID}&attempt=${i}" || true)"
-              if printf '%s' "$body" | grep -Fq "$marker"; then echo "$name PUBLIC: PASS"; return 0; fi
+              if [[ "$body" == *"$marker"* ]]; then echo "$name PUBLIC: PASS"; return 0; fi
               echo "$name not ready ($i/45)"; sleep 10
             done
             echo "$name PUBLIC marker timeout"; return 1
