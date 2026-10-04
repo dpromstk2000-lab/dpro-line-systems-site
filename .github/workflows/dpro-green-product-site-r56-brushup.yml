@@ -1,0 +1,152 @@
+name: DPRO GREEN Product Site R56 Brushup
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  brushup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout product site
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Apply GREEN R56 product brushup
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+
+          p = Path("systems/green-rental.html")
+          s = p.read_text(encoding="utf-8")
+
+          old_desc = 'DPRO 観葉植物レンタル・グリーンレンタル向けシステム。写真相談・現地確認、顧客・拠点・設置場所、植物・鉢・現在地、定期巡回・担当・順番、作業・状態・写真報告、交換・回収・養生を一つの流れにつなぎます。'
+          new_desc = 'DPRO 観葉植物レンタル・グリーンレンタル向けシステム。74植物・22鉢モデル・96図鑑画像の植物／鉢図鑑、写真差替え・復元、定期巡回、作業報告、交換・養生を公開LIVE DEMOで確認できます。'
+          if old_desc in s:
+              s = s.replace(old_desc, new_desc, 1)
+          elif new_desc not in s:
+              raise SystemExit("product meta description anchor not found")
+
+          old_summary = '<p class="ps-hero__summary">グリーンレンタル向けに、写真相談・現地確認、顧客・拠点・設置場所、植物・鉢・現在地などの業務をまとめる業種特化型システム。</p>'
+          new_summary = '<p class="ps-hero__summary">グリーンレンタル向けに、写真相談・現地確認、顧客・拠点、74植物・22鉢モデル・96図鑑画像、巡回・作業・交換までをまとめる業種特化型システム。</p>'
+          if old_summary in s:
+              s = s.replace(old_summary, new_summary, 1)
+
+          css_marker = "/* GREEN-R56-PRODUCT-PROOF */"
+          if css_marker not in s:
+              css = r'''
+          /* GREEN-R56-PRODUCT-PROOF */
+          .ps-r56{background:linear-gradient(180deg,#fff,#f3faf6)}
+          .ps-r56-shell{padding:clamp(1.4rem,4vw,2.6rem);border:1px solid #cce4d7;border-radius:1.5rem;background:#fff;box-shadow:var(--dpro-shadow-sm)}
+          .ps-r56-head{display:grid;grid-template-columns:minmax(0,1fr) minmax(280px,.8fr);gap:1.5rem;align-items:end}
+          .ps-r56-head h2{margin:0;color:var(--ps-deep);font-size:clamp(1.9rem,4vw,3rem);line-height:1.18;letter-spacing:-.04em}
+          .ps-r56-head p:last-child{margin:0;color:var(--dpro-warm-gray-600)}
+          .ps-r56-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.8rem;margin-top:1.4rem}
+          .ps-r56-stat{padding:1.15rem;border:1px solid var(--ps-line);border-radius:1rem;background:var(--ps-pale)}
+          .ps-r56-stat strong{display:block;color:var(--dpro-green);font-size:2.5rem;line-height:1}
+          .ps-r56-stat span{display:block;margin-top:.45rem;font-weight:900}
+          .ps-r56-features{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.8rem;margin-top:.8rem}
+          .ps-r56-feature{padding:1rem;border-radius:1rem;background:var(--ps-deep);color:#fff}
+          .ps-r56-feature small{display:block;color:#9ce5bf;font-size:.68rem;font-weight:900;letter-spacing:.1em}
+          .ps-r56-feature strong{display:block;margin-top:.35rem}
+          .ps-r56-feature p{margin:.4rem 0 0;color:#cfe4db;font-size:.82rem}
+          .ps-r56-links{display:flex;flex-wrap:wrap;gap:.55rem;margin-top:1rem}
+          .ps-r56-links a{min-height:44px;display:inline-flex;align-items:center;padding:.5rem .8rem;border:1px solid #a9cfba;border-radius:999px;background:#fff;color:var(--dpro-green);font-size:.82rem;font-weight:900;text-decoration:none}
+          @media(max-width:780px){.ps-r56-head{grid-template-columns:1fr}.ps-r56-stats,.ps-r56-features{grid-template-columns:1fr}.ps-r56-links a{width:100%;justify-content:center}}
+          '''
+              if "</style>" not in s:
+                  raise SystemExit("product style close not found")
+              s = s.replace("</style>", css + "\n</style>", 1)
+
+          if 'id="r56-proof"' not in s:
+              anchor = '<section class="dpro-section ps-section-soft master-section" data-master-section="3" id="recommended"'
+              if anchor not in s:
+                  raise SystemExit("product proof insertion anchor not found")
+              section = r'''<section class="dpro-section ps-r56" id="r56-proof" aria-labelledby="r56-proof-title"><div class="dpro-container"><div class="ps-r56-shell">
+          <div class="ps-r56-head"><div><p class="ps-kicker">FC COMMON / PRODUCT READY R56</p><h2 id="r56-proof-title">図鑑も、巡回も、<br>実際の画面で確認。</h2></div><p>特定店舗に依存しないFC共通DEMOとして、植物・鉢の図鑑からスタッフ巡回、お客様マイページまで操作できます。</p></div>
+          <div class="ps-r56-stats"><article class="ps-r56-stat"><strong>74</strong><span>植物マスター</span></article><article class="ps-r56-stat"><strong>22</strong><span>鉢モデル</span></article><article class="ps-r56-stat"><strong>96</strong><span>図鑑画像</span></article></div>
+          <div class="ps-r56-features"><article class="ps-r56-feature"><small>ATLAS</small><strong>写真差替え・復元</strong><p>図鑑写真を管理側で更新し、必要に応じて前の画像へ戻せます。</p></article><article class="ps-r56-feature"><small>FIELD</small><strong>毎日の巡回DEMO</strong><p>スタッフ画面で本日の巡回、完了・未完了を確認できます。</p></article><article class="ps-r56-feature"><small>SAFE</small><strong>本番と公開DEMOを分離</strong><p>架空データのみで実画面を確認できます。</p></article></div>
+          <div class="ps-r56-links"><a href="https://dpromstk2000-lab.github.io/dpro-green-rental-line/owner.html?demo=1&view=assets" target="_blank" rel="noopener">植物・鉢台帳 ↗</a><a href="https://dpromstk2000-lab.github.io/dpro-green-rental-line/staff.html?demo=1" target="_blank" rel="noopener">スタッフ巡回 ↗</a><a href="https://dpromstk2000-lab.github.io/dpro-green-rental-line/member.html?demo=1" target="_blank" rel="noopener">お客様マイページ ↗</a><a href="https://dpromstk2000-lab.github.io/dpro-green-rental-line/system-check.html?demo=1" target="_blank" rel="noopener">System Check ↗</a></div>
+          </div></div></section>'''
+              s = s.replace(anchor, section + anchor, 1)
+
+          old_live = '<div class="ps-live-links"><a class="dpro-button dpro-button--secondary" data-product-code="GREEN" data-cta-role="product-demo-tab" href="https://dpromstk2000-lab.github.io/dpro-green-rental-line/" target="_blank" rel="noopener">別タブで開く</a></div>'
+          new_live = '<div class="ps-live-links"><a class="dpro-button dpro-button--secondary" data-product-code="GREEN" data-cta-role="product-demo-owner" href="https://dpromstk2000-lab.github.io/dpro-green-rental-line/owner.html?demo=1&view=dashboard" target="_blank" rel="noopener">管理PC</a><a class="dpro-button dpro-button--secondary" data-product-code="GREEN" data-cta-role="product-demo-atlas" href="https://dpromstk2000-lab.github.io/dpro-green-rental-line/owner.html?demo=1&view=assets" target="_blank" rel="noopener">植物・鉢図鑑</a><a class="dpro-button dpro-button--secondary" data-product-code="GREEN" data-cta-role="product-demo-staff" href="https://dpromstk2000-lab.github.io/dpro-green-rental-line/staff.html?demo=1" target="_blank" rel="noopener">スタッフ</a><a class="dpro-button dpro-button--secondary" data-product-code="GREEN" data-cta-role="product-demo-member" href="https://dpromstk2000-lab.github.io/dpro-green-rental-line/member.html?demo=1" target="_blank" rel="noopener">お客様</a></div>'
+          if old_live in s:
+              s = s.replace(old_live, new_live, 1)
+
+          p.write_text(s, encoding="utf-8")
+
+          p = Path("systems-data.js")
+          s = p.read_text(encoding="utf-8")
+          start = s.find('"code": "GREEN"')
+          end = s.find('"code": "HOMECARE"', start)
+          if start < 0 or end < 0:
+              raise SystemExit("GREEN systems-data entry bounds not found")
+          block = s[start:end]
+          block = block.replace(
+              '"demoUrl": "https://dpromstk2000-lab.github.io/dpro-green-rental-line/demo-guide.html"',
+              '"demoUrl": "https://dpromstk2000-lab.github.io/dpro-green-rental-line/owner.html?demo=1&view=dashboard"'
+          )
+          block = block.replace(
+              '"tagline": "写真相談・現地確認から交換・回収・養生までを、一つの流れにつなぐ。"',
+              '"tagline": "植物・鉢図鑑から定期巡回、交換・回収・養生までを、一つの流れにつなぐ。"'
+          )
+          block = block.replace(
+              '"summary": "グリーンレンタル向けに、写真相談・現地確認、顧客・拠点・設置場所、植物・鉢・現在地などの業務をまとめる業種特化型システム。"',
+              '"summary": "74植物・22鉢モデル・96図鑑画像を備え、写真相談・顧客・拠点・植物台帳・定期巡回・交換までをつなぐグリーンレンタル向け業種特化型システム。"'
+          )
+          block = block.replace('"植物・鉢・現在地"', '"植物・鉢図鑑・現在地"')
+          s = s[:start] + block + s[end:]
+          p.write_text(s, encoding="utf-8")
+
+          p = Path("sitemap.xml")
+          s = p.read_text(encoding="utf-8")
+          s = s.replace(
+              "<url><loc>https://dpromstk2000-lab.github.io/dpro-line-systems-site/systems/green-rental.html</loc><lastmod>2026-09-03</lastmod>",
+              "<url><loc>https://dpromstk2000-lab.github.io/dpro-line-systems-site/systems/green-rental.html</loc><lastmod>2026-10-04</lastmod>",
+              1
+          )
+          p.write_text(s, encoding="utf-8")
+          PY
+
+      - name: Validate product GREEN R56
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --check systems-data.js
+          grep -q 'GREEN-R56-PRODUCT-PROOF' systems/green-rental.html
+          grep -q '74植物' systems/green-rental.html
+          grep -q '22鉢' systems/green-rental.html
+          grep -q '96図鑑画像' systems/green-rental.html
+          grep -q '写真差替え・復元' systems/green-rental.html
+          grep -q 'owner.html?demo=1&view=assets' systems/green-rental.html
+          grep -q 'staff.html?demo=1' systems/green-rental.html
+          grep -q 'member.html?demo=1' systems/green-rental.html
+          grep -q 'system-check.html?demo=1' systems/green-rental.html
+          grep -q '74植物・22鉢モデル・96図鑑画像' systems-data.js
+          grep -q 'CANONICAL 55 PRODUCT DATA' systems-data.js
+          grep -q 'green-rental.html</loc><lastmod>2026-10-04' sitemap.xml
+          ! grep -q 'cl_000001_green' systems/green-rental.html
+          ! grep -q '2011750460-EpN149VY' systems/green-rental.html
+          git diff --check
+          echo "PRODUCT GREEN R56 PASS"
+
+      - name: Commit product GREEN R56
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "DPRO GREEN R56"
+          git config user.email "actions@users.noreply.github.com"
+          git add systems/green-rental.html systems-data.js sitemap.xml
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+            exit 0
+          fi
+          git commit -m "Brush up GREEN product site for R56 FC common demo"
+          git push origin HEAD:main
