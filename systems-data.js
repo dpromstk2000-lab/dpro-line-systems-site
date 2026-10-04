@@ -1296,18 +1296,18 @@
     "lpUrl": "lp-green-rental.html",
     "flyerHtml": "flyer-green-rental.html",
     "flyerPdf": "flyer-green-rental.pdf",
-    "demoUrl": "https://dpromstk2000-lab.github.io/dpro-green-rental-line/demo-guide.html",
+    "demoUrl": "https://dpromstk2000-lab.github.io/dpro-green-rental-line/owner.html?demo=1&view=dashboard",
     "status": "AVAILABLE",
     "verificationStatus": "VERIFIED",
-    "tagline": "写真相談・現地確認から交換・回収・養生までを、一つの流れにつなぐ。",
-    "summary": "グリーンレンタル向けに、写真相談・現地確認、顧客・拠点・設置場所、植物・鉢・現在地などの業務をまとめる業種特化型システム。",
+    "tagline": "植物・鉢図鑑から定期巡回、交換・回収・養生までを、一つの流れにつなぐ。",
+    "summary": "74植物・22鉢モデル・96図鑑画像を備え、写真相談・顧客・拠点・植物台帳・定期巡回・交換までをつなぐグリーンレンタル向け業種特化型システム。",
     "targets": [
       "グリーンレンタル"
     ],
     "features": [
       "写真相談・現地確認",
       "顧客・拠点・設置場所",
-      "植物・鉢・現在地",
+      "植物・鉢図鑑・現在地",
       "定期巡回・担当・順番",
       "作業・状態・写真報告",
       "交換・回収・養生"
