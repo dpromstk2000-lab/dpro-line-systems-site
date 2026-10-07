@@ -1,0 +1,42 @@
+name: DPRO PRODUCT GREEN Blog Demo Link R1
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Apply direct Blog CMS demo link
+        shell: python
+        env:
+          PATCH_B64: "CmZyb20gcGF0aGxpYiBpbXBvcnQgUGF0aApwID0gUGF0aCgic3lzdGVtcy9ncmVlbi1yZW50YWwuaHRtbCIpCnMgPSBwLnJlYWRfdGV4dChlbmNvZGluZz0idXRmLTgiKQp1cmwgPSAiaHR0cHM6Ly9kcHJvbXN0azIwMDAtbGFiLmdpdGh1Yi5pby9kcHJvLWdyZWVuLXJlbnRhbC1saW5lL293bmVyLmh0bWw/ZGVtbz0xJnZpZXc9YmxvZyIKbGluayA9IGYnPGEgY2xhc3M9ImRwcm8tYnV0dG9uIGRwcm8tYnV0dG9uLS1zZWNvbmRhcnkiIGRhdGEtcHJvZHVjdC1jb2RlPSJHUkVFTiIgZGF0YS1jdGEtcm9sZT0icHJvZHVjdC1kZW1vLWJsb2ciIGhyZWY9Int1cmx9IiB0YXJnZXQ9Il9ibGFuayIgcmVsPSJub29wZW5lciI+44OW44Ot44KwQ01TPC9hPicKYW5jaG9yID0gJzxhIGNsYXNzPSJkcHJvLWJ1dHRvbiBkcHJvLWJ1dHRvbi0tc2Vjb25kYXJ5IiBkYXRhLXByb2R1Y3QtY29kZT0iR1JFRU4iIGRhdGEtY3RhLXJvbGU9InByb2R1Y3QtZGVtby1hdGxhcyIgaHJlZj0iaHR0cHM6Ly9kcHJvbXN0azIwMDAtbGFiLmdpdGh1Yi5pby9kcHJvLWdyZWVuLXJlbnRhbC1saW5lL293bmVyLmh0bWw/ZGVtbz0xJnZpZXc9YXNzZXRzIiB0YXJnZXQ9Il9ibGFuayIgcmVsPSJub29wZW5lciI+5qSN54mp44O76Ymi5Zuz6ZGRPC9hPicKaWYgbGluayBub3QgaW4gczoKICAgIGlmIGFuY2hvciBub3QgaW4gczoKICAgICAgICByYWlzZSBTeXN0ZW1FeGl0KCJwcm9kdWN0IGF0bGFzIGFuY2hvciBub3QgZm91bmQiKQogICAgcyA9IHMucmVwbGFjZShhbmNob3IsIGFuY2hvciArIGxpbmssIDEpCnAud3JpdGVfdGV4dChzLCBlbmNvZGluZz0idXRmLTgiKQo="
+        run: |
+          import os, base64
+          code = base64.b64decode(os.environ["PATCH_B64"]).decode("utf-8")
+          exec(compile(code, "patch.py", "exec"))
+      - name: Validate
+        shell: bash
+        run: |
+          grep -q 'data-cta-role="product-demo-blog"' systems/green-rental.html
+          grep -q '>ブログCMS<' systems/green-rental.html
+          grep -q 'view=blog' systems/green-rental.html
+      - name: Remove installer workflow
+        shell: bash
+        run: rm -f .github/workflows/dpro-product-green-blog-demo-link-r1.yml
+      - name: Commit and push
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+            exit 0
+          fi
+          git commit -m "Add GREEN Blog CMS live demo shortcut"
+          git push
