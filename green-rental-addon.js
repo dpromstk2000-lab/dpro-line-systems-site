@@ -67,7 +67,7 @@
       <div class="catalog-card-copy">
         <small>${GREEN_CATEGORY}</small>
         <h3>${GREEN_TITLE}</h3>
-        <p>写真相談・植物資産・定期巡回・作業写真・交換・回収・養生・お客様報告を、ログイン後の実画面で確認できます。</p>
+        <p>74植物・22鉢の図鑑、定期巡回、交換・養生に加え、HP・LINE・ブログ運用までつながるGREEN標準構成です。</p>
         <b class="catalog-card-cta">今すぐ製品ページを見る →</b>
       </div>`;
     grid.appendChild(card);

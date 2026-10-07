@@ -1299,8 +1299,8 @@
     "demoUrl": "https://dpromstk2000-lab.github.io/dpro-green-rental-line/owner.html?demo=1&view=dashboard",
     "status": "AVAILABLE",
     "verificationStatus": "VERIFIED",
-    "tagline": "植物・鉢図鑑から定期巡回、交換・回収・養生までを、一つの流れにつなぐ。",
-    "summary": "74植物・22鉢モデル・96図鑑画像を備え、写真相談・顧客・拠点・植物台帳・定期巡回・交換までをつなぐグリーンレンタル向け業種特化型システム。",
+    "tagline": "植物・鉢図鑑、定期巡回、HP・LINE・ブログ運用までを、一つの流れにつなぐ。",
+    "summary": "74植物・22鉢モデルを備え、写真相談・植物台帳・定期巡回・交換に加え、導入構成ではHP・LINE・ブログCMS・予約公開までつなぐGREEN標準システム。",
     "targets": [
       "グリーンレンタル"
     ],
