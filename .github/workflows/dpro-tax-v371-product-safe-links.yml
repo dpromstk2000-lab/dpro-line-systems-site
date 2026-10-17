@@ -1,0 +1,88 @@
+name: DPRO TAX V3.7.1 Product Safe Demo Link Preview and Publish
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 'preview = read-only diff check; publish = write only TAX marketing pages'
+        required: true
+        default: preview
+        type: choice
+        options:
+          - preview
+          - publish
+permissions:
+  contents: write
+jobs:
+  safe-tax-demo-links:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout only main
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - name: Verify safe marketing migration without Worker DB or LINE
+        env:
+          PUBLISH_MODE: ${{ inputs.mode }}
+        run: |
+          set -euo pipefail
+          python3 - <<'PY_AUDIT'
+          from pathlib import Path
+          import os,hashlib,sys
+          MODE=os.environ.get('PUBLISH_MODE','')
+          if MODE not in ('preview','publish'): raise SystemExit('invalid mode')
+          V36='https://dpro-shop.com/systems/tax-demo/v36-public.html'
+          V371='https://dpro-shop.com/systems/tax-demo/v371-public.html'
+          def sha(data):
+              b=data.encode('utf-8')
+              return hashlib.sha1(b'blob '+str(len(b)).encode()+b'\0'+b).hexdigest()
+          def replace_exact(s,a,b,count,name):
+              n=s.count(a)
+              if n!=count: raise SystemExit('Unexpected '+name+' count '+str(n)+' expected '+str(count))
+              return s.replace(a,b)
+          def present(s):
+              if not V371 in s or 'V3.7.1' not in s: raise SystemExit('New demo link/title missing')
+              if V36 in s or '最新V3.6' in s or 'data-dpro-tax-v36=' in s: raise SystemExit('Old public CTA remains')
+              if 'X-Line-User-Id' in s or 'service_role' in s: pass # Text validation only; no API calls
+          LEGACY_BASE='https://dpromstk2000-lab.github.io/dpro-tax-accounting-line-liff/'
+          FILES=[('systems/tax-accounting.html','c4a7e29c3dfa7922d800b31a0e506e86f10511c3',2),('lp-tax.html','3fa603ed0578d9d179d2e72e728b951b93c7b594',4)]
+          for name,expected_sha,v36_count in FILES:
+              p=Path(name);old=p.read_text('utf-8');current_sha=sha(old)
+              if current_sha!=expected_sha:
+                  if V371 in old and V36 not in old and '?demo=1' not in old: print('ALREADY_PUBLISHED',name);continue
+                  raise SystemExit('Page SHA drift: '+name)
+              new=replace_exact(old,V36,V371,v36_count,name+' existing safe links')
+              new=replace_exact(new,'data-dpro-tax-v36="20261016"','data-dpro-tax-v371="20261017"',1,name+' marker')
+              new=replace_exact(new,'V3.6','V3.7.1',2,name+' version label')
+              new=replace_exact(new,'・管理コードを求められた場合は1234（体験専用）','',1,name+' obsolete demo code')
+              if name.startswith('systems/'):
+                  old_urls=[(LEGACY_BASE+'?demo=1',4),(LEGACY_BASE+'index.html',1),(LEGACY_BASE+'guide-center.html',1)]
+              else:
+                  old_urls=[(LEGACY_BASE+'member.html?demo=1&amp;line_user_id=demo_tax_line_001',4),(LEGACY_BASE+'owner.html?demo=1',4),(LEGACY_BASE+'owner-ipad.html?demo=1',4)]
+              for legacy,count in old_urls:
+                  new=replace_exact(new,legacy,V371,count,name+' unsafe legacy link '+legacy)
+              if name.startswith('systems/'):
+                  new=replace_exact(new,'Tutorial Start<small>First10をStep 1から確認</small>','共通デモを開く<small>架空データで操作体験</small>',1,'tutorial start label')
+                  new=replace_exact(new,'Guide Center<small>Start / Resume / Replay と10項目一覧</small>','共通デモの操作<small>左メニューで各機能を確認</small>',1,'guide label')
+              if new.count('data-preview=') or new.count('data-dpro-live-load='):
+                  new=new.replace('実画面を表示','共通デモを表示').replace('実画面を開く','共通デモを開く')
+              assert '?demo=1' not in new and V36 not in new and 'data-dpro-tax-v36=' not in new
+              assert (LEGACY_BASE+'index.html') not in new and (LEGACY_BASE+'guide-center.html') not in new
+              assert 'data-dpro-tax-v371="20261017"' in new
+              present(new)
+              print('PRODUCT_PATCH_READY',{'path':name,'mode':MODE,'old_sha':current_sha,'new_sha':sha(new),'v371_links':new.count(V371),'changed_chars':len(new)-len(old)})
+              if MODE=='publish': p.write_text(new,encoding='utf-8')
+          PY_AUDIT
+      - name: Commit only allowed TAX marketing pages
+        if: inputs.mode == 'publish'
+        run: |
+          set -euo pipefail
+          git diff --check
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add systems/tax-accounting.html lp-tax.html
+          if git diff --cached --quiet; then echo 'Already published: no changes'; exit 0; fi
+          git diff --cached --stat
+          git commit -m 'docs(tax): use V3.7.1 isolated public demo; stop linking legacy demo'
+          git push origin HEAD:main
