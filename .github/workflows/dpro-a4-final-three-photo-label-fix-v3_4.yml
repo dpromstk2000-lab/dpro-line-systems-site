@@ -1,0 +1,290 @@
+name: DPRO A4 Priority Layout Fix V3.4 Final Three Photo Label Fix
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/dpro-a4-final-three-photo-label-fix-v3_4.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: dpro-a4-photo-label-fix-v3-4
+  cancel-in-progress: false
+
+jobs:
+  repair-only-when-verified:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    steps:
+      - name: Checkout original production source
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: true
+      - name: Install Chrome and Japanese fonts
+        run: |
+          set -euo pipefail
+          python3 -m pip install --quiet --break-system-packages playwright pypdf
+          python3 -m playwright install --with-deps chromium
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq fonts-noto-cjk >/dev/null
+      - name: Patch selected layouts and retain only individually verified changes
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p qa/a4-photo-label-fix-v3-4
+          cat >/tmp/a4_photo_label_fix_v3_4.py <<'PYTHON'
+          from pathlib import Path
+          import json, os, re, traceback
+          from playwright.sync_api import sync_playwright
+          from pypdf import PdfReader
+
+          ROOT=Path.cwd()
+          OUT=ROOT/'qa/a4-photo-label-fix-v3-4'
+          OUT.mkdir(parents=True, exist_ok=True)
+          MARK='DPRO_A4_PHOTO_LABELS_V3_4_20261113'
+          # Only confirmed geometry issues and narrowly spaced bottom panels are candidates.
+          candidates={
+              'flyer-bakery':'photo',
+              'flyer-cosmetics':'photo',
+              'flyer-homecare':'photo',
+          }
+          # Only the three V3.3 review flyers. All 21 previously verified fixes stay unchanged.
+          assert len(candidates)==3
+          base_css='''
+          /* DPRO_A4_PHOTO_LABELS_V3_4_20261113 : reversible verified layout patch */
+          .main { padding-top:3.8mm; }
+          .section-title { margin-bottom:2.0mm; }
+          .feature-grid { gap:1.9mm; }
+          .feature { min-height:23.4mm; padding-top:2.2mm; padding-bottom:2.0mm; }
+          .ecosystem { margin-top:2.4mm; padding-top:2.8mm; padding-bottom:2.6mm; }
+          .cost-check { margin-top:2.4mm; }
+          .price { margin-top:2.4mm; }
+          .contact { margin-top:1.8mm; padding-top:1.8mm; }
+          @media print {
+            .toolbar {display:none!important;}
+            .sheet { margin:0!important;box-shadow:none!important;
+              transform: translate(4.8mm,4.8mm) scale(.954)!important;
+              transform-origin:top left!important; }
+          }
+          '''
+          estate_css='''
+          .hero { grid-template-rows:minmax(0,1fr); }
+          .hero-copy { min-height:0; padding-top:5.1mm; padding-bottom:1.5mm; }
+          .hero-photo { min-height:0; }
+          .hero .eyebrow {margin-top:2.2mm;}
+          .hero h1 {font-size:7.2mm;line-height:1.08;margin:1.3mm 0 1.25mm;}
+          .hero .lead {font-size:2.66mm;line-height:1.35;}
+          .hero .pillrow {margin-top:1.25mm;}
+          .hero .pill {padding-top:.8mm;padding-bottom:.8mm;}
+          '''
+          print_hero_css='''
+          @media print {
+            .hero{height:76mm!important;grid-template-rows:minmax(0,1fr);}
+            .hero-copy{min-height:0;padding-top:6.2mm;padding-bottom:2mm;}
+            .hero-photo{min-height:0;}
+            .hero .eyebrow{margin-top:2.7mm;}
+            .hero h1{margin-bottom:1.5mm;}
+            .hero .pillrow{margin-top:1.7mm;}
+            .hero .pill{padding-top:.9mm;padding-bottom:.9mm;}
+          }
+          '''
+          photo_css='''
+          /* V3.4: constrain the grid item's intrinsic height; keep existing 76mm hero height. */
+          .hero { grid-template-rows:minmax(0,1fr); }
+          .hero-photo { min-height:0; min-width:0; }
+          .hero-photo .photo-label { bottom:4mm; }
+          '''
+          gyosei_css='''
+          .hero{grid-template-rows:minmax(0,1fr);}
+          .hero-photo{min-height:0;}
+          .hero-photo-label{bottom:4.7mm!important;}
+          '''
+          medical_css='''
+          /* DPRO_A4_PHOTO_LABELS_V3_4_20261113 : medical print pagination only */
+          @media print {
+            html,body{width:210mm;height:297mm;overflow:hidden;background:white;margin:0;padding:0;}
+            .page{width:210mm!important;height:297mm!important;min-height:297mm!important;
+              box-sizing:border-box!important;overflow:hidden!important;
+              padding:10mm 12mm 8mm!important;margin:0!important;
+              transform:translate(4.2mm,4.2mm) scale(.962)!important;
+              transform-origin:top left!important;break-inside:avoid-page;}
+            .lead{margin-bottom:3mm;line-height:1.5;}
+            .stats{margin-bottom:3mm;}
+            .band{margin:3mm 0;}
+            .models{margin-top:3mm;}
+            .points{margin-top:3mm;}
+            .qrs{margin-top:3mm;padding-top:3mm;}
+            .note{margin-top:2.2mm;}
+          }
+          '''
+          def style_for(kind):
+            if kind=='medical': return medical_css
+            s=base_css
+            if kind=='estate': s+=estate_css
+            if kind=='photo': s+=photo_css
+            if kind=='print-hero':s+=print_hero_css
+            if kind=='gyosei':s+=gyosei_css
+            return s
+
+          JS='''() => {
+            const el=document.querySelector('.sheet,.page');
+            const rect=e=>{if(!e)return null;let r=e.getBoundingClientRect();return {top:r.top,bottom:r.bottom,left:r.left,right:r.right,width:r.width,height:r.height};};
+            const sheet=rect(el), hero=rect(document.querySelector('.hero'));
+            const action=rect(document.querySelector('.action-grid,.cta,.qrs'));
+            const footer=rect(document.querySelector('.footer'));
+            const labels=[...document.querySelectorAll('.pillrow .pill')].map(rect);
+            const photoLabels=[...document.querySelectorAll('.photo-label,.hero-photo-label')].map(rect);
+            const inside=(r,container,t=1)=>!r||!container||(r.top>=container.top-t&&r.bottom<=container.bottom+t&&r.left>=container.left-t&&r.right<=container.right+t);
+            const badImgs=[...document.images].filter(i=>!i.complete||!i.naturalWidth).length;
+            const qrs=[...document.querySelectorAll('img')].filter(img=>/qr/i.test((img.alt||'')+' '+(img.className||'')));
+            const badQR=qrs.filter(img=>!inside(rect(img),sheet,2)).length;
+            let hiddenTextClips=0;
+            const walker=document.createTreeWalker(el,NodeFilter.SHOW_TEXT);
+            while(walker.nextNode()){
+              const n=walker.currentNode;
+              if(!(n.nodeValue||'').trim())continue;
+              const parent=n.parentElement;
+              if(!parent || parent.closest('style,script,svg,noscript,template'))continue;
+              const pcs=getComputedStyle(parent);
+              if(pcs.display==='none'||pcs.visibility==='hidden')continue;
+              const range=document.createRange();range.selectNodeContents(n);
+              for(const r of range.getClientRects()){
+                if(r.width<1.5||r.height<1.5)continue;
+                for(let a=parent;a;a=a.parentElement){
+                  const cs=getComputedStyle(a),ar=a.getBoundingClientRect();
+                  if(['hidden','clip'].includes(cs.overflowY)&&
+                      ((ar.top-r.top)>2.6 || (r.bottom-ar.bottom)>2.6)) {hiddenTextClips++;break;}
+                  if(['hidden','clip'].includes(cs.overflowX)&&
+                      ((ar.left-r.left)>3.6 || (r.right-ar.right)>3.6)) {hiddenTextClips++;break;}
+                  if(a===el)break;
+                }
+              }
+            }
+            return {sheet,hero,action,footer,
+              labelCount:labels.length,labelGap:hero&&labels.length?hero.bottom-Math.max(...labels.map(x=>x.bottom)):null,
+              photoLabelOutside:hero?photoLabels.filter(r=>!inside(r,hero,2)).length:0,
+              actionGap:action&&footer?footer.top-action.bottom:null,
+              badImgs,badQR,hiddenTextClips,scrollOverflow:el?el.scrollHeight-el.clientHeight:0,
+              winWidth:window.innerWidth};
+          }'''
+          def errors(m,kind,mode):
+            bad=[]
+            if not m['sheet']: return ['sheet/page not found']
+            if kind!='medical':
+              if m['actionGap'] is not None and m['actionGap']<6.0:bad.append('bottom gap <6px')
+              if m['labelGap'] is not None and m['labelGap']<2.0:bad.append('hero label clipped')
+              if m['photoLabelOutside']:bad.append('photo label clipped')
+            if m['badQR']:bad.append('QR outside paper container')
+            if m['hiddenTextClips']:bad.append('text under clipped overflow')
+            if m['badImgs']:bad.append('broken images')
+            if m['scrollOverflow']>3:bad.append('hidden overflow')
+            if mode=='print':
+              s=m['sheet']
+              if s['left']<8 or s['top']<8:bad.append('no physical print inset')
+              if s['right']>785.7 or s['bottom']>1114.5:bad.append('paper exceeds A4 printable inset')
+            return bad
+
+          results=[]
+          with sync_playwright() as p:
+            browser=p.chromium.launch(headless=True,args=['--no-sandbox','--disable-dev-shm-usage'])
+            page=browser.new_page(viewport={'width':1550,'height':1900},device_scale_factor=1)
+            page.set_default_timeout(30000)
+            for stem,kind in candidates.items():
+              html=ROOT/(stem+'.html'); pdf=ROOT/(stem+'.pdf')
+              item={'name':stem,'type':kind,'status':'SKIP','details':[]}
+              old=None
+              try:
+                assert html.is_file() and pdf.is_file(), 'HTML/PDF missing'
+                old=html.read_text(encoding='utf-8')
+                assert old.count('</style>')>=1 and 0<=old.find('<style')<old.find('</head>'), 'Head CSS style block not found'
+                assert '<style>' in old, 'style absent'
+                assert MARK not in old, 'already patched'
+                if kind!='medical':
+                  assert '.sheet' in old and 'class="hero"' in old and '<footer' in old,'unexpected template'
+                else:
+                  assert 'class="page"' in old,'medical template mismatch'
+                new=old.replace('</style>',style_for(kind)+'\n</style>',1)
+                html.write_text(new,encoding='utf-8')
+                page.goto(html.as_uri(),wait_until='load',timeout=18000)
+                page.evaluate('() => document.fonts.ready')
+                screen=page.evaluate(JS)
+                screen_errors=errors(screen,kind,'screen')
+                page.emulate_media(media='print')
+                paper=page.evaluate(JS)
+                print_errors=errors(paper,kind,'print')
+                page.pdf(path=str(OUT/(stem+'.pdf')),prefer_css_page_size=True,
+                         print_background=True,display_header_footer=False,scale=1)
+                reader=PdfReader(str(OUT/(stem+'.pdf')))
+                pdf_errors=[]
+                if len(reader.pages)!=1:pdf_errors.append(f'pages={len(reader.pages)}')
+                else:
+                  media=reader.pages[0].mediabox
+                  if abs(float(media.width)-595.28)>2 or abs(float(media.height)-841.89)>2:pdf_errors.append('not A4')
+                allerr=screen_errors+print_errors+pdf_errors
+                item['details']={'screen':{'gap':screen['actionGap'],'label':screen['labelGap'],'image':screen['photoLabelOutside']},
+                                 'print':{'gap':paper['actionGap'],'label':paper['labelGap'],'inset':paper['sheet']['left']},
+                                 'errors':allerr}
+                if not allerr:
+                  pdf.write_bytes((OUT/(stem+'.pdf')).read_bytes())
+                  item['status']='FIXED_AND_VERIFIED'
+                else:
+                  html.write_text(old,encoding='utf-8')
+                  item['status']='NEEDS_MANUAL_REVIEW'
+              except Exception as e:
+                if old is not None:html.write_text(old,encoding='utf-8')
+                item['status']='NEEDS_MANUAL_REVIEW'
+                item['details']={'error':str(e)[:350]}
+              finally:
+                page.emulate_media(media='screen')
+                try:(OUT/(stem+'.pdf')).unlink(missing_ok=True)
+                except:pass
+                print(stem,item['status'],str(item['details'])[:500],flush=True)
+                results.append(item)
+            browser.close()
+          (OUT/'STATUS.json').write_text(json.dumps(results,ensure_ascii=False,indent=2),encoding='utf-8')
+          fixed=[x for x in results if x['status']=='FIXED_AND_VERIFIED']
+          review=[x for x in results if x['status']!='FIXED_AND_VERIFIED']
+          lines=['# DPRO A4 Photo Label Fix V3.4','',
+                 f'- Candidate flyers: {len(results)}',
+                 f'- Automatically fixed and verified: {len(fixed)}',
+                 f'- Needs manual review (not changed): {len(review)}',
+                 '- All other flyers: unchanged, including previously fixed YAKINIKU',
+                 '', '## FIXED',*([f'- {x["name"]}' for x in fixed] or ['- None']),
+                 '', '## STILL NEEDS REVIEW',*([f'- {x["name"]}: {x["details"]}' for x in review] or ['- None'])]
+          (OUT/'SUMMARY.md').write_text('\n'.join(lines)+'\n',encoding='utf-8')
+          print('\n'.join(lines),flush=True)
+          PYTHON
+          python3 /tmp/a4_photo_label_fix_v3_4.py
+      - name: Commit only verified individual HTML and PDF fixes
+        shell: bash
+        if: success()
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json,subprocess
+          from pathlib import Path
+          records=json.loads(Path('qa/a4-photo-label-fix-v3-4/STATUS.json').read_text())
+          paths=['qa/a4-photo-label-fix-v3-4/STATUS.json','qa/a4-photo-label-fix-v3-4/SUMMARY.md']
+          for x in records:
+            if x['status']=='FIXED_AND_VERIFIED': paths.extend([x['name']+'.html',x['name']+'.pdf'])
+          subprocess.check_call(['git','add','--',*paths])
+          PY
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          if git diff --cached --quiet; then echo 'No verified changes'; else
+            git commit -m 'fix: verified photo label and bottom clearance on remaining 3 A4 flyers'
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
+      - name: Upload validation report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: DPRO_A4_PHOTO_LABEL_FIX_V3_4_REPORT
+          path: qa/a4-photo-label-fix-v3-4/STATUS.json
+          if-no-files-found: warn
+          retention-days: 14
