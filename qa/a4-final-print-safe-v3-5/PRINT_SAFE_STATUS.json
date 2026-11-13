@@ -1,0 +1,356 @@
+[
+  {
+    "stem": "flyer-btype",
+    "status": "FIXED_AND_VERIFIED",
+    "error": [],
+    "screenFooterGap": 61.921875,
+    "printFooterGap": 59.073486328125,
+    "printHeroGap": 18.006784439086914,
+    "printInsetLeftPx": 18.14,
+    "printInsetTopPx": 18.14,
+    "printedPdf": {
+      "pages": 1,
+      "A4": true
+    }
+  },
+  {
+    "stem": "flyer-cake",
+    "status": "FIXED_AND_VERIFIED",
+    "error": [],
+    "screenFooterGap": 27.390625,
+    "printFooterGap": 26.130615234375,
+    "printHeroGap": 10.956125259399414,
+    "printInsetLeftPx": 18.14,
+    "printInsetTopPx": 18.14,
+    "printedPdf": {
+      "pages": 1,
+      "A4": true
+    }
+  },
+  {
+    "stem": "flyer-car-service",
+    "status": "FIXED_AND_VERIFIED",
+    "error": [],
+    "screenFooterGap": 27.546875,
+    "printFooterGap": 26.2796630859375,
+    "printHeroGap": 43.21322059631348,
+    "printInsetLeftPx": 18.14,
+    "printInsetTopPx": 18.14,
+    "printedPdf": {
+      "pages": 1,
+      "A4": true
+    }
+  },
+  {
+    "stem": "flyer-car",
+    "status": "FIXED_AND_VERIFIED",
+    "error": [],
+    "screenFooterGap": 10.640625,
+    "printFooterGap": 10.151123046875,
+    "printHeroGap": 43.03435707092285,
+    "printInsetLeftPx": 18.14,
+    "printInsetTopPx": 18.14,
+    "printedPdf": {
+      "pages": 1,
+      "A4": true
+    }
+  },
+  {
+    "stem": "flyer-chosashi",
+    "status": "FIXED_AND_VERIFIED",
+    "error": [],
+    "screenFooterGap": 38.5,
+    "printFooterGap": 36.72900390625,
+    "printHeroGap": null,
+    "printInsetLeftPx": 18.14,
+    "printInsetTopPx": 18.14,
+    "printedPdf": {
+      "pages": 1,
+      "A4": true
+    }
+  },
+  {
+    "stem": "flyer-clinic-shuttle",
+    "status": "FIXED_AND_VERIFIED",
+    "error": [],
+    "screenFooterGap": 85.125,
+    "printFooterGap": 81.209228515625,
+    "printHeroGap": 35.90914344787598,
+    "printInsetLeftPx": 18.14,
+    "printInsetTopPx": 18.14,
+    "printedPdf": {
+      "pages": 1,
+      "A4": true
+    }
+  },
+  {
+    "stem": "flyer-daycare",
+    "status": "FIXED_AND_VERIFIED",
+    "error": [],
+    "screenFooterGap": 32,
+    "printFooterGap": 30.5279541015625,
+    "printHeroGap": 7.259378433227539,
+    "printInsetLeftPx": 18.14,
+    "printInsetTopPx": 18.14,
+    "printedPdf": {
+      "pages": 1,
+      "A4": true
+    }
+  },
+  {
+    "stem": "flyer-dental",
+    "status": "REVIEW",
+    "error": [
+      "print-inset-not-safe"
+    ],
+    "screenFooterGap": null,
+    "printFooterGap": null,
+    "printHeroGap": null,
+    "printInsetLeftPx": 396.3,
+    "printInsetTopPx": 18.14,
+    "printedPdf": {
+      "pages": 1,
+      "A4": true
+    }
+  },
+  {
+    "stem": "flyer-disposal",
+    "status": "FIXED_AND_VERIFIED",
+    "error": [],
+    "screenFooterGap": 13.953125,
+    "printFooterGap": 13.311279296875,
+    "printHeroGap": 23.17923927307129,
+    "printInsetLeftPx": 18.14,
+    "printInsetTopPx": 18.14,
+    "printedPdf": {
+      "pages": 1,
+      "A4": true
+    }
+  },
+  {
+    "stem": "flyer-flower",
+    "status": "FIXED_AND_VERIFIED",
+    "error": [],
+    "screenFooterGap": 3.125,
+    "printFooterGap": 2.9813232421875,
+    "printHeroGap": 41.87166786193848,
+    "printInsetLeftPx": 18.14,
+    "printInsetTopPx": 18.14,
+    "printedPdf": {
+      "pages": 1,
+      "A4": true
+    }
+  },
+  {
+    "stem": "flyer-funeral",
+    "status": "FIXED_AND_VERIFIED",
+    "error": [],
+    "screenFooterGap": 5.90625,
+    "printFooterGap": 5.634521484375,
+    "printHeroGap": 9.510202407836914,
+    "printInsetLeftPx": 18.14,
+    "printInsetTopPx": 18.14,
+    "printedPdf": {
+      "pages": 1,
+      "A4": true
+    }
+  },
+  {
+    "stem": "flyer-gakudo",
+    "status": "FIXED_AND_VERIFIED",
+    "error": [],
+    "screenFooterGap": 11.3125,
+    "printFooterGap": 10.7921142578125,
+    "printHeroGap": 11.820688247680664,
+    "printInsetLeftPx": 18.14,
+    "printInsetTopPx": 18.14,
+    "printedPdf": {
+      "pages": 1,
+      "A4": true
+    }
+  },
+  {
+    "stem": "flyer-green-rental",
+    "status": "FIXED_AND_VERIFIED",
+    "error": [],
+    "screenFooterGap": 86.328125,
+    "printFooterGap": 116.3701171875,
+    "printHeroGap": 5.843271255493164,
+    "printInsetLeftPx": 18.14,
+    "printInsetTopPx": 18.14,
+    "printedPdf": {
+      "pages": 1,
+      "A4": true
+    }
+  },
+  {
+    "stem": "flyer-hair",
+    "status": "FIXED_AND_VERIFIED",
+    "error": [],
+    "screenFooterGap": 32.34375,
+    "printFooterGap": 30.85595703125,
+    "printHeroGap": null,
+    "printInsetLeftPx": 18.14,
+    "printInsetTopPx": 18.14,
+    "printedPdf": {
+      "pages": 1,
+      "A4": true
+    }
+  },
+  {
+    "stem": "flyer-houkago",
+    "status": "FIXED_AND_VERIFIED",
+    "error": [],
+    "screenFooterGap": null,
+    "printFooterGap": null,
+    "printHeroGap": null,
+    "printInsetLeftPx": 18.14,
+    "printInsetTopPx": 18.14,
+    "printedPdf": {
+      "pages": 1,
+      "A4": true
+    }
+  },
+  {
+    "stem": "flyer-housekeep",
+    "status": "FIXED_AND_VERIFIED",
+    "error": [],
+    "screenFooterGap": 4.765625,
+    "printFooterGap": 4.54638671875,
+    "printHeroGap": 6.961252212524414,
+    "printInsetLeftPx": 18.14,
+    "printInsetTopPx": 18.14,
+    "printedPdf": {
+      "pages": 1,
+      "A4": true
+    }
+  },
+  {
+    "stem": "flyer-photo",
+    "status": "FIXED_AND_VERIFIED",
+    "error": [],
+    "screenFooterGap": 2.109375,
+    "printFooterGap": 2.0123291015625,
+    "printHeroGap": 9.510202407836914,
+    "printInsetLeftPx": 18.14,
+    "printInsetTopPx": 18.14,
+    "printedPdf": {
+      "pages": 1,
+      "A4": true
+    }
+  },
+  {
+    "stem": "flyer-repair",
+    "status": "FIXED_AND_VERIFIED",
+    "error": [],
+    "screenFooterGap": 5.4375,
+    "printFooterGap": 5.1873779296875,
+    "printHeroGap": null,
+    "printInsetLeftPx": 18.14,
+    "printInsetTopPx": 18.14,
+    "printedPdf": {
+      "pages": 1,
+      "A4": true
+    }
+  },
+  {
+    "stem": "flyer-salesnavi",
+    "status": "REVIEW",
+    "error": [
+      "photo-label-clipped"
+    ],
+    "screenFooterGap": 102.046875,
+    "printFooterGap": 97.35272216796875,
+    "printHeroGap": 2.981271743774414,
+    "printInsetLeftPx": 18.14,
+    "printInsetTopPx": 18.14,
+    "printedPdf": {
+      "pages": 1,
+      "A4": true
+    }
+  },
+  {
+    "stem": "flyer-salon",
+    "status": "FIXED_AND_VERIFIED",
+    "error": [],
+    "screenFooterGap": 13.90625,
+    "printFooterGap": 13.2666015625,
+    "printHeroGap": 7.289194107055664,
+    "printInsetLeftPx": 18.14,
+    "printInsetTopPx": 18.14,
+    "printedPdf": {
+      "pages": 1,
+      "A4": true
+    }
+  },
+  {
+    "stem": "flyer-seitai",
+    "status": "FIXED_AND_VERIFIED",
+    "error": [],
+    "screenFooterGap": 10.671875,
+    "printFooterGap": 10.1810302734375,
+    "printHeroGap": 7.095407485961914,
+    "printInsetLeftPx": 18.14,
+    "printInsetTopPx": 18.14,
+    "printedPdf": {
+      "pages": 1,
+      "A4": true
+    }
+  },
+  {
+    "stem": "flyer-takeout",
+    "status": "FIXED_AND_VERIFIED",
+    "error": [],
+    "screenFooterGap": 8.734375,
+    "printFooterGap": 8.3326416015625,
+    "printHeroGap": 5.843271255493164,
+    "printInsetLeftPx": 18.14,
+    "printInsetTopPx": 18.14,
+    "printedPdf": {
+      "pages": 1,
+      "A4": true
+    }
+  },
+  {
+    "stem": "flyer-welfare-shuttle",
+    "status": "FIXED_AND_VERIFIED",
+    "error": [],
+    "screenFooterGap": 2.734375,
+    "printFooterGap": 2.608642578125,
+    "printHeroGap": 5.843271255493164,
+    "printInsetLeftPx": 18.14,
+    "printInsetTopPx": 18.14,
+    "printedPdf": {
+      "pages": 1,
+      "A4": true
+    }
+  },
+  {
+    "stem": "flyer-welfare",
+    "status": "FIXED_AND_VERIFIED",
+    "error": [],
+    "screenFooterGap": 13.953125,
+    "printFooterGap": 13.311279296875,
+    "printHeroGap": 23.17923927307129,
+    "printInsetLeftPx": 18.14,
+    "printInsetTopPx": 18.14,
+    "printedPdf": {
+      "pages": 1,
+      "A4": true
+    }
+  },
+  {
+    "stem": "flyer-yoga",
+    "status": "FIXED_AND_VERIFIED",
+    "error": [],
+    "screenFooterGap": 48.59375,
+    "printFooterGap": 46.35845947265625,
+    "printHeroGap": null,
+    "printInsetLeftPx": 18.14,
+    "printInsetTopPx": 18.14,
+    "printedPdf": {
+      "pages": 1,
+      "A4": true
+    }
+  }
+]

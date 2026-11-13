@@ -68,6 +68,18 @@ h1{margin:2.3mm 0 2.3mm;font-size:7.75mm;line-height:1.12;letter-spacing:-.045em
 .footer .note{font-size:1.7mm!important;color:#b8d2c9!important;text-align:right!important;line-height:1.3!important}
 .footer b,.footer strong{color:#fff!important;font-weight:900!important}
 .footer>span:last-child{color:#b8d2c9!important;text-align:right!important}
+
+/* DPRO_A4_PRINT_SAFE_FINAL_V3_5_20261113. Print only. No screen alteration. */
+@media print {
+  @page {size: A4 portrait; margin: 0;}
+  html,body {margin:0!important;padding:0!important;background:#fff!important;}
+  .toolbar {display:none!important;}
+  .sheet {width:210mm!important;height:297mm!important;margin:0!important;
+          box-shadow:none!important;
+          transform:translate(4.8mm,4.8mm) scale(.954)!important;
+          transform-origin:top left!important;}
+}
+
 </style>
 </head>
 <body>

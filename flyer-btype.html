@@ -21,6 +21,18 @@
 .action-grid{display:grid;grid-template-columns:.94fr 1.12fr .94fr;gap:2.2mm}.action-card{border:1px solid #cfe0d8;border-radius:3mm;padding:1.6mm 1.8mm;min-height:31.8mm;display:grid;grid-template-columns:minmax(0,1fr) 19mm;gap:1.3mm;align-items:center;background:#fff;overflow:hidden}.action-card.line{background:linear-gradient(135deg,#eefbf5 0%,#fff 78%)}.action-card.site{border-color:#64bc99;background:linear-gradient(135deg,#f1fcf7 0%,#fff 72%);box-shadow:inset 0 0 0 .35mm rgba(24,201,138,.07)}.action-card.demo{background:linear-gradient(135deg,#f5f8f6 0%,#fff 78%)}.action-copy{min-width:0;align-self:stretch;display:flex;flex-direction:column;justify-content:center}.action-kicker{display:flex;align-items:center;gap:1.2mm;margin-bottom:.7mm;color:#0b7557;font-size:1.45mm;font-weight:900;letter-spacing:.06em}.action-num{width:4.6mm;height:4.6mm;border-radius:50%;display:grid;place-items:center;background:var(--deep);color:#fff;font-size:1.55mm;letter-spacing:0;flex:0 0 auto}.action-card h4{font-size:2.82mm;line-height:1.16;margin:0 0 .7mm;letter-spacing:-.025em;white-space:nowrap}.action-card p{font-size:1.4mm;line-height:1.3;margin:0;color:var(--muted);font-weight:700}.action-note{margin-top:auto;padding-top:1.05mm;border-top:1px solid #dfe9e4;font-size:1.32mm;letter-spacing:.06em;font-weight:900;color:#477266}.site-url-label{margin-top:auto;padding-top:1.4mm;border-top:1px solid #d3e7de;font-size:1.45mm;letter-spacing:.04em;font-weight:900;color:#52766b}.site-url{margin-top:.55mm;font-size:3.92mm;line-height:1.05;font-weight:900;color:#063f30;letter-spacing:-.045em;white-space:nowrap;background:#e9f8f2;border:1px solid #b9e4d2;border-radius:1.5mm;padding:1mm 1.2mm}.action-url{margin-top:auto;padding-top:1.0mm;border-top:1px solid #dfe9e4;font-size:1.25mm;line-height:1.2;font-weight:800;color:#0b4939;word-break:break-all}.action-qr{text-align:center;align-self:center}.action-qr img{width:18mm;height:18mm;display:block;margin:0 auto .5mm}.action-qr .qlabel{font-size:1.78mm;font-weight:900;color:#123c31;line-height:1.1}.action-qr .qmini{font-size:1.15mm;color:#6b8179;font-weight:750;line-height:1.15;margin-top:.25mm}
 .footer{position:absolute;left:0;right:0;bottom:0;height:9.5mm;background:var(--deep);display:flex;align-items:center;justify-content:space-between;padding:0 10mm;color:#fff}.footer .fbrand{display:flex;align-items:center;gap:3mm;font-size:2.5mm;font-weight:900;letter-spacing:.07em}.footer .shop{color:#68e7b8}.footer .note{font-size:1.7mm;color:#b8d2c9;text-align:right;line-height:1.3}
 @page{size:A4 portrait;margin:0}@media print{html,body{background:#fff}.toolbar{display:none!important}.sheet{margin:0;box-shadow:none}}@media screen and (max-width:900px){.sheet{transform-origin:top center;transform:scale(.72);margin-bottom:-72mm}}
+
+/* DPRO_A4_PRINT_SAFE_FINAL_V3_5_20261113. Print only. No screen alteration. */
+@media print {
+  @page {size: A4 portrait; margin: 0;}
+  html,body {margin:0!important;padding:0!important;background:#fff!important;}
+  .toolbar {display:none!important;}
+  .sheet {width:210mm!important;height:297mm!important;margin:0!important;
+          box-shadow:none!important;
+          transform:translate(4.8mm,4.8mm) scale(.954)!important;
+          transform-origin:top left!important;}
+}
+
 </style></head><body>
 <div class="toolbar"><button class="primary" onclick="window.print()">A4で印刷 / PDF保存</button><button class="secondary" onclick="window.scrollTo({top:0,behavior:'smooth'})">先頭へ</button></div>
 <section aria-label="DPRO 就労継続支援B型 A4営業チラシ" class="sheet" data-photo-replacement-required="no">

@@ -52,6 +52,18 @@ h1{margin:2.4mm 0 2.3mm;font-size:8.0mm;line-height:1.12;letter-spacing:-.04em}.
 .action-copy{min-width:0;align-self:stretch;display:flex;flex-direction:column;justify-content:center}.action-kicker{display:flex;align-items:center;gap:1.2mm;margin-bottom:1mm;color:#0b7557;font-size:1.65mm;font-weight:900;letter-spacing:.06em}.action-num{width:5.1mm;height:5.1mm;border-radius:50%;display:grid;place-items:center;background:var(--deep);color:#fff;font-size:1.7mm;letter-spacing:0;flex:0 0 auto}.action-card h4{font-size:3.12mm;line-height:1.16;margin:0 0 1mm;letter-spacing:-.025em;white-space:nowrap}.action-card p{font-size:1.62mm;line-height:1.35;margin:0;color:var(--muted);font-weight:700}.action-note{margin-top:auto;padding-top:1.5mm;border-top:1px solid #dfe9e4;font-size:1.5mm;letter-spacing:.10em;font-weight:900;color:#477266}.site-url-label{margin-top:auto;padding-top:1.4mm;border-top:1px solid #d3e7de;font-size:1.45mm;letter-spacing:.04em;font-weight:900;color:#52766b}.site-url{margin-top:.55mm;font-size:3.92mm;line-height:1.05;font-weight:900;color:#063f30;letter-spacing:-.045em;white-space:nowrap;background:#e9f8f2;border:1px solid #b9e4d2;border-radius:1.5mm;padding:1mm 1.2mm}.action-qr{text-align:center;align-self:center}.action-qr img{width:19.2mm;height:19.2mm;display:block;margin:0 auto .8mm}.action-qr .qlabel{font-size:2.32mm;font-weight:900;color:#123c31;line-height:1.1}.action-qr .qmini{font-size:1.48mm;color:#6b8179;font-weight:750;line-height:1.15;margin-top:.3mm}
 .footer{position:absolute;left:0;right:0;bottom:0;height:9.5mm;background:var(--deep);display:flex;align-items:center;justify-content:space-between;padding:0 10mm;color:#fff}.footer .fbrand{display:flex;align-items:center;gap:3mm;font-size:2.5mm;font-weight:900;letter-spacing:.07em}.footer .shop{color:#68e7b8}.footer .note{font-size:1.7mm;color:#b8d2c9;text-align:right;line-height:1.3}
 @page{size:A4 portrait;margin:0}@media print{html,body{background:#fff}.toolbar{display:none!important}.sheet{margin:0;box-shadow:none}}@media screen and (max-width:900px){.sheet{transform-origin:top center;transform:scale(.72);margin-bottom:-72mm}}
+
+/* DPRO_A4_PRINT_SAFE_FINAL_V3_5_20261113. Print only. No screen alteration. */
+@media print {
+  @page {size: A4 portrait; margin: 0;}
+  html,body {margin:0!important;padding:0!important;background:#fff!important;}
+  .toolbar {display:none!important;}
+  .sheet {width:210mm!important;height:297mm!important;margin:0!important;
+          box-shadow:none!important;
+          transform:translate(4.8mm,4.8mm) scale(.954)!important;
+          transform-origin:top left!important;}
+}
+
 </style>
 </head>
 <body>

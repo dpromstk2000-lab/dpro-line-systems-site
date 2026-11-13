@@ -49,6 +49,18 @@ a{color:inherit;text-decoration:none}.toolbar{height:48px;display:flex;align-ite
   border-radius:1.5mm!important;padding:1mm 1.2mm!important;word-break:normal!important;
   display:block!important;box-sizing:border-box!important;
 }
+
+/* DPRO_A4_PRINT_SAFE_FINAL_V3_5_20261113. Print only. No screen alteration. */
+@media print {
+  @page {size: A4 portrait; margin: 0;}
+  html,body {margin:0!important;padding:0!important;background:#fff!important;}
+  .toolbar {display:none!important;}
+  .sheet {width:210mm!important;height:297mm!important;margin:0!important;
+          box-shadow:none!important;
+          transform:translate(4.8mm,4.8mm) scale(.954)!important;
+          transform-origin:top left!important;}
+}
+
 </style>
 </head><body>
 <div class="toolbar">DPRO A4 FLYER / YOGA <button onclick="window.print()">A4で印刷 / PDF保存</button></div>

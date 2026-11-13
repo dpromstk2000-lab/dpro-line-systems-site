@@ -134,6 +134,18 @@ body{min-height:100vh}
 }
 .action-qr .qlabel{font-size:2.32mm!important}
 .action-qr .qmini{font-size:1.48mm!important}
+
+/* DPRO_A4_PRINT_SAFE_FINAL_V3_5_20261113. Print only. No screen alteration. */
+@media print {
+  @page {size: A4 portrait; margin: 0;}
+  html,body {margin:0!important;padding:0!important;background:#fff!important;}
+  .toolbar {display:none!important;}
+  .sheet {width:210mm!important;height:297mm!important;margin:0!important;
+          box-shadow:none!important;
+          transform:translate(4.8mm,4.8mm) scale(.954)!important;
+          transform-origin:top left!important;}
+}
+
 </style>
 </head>
 <body>
