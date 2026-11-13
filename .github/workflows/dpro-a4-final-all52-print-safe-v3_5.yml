@@ -1,0 +1,305 @@
+name: DPRO A4 FINAL ALL52 Print-safe Validation V3.5
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/dpro-a4-final-all52-print-safe-v3_5.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: dpro-a4-final-52-print-safe-v3-5
+  cancel-in-progress: false
+
+jobs:
+  print-safe-and-recheck:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    steps:
+      - name: Checkout current A4 flyer website
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: true
+      - name: Install Japanese fonts and browser print verification
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m pip install --quiet --break-system-packages playwright pypdf
+          python3 -m playwright install --with-deps chromium
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq fonts-noto-cjk >/dev/null
+      - name: Protect screen layouts, add safe print insets and recheck all 52 flyers
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat > /tmp/dpro_final_printsafe_v35.py <<'PYCODE'
+
+          from pathlib import Path
+          import json, traceback, os, re
+          from playwright.sync_api import sync_playwright
+          from pypdf import PdfReader
+
+          ROOT=Path.cwd()
+          OUT=ROOT/'qa/a4-final-print-safe-v3-5'
+          OUT.mkdir(parents=True,exist_ok=True)
+          TEMP=OUT/'_temp'
+          TEMP.mkdir(exist_ok=True)
+          MARK='DPRO_A4_PRINT_SAFE_FINAL_V3_5_20261113'
+          TARGETS=['flyer-btype', 'flyer-cake', 'flyer-car-service', 'flyer-car', 'flyer-chosashi', 'flyer-clinic-shuttle', 'flyer-daycare', 'flyer-dental', 'flyer-disposal', 'flyer-flower', 'flyer-funeral', 'flyer-gakudo', 'flyer-green-rental', 'flyer-hair', 'flyer-houkago', 'flyer-housekeep', 'flyer-photo', 'flyer-repair', 'flyer-salesnavi', 'flyer-salon', 'flyer-seitai', 'flyer-takeout', 'flyer-welfare-shuttle', 'flyer-welfare', 'flyer-yoga']
+
+          CSS=r'''
+          /* DPRO_A4_PRINT_SAFE_FINAL_V3_5_20261113. Print only. No screen alteration. */
+          @media print {
+            @page {size: A4 portrait; margin: 0;}
+            html,body {margin:0!important;padding:0!important;background:#fff!important;}
+            .toolbar {display:none!important;}
+            .sheet {width:210mm!important;height:297mm!important;margin:0!important;
+                    box-shadow:none!important;
+                    transform:translate(4.8mm,4.8mm) scale(.954)!important;
+                    transform-origin:top left!important;}
+          }
+          '''
+
+          JS=r'''() => {
+            const sheet=document.querySelector('.sheet,.page,article[aria-label*="A4"]')||document.querySelector('main');
+            const hero=document.querySelector('.hero,.top');
+            const footer=document.querySelector('.footer,footer');
+            const action=document.querySelector('.action-grid,.cta,.qrs');
+            const rect=e=>{if(!e)return null;const r=e.getBoundingClientRect();return {left:r.left,right:r.right,top:r.top,bottom:r.bottom,width:r.width,height:r.height};};
+            const sr=rect(sheet),hr=rect(hero),fr=rect(footer),ar=rect(action);
+            const within=(a,b,tol=1)=>!a||!b||(a.top>=b.top-tol&&a.bottom<=b.bottom+tol&&a.left>=b.left-tol&&a.right<=b.right+tol);
+            const labels=[...document.querySelectorAll('.pillrow .pill')].map(rect);
+            const heroLabelGap=hr&&labels.length?hr.bottom-Math.max(...labels.map(x=>x.bottom)):null;
+            const photoLabels=[...document.querySelectorAll('.photo-label,.hero-photo-label')].map(rect);
+            const photoLabelOut=hr?photoLabels.filter(x=>!within(x,hr,2)).length:0;
+            const qrCandidates=[...document.images].filter(img=>{
+              const r=img.getBoundingClientRect(); const txt=((img.alt||'')+' '+(img.className||'')).toLowerCase();
+              return txt.includes('qr')||(r.width>=45&&r.width<=200&&r.height>=45&&r.height<=200&&r.width/r.height>=.88&&r.width/r.height<=1.12);
+            });
+            const qrOutside=qrCandidates.filter(img=>!within(rect(img),sr,2)).length;
+            const brokenImages=[...document.images].filter(img=>!img.complete||!img.naturalWidth).length;
+            let clippedText=0;
+            if(sheet){
+              const walker=document.createTreeWalker(sheet,NodeFilter.SHOW_TEXT);
+              while(walker.nextNode()){
+                const n=walker.currentNode;
+                if(!(n.nodeValue||'').trim())continue;
+                const p=n.parentElement;if(!p||p.closest('script,style,svg,noscript,template'))continue;
+                const pcs=getComputedStyle(p);if(pcs.display==='none'||pcs.visibility==='hidden')continue;
+                const range=document.createRange();range.selectNodeContents(n);
+                for(const r of range.getClientRects()){
+                  if(r.width<1.5||r.height<1.5)continue;
+                  for(let a=p;a;a=a.parentElement){
+                    const cs=getComputedStyle(a),ar=a.getBoundingClientRect();
+                    const dy=Math.max(0,ar.top-r.top)+Math.max(0,r.bottom-ar.bottom);
+                    const dx=Math.max(0,ar.left-r.left)+Math.max(0,r.right-ar.right);
+                    if((['hidden','clip'].includes(cs.overflowY)&&dy>3&&dy/r.height>.12)||
+                       (['hidden','clip'].includes(cs.overflowX)&&dx>4&&dx/r.width>.1)){
+                      clippedText++;break;
+                    }
+                    if(a===sheet)break;
+                  }
+                }
+              }
+            }
+            return {sheet:sr,hero:hr,footer:fr,action:ar,heroLabelGap,
+                    photoLabelOut,qrOutside,brokenImages,clippedText,
+                    footerGap:fr&&ar?fr.top-ar.bottom:null,
+                    overflow:sheet?Math.max(0,sheet.scrollHeight-sheet.clientHeight):null};
+          }'''
+
+
+          def check(m,strict_inset=False):
+            out=[]
+            if not m.get('sheet'):return ['sheet-missing']
+            if m['heroLabelGap'] is not None and m['heroLabelGap'] < -1.0:out.append('hero-label-clipped')
+            if m['photoLabelOut']:out.append('photo-label-clipped')
+            if m['footerGap'] is not None and m['footerGap'] < -0.8:out.append('footer-contact-overlap')
+            if m['qrOutside']:out.append('qr-outside-paper')
+            if m['brokenImages']:out.append('broken-images')
+            if m['clippedText']:out.append('text-overflow-clipped')
+            if m['overflow'] is not None and m['overflow'] > 4:out.append('page-content-overflow')
+            if strict_inset:
+              r=m['sheet']
+              if r['left'] < 10 or r['top'] < 10 or r['right'] > 783 or r['bottom'] > 1112:
+                out.append('print-inset-not-safe')
+            return out
+
+
+          def inspect(page,stem):
+            p=ROOT/(stem+'.html')
+            page.emulate_media(media='screen')
+            page.goto(p.as_uri(),wait_until='load',timeout=25000)
+            page.evaluate('() => document.fonts.ready')
+            screen=page.evaluate(JS)
+            page.emulate_media(media='print')
+            printm=page.evaluate(JS)
+            return screen,printm
+
+
+          def verify_pdf(filename):
+            r=PdfReader(str(filename))
+            n=len(r.pages)
+            if n!=1:return {'pages':n,'A4':False}
+            mb=r.pages[0].mediabox
+            w,h=float(mb.width),float(mb.height)
+            return {'pages':n,'A4':abs(w-595.28)<2 and abs(h-841.89)<2}
+
+          changes=[]
+          with sync_playwright() as p:
+            browser=p.chromium.launch(headless=True,args=['--no-sandbox','--disable-dev-shm-usage'])
+            page=browser.new_page(viewport={'width':1550,'height':1900},locale='ja-JP',device_scale_factor=1)
+            page.set_default_timeout(30000)
+            for stem in TARGETS:
+              row={'stem':stem,'status':'REVIEW','error':[]}
+              src=ROOT/(stem+'.html');original=None
+              try:
+                assert src.is_file() and (ROOT/(stem+'.pdf')).is_file(),'missing HTML or PDF'
+                original=src.read_text(encoding='utf-8')
+                assert MARK not in original,'marker already applied'
+                assert '.sheet' in original and 'class="sheet"' in original,'unknown paper structure'
+                h=original.lower().find('</head>')
+                ci=original.lower().rfind('</style>',0,h)
+                assert 0<ci<h, 'head CSS anchor not found'
+                baseline_screen,_=inspect(page,stem)
+                candidate=original[:ci]+CSS+'\n'+original[ci:]
+                src.write_text(candidate,encoding='utf-8')
+                screen,printm=inspect(page,stem)
+                bad=check(screen)+check(printm,strict_inset=True)
+                if baseline_screen['footerGap'] is not None and screen['footerGap'] is not None:
+                  if abs(baseline_screen['footerGap']-screen['footerGap'])>1:
+                    bad.append('screen-layout-changed')
+                tmp=TEMP/(stem+'.pdf')
+                page.pdf(path=str(tmp),prefer_css_page_size=True,print_background=True,
+                         display_header_footer=False,scale=1)
+                pdf=verify_pdf(tmp)
+                if not pdf['A4']:bad.append('rendered-PDF-not-single-A4')
+                row.update({'screenFooterGap':screen['footerGap'],'printFooterGap':printm['footerGap'],
+                            'printHeroGap':printm['heroLabelGap'],
+                            'printInsetLeftPx':round(printm['sheet']['left'],2),
+                            'printInsetTopPx':round(printm['sheet']['top'],2),
+                            'printedPdf':pdf,'error':sorted(set(bad))})
+                if bad:
+                  src.write_text(original,encoding='utf-8')
+                else:
+                  (ROOT/(stem+'.pdf')).write_bytes(tmp.read_bytes())
+                  row['status']='FIXED_AND_VERIFIED'
+                  changes.append(stem)
+              except Exception as exc:
+                if original is not None:src.write_text(original,encoding='utf-8')
+                row['error']=[f'exception: {str(exc)[:350]}']
+              print('PRINT SAFE',stem,row['status'],row['error'],flush=True)
+              if row['status']!='FIXED_AND_VERIFIED' and (TEMP/(stem+'.pdf')).exists():
+                (TEMP/(stem+'.pdf')).unlink(missing_ok=True)
+              changes_row=row
+              # Append immediately so partial reports survive unexpected errors.
+              report_path=OUT/'PRINT_SAFE_STATUS.json'
+              if report_path.exists():
+                report=json.loads(report_path.read_text(encoding='utf-8'))
+              else: report=[]
+              report.append(changes_row)
+              report_path.write_text(json.dumps(report,ensure_ascii=False,indent=2),encoding='utf-8')
+
+            # Recheck the actual current HTML/PDF set *after* all verified print fixes.
+            rows=[]
+            files=sorted(ROOT.glob('flyer-*.html'))
+            for i,fp in enumerate(files,1):
+              stem=fp.stem; status='PASS'; reasons=[]; screen={}; printm={}; pdf={}
+              try:
+                screen,printm=inspect(page,stem)
+                reasons=check(screen)+check(printm)
+                current=ROOT/(stem+'.pdf')
+                pdf=verify_pdf(current)
+                if not pdf['A4']:reasons.append('saved-PDF-not-single-A4')
+                rendered=TEMP/(stem+'-final.pdf')
+                page.pdf(path=str(rendered),prefer_css_page_size=True,print_background=True,
+                         display_header_footer=False,scale=1)
+                fresh=verify_pdf(rendered)
+                if not fresh['A4']:reasons.append('HTML-print-not-single-A4')
+                # Physical-printer checks: confirmed insets, otherwise warn rather than guessing.
+                r=printm['sheet']
+                paperInset=bool(r and r['left']>=10 and r['top']>=10 and r['right']<=783 and r['bottom']<=1112)
+                status='FAIL' if reasons else ('REVIEW' if not paperInset and stem not in ('flyer-haishoku','flyer-homenursing') else 'PASS')
+                if status=='REVIEW':reasons.append('print-margin-requires-printer-check')
+                if stem in ('flyer-haishoku','flyer-homenursing') and not paperInset:
+                  reasons.append('special-template-physical-printer-check-recommended')
+                rendered.unlink(missing_ok=True)
+                row={'stem':stem,'status':status,'reasons':sorted(set(reasons)),
+                     'screenHeroGap':screen.get('heroLabelGap'),'printHeroGap':printm.get('heroLabelGap'),
+                     'screenFooterGap':screen.get('footerGap'),'printFooterGap':printm.get('footerGap'),
+                     'printedInset':paperInset,'savedPDF':pdf,'renderedPDF':fresh}
+              except Exception as e:
+                row={'stem':stem,'status':'FAIL','reasons':['exception: '+str(e)[:350]]}
+              rows.append(row)
+              print('FINAL AUDIT',i,'/',len(files),stem,row['status'],row['reasons'][:3],flush=True)
+            browser.close()
+
+          assert len(files)==52,f'Unexpected flyer count: {len(files)}'
+          (OUT/'FINAL_AUDIT.json').write_text(json.dumps(rows,ensure_ascii=False,indent=2),encoding='utf-8')
+          fixed=[r for r in report if r['status']=='FIXED_AND_VERIFIED']
+          review=[r for r in report if r['status']!='FIXED_AND_VERIFIED']
+          from collections import Counter
+          counts=Counter(x['status'] for x in rows)
+          lines=['# DPRO A4 FINAL Print-safe QA V3.5','',
+                 f'- Print-safe update candidates: {len(TARGETS)}',
+                 f'- Print-safe updated and verified: {len(fixed)}',
+                 f'- Print-safe not modified (review): {len(review)}',
+                 f'- Final full A4 audit: {len(rows)} flyers',
+                 f'- Final PASS: {counts["PASS"]}',
+                 f'- Final REVIEW: {counts["REVIEW"]}',
+                 f'- Final FAIL: {counts["FAIL"]}',
+                 '- This test was performed on current HTML and PDF files after the candidate patches.',
+                 '- All printer-specific printable areas differ; special-template physical testing is recommended.',
+                 '- Production edits are limited to successfully verified target HTML/PDF files. All other flyers unchanged.',
+                 '', '## Print-safe updated',
+                 *([f'- {x["stem"]}' for x in fixed] or ['- none']),
+                 '', '## Print-safe pending (unchanged)',
+                 *([f'- {x["stem"]}: {x["error"]}' for x in review] or ['- none']),
+                 '', '## Final FAIL / REVIEW',
+                 *([f'- {x["stem"]}: {x["status"]} {x["reasons"]}' for x in rows if x['status']!='PASS'] or ['- none']),
+                 '', '## All 52 status',
+                 *[f'- {x["stem"]}: {x["status"]}' for x in rows]]
+          (OUT/'SUMMARY.md').write_text('\n'.join(lines)+'\n',encoding='utf-8')
+          print('FINAL COUNT',counts,'PRINT FIXES',len(fixed),'SKIPPED',len(review),flush=True)
+          PYCODE
+          python3 /tmp/dpro_final_printsafe_v35.py
+      - name: Commit only verified HTML PDF and final audit results
+        shell: bash
+        if: success()
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          import subprocess,json
+          out=Path('qa/a4-final-print-safe-v3-5')
+          report=json.loads((out/'PRINT_SAFE_STATUS.json').read_text(encoding='utf-8'))
+          paths=[str(out/'PRINT_SAFE_STATUS.json'),str(out/'FINAL_AUDIT.json'),str(out/'SUMMARY.md')]
+          for item in report:
+              if item.get('status')=='FIXED_AND_VERIFIED':
+                  paths.extend([item['stem']+'.html',item['stem']+'.pdf'])
+          subprocess.check_call(['git','add','--',*paths])
+          PY
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          if git diff --cached --quiet; then
+            echo 'No new print-safe QA changes to commit.'
+          else
+            git commit -m 'qa: final A4 print-safe 52 flyer verification and verified print insets'
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
+      - name: Upload final A4 detailed QA report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: DPRO_ALL52_A4_FINAL_PRINT_SAFE_V3_5
+          path: |
+            qa/a4-final-print-safe-v3-5/PRINT_SAFE_STATUS.json
+            qa/a4-final-print-safe-v3-5/FINAL_AUDIT.json
+            qa/a4-final-print-safe-v3-5/SUMMARY.md
+          if-no-files-found: warn
+          retention-days: 21
