@@ -1,0 +1,5998 @@
+[
+  {
+    "file": "flyer-bakery.html",
+    "stem": "flyer-bakery",
+    "screen": {
+      "page": {
+        "top": 107.34375,
+        "bottom": 1229.859375,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 1122.515625
+      },
+      "footer": {
+        "top": 1193.96875,
+        "bottom": 1229.859375,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 35.890625
+      },
+      "hero": {
+        "top": 107.34375,
+        "bottom": 394.578125,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 287.234375
+      },
+      "heroLabelCount": 4,
+      "heroLabelGap": 4.1,
+      "footerActionGap": 1.1,
+      "textRanges": 125,
+      "textClips": [],
+      "textClipCount": 0,
+      "pageClips": [],
+      "pageClipCount": 0,
+      "footerCollisions": [],
+      "footerCollisionCount": 0,
+      "qrCount": 3,
+      "qrIssues": [],
+      "brokenImages": [],
+      "brokenImageCount": 0,
+      "pageScrollHeight": 1123,
+      "pageClientHeight": 1123,
+      "trimRisk": true,
+      "viewportWidth": 1550
+    },
+    "print": {
+      "page": {
+        "top": 0,
+        "bottom": 1122.515625,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 1122.515625
+      },
+      "footer": {
+        "top": 1086.625,
+        "bottom": 1122.515625,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 35.890625
+      },
+      "hero": {
+        "top": 0,
+        "bottom": 287.234375,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 287.234375
+      },
+      "heroLabelCount": 4,
+      "heroLabelGap": 4.1,
+      "footerActionGap": 1.1,
+      "textRanges": 125,
+      "textClips": [],
+      "textClipCount": 0,
+      "pageClips": [],
+      "pageClipCount": 0,
+      "footerCollisions": [],
+      "footerCollisionCount": 0,
+      "qrCount": 3,
+      "qrIssues": [],
+      "brokenImages": [],
+      "brokenImageCount": 0,
+      "pageScrollHeight": 1123,
+      "pageClientHeight": 1123,
+      "trimRisk": true,
+      "viewportWidth": 1550
+    },
+    "issues": [
+      "print:ACTION_FOOTER_OVERLAP",
+      "screen:ACTION_FOOTER_OVERLAP"
+    ],
+    "warnings": [
+      "PRINT_EDGE_RISK_NON_BORDERLESS_PRINTER"
+    ],
+    "status": "FAIL",
+    "originalPdf": {
+      "pages": 1,
+      "widthPt": 595.3,
+      "heightPt": 841.9,
+      "a4": true
+    },
+    "renderedPdf": {
+      "pages": 1,
+      "widthPt": 595.0,
+      "heightPt": 841.9,
+      "a4": true
+    }
+  },
+  {
+    "file": "flyer-btype.html",
+    "stem": "flyer-btype",
+    "screen": {
+      "page": {
+        "top": 107.34375,
+        "bottom": 1229.859375,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 1122.515625
+      },
+      "footer": {
+        "top": 1193.96875,
+        "bottom": 1229.859375,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 35.890625
+      },
+      "hero": {
+        "top": 107.34375,
+        "bottom": 394.578125,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 287.234375
+      },
+      "heroLabelCount": 4,
+      "heroLabelGap": 18.9,
+      "footerActionGap": 61.9,
+      "textRanges": 118,
+      "textClips": [],
+      "textClipCount": 0,
+      "pageClips": [],
+      "pageClipCount": 0,
+      "footerCollisions": [],
+      "footerCollisionCount": 0,
+      "qrCount": 3,
+      "qrIssues": [],
+      "brokenImages": [],
+      "brokenImageCount": 0,
+      "pageScrollHeight": 1123,
+      "pageClientHeight": 1123,
+      "trimRisk": true,
+      "viewportWidth": 1550
+    },
+    "print": {
+      "page": {
+        "top": 0,
+        "bottom": 1122.515625,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 1122.515625
+      },
+      "footer": {
+        "top": 1086.625,
+        "bottom": 1122.515625,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 35.890625
+      },
+      "hero": {
+        "top": 0,
+        "bottom": 287.234375,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 287.234375
+      },
+      "heroLabelCount": 4,
+      "heroLabelGap": 18.9,
+      "footerActionGap": 61.9,
+      "textRanges": 118,
+      "textClips": [],
+      "textClipCount": 0,
+      "pageClips": [],
+      "pageClipCount": 0,
+      "footerCollisions": [],
+      "footerCollisionCount": 0,
+      "qrCount": 3,
+      "qrIssues": [],
+      "brokenImages": [],
+      "brokenImageCount": 0,
+      "pageScrollHeight": 1123,
+      "pageClientHeight": 1123,
+      "trimRisk": true,
+      "viewportWidth": 1550
+    },
+    "issues": [],
+    "warnings": [
+      "PRINT_EDGE_RISK_NON_BORDERLESS_PRINTER"
+    ],
+    "status": "REVIEW",
+    "originalPdf": {
+      "pages": 1,
+      "widthPt": 595.0,
+      "heightPt": 841.9,
+      "a4": true
+    },
+    "renderedPdf": {
+      "pages": 1,
+      "widthPt": 595.0,
+      "heightPt": 841.9,
+      "a4": true
+    }
+  },
+  {
+    "file": "flyer-buyback.html",
+    "stem": "flyer-buyback",
+    "screen": {
+      "page": {
+        "top": 107.34375,
+        "bottom": 1229.859375,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 1122.515625
+      },
+      "footer": {
+        "top": 1193.96875,
+        "bottom": 1229.859375,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 35.890625
+      },
+      "hero": {
+        "top": 107.34375,
+        "bottom": 394.578125,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 287.234375
+      },
+      "heroLabelCount": 4,
+      "heroLabelGap": 10.5,
+      "footerActionGap": 1.1,
+      "textRanges": 117,
+      "textClips": [],
+      "textClipCount": 0,
+      "pageClips": [],
+      "pageClipCount": 0,
+      "footerCollisions": [],
+      "footerCollisionCount": 0,
+      "qrCount": 3,
+      "qrIssues": [],
+      "brokenImages": [],
+      "brokenImageCount": 0,
+      "pageScrollHeight": 1123,
+      "pageClientHeight": 1123,
+      "trimRisk": true,
+      "viewportWidth": 1550
+    },
+    "print": {
+      "page": {
+        "top": 0,
+        "bottom": 1122.515625,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 1122.515625
+      },
+      "footer": {
+        "top": 1086.625,
+        "bottom": 1122.515625,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 35.890625
+      },
+      "hero": {
+        "top": 0,
+        "bottom": 287.234375,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 287.234375
+      },
+      "heroLabelCount": 4,
+      "heroLabelGap": 10.5,
+      "footerActionGap": 1.1,
+      "textRanges": 117,
+      "textClips": [],
+      "textClipCount": 0,
+      "pageClips": [],
+      "pageClipCount": 0,
+      "footerCollisions": [],
+      "footerCollisionCount": 0,
+      "qrCount": 3,
+      "qrIssues": [],
+      "brokenImages": [],
+      "brokenImageCount": 0,
+      "pageScrollHeight": 1123,
+      "pageClientHeight": 1123,
+      "trimRisk": true,
+      "viewportWidth": 1550
+    },
+    "issues": [
+      "print:ACTION_FOOTER_OVERLAP",
+      "screen:ACTION_FOOTER_OVERLAP"
+    ],
+    "warnings": [
+      "PRINT_EDGE_RISK_NON_BORDERLESS_PRINTER"
+    ],
+    "status": "FAIL",
+    "originalPdf": {
+      "pages": 1,
+      "widthPt": 595.0,
+      "heightPt": 841.9,
+      "a4": true
+    },
+    "renderedPdf": {
+      "pages": 1,
+      "widthPt": 595.0,
+      "heightPt": 841.9,
+      "a4": true
+    }
+  },
+  {
+    "file": "flyer-cake.html",
+    "stem": "flyer-cake",
+    "screen": {
+      "page": {
+        "top": 107.34375,
+        "bottom": 1229.859375,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 1122.515625
+      },
+      "footer": {
+        "top": 1193.96875,
+        "bottom": 1229.859375,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 35.890625
+      },
+      "hero": {
+        "top": 107.34375,
+        "bottom": 394.578125,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 287.234375
+      },
+      "heroLabelCount": 4,
+      "heroLabelGap": 11.5,
+      "footerActionGap": 27.4,
+      "textRanges": 125,
+      "textClips": [],
+      "textClipCount": 0,
+      "pageClips": [],
+      "pageClipCount": 0,
+      "footerCollisions": [],
+      "footerCollisionCount": 0,
+      "qrCount": 3,
+      "qrIssues": [],
+      "brokenImages": [],
+      "brokenImageCount": 0,
+      "pageScrollHeight": 1123,
+      "pageClientHeight": 1123,
+      "trimRisk": true,
+      "viewportWidth": 1550
+    },
+    "print": {
+      "page": {
+        "top": 0,
+        "bottom": 1122.515625,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 1122.515625
+      },
+      "footer": {
+        "top": 1086.625,
+        "bottom": 1122.515625,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 35.890625
+      },
+      "hero": {
+        "top": 0,
+        "bottom": 287.234375,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 287.234375
+      },
+      "heroLabelCount": 4,
+      "heroLabelGap": 11.5,
+      "footerActionGap": 27.4,
+      "textRanges": 125,
+      "textClips": [],
+      "textClipCount": 0,
+      "pageClips": [],
+      "pageClipCount": 0,
+      "footerCollisions": [],
+      "footerCollisionCount": 0,
+      "qrCount": 3,
+      "qrIssues": [],
+      "brokenImages": [],
+      "brokenImageCount": 0,
+      "pageScrollHeight": 1123,
+      "pageClientHeight": 1123,
+      "trimRisk": true,
+      "viewportWidth": 1550
+    },
+    "issues": [],
+    "warnings": [
+      "PRINT_EDGE_RISK_NON_BORDERLESS_PRINTER"
+    ],
+    "status": "REVIEW",
+    "originalPdf": {
+      "pages": 1,
+      "widthPt": 595.0,
+      "heightPt": 841.9,
+      "a4": true
+    },
+    "renderedPdf": {
+      "pages": 1,
+      "widthPt": 595.0,
+      "heightPt": 841.9,
+      "a4": true
+    }
+  },
+  {
+    "file": "flyer-car-service.html",
+    "stem": "flyer-car-service",
+    "screen": {
+      "page": {
+        "top": 107.34375,
+        "bottom": 1229.859375,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 1122.515625
+      },
+      "footer": {
+        "top": 1193.96875,
+        "bottom": 1229.859375,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 35.890625
+      },
+      "hero": {
+        "top": 107.34375,
+        "bottom": 394.578125,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 287.234375
+      },
+      "heroLabelCount": 3,
+      "heroLabelGap": 45.3,
+      "footerActionGap": 27.5,
+      "textRanges": 120,
+      "textClips": [],
+      "textClipCount": 0,
+      "pageClips": [],
+      "pageClipCount": 0,
+      "footerCollisions": [],
+      "footerCollisionCount": 0,
+      "qrCount": 3,
+      "qrIssues": [],
+      "brokenImages": [],
+      "brokenImageCount": 0,
+      "pageScrollHeight": 1123,
+      "pageClientHeight": 1123,
+      "trimRisk": true,
+      "viewportWidth": 1550
+    },
+    "print": {
+      "page": {
+        "top": 0,
+        "bottom": 1122.515625,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 1122.515625
+      },
+      "footer": {
+        "top": 1086.625,
+        "bottom": 1122.515625,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 35.890625
+      },
+      "hero": {
+        "top": 0,
+        "bottom": 287.234375,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 287.234375
+      },
+      "heroLabelCount": 3,
+      "heroLabelGap": 45.3,
+      "footerActionGap": 27.5,
+      "textRanges": 120,
+      "textClips": [],
+      "textClipCount": 0,
+      "pageClips": [],
+      "pageClipCount": 0,
+      "footerCollisions": [],
+      "footerCollisionCount": 0,
+      "qrCount": 3,
+      "qrIssues": [],
+      "brokenImages": [],
+      "brokenImageCount": 0,
+      "pageScrollHeight": 1123,
+      "pageClientHeight": 1123,
+      "trimRisk": true,
+      "viewportWidth": 1550
+    },
+    "issues": [],
+    "warnings": [
+      "PRINT_EDGE_RISK_NON_BORDERLESS_PRINTER"
+    ],
+    "status": "REVIEW",
+    "originalPdf": {
+      "pages": 1,
+      "widthPt": 595.0,
+      "heightPt": 841.9,
+      "a4": true
+    },
+    "renderedPdf": {
+      "pages": 1,
+      "widthPt": 595.0,
+      "heightPt": 841.9,
+      "a4": true
+    }
+  },
+  {
+    "file": "flyer-car.html",
+    "stem": "flyer-car",
+    "screen": {
+      "page": {
+        "top": 107.34375,
+        "bottom": 1229.859375,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 1122.515625
+      },
+      "footer": {
+        "top": 1193.96875,
+        "bottom": 1229.859375,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 35.890625
+      },
+      "hero": {
+        "top": 107.34375,
+        "bottom": 394.578125,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 287.234375
+      },
+      "heroLabelCount": 3,
+      "heroLabelGap": 45.1,
+      "footerActionGap": 10.6,
+      "textRanges": 121,
+      "textClips": [],
+      "textClipCount": 0,
+      "pageClips": [],
+      "pageClipCount": 0,
+      "footerCollisions": [],
+      "footerCollisionCount": 0,
+      "qrCount": 3,
+      "qrIssues": [],
+      "brokenImages": [],
+      "brokenImageCount": 0,
+      "pageScrollHeight": 1123,
+      "pageClientHeight": 1123,
+      "trimRisk": true,
+      "viewportWidth": 1550
+    },
+    "print": {
+      "page": {
+        "top": 0,
+        "bottom": 1122.515625,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 1122.515625
+      },
+      "footer": {
+        "top": 1086.625,
+        "bottom": 1122.515625,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 35.890625
+      },
+      "hero": {
+        "top": 0,
+        "bottom": 287.234375,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 287.234375
+      },
+      "heroLabelCount": 3,
+      "heroLabelGap": 45.1,
+      "footerActionGap": 10.6,
+      "textRanges": 121,
+      "textClips": [],
+      "textClipCount": 0,
+      "pageClips": [],
+      "pageClipCount": 0,
+      "footerCollisions": [],
+      "footerCollisionCount": 0,
+      "qrCount": 3,
+      "qrIssues": [],
+      "brokenImages": [],
+      "brokenImageCount": 0,
+      "pageScrollHeight": 1123,
+      "pageClientHeight": 1123,
+      "trimRisk": true,
+      "viewportWidth": 1550
+    },
+    "issues": [],
+    "warnings": [
+      "PRINT_EDGE_RISK_NON_BORDERLESS_PRINTER"
+    ],
+    "status": "REVIEW",
+    "originalPdf": {
+      "pages": 1,
+      "widthPt": 595.0,
+      "heightPt": 841.9,
+      "a4": true
+    },
+    "renderedPdf": {
+      "pages": 1,
+      "widthPt": 595.0,
+      "heightPt": 841.9,
+      "a4": true
+    }
+  },
+  {
+    "file": "flyer-careplan.html",
+    "stem": "flyer-careplan",
+    "screen": {
+      "page": {
+        "top": 107.34375,
+        "bottom": 1229.859375,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 1122.515625
+      },
+      "footer": {
+        "top": 1193.96875,
+        "bottom": 1229.859375,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 35.890625
+      },
+      "hero": {
+        "top": 107.34375,
+        "bottom": 394.578125,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 287.234375
+      },
+      "heroLabelCount": 4,
+      "heroLabelGap": 5.9,
+      "footerActionGap": -4.6,
+      "textRanges": 126,
+      "textClips": [],
+      "textClipCount": 0,
+      "pageClips": [],
+      "pageClipCount": 0,
+      "footerCollisions": [],
+      "footerCollisionCount": 0,
+      "qrCount": 3,
+      "qrIssues": [],
+      "brokenImages": [],
+      "brokenImageCount": 0,
+      "pageScrollHeight": 1123,
+      "pageClientHeight": 1123,
+      "trimRisk": true,
+      "viewportWidth": 1550
+    },
+    "print": {
+      "page": {
+        "top": 0,
+        "bottom": 1122.515625,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 1122.515625
+      },
+      "footer": {
+        "top": 1086.625,
+        "bottom": 1122.515625,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 35.890625
+      },
+      "hero": {
+        "top": 0,
+        "bottom": 287.234375,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 287.234375
+      },
+      "heroLabelCount": 4,
+      "heroLabelGap": 5.9,
+      "footerActionGap": -4.6,
+      "textRanges": 126,
+      "textClips": [],
+      "textClipCount": 0,
+      "pageClips": [],
+      "pageClipCount": 0,
+      "footerCollisions": [],
+      "footerCollisionCount": 0,
+      "qrCount": 3,
+      "qrIssues": [],
+      "brokenImages": [],
+      "brokenImageCount": 0,
+      "pageScrollHeight": 1123,
+      "pageClientHeight": 1123,
+      "trimRisk": true,
+      "viewportWidth": 1550
+    },
+    "issues": [
+      "print:ACTION_FOOTER_OVERLAP",
+      "screen:ACTION_FOOTER_OVERLAP"
+    ],
+    "warnings": [
+      "PRINT_EDGE_RISK_NON_BORDERLESS_PRINTER"
+    ],
+    "status": "FAIL",
+    "originalPdf": {
+      "pages": 1,
+      "widthPt": 595.3,
+      "heightPt": 841.9,
+      "a4": true
+    },
+    "renderedPdf": {
+      "pages": 1,
+      "widthPt": 595.0,
+      "heightPt": 841.9,
+      "a4": true
+    }
+  },
+  {
+    "file": "flyer-caretaxi.html",
+    "stem": "flyer-caretaxi",
+    "screen": {
+      "page": {
+        "top": 107.34375,
+        "bottom": 1229.859375,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 1122.515625
+      },
+      "footer": {
+        "top": 1193.96875,
+        "bottom": 1229.859375,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 35.890625
+      },
+      "hero": {
+        "top": 107.34375,
+        "bottom": 394.578125,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 287.234375
+      },
+      "heroLabelCount": 4,
+      "heroLabelGap": 6.1,
+      "footerActionGap": 1.1,
+      "textRanges": 126,
+      "textClips": [],
+      "textClipCount": 0,
+      "pageClips": [],
+      "pageClipCount": 0,
+      "footerCollisions": [],
+      "footerCollisionCount": 0,
+      "qrCount": 3,
+      "qrIssues": [],
+      "brokenImages": [],
+      "brokenImageCount": 0,
+      "pageScrollHeight": 1123,
+      "pageClientHeight": 1123,
+      "trimRisk": true,
+      "viewportWidth": 1550
+    },
+    "print": {
+      "page": {
+        "top": 0,
+        "bottom": 1122.515625,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 1122.515625
+      },
+      "footer": {
+        "top": 1086.625,
+        "bottom": 1122.515625,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 35.890625
+      },
+      "hero": {
+        "top": 0,
+        "bottom": 287.234375,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 287.234375
+      },
+      "heroLabelCount": 4,
+      "heroLabelGap": 6.1,
+      "footerActionGap": 1.1,
+      "textRanges": 126,
+      "textClips": [],
+      "textClipCount": 0,
+      "pageClips": [],
+      "pageClipCount": 0,
+      "footerCollisions": [],
+      "footerCollisionCount": 0,
+      "qrCount": 3,
+      "qrIssues": [],
+      "brokenImages": [],
+      "brokenImageCount": 0,
+      "pageScrollHeight": 1123,
+      "pageClientHeight": 1123,
+      "trimRisk": true,
+      "viewportWidth": 1550
+    },
+    "issues": [
+      "print:ACTION_FOOTER_OVERLAP",
+      "screen:ACTION_FOOTER_OVERLAP"
+    ],
+    "warnings": [
+      "PRINT_EDGE_RISK_NON_BORDERLESS_PRINTER"
+    ],
+    "status": "FAIL",
+    "originalPdf": {
+      "pages": 1,
+      "widthPt": 595.0,
+      "heightPt": 841.9,
+      "a4": true
+    },
+    "renderedPdf": {
+      "pages": 1,
+      "widthPt": 595.0,
+      "heightPt": 841.9,
+      "a4": true
+    }
+  },
+  {
+    "file": "flyer-chosashi.html",
+    "stem": "flyer-chosashi",
+    "screen": {
+      "page": {
+        "top": 34,
+        "bottom": 1156.515625,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 1122.515625
+      },
+      "footer": {
+        "top": 1120.625,
+        "bottom": 1156.515625,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 35.890625
+      },
+      "hero": {
+        "top": 98.25,
+        "bottom": 279.65625,
+        "left": 408.390625,
+        "right": 1141.609375,
+        "width": 733.21875,
+        "height": 181.40625
+      },
+      "heroLabelCount": 0,
+      "heroLabelGap": null,
+      "footerActionGap": 38.5,
+      "textRanges": 94,
+      "textClips": [],
+      "textClipCount": 0,
+      "pageClips": [],
+      "pageClipCount": 0,
+      "footerCollisions": [],
+      "footerCollisionCount": 0,
+      "qrCount": 3,
+      "qrIssues": [],
+      "brokenImages": [],
+      "brokenImageCount": 0,
+      "pageScrollHeight": 1123,
+      "pageClientHeight": 1123,
+      "trimRisk": true,
+      "viewportWidth": 1550
+    },
+    "print": {
+      "page": {
+        "top": 0,
+        "bottom": 1122.515625,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 1122.515625
+      },
+      "footer": {
+        "top": 1086.625,
+        "bottom": 1122.515625,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 35.890625
+      },
+      "hero": {
+        "top": 64.25,
+        "bottom": 245.65625,
+        "left": 30.234375,
+        "right": 763.453125,
+        "width": 733.21875,
+        "height": 181.40625
+      },
+      "heroLabelCount": 0,
+      "heroLabelGap": null,
+      "footerActionGap": 38.5,
+      "textRanges": 94,
+      "textClips": [],
+      "textClipCount": 0,
+      "pageClips": [],
+      "pageClipCount": 0,
+      "footerCollisions": [],
+      "footerCollisionCount": 0,
+      "qrCount": 3,
+      "qrIssues": [],
+      "brokenImages": [],
+      "brokenImageCount": 0,
+      "pageScrollHeight": 1123,
+      "pageClientHeight": 1123,
+      "trimRisk": true,
+      "viewportWidth": 1550
+    },
+    "issues": [],
+    "warnings": [
+      "PRINT_EDGE_RISK_NON_BORDERLESS_PRINTER"
+    ],
+    "status": "REVIEW",
+    "originalPdf": {
+      "pages": 1,
+      "widthPt": 595.0,
+      "heightPt": 841.9,
+      "a4": true
+    },
+    "renderedPdf": {
+      "pages": 1,
+      "widthPt": 595.0,
+      "heightPt": 841.9,
+      "a4": true
+    }
+  },
+  {
+    "file": "flyer-cleaning.html",
+    "stem": "flyer-cleaning",
+    "screen": {
+      "page": {
+        "top": 107.34375,
+        "bottom": 1229.859375,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 1122.515625
+      },
+      "footer": {
+        "top": 1193.96875,
+        "bottom": 1229.859375,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 35.890625
+      },
+      "hero": {
+        "top": 107.34375,
+        "bottom": 394.578125,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 287.234375
+      },
+      "heroLabelCount": 4,
+      "heroLabelGap": 6.1,
+      "footerActionGap": 1.1,
+      "textRanges": 124,
+      "textClips": [],
+      "textClipCount": 0,
+      "pageClips": [],
+      "pageClipCount": 0,
+      "footerCollisions": [],
+      "footerCollisionCount": 0,
+      "qrCount": 3,
+      "qrIssues": [],
+      "brokenImages": [],
+      "brokenImageCount": 0,
+      "pageScrollHeight": 1123,
+      "pageClientHeight": 1123,
+      "trimRisk": true,
+      "viewportWidth": 1550
+    },
+    "print": {
+      "page": {
+        "top": 0,
+        "bottom": 1122.515625,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 1122.515625
+      },
+      "footer": {
+        "top": 1086.625,
+        "bottom": 1122.515625,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 35.890625
+      },
+      "hero": {
+        "top": 0,
+        "bottom": 287.234375,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 287.234375
+      },
+      "heroLabelCount": 4,
+      "heroLabelGap": 6.1,
+      "footerActionGap": 1.1,
+      "textRanges": 124,
+      "textClips": [],
+      "textClipCount": 0,
+      "pageClips": [],
+      "pageClipCount": 0,
+      "footerCollisions": [],
+      "footerCollisionCount": 0,
+      "qrCount": 3,
+      "qrIssues": [],
+      "brokenImages": [],
+      "brokenImageCount": 0,
+      "pageScrollHeight": 1123,
+      "pageClientHeight": 1123,
+      "trimRisk": true,
+      "viewportWidth": 1550
+    },
+    "issues": [
+      "print:ACTION_FOOTER_OVERLAP",
+      "screen:ACTION_FOOTER_OVERLAP"
+    ],
+    "warnings": [
+      "PRINT_EDGE_RISK_NON_BORDERLESS_PRINTER"
+    ],
+    "status": "FAIL",
+    "originalPdf": {
+      "pages": 1,
+      "widthPt": 595.3,
+      "heightPt": 841.9,
+      "a4": true
+    },
+    "renderedPdf": {
+      "pages": 1,
+      "widthPt": 595.0,
+      "heightPt": 841.9,
+      "a4": true
+    }
+  },
+  {
+    "file": "flyer-clinic-shuttle.html",
+    "stem": "flyer-clinic-shuttle",
+    "screen": {
+      "page": {
+        "top": 107.34375,
+        "bottom": 1229.859375,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 1122.515625
+      },
+      "footer": {
+        "top": 1197.359375,
+        "bottom": 1229.859375,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 32.5
+      },
+      "hero": {
+        "top": 107.34375,
+        "bottom": 383.234375,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 275.890625
+      },
+      "heroLabelCount": 4,
+      "heroLabelGap": 37.6,
+      "footerActionGap": 85.1,
+      "textRanges": 122,
+      "textClips": [],
+      "textClipCount": 0,
+      "pageClips": [],
+      "pageClipCount": 0,
+      "footerCollisions": [],
+      "footerCollisionCount": 0,
+      "qrCount": 3,
+      "qrIssues": [],
+      "brokenImages": [],
+      "brokenImageCount": 0,
+      "pageScrollHeight": 1123,
+      "pageClientHeight": 1123,
+      "trimRisk": true,
+      "viewportWidth": 1550
+    },
+    "print": {
+      "page": {
+        "top": 0,
+        "bottom": 1122.515625,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 1122.515625
+      },
+      "footer": {
+        "top": 1090.015625,
+        "bottom": 1122.515625,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 32.5
+      },
+      "hero": {
+        "top": 0,
+        "bottom": 275.890625,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 275.890625
+      },
+      "heroLabelCount": 4,
+      "heroLabelGap": 37.6,
+      "footerActionGap": 85.1,
+      "textRanges": 122,
+      "textClips": [],
+      "textClipCount": 0,
+      "pageClips": [],
+      "pageClipCount": 0,
+      "footerCollisions": [],
+      "footerCollisionCount": 0,
+      "qrCount": 3,
+      "qrIssues": [],
+      "brokenImages": [],
+      "brokenImageCount": 0,
+      "pageScrollHeight": 1123,
+      "pageClientHeight": 1123,
+      "trimRisk": true,
+      "viewportWidth": 1550
+    },
+    "issues": [],
+    "warnings": [
+      "PRINT_EDGE_RISK_NON_BORDERLESS_PRINTER"
+    ],
+    "status": "REVIEW",
+    "originalPdf": {
+      "pages": 1,
+      "widthPt": 595.0,
+      "heightPt": 841.9,
+      "a4": true
+    },
+    "renderedPdf": {
+      "pages": 1,
+      "widthPt": 595.0,
+      "heightPt": 841.9,
+      "a4": true
+    }
+  },
+  {
+    "file": "flyer-cosmetics.html",
+    "stem": "flyer-cosmetics",
+    "screen": {
+      "page": {
+        "top": 107.34375,
+        "bottom": 1229.859375,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 1122.515625
+      },
+      "footer": {
+        "top": 1193.96875,
+        "bottom": 1229.859375,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 35.890625
+      },
+      "hero": {
+        "top": 107.34375,
+        "bottom": 394.578125,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 287.234375
+      },
+      "heroLabelCount": 4,
+      "heroLabelGap": 3.1,
+      "footerActionGap": -4.9,
+      "textRanges": 124,
+      "textClips": [],
+      "textClipCount": 0,
+      "pageClips": [],
+      "pageClipCount": 0,
+      "footerCollisions": [],
+      "footerCollisionCount": 0,
+      "qrCount": 3,
+      "qrIssues": [],
+      "brokenImages": [],
+      "brokenImageCount": 0,
+      "pageScrollHeight": 1123,
+      "pageClientHeight": 1123,
+      "trimRisk": true,
+      "viewportWidth": 1550
+    },
+    "print": {
+      "page": {
+        "top": 0,
+        "bottom": 1122.515625,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 1122.515625
+      },
+      "footer": {
+        "top": 1086.625,
+        "bottom": 1122.515625,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 35.890625
+      },
+      "hero": {
+        "top": 0,
+        "bottom": 287.234375,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 287.234375
+      },
+      "heroLabelCount": 4,
+      "heroLabelGap": 3.1,
+      "footerActionGap": -4.9,
+      "textRanges": 124,
+      "textClips": [],
+      "textClipCount": 0,
+      "pageClips": [],
+      "pageClipCount": 0,
+      "footerCollisions": [],
+      "footerCollisionCount": 0,
+      "qrCount": 3,
+      "qrIssues": [],
+      "brokenImages": [],
+      "brokenImageCount": 0,
+      "pageScrollHeight": 1123,
+      "pageClientHeight": 1123,
+      "trimRisk": true,
+      "viewportWidth": 1550
+    },
+    "issues": [
+      "print:ACTION_FOOTER_OVERLAP",
+      "screen:ACTION_FOOTER_OVERLAP"
+    ],
+    "warnings": [
+      "PRINT_EDGE_RISK_NON_BORDERLESS_PRINTER"
+    ],
+    "status": "FAIL",
+    "originalPdf": {
+      "pages": 1,
+      "widthPt": 595.0,
+      "heightPt": 841.9,
+      "a4": true
+    },
+    "renderedPdf": {
+      "pages": 1,
+      "widthPt": 595.0,
+      "heightPt": 841.9,
+      "a4": true
+    }
+  },
+  {
+    "file": "flyer-daycare.html",
+    "stem": "flyer-daycare",
+    "screen": {
+      "page": {
+        "top": 107.34375,
+        "bottom": 1229.859375,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 1122.515625
+      },
+      "footer": {
+        "top": 1193.96875,
+        "bottom": 1229.859375,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 35.890625
+      },
+      "hero": {
+        "top": 107.34375,
+        "bottom": 394.578125,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 287.234375
+      },
+      "heroLabelCount": 4,
+      "heroLabelGap": 7.6,
+      "footerActionGap": 32,
+      "textRanges": 123,
+      "textClips": [],
+      "textClipCount": 0,
+      "pageClips": [],
+      "pageClipCount": 0,
+      "footerCollisions": [],
+      "footerCollisionCount": 0,
+      "qrCount": 3,
+      "qrIssues": [],
+      "brokenImages": [],
+      "brokenImageCount": 0,
+      "pageScrollHeight": 1123,
+      "pageClientHeight": 1123,
+      "trimRisk": true,
+      "viewportWidth": 1550
+    },
+    "print": {
+      "page": {
+        "top": 0,
+        "bottom": 1122.515625,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 1122.515625
+      },
+      "footer": {
+        "top": 1086.625,
+        "bottom": 1122.515625,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 35.890625
+      },
+      "hero": {
+        "top": 0,
+        "bottom": 287.234375,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 287.234375
+      },
+      "heroLabelCount": 4,
+      "heroLabelGap": 7.6,
+      "footerActionGap": 32,
+      "textRanges": 123,
+      "textClips": [],
+      "textClipCount": 0,
+      "pageClips": [],
+      "pageClipCount": 0,
+      "footerCollisions": [],
+      "footerCollisionCount": 0,
+      "qrCount": 3,
+      "qrIssues": [],
+      "brokenImages": [],
+      "brokenImageCount": 0,
+      "pageScrollHeight": 1123,
+      "pageClientHeight": 1123,
+      "trimRisk": true,
+      "viewportWidth": 1550
+    },
+    "issues": [],
+    "warnings": [
+      "PRINT_EDGE_RISK_NON_BORDERLESS_PRINTER"
+    ],
+    "status": "REVIEW",
+    "originalPdf": {
+      "pages": 1,
+      "widthPt": 595.0,
+      "heightPt": 841.9,
+      "a4": true
+    },
+    "renderedPdf": {
+      "pages": 1,
+      "widthPt": 595.0,
+      "heightPt": 841.9,
+      "a4": true
+    }
+  },
+  {
+    "file": "flyer-dental.html",
+    "stem": "flyer-dental",
+    "screen": {
+      "page": {
+        "top": 0,
+        "bottom": 1122.515625,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 1122.515625
+      },
+      "footer": {
+        "top": 1086.625,
+        "bottom": 1122.515625,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 35.890625
+      },
+      "hero": {
+        "top": 0,
+        "bottom": 294.796875,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 294.796875
+      },
+      "heroLabelCount": 0,
+      "heroLabelGap": null,
+      "footerActionGap": null,
+      "textRanges": 115,
+      "textClips": [],
+      "textClipCount": 0,
+      "pageClips": [],
+      "pageClipCount": 0,
+      "footerCollisions": [],
+      "footerCollisionCount": 0,
+      "qrCount": 3,
+      "qrIssues": [],
+      "brokenImages": [],
+      "brokenImageCount": 0,
+      "pageScrollHeight": 1123,
+      "pageClientHeight": 1123,
+      "trimRisk": true,
+      "viewportWidth": 1550
+    },
+    "print": {
+      "page": {
+        "top": 0,
+        "bottom": 1122.515625,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 1122.515625
+      },
+      "footer": {
+        "top": 1086.625,
+        "bottom": 1122.515625,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 35.890625
+      },
+      "hero": {
+        "top": 0,
+        "bottom": 294.796875,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 294.796875
+      },
+      "heroLabelCount": 0,
+      "heroLabelGap": null,
+      "footerActionGap": null,
+      "textRanges": 115,
+      "textClips": [],
+      "textClipCount": 0,
+      "pageClips": [],
+      "pageClipCount": 0,
+      "footerCollisions": [],
+      "footerCollisionCount": 0,
+      "qrCount": 3,
+      "qrIssues": [],
+      "brokenImages": [],
+      "brokenImageCount": 0,
+      "pageScrollHeight": 1123,
+      "pageClientHeight": 1123,
+      "trimRisk": true,
+      "viewportWidth": 1550
+    },
+    "issues": [],
+    "warnings": [
+      "PRINT_EDGE_RISK_NON_BORDERLESS_PRINTER"
+    ],
+    "status": "REVIEW",
+    "originalPdf": {
+      "pages": 1,
+      "widthPt": 595.0,
+      "heightPt": 841.9,
+      "a4": true
+    },
+    "renderedPdf": {
+      "pages": 1,
+      "widthPt": 595.0,
+      "heightPt": 841.9,
+      "a4": true
+    }
+  },
+  {
+    "file": "flyer-disposal.html",
+    "stem": "flyer-disposal",
+    "screen": {
+      "page": {
+        "top": 107.34375,
+        "bottom": 1229.859375,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 1122.515625
+      },
+      "footer": {
+        "top": 1193.96875,
+        "bottom": 1229.859375,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 35.890625
+      },
+      "hero": {
+        "top": 107.34375,
+        "bottom": 394.578125,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 287.234375
+      },
+      "heroLabelCount": 4,
+      "heroLabelGap": 24.3,
+      "footerActionGap": 14,
+      "textRanges": 122,
+      "textClips": [],
+      "textClipCount": 0,
+      "pageClips": [],
+      "pageClipCount": 0,
+      "footerCollisions": [],
+      "footerCollisionCount": 0,
+      "qrCount": 3,
+      "qrIssues": [],
+      "brokenImages": [],
+      "brokenImageCount": 0,
+      "pageScrollHeight": 1123,
+      "pageClientHeight": 1123,
+      "trimRisk": true,
+      "viewportWidth": 1550
+    },
+    "print": {
+      "page": {
+        "top": 0,
+        "bottom": 1122.515625,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 1122.515625
+      },
+      "footer": {
+        "top": 1086.625,
+        "bottom": 1122.515625,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 35.890625
+      },
+      "hero": {
+        "top": 0,
+        "bottom": 287.234375,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 287.234375
+      },
+      "heroLabelCount": 4,
+      "heroLabelGap": 24.3,
+      "footerActionGap": 14,
+      "textRanges": 122,
+      "textClips": [],
+      "textClipCount": 0,
+      "pageClips": [],
+      "pageClipCount": 0,
+      "footerCollisions": [],
+      "footerCollisionCount": 0,
+      "qrCount": 3,
+      "qrIssues": [],
+      "brokenImages": [],
+      "brokenImageCount": 0,
+      "pageScrollHeight": 1123,
+      "pageClientHeight": 1123,
+      "trimRisk": true,
+      "viewportWidth": 1550
+    },
+    "issues": [],
+    "warnings": [
+      "PRINT_EDGE_RISK_NON_BORDERLESS_PRINTER"
+    ],
+    "status": "REVIEW",
+    "originalPdf": {
+      "pages": 1,
+      "widthPt": 595.0,
+      "heightPt": 841.9,
+      "a4": true
+    },
+    "renderedPdf": {
+      "pages": 1,
+      "widthPt": 595.0,
+      "heightPt": 841.9,
+      "a4": true
+    }
+  },
+  {
+    "file": "flyer-estate.html",
+    "stem": "flyer-estate",
+    "screen": {
+      "page": {
+        "top": 107.34375,
+        "bottom": 1229.859375,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 1122.515625
+      },
+      "footer": {
+        "top": 1193.96875,
+        "bottom": 1229.859375,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 35.890625
+      },
+      "hero": {
+        "top": 107.34375,
+        "bottom": 394.578125,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 287.234375
+      },
+      "heroLabelCount": 4,
+      "heroLabelGap": -28.8,
+      "footerActionGap": 1.1,
+      "textRanges": 125,
+      "textClips": [
+        {
+          "text": "内見予約",
+          "element": "SPAN.pill",
+          "ancestor": "HEADER.hero",
+          "lossY": 21.9,
+          "lossX": 0
+        },
+        {
+          "text": "顧客・希望条件",
+          "element": "SPAN.pill",
+          "ancestor": "HEADER.hero",
+          "lossY": 21.9,
+          "lossX": 0
+        },
+        {
+          "text": "物件・案件",
+          "element": "SPAN.pill",
+          "ancestor": "HEADER.hero",
+          "lossY": 21.9,
+          "lossX": 0
+        },
+        {
+          "text": "追客・再相談",
+          "element": "SPAN.pill",
+          "ancestor": "HEADER.hero",
+          "lossY": 21.9,
+          "lossX": 0
+        },
+        {
+          "text": "不動産・賃貸向け",
+          "element": "DIV.photo-label",
+          "ancestor": "HEADER.hero",
+          "lossY": 29.7,
+          "lossX": 0
+        }
+      ],
+      "textClipCount": 5,
+      "pageClips": [],
+      "pageClipCount": 0,
+      "footerCollisions": [],
+      "footerCollisionCount": 0,
+      "qrCount": 3,
+      "qrIssues": [],
+      "brokenImages": [],
+      "brokenImageCount": 0,
+      "pageScrollHeight": 1123,
+      "pageClientHeight": 1123,
+      "trimRisk": true,
+      "viewportWidth": 1550
+    },
+    "print": {
+      "page": {
+        "top": 0,
+        "bottom": 1122.515625,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 1122.515625
+      },
+      "footer": {
+        "top": 1086.625,
+        "bottom": 1122.515625,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 35.890625
+      },
+      "hero": {
+        "top": 0,
+        "bottom": 287.234375,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 287.234375
+      },
+      "heroLabelCount": 4,
+      "heroLabelGap": -28.8,
+      "footerActionGap": 1.1,
+      "textRanges": 125,
+      "textClips": [
+        {
+          "text": "内見予約",
+          "element": "SPAN.pill",
+          "ancestor": "HEADER.hero",
+          "lossY": 21.9,
+          "lossX": 0
+        },
+        {
+          "text": "顧客・希望条件",
+          "element": "SPAN.pill",
+          "ancestor": "HEADER.hero",
+          "lossY": 21.9,
+          "lossX": 0
+        },
+        {
+          "text": "物件・案件",
+          "element": "SPAN.pill",
+          "ancestor": "HEADER.hero",
+          "lossY": 21.9,
+          "lossX": 0
+        },
+        {
+          "text": "追客・再相談",
+          "element": "SPAN.pill",
+          "ancestor": "HEADER.hero",
+          "lossY": 21.9,
+          "lossX": 0
+        },
+        {
+          "text": "不動産・賃貸向け",
+          "element": "DIV.photo-label",
+          "ancestor": "HEADER.hero",
+          "lossY": 29.7,
+          "lossX": 0
+        }
+      ],
+      "textClipCount": 5,
+      "pageClips": [],
+      "pageClipCount": 0,
+      "footerCollisions": [],
+      "footerCollisionCount": 0,
+      "qrCount": 3,
+      "qrIssues": [],
+      "brokenImages": [],
+      "brokenImageCount": 0,
+      "pageScrollHeight": 1123,
+      "pageClientHeight": 1123,
+      "trimRisk": true,
+      "viewportWidth": 1550
+    },
+    "issues": [
+      "print:ACTION_FOOTER_OVERLAP",
+      "print:HERO_LABEL_CLIP",
+      "print:TEXT_CLIP(5)",
+      "screen:ACTION_FOOTER_OVERLAP",
+      "screen:HERO_LABEL_CLIP",
+      "screen:TEXT_CLIP(5)"
+    ],
+    "warnings": [
+      "PRINT_EDGE_RISK_NON_BORDERLESS_PRINTER"
+    ],
+    "status": "FAIL",
+    "originalPdf": {
+      "pages": 1,
+      "widthPt": 595.0,
+      "heightPt": 841.9,
+      "a4": true
+    },
+    "renderedPdf": {
+      "pages": 1,
+      "widthPt": 595.0,
+      "heightPt": 841.9,
+      "a4": true
+    }
+  },
+  {
+    "file": "flyer-esthe.html",
+    "stem": "flyer-esthe",
+    "screen": {
+      "page": {
+        "top": 107.34375,
+        "bottom": 1229.859375,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 1122.515625
+      },
+      "footer": {
+        "top": 1193.96875,
+        "bottom": 1229.859375,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 35.890625
+      },
+      "hero": {
+        "top": 107.34375,
+        "bottom": 394.578125,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 287.234375
+      },
+      "heroLabelCount": 4,
+      "heroLabelGap": 6.1,
+      "footerActionGap": 1.1,
+      "textRanges": 126,
+      "textClips": [],
+      "textClipCount": 0,
+      "pageClips": [],
+      "pageClipCount": 0,
+      "footerCollisions": [],
+      "footerCollisionCount": 0,
+      "qrCount": 3,
+      "qrIssues": [],
+      "brokenImages": [],
+      "brokenImageCount": 0,
+      "pageScrollHeight": 1123,
+      "pageClientHeight": 1123,
+      "trimRisk": true,
+      "viewportWidth": 1550
+    },
+    "print": {
+      "page": {
+        "top": 0,
+        "bottom": 1122.515625,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 1122.515625
+      },
+      "footer": {
+        "top": 1086.625,
+        "bottom": 1122.515625,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 35.890625
+      },
+      "hero": {
+        "top": 0,
+        "bottom": 287.234375,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 287.234375
+      },
+      "heroLabelCount": 4,
+      "heroLabelGap": 6.1,
+      "footerActionGap": 1.1,
+      "textRanges": 126,
+      "textClips": [],
+      "textClipCount": 0,
+      "pageClips": [],
+      "pageClipCount": 0,
+      "footerCollisions": [],
+      "footerCollisionCount": 0,
+      "qrCount": 3,
+      "qrIssues": [],
+      "brokenImages": [],
+      "brokenImageCount": 0,
+      "pageScrollHeight": 1123,
+      "pageClientHeight": 1123,
+      "trimRisk": true,
+      "viewportWidth": 1550
+    },
+    "issues": [
+      "print:ACTION_FOOTER_OVERLAP",
+      "screen:ACTION_FOOTER_OVERLAP"
+    ],
+    "warnings": [
+      "PRINT_EDGE_RISK_NON_BORDERLESS_PRINTER"
+    ],
+    "status": "FAIL",
+    "originalPdf": {
+      "pages": 1,
+      "widthPt": 595.0,
+      "heightPt": 841.9,
+      "a4": true
+    },
+    "renderedPdf": {
+      "pages": 1,
+      "widthPt": 595.0,
+      "heightPt": 841.9,
+      "a4": true
+    }
+  },
+  {
+    "file": "flyer-eye.html",
+    "stem": "flyer-eye",
+    "screen": {
+      "page": {
+        "top": 107.34375,
+        "bottom": 1229.859375,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 1122.515625
+      },
+      "footer": {
+        "top": 1193.96875,
+        "bottom": 1229.859375,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 35.890625
+      },
+      "hero": {
+        "top": 107.34375,
+        "bottom": 394.578125,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 287.234375
+      },
+      "heroLabelCount": 4,
+      "heroLabelGap": 6.1,
+      "footerActionGap": -1.8,
+      "textRanges": 125,
+      "textClips": [],
+      "textClipCount": 0,
+      "pageClips": [],
+      "pageClipCount": 0,
+      "footerCollisions": [],
+      "footerCollisionCount": 0,
+      "qrCount": 3,
+      "qrIssues": [],
+      "brokenImages": [],
+      "brokenImageCount": 0,
+      "pageScrollHeight": 1123,
+      "pageClientHeight": 1123,
+      "trimRisk": true,
+      "viewportWidth": 1550
+    },
+    "print": {
+      "page": {
+        "top": 0,
+        "bottom": 1122.515625,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 1122.515625
+      },
+      "footer": {
+        "top": 1086.625,
+        "bottom": 1122.515625,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 35.890625
+      },
+      "hero": {
+        "top": 0,
+        "bottom": 287.234375,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 287.234375
+      },
+      "heroLabelCount": 4,
+      "heroLabelGap": 6.1,
+      "footerActionGap": -1.8,
+      "textRanges": 125,
+      "textClips": [],
+      "textClipCount": 0,
+      "pageClips": [],
+      "pageClipCount": 0,
+      "footerCollisions": [],
+      "footerCollisionCount": 0,
+      "qrCount": 3,
+      "qrIssues": [],
+      "brokenImages": [],
+      "brokenImageCount": 0,
+      "pageScrollHeight": 1123,
+      "pageClientHeight": 1123,
+      "trimRisk": true,
+      "viewportWidth": 1550
+    },
+    "issues": [
+      "print:ACTION_FOOTER_OVERLAP",
+      "screen:ACTION_FOOTER_OVERLAP"
+    ],
+    "warnings": [
+      "PRINT_EDGE_RISK_NON_BORDERLESS_PRINTER"
+    ],
+    "status": "FAIL",
+    "originalPdf": {
+      "pages": 1,
+      "widthPt": 595.3,
+      "heightPt": 841.9,
+      "a4": true
+    },
+    "renderedPdf": {
+      "pages": 1,
+      "widthPt": 595.0,
+      "heightPt": 841.9,
+      "a4": true
+    }
+  },
+  {
+    "file": "flyer-flower.html",
+    "stem": "flyer-flower",
+    "screen": {
+      "page": {
+        "top": 107.34375,
+        "bottom": 1229.859375,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 1122.515625
+      },
+      "footer": {
+        "top": 1193.96875,
+        "bottom": 1229.859375,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 35.890625
+      },
+      "hero": {
+        "top": 107.34375,
+        "bottom": 394.578125,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 287.234375
+      },
+      "heroLabelCount": 3,
+      "heroLabelGap": 43.9,
+      "footerActionGap": 3.1,
+      "textRanges": 122,
+      "textClips": [],
+      "textClipCount": 0,
+      "pageClips": [],
+      "pageClipCount": 0,
+      "footerCollisions": [],
+      "footerCollisionCount": 0,
+      "qrCount": 3,
+      "qrIssues": [],
+      "brokenImages": [],
+      "brokenImageCount": 0,
+      "pageScrollHeight": 1123,
+      "pageClientHeight": 1123,
+      "trimRisk": true,
+      "viewportWidth": 1550
+    },
+    "print": {
+      "page": {
+        "top": 0,
+        "bottom": 1122.515625,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 1122.515625
+      },
+      "footer": {
+        "top": 1086.625,
+        "bottom": 1122.515625,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 35.890625
+      },
+      "hero": {
+        "top": 0,
+        "bottom": 287.234375,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 287.234375
+      },
+      "heroLabelCount": 3,
+      "heroLabelGap": 43.9,
+      "footerActionGap": 3.1,
+      "textRanges": 122,
+      "textClips": [],
+      "textClipCount": 0,
+      "pageClips": [],
+      "pageClipCount": 0,
+      "footerCollisions": [],
+      "footerCollisionCount": 0,
+      "qrCount": 3,
+      "qrIssues": [],
+      "brokenImages": [],
+      "brokenImageCount": 0,
+      "pageScrollHeight": 1123,
+      "pageClientHeight": 1123,
+      "trimRisk": true,
+      "viewportWidth": 1550
+    },
+    "issues": [],
+    "warnings": [
+      "PRINT_EDGE_RISK_NON_BORDERLESS_PRINTER"
+    ],
+    "status": "REVIEW",
+    "originalPdf": {
+      "pages": 1,
+      "widthPt": 595.0,
+      "heightPt": 841.9,
+      "a4": true
+    },
+    "renderedPdf": {
+      "pages": 1,
+      "widthPt": 595.0,
+      "heightPt": 841.9,
+      "a4": true
+    }
+  },
+  {
+    "file": "flyer-funeral.html",
+    "stem": "flyer-funeral",
+    "screen": {
+      "page": {
+        "top": 107.34375,
+        "bottom": 1229.859375,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 1122.515625
+      },
+      "footer": {
+        "top": 1193.96875,
+        "bottom": 1229.859375,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 35.890625
+      },
+      "hero": {
+        "top": 107.34375,
+        "bottom": 394.578125,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 287.234375
+      },
+      "heroLabelCount": 4,
+      "heroLabelGap": 10,
+      "footerActionGap": 5.9,
+      "textRanges": 122,
+      "textClips": [],
+      "textClipCount": 0,
+      "pageClips": [],
+      "pageClipCount": 0,
+      "footerCollisions": [],
+      "footerCollisionCount": 0,
+      "qrCount": 3,
+      "qrIssues": [],
+      "brokenImages": [],
+      "brokenImageCount": 0,
+      "pageScrollHeight": 1123,
+      "pageClientHeight": 1123,
+      "trimRisk": true,
+      "viewportWidth": 1550
+    },
+    "print": {
+      "page": {
+        "top": 0,
+        "bottom": 1122.515625,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 1122.515625
+      },
+      "footer": {
+        "top": 1086.625,
+        "bottom": 1122.515625,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 35.890625
+      },
+      "hero": {
+        "top": 0,
+        "bottom": 287.234375,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 287.234375
+      },
+      "heroLabelCount": 4,
+      "heroLabelGap": 10,
+      "footerActionGap": 5.9,
+      "textRanges": 122,
+      "textClips": [],
+      "textClipCount": 0,
+      "pageClips": [],
+      "pageClipCount": 0,
+      "footerCollisions": [],
+      "footerCollisionCount": 0,
+      "qrCount": 3,
+      "qrIssues": [],
+      "brokenImages": [],
+      "brokenImageCount": 0,
+      "pageScrollHeight": 1123,
+      "pageClientHeight": 1123,
+      "trimRisk": true,
+      "viewportWidth": 1550
+    },
+    "issues": [],
+    "warnings": [
+      "PRINT_EDGE_RISK_NON_BORDERLESS_PRINTER"
+    ],
+    "status": "REVIEW",
+    "originalPdf": {
+      "pages": 1,
+      "widthPt": 595.0,
+      "heightPt": 841.9,
+      "a4": true
+    },
+    "renderedPdf": {
+      "pages": 1,
+      "widthPt": 595.0,
+      "heightPt": 841.9,
+      "a4": true
+    }
+  },
+  {
+    "file": "flyer-gakudo.html",
+    "stem": "flyer-gakudo",
+    "screen": {
+      "page": {
+        "top": 107.34375,
+        "bottom": 1229.859375,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 1122.515625
+      },
+      "footer": {
+        "top": 1193.96875,
+        "bottom": 1229.859375,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 35.890625
+      },
+      "hero": {
+        "top": 107.34375,
+        "bottom": 394.578125,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 287.234375
+      },
+      "heroLabelCount": 3,
+      "heroLabelGap": 12.4,
+      "footerActionGap": 11.3,
+      "textRanges": 126,
+      "textClips": [],
+      "textClipCount": 0,
+      "pageClips": [],
+      "pageClipCount": 0,
+      "footerCollisions": [],
+      "footerCollisionCount": 0,
+      "qrCount": 3,
+      "qrIssues": [],
+      "brokenImages": [],
+      "brokenImageCount": 0,
+      "pageScrollHeight": 1123,
+      "pageClientHeight": 1123,
+      "trimRisk": true,
+      "viewportWidth": 1550
+    },
+    "print": {
+      "page": {
+        "top": 0,
+        "bottom": 1122.515625,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 1122.515625
+      },
+      "footer": {
+        "top": 1086.625,
+        "bottom": 1122.515625,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 35.890625
+      },
+      "hero": {
+        "top": 0,
+        "bottom": 287.234375,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 287.234375
+      },
+      "heroLabelCount": 3,
+      "heroLabelGap": 12.4,
+      "footerActionGap": 11.3,
+      "textRanges": 126,
+      "textClips": [],
+      "textClipCount": 0,
+      "pageClips": [],
+      "pageClipCount": 0,
+      "footerCollisions": [],
+      "footerCollisionCount": 0,
+      "qrCount": 3,
+      "qrIssues": [],
+      "brokenImages": [],
+      "brokenImageCount": 0,
+      "pageScrollHeight": 1123,
+      "pageClientHeight": 1123,
+      "trimRisk": true,
+      "viewportWidth": 1550
+    },
+    "issues": [],
+    "warnings": [
+      "PRINT_EDGE_RISK_NON_BORDERLESS_PRINTER"
+    ],
+    "status": "REVIEW",
+    "originalPdf": {
+      "pages": 1,
+      "widthPt": 595.0,
+      "heightPt": 841.9,
+      "a4": true
+    },
+    "renderedPdf": {
+      "pages": 1,
+      "widthPt": 595.0,
+      "heightPt": 841.9,
+      "a4": true
+    }
+  },
+  {
+    "file": "flyer-green-rental.html",
+    "stem": "flyer-green-rental",
+    "screen": {
+      "page": {
+        "top": 107.34375,
+        "bottom": 1229.859375,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 1122.515625
+      },
+      "footer": {
+        "top": 1193.96875,
+        "bottom": 1229.859375,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 35.890625
+      },
+      "hero": {
+        "top": 107.34375,
+        "bottom": 394.578125,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 287.234375
+      },
+      "heroLabelCount": 4,
+      "heroLabelGap": 6.1,
+      "footerActionGap": 86.3,
+      "textRanges": 124,
+      "textClips": [],
+      "textClipCount": 0,
+      "pageClips": [],
+      "pageClipCount": 0,
+      "footerCollisions": [],
+      "footerCollisionCount": 0,
+      "qrCount": 3,
+      "qrIssues": [],
+      "brokenImages": [],
+      "brokenImageCount": 0,
+      "pageScrollHeight": 1123,
+      "pageClientHeight": 1123,
+      "trimRisk": true,
+      "viewportWidth": 1550
+    },
+    "print": {
+      "page": {
+        "top": 0,
+        "bottom": 1122.515625,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 1122.515625
+      },
+      "footer": {
+        "top": 1086.625,
+        "bottom": 1122.515625,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 35.890625
+      },
+      "hero": {
+        "top": 0,
+        "bottom": 287.234375,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 287.234375
+      },
+      "heroLabelCount": 4,
+      "heroLabelGap": 6.1,
+      "footerActionGap": 122,
+      "textRanges": 123,
+      "textClips": [],
+      "textClipCount": 0,
+      "pageClips": [],
+      "pageClipCount": 0,
+      "footerCollisions": [],
+      "footerCollisionCount": 0,
+      "qrCount": 3,
+      "qrIssues": [],
+      "brokenImages": [],
+      "brokenImageCount": 0,
+      "pageScrollHeight": 1123,
+      "pageClientHeight": 1123,
+      "trimRisk": true,
+      "viewportWidth": 1550
+    },
+    "issues": [],
+    "warnings": [
+      "PRINT_EDGE_RISK_NON_BORDERLESS_PRINTER"
+    ],
+    "status": "REVIEW",
+    "originalPdf": {
+      "pages": 1,
+      "widthPt": 595.0,
+      "heightPt": 841.9,
+      "a4": true
+    },
+    "renderedPdf": {
+      "pages": 1,
+      "widthPt": 595.0,
+      "heightPt": 841.9,
+      "a4": true
+    }
+  },
+  {
+    "file": "flyer-gym.html",
+    "stem": "flyer-gym",
+    "screen": {
+      "page": {
+        "top": 107.34375,
+        "bottom": 1229.859375,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 1122.515625
+      },
+      "footer": {
+        "top": 1193.96875,
+        "bottom": 1229.859375,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 35.890625
+      },
+      "hero": {
+        "top": 107.34375,
+        "bottom": 394.578125,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 287.234375
+      },
+      "heroLabelCount": 4,
+      "heroLabelGap": 6.1,
+      "footerActionGap": 1.1,
+      "textRanges": 124,
+      "textClips": [],
+      "textClipCount": 0,
+      "pageClips": [],
+      "pageClipCount": 0,
+      "footerCollisions": [],
+      "footerCollisionCount": 0,
+      "qrCount": 3,
+      "qrIssues": [],
+      "brokenImages": [],
+      "brokenImageCount": 0,
+      "pageScrollHeight": 1123,
+      "pageClientHeight": 1123,
+      "trimRisk": true,
+      "viewportWidth": 1550
+    },
+    "print": {
+      "page": {
+        "top": 0,
+        "bottom": 1122.515625,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 1122.515625
+      },
+      "footer": {
+        "top": 1086.625,
+        "bottom": 1122.515625,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 35.890625
+      },
+      "hero": {
+        "top": 0,
+        "bottom": 287.234375,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 287.234375
+      },
+      "heroLabelCount": 4,
+      "heroLabelGap": 6.1,
+      "footerActionGap": 1.1,
+      "textRanges": 124,
+      "textClips": [],
+      "textClipCount": 0,
+      "pageClips": [],
+      "pageClipCount": 0,
+      "footerCollisions": [],
+      "footerCollisionCount": 0,
+      "qrCount": 3,
+      "qrIssues": [],
+      "brokenImages": [],
+      "brokenImageCount": 0,
+      "pageScrollHeight": 1123,
+      "pageClientHeight": 1123,
+      "trimRisk": true,
+      "viewportWidth": 1550
+    },
+    "issues": [
+      "print:ACTION_FOOTER_OVERLAP",
+      "screen:ACTION_FOOTER_OVERLAP"
+    ],
+    "warnings": [
+      "PRINT_EDGE_RISK_NON_BORDERLESS_PRINTER"
+    ],
+    "status": "FAIL",
+    "originalPdf": {
+      "pages": 1,
+      "widthPt": 595.0,
+      "heightPt": 841.9,
+      "a4": true
+    },
+    "renderedPdf": {
+      "pages": 1,
+      "widthPt": 595.0,
+      "heightPt": 841.9,
+      "a4": true
+    }
+  },
+  {
+    "file": "flyer-gyosei.html",
+    "stem": "flyer-gyosei",
+    "screen": {
+      "page": {
+        "top": 107.34375,
+        "bottom": 1229.859375,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 1122.515625
+      },
+      "footer": {
+        "top": 1193.96875,
+        "bottom": 1229.859375,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 35.890625
+      },
+      "hero": {
+        "top": 107.34375,
+        "bottom": 394.578125,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 287.234375
+      },
+      "heroLabelCount": 4,
+      "heroLabelGap": 6.6,
+      "footerActionGap": 5,
+      "textRanges": 121,
+      "textClips": [
+        {
+          "text": "GYOSEI / CLIENT CONSULTATION",
+          "element": "DIV.hero-photo-label",
+          "ancestor": "HEADER.hero",
+          "lossY": 4.4,
+          "lossX": 0
+        }
+      ],
+      "textClipCount": 1,
+      "pageClips": [],
+      "pageClipCount": 0,
+      "footerCollisions": [],
+      "footerCollisionCount": 0,
+      "qrCount": 3,
+      "qrIssues": [],
+      "brokenImages": [],
+      "brokenImageCount": 0,
+      "pageScrollHeight": 1123,
+      "pageClientHeight": 1123,
+      "trimRisk": true,
+      "viewportWidth": 1550
+    },
+    "print": {
+      "page": {
+        "top": 0,
+        "bottom": 1122.515625,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 1122.515625
+      },
+      "footer": {
+        "top": 1086.625,
+        "bottom": 1122.515625,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 35.890625
+      },
+      "hero": {
+        "top": 0,
+        "bottom": 287.234375,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 287.234375
+      },
+      "heroLabelCount": 4,
+      "heroLabelGap": 6.6,
+      "footerActionGap": 5,
+      "textRanges": 121,
+      "textClips": [
+        {
+          "text": "GYOSEI / CLIENT CONSULTATION",
+          "element": "DIV.hero-photo-label",
+          "ancestor": "HEADER.hero",
+          "lossY": 4.4,
+          "lossX": 0
+        }
+      ],
+      "textClipCount": 1,
+      "pageClips": [],
+      "pageClipCount": 0,
+      "footerCollisions": [],
+      "footerCollisionCount": 0,
+      "qrCount": 3,
+      "qrIssues": [],
+      "brokenImages": [],
+      "brokenImageCount": 0,
+      "pageScrollHeight": 1123,
+      "pageClientHeight": 1123,
+      "trimRisk": true,
+      "viewportWidth": 1550
+    },
+    "issues": [
+      "print:TEXT_CLIP(1)",
+      "screen:TEXT_CLIP(1)"
+    ],
+    "warnings": [
+      "PRINT_EDGE_RISK_NON_BORDERLESS_PRINTER"
+    ],
+    "status": "FAIL",
+    "originalPdf": {
+      "pages": 1,
+      "widthPt": 595.3,
+      "heightPt": 841.9,
+      "a4": true
+    },
+    "renderedPdf": {
+      "pages": 1,
+      "widthPt": 595.0,
+      "heightPt": 841.9,
+      "a4": true
+    }
+  },
+  {
+    "file": "flyer-hair.html",
+    "stem": "flyer-hair",
+    "screen": {
+      "page": {
+        "top": 93.34375,
+        "bottom": 1215.859375,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 1122.515625
+      },
+      "footer": {
+        "top": 1179.96875,
+        "bottom": 1215.859375,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 35.890625
+      },
+      "hero": {
+        "top": 93.34375,
+        "bottom": 378.6875,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 285.34375
+      },
+      "heroLabelCount": 0,
+      "heroLabelGap": null,
+      "footerActionGap": 32.3,
+      "textRanges": 103,
+      "textClips": [],
+      "textClipCount": 0,
+      "pageClips": [],
+      "pageClipCount": 0,
+      "footerCollisions": [],
+      "footerCollisionCount": 0,
+      "qrCount": 3,
+      "qrIssues": [],
+      "brokenImages": [],
+      "brokenImageCount": 0,
+      "pageScrollHeight": 1123,
+      "pageClientHeight": 1123,
+      "trimRisk": true,
+      "viewportWidth": 1550
+    },
+    "print": {
+      "page": {
+        "top": 0,
+        "bottom": 1122.515625,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 1122.515625
+      },
+      "footer": {
+        "top": 1086.625,
+        "bottom": 1122.515625,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 35.890625
+      },
+      "hero": {
+        "top": 0,
+        "bottom": 285.34375,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 285.34375
+      },
+      "heroLabelCount": 0,
+      "heroLabelGap": null,
+      "footerActionGap": 32.3,
+      "textRanges": 103,
+      "textClips": [],
+      "textClipCount": 0,
+      "pageClips": [],
+      "pageClipCount": 0,
+      "footerCollisions": [],
+      "footerCollisionCount": 0,
+      "qrCount": 3,
+      "qrIssues": [],
+      "brokenImages": [],
+      "brokenImageCount": 0,
+      "pageScrollHeight": 1123,
+      "pageClientHeight": 1123,
+      "trimRisk": true,
+      "viewportWidth": 1550
+    },
+    "issues": [],
+    "warnings": [
+      "PRINT_EDGE_RISK_NON_BORDERLESS_PRINTER"
+    ],
+    "status": "REVIEW",
+    "originalPdf": {
+      "pages": 1,
+      "widthPt": 595.0,
+      "heightPt": 841.9,
+      "a4": true
+    },
+    "renderedPdf": {
+      "pages": 1,
+      "widthPt": 595.0,
+      "heightPt": 841.9,
+      "a4": true
+    }
+  },
+  {
+    "file": "flyer-haishoku.html",
+    "stem": "flyer-haishoku",
+    "screen": {
+      "page": {
+        "top": 20,
+        "bottom": 1142.515625,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 1122.515625
+      },
+      "footer": {
+        "top": 852.515625,
+        "bottom": 930.765625,
+        "left": 417.828125,
+        "right": 1132.171875,
+        "width": 714.34375,
+        "height": 78.25
+      },
+      "hero": {
+        "top": 89.90625,
+        "bottom": 329.765625,
+        "left": 417.828125,
+        "right": 1132.171875,
+        "width": 714.34375,
+        "height": 239.859375
+      },
+      "heroLabelCount": 0,
+      "heroLabelGap": null,
+      "footerActionGap": null,
+      "textRanges": 81,
+      "textClips": [],
+      "textClipCount": 0,
+      "pageClips": [],
+      "pageClipCount": 0,
+      "footerCollisions": [],
+      "footerCollisionCount": 0,
+      "qrCount": 3,
+      "qrIssues": [
+        {
+          "alt": "LINE相談QR",
+          "at": 840.5,
+          "reason": "outside page or overlaps footer"
+        },
+        {
+          "alt": "DPRO SHOP QR",
+          "at": 840.5,
+          "reason": "outside page or overlaps footer"
+        },
+        {
+          "alt": "LIVE DEMO QR",
+          "at": 840.5,
+          "reason": "outside page or overlaps footer"
+        }
+      ],
+      "brokenImages": [],
+      "brokenImageCount": 0,
+      "pageScrollHeight": 1123,
+      "pageClientHeight": 1123,
+      "trimRisk": false,
+      "viewportWidth": 1550
+    },
+    "print": {
+      "page": {
+        "top": 0,
+        "bottom": 1122.515625,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 1122.515625
+      },
+      "footer": {
+        "top": 832.515625,
+        "bottom": 910.765625,
+        "left": 39.671875,
+        "right": 754.015625,
+        "width": 714.34375,
+        "height": 78.25
+      },
+      "hero": {
+        "top": 69.90625,
+        "bottom": 309.765625,
+        "left": 39.671875,
+        "right": 754.015625,
+        "width": 714.34375,
+        "height": 239.859375
+      },
+      "heroLabelCount": 0,
+      "heroLabelGap": null,
+      "footerActionGap": null,
+      "textRanges": 81,
+      "textClips": [],
+      "textClipCount": 0,
+      "pageClips": [],
+      "pageClipCount": 0,
+      "footerCollisions": [],
+      "footerCollisionCount": 0,
+      "qrCount": 3,
+      "qrIssues": [
+        {
+          "alt": "LINE相談QR",
+          "at": 840.5,
+          "reason": "outside page or overlaps footer"
+        },
+        {
+          "alt": "DPRO SHOP QR",
+          "at": 840.5,
+          "reason": "outside page or overlaps footer"
+        },
+        {
+          "alt": "LIVE DEMO QR",
+          "at": 840.5,
+          "reason": "outside page or overlaps footer"
+        }
+      ],
+      "brokenImages": [],
+      "brokenImageCount": 0,
+      "pageScrollHeight": 1123,
+      "pageClientHeight": 1123,
+      "trimRisk": false,
+      "viewportWidth": 1550
+    },
+    "issues": [
+      "print:QR_CLIPPED(3)",
+      "screen:QR_CLIPPED(3)"
+    ],
+    "warnings": [],
+    "status": "FAIL",
+    "originalPdf": {
+      "pages": 1,
+      "widthPt": 595.0,
+      "heightPt": 841.9,
+      "a4": true
+    },
+    "renderedPdf": {
+      "pages": 1,
+      "widthPt": 595.0,
+      "heightPt": 841.9,
+      "a4": true
+    }
+  },
+  {
+    "file": "flyer-homecare.html",
+    "stem": "flyer-homecare",
+    "screen": {
+      "page": {
+        "top": 107.34375,
+        "bottom": 1229.859375,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 1122.515625
+      },
+      "footer": {
+        "top": 1193.96875,
+        "bottom": 1229.859375,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 35.890625
+      },
+      "hero": {
+        "top": 107.34375,
+        "bottom": 394.578125,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 287.234375
+      },
+      "heroLabelCount": 4,
+      "heroLabelGap": 3.1,
+      "footerActionGap": -3.1,
+      "textRanges": 123,
+      "textClips": [],
+      "textClipCount": 0,
+      "pageClips": [],
+      "pageClipCount": 0,
+      "footerCollisions": [],
+      "footerCollisionCount": 0,
+      "qrCount": 3,
+      "qrIssues": [],
+      "brokenImages": [],
+      "brokenImageCount": 0,
+      "pageScrollHeight": 1123,
+      "pageClientHeight": 1123,
+      "trimRisk": true,
+      "viewportWidth": 1550
+    },
+    "print": {
+      "page": {
+        "top": 0,
+        "bottom": 1122.515625,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 1122.515625
+      },
+      "footer": {
+        "top": 1086.625,
+        "bottom": 1122.515625,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 35.890625
+      },
+      "hero": {
+        "top": 0,
+        "bottom": 287.234375,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 287.234375
+      },
+      "heroLabelCount": 4,
+      "heroLabelGap": 3.1,
+      "footerActionGap": -3.1,
+      "textRanges": 123,
+      "textClips": [],
+      "textClipCount": 0,
+      "pageClips": [],
+      "pageClipCount": 0,
+      "footerCollisions": [],
+      "footerCollisionCount": 0,
+      "qrCount": 3,
+      "qrIssues": [],
+      "brokenImages": [],
+      "brokenImageCount": 0,
+      "pageScrollHeight": 1123,
+      "pageClientHeight": 1123,
+      "trimRisk": true,
+      "viewportWidth": 1550
+    },
+    "issues": [
+      "print:ACTION_FOOTER_OVERLAP",
+      "screen:ACTION_FOOTER_OVERLAP"
+    ],
+    "warnings": [
+      "PRINT_EDGE_RISK_NON_BORDERLESS_PRINTER"
+    ],
+    "status": "FAIL",
+    "originalPdf": {
+      "pages": 1,
+      "widthPt": 595.0,
+      "heightPt": 841.9,
+      "a4": true
+    },
+    "renderedPdf": {
+      "pages": 1,
+      "widthPt": 595.0,
+      "heightPt": 841.9,
+      "a4": true
+    }
+  },
+  {
+    "file": "flyer-homenursing.html",
+    "stem": "flyer-homenursing",
+    "screen": {
+      "page": {
+        "top": 0,
+        "bottom": 1122.515625,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 1122.515625
+      },
+      "footer": {
+        "top": 1059.953125,
+        "bottom": 1092.28125,
+        "left": 427.28125,
+        "right": 1122.71875,
+        "width": 695.4375,
+        "height": 32.328125
+      },
+      "hero": {
+        "top": 0,
+        "bottom": 302.359375,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 302.359375
+      },
+      "heroLabelCount": 0,
+      "heroLabelGap": null,
+      "footerActionGap": 25,
+      "textRanges": 61,
+      "textClips": [],
+      "textClipCount": 0,
+      "pageClips": [],
+      "pageClipCount": 0,
+      "footerCollisions": [],
+      "footerCollisionCount": 0,
+      "qrCount": 2,
+      "qrIssues": [],
+      "brokenImages": [],
+      "brokenImageCount": 0,
+      "pageScrollHeight": 1123,
+      "pageClientHeight": 1123,
+      "trimRisk": false,
+      "viewportWidth": 1550
+    },
+    "print": {
+      "page": {
+        "top": 0,
+        "bottom": 1122.515625,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 1122.515625
+      },
+      "footer": {
+        "top": 1059.953125,
+        "bottom": 1092.28125,
+        "left": 427.28125,
+        "right": 1122.71875,
+        "width": 695.4375,
+        "height": 32.328125
+      },
+      "hero": {
+        "top": 0,
+        "bottom": 302.359375,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 302.359375
+      },
+      "heroLabelCount": 0,
+      "heroLabelGap": null,
+      "footerActionGap": 25,
+      "textRanges": 61,
+      "textClips": [],
+      "textClipCount": 0,
+      "pageClips": [],
+      "pageClipCount": 0,
+      "footerCollisions": [],
+      "footerCollisionCount": 0,
+      "qrCount": 2,
+      "qrIssues": [],
+      "brokenImages": [],
+      "brokenImageCount": 0,
+      "pageScrollHeight": 1123,
+      "pageClientHeight": 1123,
+      "trimRisk": false,
+      "viewportWidth": 1550
+    },
+    "issues": [],
+    "warnings": [],
+    "status": "PASS",
+    "originalPdf": {
+      "pages": 1,
+      "widthPt": 595.3,
+      "heightPt": 841.9,
+      "a4": true
+    },
+    "renderedPdf": {
+      "pages": 1,
+      "widthPt": 595.0,
+      "heightPt": 841.9,
+      "a4": true
+    }
+  },
+  {
+    "file": "flyer-houkago.html",
+    "stem": "flyer-houkago",
+    "screen": {
+      "page": {
+        "top": 0,
+        "bottom": 1122.515625,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 1122.515625
+      },
+      "footer": {
+        "top": 1086.625,
+        "bottom": 1122.515625,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 35.890625
+      },
+      "hero": {
+        "top": 86.53125,
+        "bottom": 294.390625,
+        "left": 415.9375,
+        "right": 1134.0625,
+        "width": 718.125,
+        "height": 207.859375
+      },
+      "heroLabelCount": 0,
+      "heroLabelGap": null,
+      "footerActionGap": null,
+      "textRanges": 104,
+      "textClips": [],
+      "textClipCount": 0,
+      "pageClips": [],
+      "pageClipCount": 0,
+      "footerCollisions": [],
+      "footerCollisionCount": 0,
+      "qrCount": 3,
+      "qrIssues": [],
+      "brokenImages": [],
+      "brokenImageCount": 0,
+      "pageScrollHeight": 1123,
+      "pageClientHeight": 1123,
+      "trimRisk": true,
+      "viewportWidth": 1550
+    },
+    "print": {
+      "page": {
+        "top": 0,
+        "bottom": 1122.515625,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 1122.515625
+      },
+      "footer": {
+        "top": 1086.625,
+        "bottom": 1122.515625,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 35.890625
+      },
+      "hero": {
+        "top": 86.53125,
+        "bottom": 294.390625,
+        "left": 37.78125,
+        "right": 755.90625,
+        "width": 718.125,
+        "height": 207.859375
+      },
+      "heroLabelCount": 0,
+      "heroLabelGap": null,
+      "footerActionGap": null,
+      "textRanges": 104,
+      "textClips": [],
+      "textClipCount": 0,
+      "pageClips": [],
+      "pageClipCount": 0,
+      "footerCollisions": [],
+      "footerCollisionCount": 0,
+      "qrCount": 3,
+      "qrIssues": [],
+      "brokenImages": [],
+      "brokenImageCount": 0,
+      "pageScrollHeight": 1123,
+      "pageClientHeight": 1123,
+      "trimRisk": true,
+      "viewportWidth": 1550
+    },
+    "issues": [],
+    "warnings": [
+      "PRINT_EDGE_RISK_NON_BORDERLESS_PRINTER"
+    ],
+    "status": "REVIEW",
+    "originalPdf": {
+      "pages": 1,
+      "widthPt": 595.0,
+      "heightPt": 841.9,
+      "a4": true
+    },
+    "renderedPdf": {
+      "pages": 1,
+      "widthPt": 595.0,
+      "heightPt": 841.9,
+      "a4": true
+    }
+  },
+  {
+    "file": "flyer-housekeep.html",
+    "stem": "flyer-housekeep",
+    "screen": {
+      "page": {
+        "top": 107.34375,
+        "bottom": 1229.859375,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 1122.515625
+      },
+      "footer": {
+        "top": 1193.96875,
+        "bottom": 1229.859375,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 35.890625
+      },
+      "hero": {
+        "top": 107.34375,
+        "bottom": 394.578125,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 287.234375
+      },
+      "heroLabelCount": 4,
+      "heroLabelGap": 7.3,
+      "footerActionGap": 4.8,
+      "textRanges": 117,
+      "textClips": [],
+      "textClipCount": 0,
+      "pageClips": [],
+      "pageClipCount": 0,
+      "footerCollisions": [],
+      "footerCollisionCount": 0,
+      "qrCount": 3,
+      "qrIssues": [],
+      "brokenImages": [],
+      "brokenImageCount": 0,
+      "pageScrollHeight": 1123,
+      "pageClientHeight": 1123,
+      "trimRisk": true,
+      "viewportWidth": 1550
+    },
+    "print": {
+      "page": {
+        "top": 0,
+        "bottom": 1122.515625,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 1122.515625
+      },
+      "footer": {
+        "top": 1086.625,
+        "bottom": 1122.515625,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 35.890625
+      },
+      "hero": {
+        "top": 0,
+        "bottom": 287.234375,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 287.234375
+      },
+      "heroLabelCount": 4,
+      "heroLabelGap": 7.3,
+      "footerActionGap": 4.8,
+      "textRanges": 117,
+      "textClips": [],
+      "textClipCount": 0,
+      "pageClips": [],
+      "pageClipCount": 0,
+      "footerCollisions": [],
+      "footerCollisionCount": 0,
+      "qrCount": 3,
+      "qrIssues": [],
+      "brokenImages": [],
+      "brokenImageCount": 0,
+      "pageScrollHeight": 1123,
+      "pageClientHeight": 1123,
+      "trimRisk": true,
+      "viewportWidth": 1550
+    },
+    "issues": [],
+    "warnings": [
+      "PRINT_EDGE_RISK_NON_BORDERLESS_PRINTER"
+    ],
+    "status": "REVIEW",
+    "originalPdf": {
+      "pages": 1,
+      "widthPt": 595.0,
+      "heightPt": 841.9,
+      "a4": true
+    },
+    "renderedPdf": {
+      "pages": 1,
+      "widthPt": 595.0,
+      "heightPt": 841.9,
+      "a4": true
+    }
+  },
+  {
+    "file": "flyer-izakaya.html",
+    "stem": "flyer-izakaya",
+    "screen": {
+      "page": {
+        "top": 107.34375,
+        "bottom": 1229.859375,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 1122.515625
+      },
+      "footer": {
+        "top": 1193.96875,
+        "bottom": 1229.859375,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 35.890625
+      },
+      "hero": {
+        "top": 107.34375,
+        "bottom": 394.578125,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 287.234375
+      },
+      "heroLabelCount": 4,
+      "heroLabelGap": 6.1,
+      "footerActionGap": -1.8,
+      "textRanges": 120,
+      "textClips": [],
+      "textClipCount": 0,
+      "pageClips": [],
+      "pageClipCount": 0,
+      "footerCollisions": [],
+      "footerCollisionCount": 0,
+      "qrCount": 3,
+      "qrIssues": [],
+      "brokenImages": [],
+      "brokenImageCount": 0,
+      "pageScrollHeight": 1123,
+      "pageClientHeight": 1123,
+      "trimRisk": true,
+      "viewportWidth": 1550
+    },
+    "print": {
+      "page": {
+        "top": 0,
+        "bottom": 1122.515625,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 1122.515625
+      },
+      "footer": {
+        "top": 1086.625,
+        "bottom": 1122.515625,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 35.890625
+      },
+      "hero": {
+        "top": 0,
+        "bottom": 287.234375,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 287.234375
+      },
+      "heroLabelCount": 4,
+      "heroLabelGap": 6.1,
+      "footerActionGap": -1.8,
+      "textRanges": 120,
+      "textClips": [],
+      "textClipCount": 0,
+      "pageClips": [],
+      "pageClipCount": 0,
+      "footerCollisions": [],
+      "footerCollisionCount": 0,
+      "qrCount": 3,
+      "qrIssues": [],
+      "brokenImages": [],
+      "brokenImageCount": 0,
+      "pageScrollHeight": 1123,
+      "pageClientHeight": 1123,
+      "trimRisk": true,
+      "viewportWidth": 1550
+    },
+    "issues": [
+      "print:ACTION_FOOTER_OVERLAP",
+      "screen:ACTION_FOOTER_OVERLAP"
+    ],
+    "warnings": [
+      "PRINT_EDGE_RISK_NON_BORDERLESS_PRINTER"
+    ],
+    "status": "FAIL",
+    "originalPdf": {
+      "pages": 1,
+      "widthPt": 595.0,
+      "heightPt": 841.9,
+      "a4": true
+    },
+    "renderedPdf": {
+      "pages": 1,
+      "widthPt": 595.0,
+      "heightPt": 841.9,
+      "a4": true
+    }
+  },
+  {
+    "file": "flyer-medical.html",
+    "stem": "flyer-medical",
+    "screen": {
+      "page": {
+        "top": 0,
+        "bottom": 1143.875,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 1143.875
+      },
+      "footer": {
+        "top": 1111.203125,
+        "bottom": 1121.203125,
+        "left": 431.0625,
+        "right": 1118.9375,
+        "width": 687.875,
+        "height": 10
+      },
+      "hero": null,
+      "heroLabelCount": 0,
+      "heroLabelGap": null,
+      "footerActionGap": 94,
+      "textRanges": 60,
+      "textClips": [],
+      "textClipCount": 0,
+      "pageClips": [],
+      "pageClipCount": 0,
+      "footerCollisions": [],
+      "footerCollisionCount": 0,
+      "qrCount": 3,
+      "qrIssues": [],
+      "brokenImages": [],
+      "brokenImageCount": 0,
+      "pageScrollHeight": 1144,
+      "pageClientHeight": 1144,
+      "trimRisk": false,
+      "viewportWidth": 1550
+    },
+    "print": {
+      "page": {
+        "top": 0,
+        "bottom": 1143.875,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 1143.875
+      },
+      "footer": {
+        "top": 1111.203125,
+        "bottom": 1121.203125,
+        "left": 431.0625,
+        "right": 1118.9375,
+        "width": 687.875,
+        "height": 10
+      },
+      "hero": null,
+      "heroLabelCount": 0,
+      "heroLabelGap": null,
+      "footerActionGap": 94,
+      "textRanges": 60,
+      "textClips": [],
+      "textClipCount": 0,
+      "pageClips": [],
+      "pageClipCount": 0,
+      "footerCollisions": [],
+      "footerCollisionCount": 0,
+      "qrCount": 3,
+      "qrIssues": [],
+      "brokenImages": [],
+      "brokenImageCount": 0,
+      "pageScrollHeight": 1144,
+      "pageClientHeight": 1144,
+      "trimRisk": false,
+      "viewportWidth": 1550
+    },
+    "issues": [
+      "renderedPdf:PAGES=2"
+    ],
+    "warnings": [],
+    "status": "FAIL",
+    "originalPdf": {
+      "pages": 1,
+      "widthPt": 595.3,
+      "heightPt": 841.9,
+      "a4": true
+    },
+    "renderedPdf": {
+      "pages": 2,
+      "widthPt": 595.0,
+      "heightPt": 841.9,
+      "a4": true
+    }
+  },
+  {
+    "file": "flyer-nail.html",
+    "stem": "flyer-nail",
+    "screen": {
+      "page": {
+        "top": 107.34375,
+        "bottom": 1229.859375,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 1122.515625
+      },
+      "footer": {
+        "top": 1193.96875,
+        "bottom": 1229.859375,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 35.890625
+      },
+      "hero": {
+        "top": 107.34375,
+        "bottom": 394.578125,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 287.234375
+      },
+      "heroLabelCount": 4,
+      "heroLabelGap": 6.6,
+      "footerActionGap": -4,
+      "textRanges": 117,
+      "textClips": [],
+      "textClipCount": 0,
+      "pageClips": [],
+      "pageClipCount": 0,
+      "footerCollisions": [],
+      "footerCollisionCount": 0,
+      "qrCount": 3,
+      "qrIssues": [],
+      "brokenImages": [],
+      "brokenImageCount": 0,
+      "pageScrollHeight": 1123,
+      "pageClientHeight": 1123,
+      "trimRisk": true,
+      "viewportWidth": 1550
+    },
+    "print": {
+      "page": {
+        "top": 0,
+        "bottom": 1122.515625,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 1122.515625
+      },
+      "footer": {
+        "top": 1086.625,
+        "bottom": 1122.515625,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 35.890625
+      },
+      "hero": {
+        "top": 0,
+        "bottom": 287.234375,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 287.234375
+      },
+      "heroLabelCount": 4,
+      "heroLabelGap": 6.6,
+      "footerActionGap": -4,
+      "textRanges": 117,
+      "textClips": [],
+      "textClipCount": 0,
+      "pageClips": [],
+      "pageClipCount": 0,
+      "footerCollisions": [],
+      "footerCollisionCount": 0,
+      "qrCount": 3,
+      "qrIssues": [],
+      "brokenImages": [],
+      "brokenImageCount": 0,
+      "pageScrollHeight": 1123,
+      "pageClientHeight": 1123,
+      "trimRisk": true,
+      "viewportWidth": 1550
+    },
+    "issues": [
+      "print:ACTION_FOOTER_OVERLAP",
+      "screen:ACTION_FOOTER_OVERLAP"
+    ],
+    "warnings": [
+      "PRINT_EDGE_RISK_NON_BORDERLESS_PRINTER"
+    ],
+    "status": "FAIL",
+    "originalPdf": {
+      "pages": 1,
+      "widthPt": 595.0,
+      "heightPt": 841.9,
+      "a4": true
+    },
+    "renderedPdf": {
+      "pages": 1,
+      "widthPt": 595.0,
+      "heightPt": 841.9,
+      "a4": true
+    }
+  },
+  {
+    "file": "flyer-pet-salon.html",
+    "stem": "flyer-pet-salon",
+    "screen": {
+      "page": {
+        "top": 107.34375,
+        "bottom": 1229.859375,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 1122.515625
+      },
+      "footer": {
+        "top": 1193.96875,
+        "bottom": 1229.859375,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 35.890625
+      },
+      "hero": {
+        "top": 107.34375,
+        "bottom": 394.578125,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 287.234375
+      },
+      "heroLabelCount": 4,
+      "heroLabelGap": 6.1,
+      "footerActionGap": 1.1,
+      "textRanges": 125,
+      "textClips": [],
+      "textClipCount": 0,
+      "pageClips": [],
+      "pageClipCount": 0,
+      "footerCollisions": [],
+      "footerCollisionCount": 0,
+      "qrCount": 3,
+      "qrIssues": [],
+      "brokenImages": [],
+      "brokenImageCount": 0,
+      "pageScrollHeight": 1123,
+      "pageClientHeight": 1123,
+      "trimRisk": true,
+      "viewportWidth": 1550
+    },
+    "print": {
+      "page": {
+        "top": 0,
+        "bottom": 1122.515625,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 1122.515625
+      },
+      "footer": {
+        "top": 1086.625,
+        "bottom": 1122.515625,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 35.890625
+      },
+      "hero": {
+        "top": 0,
+        "bottom": 287.234375,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 287.234375
+      },
+      "heroLabelCount": 4,
+      "heroLabelGap": 6.1,
+      "footerActionGap": 1.1,
+      "textRanges": 125,
+      "textClips": [],
+      "textClipCount": 0,
+      "pageClips": [],
+      "pageClipCount": 0,
+      "footerCollisions": [],
+      "footerCollisionCount": 0,
+      "qrCount": 3,
+      "qrIssues": [],
+      "brokenImages": [],
+      "brokenImageCount": 0,
+      "pageScrollHeight": 1123,
+      "pageClientHeight": 1123,
+      "trimRisk": true,
+      "viewportWidth": 1550
+    },
+    "issues": [
+      "print:ACTION_FOOTER_OVERLAP",
+      "screen:ACTION_FOOTER_OVERLAP"
+    ],
+    "warnings": [
+      "PRINT_EDGE_RISK_NON_BORDERLESS_PRINTER"
+    ],
+    "status": "FAIL",
+    "originalPdf": {
+      "pages": 1,
+      "widthPt": 595.0,
+      "heightPt": 841.9,
+      "a4": true
+    },
+    "renderedPdf": {
+      "pages": 1,
+      "widthPt": 595.0,
+      "heightPt": 841.9,
+      "a4": true
+    }
+  },
+  {
+    "file": "flyer-photo.html",
+    "stem": "flyer-photo",
+    "screen": {
+      "page": {
+        "top": 107.34375,
+        "bottom": 1229.859375,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 1122.515625
+      },
+      "footer": {
+        "top": 1193.96875,
+        "bottom": 1229.859375,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 35.890625
+      },
+      "hero": {
+        "top": 107.34375,
+        "bottom": 394.578125,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 287.234375
+      },
+      "heroLabelCount": 4,
+      "heroLabelGap": 10,
+      "footerActionGap": 2.1,
+      "textRanges": 126,
+      "textClips": [],
+      "textClipCount": 0,
+      "pageClips": [],
+      "pageClipCount": 0,
+      "footerCollisions": [],
+      "footerCollisionCount": 0,
+      "qrCount": 3,
+      "qrIssues": [],
+      "brokenImages": [],
+      "brokenImageCount": 0,
+      "pageScrollHeight": 1123,
+      "pageClientHeight": 1123,
+      "trimRisk": true,
+      "viewportWidth": 1550
+    },
+    "print": {
+      "page": {
+        "top": 0,
+        "bottom": 1122.515625,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 1122.515625
+      },
+      "footer": {
+        "top": 1086.625,
+        "bottom": 1122.515625,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 35.890625
+      },
+      "hero": {
+        "top": 0,
+        "bottom": 287.234375,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 287.234375
+      },
+      "heroLabelCount": 4,
+      "heroLabelGap": 10,
+      "footerActionGap": 2.1,
+      "textRanges": 126,
+      "textClips": [],
+      "textClipCount": 0,
+      "pageClips": [],
+      "pageClipCount": 0,
+      "footerCollisions": [],
+      "footerCollisionCount": 0,
+      "qrCount": 3,
+      "qrIssues": [],
+      "brokenImages": [],
+      "brokenImageCount": 0,
+      "pageScrollHeight": 1123,
+      "pageClientHeight": 1123,
+      "trimRisk": true,
+      "viewportWidth": 1550
+    },
+    "issues": [],
+    "warnings": [
+      "PRINT_EDGE_RISK_NON_BORDERLESS_PRINTER"
+    ],
+    "status": "REVIEW",
+    "originalPdf": {
+      "pages": 1,
+      "widthPt": 595.0,
+      "heightPt": 841.9,
+      "a4": true
+    },
+    "renderedPdf": {
+      "pages": 1,
+      "widthPt": 595.0,
+      "heightPt": 841.9,
+      "a4": true
+    }
+  },
+  {
+    "file": "flyer-reform.html",
+    "stem": "flyer-reform",
+    "screen": {
+      "page": {
+        "top": 107.34375,
+        "bottom": 1229.859375,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 1122.515625
+      },
+      "footer": {
+        "top": 1193.96875,
+        "bottom": 1229.859375,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 35.890625
+      },
+      "hero": {
+        "top": 107.34375,
+        "bottom": 394.578125,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 287.234375
+      },
+      "heroLabelCount": 4,
+      "heroLabelGap": 7.3,
+      "footerActionGap": -2.7,
+      "textRanges": 124,
+      "textClips": [],
+      "textClipCount": 0,
+      "pageClips": [],
+      "pageClipCount": 0,
+      "footerCollisions": [],
+      "footerCollisionCount": 0,
+      "qrCount": 3,
+      "qrIssues": [],
+      "brokenImages": [],
+      "brokenImageCount": 0,
+      "pageScrollHeight": 1123,
+      "pageClientHeight": 1123,
+      "trimRisk": true,
+      "viewportWidth": 1550
+    },
+    "print": {
+      "page": {
+        "top": 0,
+        "bottom": 1122.515625,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 1122.515625
+      },
+      "footer": {
+        "top": 1086.625,
+        "bottom": 1122.515625,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 35.890625
+      },
+      "hero": {
+        "top": 0,
+        "bottom": 287.234375,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 287.234375
+      },
+      "heroLabelCount": 4,
+      "heroLabelGap": 7.3,
+      "footerActionGap": -2.7,
+      "textRanges": 124,
+      "textClips": [],
+      "textClipCount": 0,
+      "pageClips": [],
+      "pageClipCount": 0,
+      "footerCollisions": [],
+      "footerCollisionCount": 0,
+      "qrCount": 3,
+      "qrIssues": [],
+      "brokenImages": [],
+      "brokenImageCount": 0,
+      "pageScrollHeight": 1123,
+      "pageClientHeight": 1123,
+      "trimRisk": true,
+      "viewportWidth": 1550
+    },
+    "issues": [
+      "print:ACTION_FOOTER_OVERLAP",
+      "screen:ACTION_FOOTER_OVERLAP"
+    ],
+    "warnings": [
+      "PRINT_EDGE_RISK_NON_BORDERLESS_PRINTER"
+    ],
+    "status": "FAIL",
+    "originalPdf": {
+      "pages": 1,
+      "widthPt": 595.0,
+      "heightPt": 841.9,
+      "a4": true
+    },
+    "renderedPdf": {
+      "pages": 1,
+      "widthPt": 595.0,
+      "heightPt": 841.9,
+      "a4": true
+    }
+  },
+  {
+    "file": "flyer-repair.html",
+    "stem": "flyer-repair",
+    "screen": {
+      "page": {
+        "top": 45.34375,
+        "bottom": 1167.859375,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 1122.515625
+      },
+      "footer": {
+        "top": 1131.96875,
+        "bottom": 1167.859375,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 35.890625
+      },
+      "hero": {
+        "top": 45.34375,
+        "bottom": 332.578125,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 287.234375
+      },
+      "heroLabelCount": 0,
+      "heroLabelGap": null,
+      "footerActionGap": 5.4,
+      "textRanges": 101,
+      "textClips": [],
+      "textClipCount": 0,
+      "pageClips": [],
+      "pageClipCount": 0,
+      "footerCollisions": [],
+      "footerCollisionCount": 0,
+      "qrCount": 3,
+      "qrIssues": [],
+      "brokenImages": [],
+      "brokenImageCount": 0,
+      "pageScrollHeight": 1123,
+      "pageClientHeight": 1123,
+      "trimRisk": true,
+      "viewportWidth": 1550
+    },
+    "print": {
+      "page": {
+        "top": 0,
+        "bottom": 1122.515625,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 1122.515625
+      },
+      "footer": {
+        "top": 1086.625,
+        "bottom": 1122.515625,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 35.890625
+      },
+      "hero": {
+        "top": 0,
+        "bottom": 287.234375,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 287.234375
+      },
+      "heroLabelCount": 0,
+      "heroLabelGap": null,
+      "footerActionGap": 5.4,
+      "textRanges": 101,
+      "textClips": [],
+      "textClipCount": 0,
+      "pageClips": [],
+      "pageClipCount": 0,
+      "footerCollisions": [],
+      "footerCollisionCount": 0,
+      "qrCount": 3,
+      "qrIssues": [],
+      "brokenImages": [],
+      "brokenImageCount": 0,
+      "pageScrollHeight": 1123,
+      "pageClientHeight": 1123,
+      "trimRisk": true,
+      "viewportWidth": 1550
+    },
+    "issues": [],
+    "warnings": [
+      "PRINT_EDGE_RISK_NON_BORDERLESS_PRINTER"
+    ],
+    "status": "REVIEW",
+    "originalPdf": {
+      "pages": 1,
+      "widthPt": 595.0,
+      "heightPt": 841.9,
+      "a4": true
+    },
+    "renderedPdf": {
+      "pages": 1,
+      "widthPt": 595.0,
+      "heightPt": 841.9,
+      "a4": true
+    }
+  },
+  {
+    "file": "flyer-salesnavi.html",
+    "stem": "flyer-salesnavi",
+    "screen": {
+      "page": {
+        "top": 107.34375,
+        "bottom": 1229.859375,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 1122.515625
+      },
+      "footer": {
+        "top": 1193.96875,
+        "bottom": 1229.859375,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 35.890625
+      },
+      "hero": {
+        "top": 107.34375,
+        "bottom": 394.578125,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 287.234375
+      },
+      "heroLabelCount": 4,
+      "heroLabelGap": 3.1,
+      "footerActionGap": 102,
+      "textRanges": 122,
+      "textClips": [],
+      "textClipCount": 0,
+      "pageClips": [],
+      "pageClipCount": 0,
+      "footerCollisions": [],
+      "footerCollisionCount": 0,
+      "qrCount": 3,
+      "qrIssues": [],
+      "brokenImages": [],
+      "brokenImageCount": 0,
+      "pageScrollHeight": 1123,
+      "pageClientHeight": 1123,
+      "trimRisk": true,
+      "viewportWidth": 1550
+    },
+    "print": {
+      "page": {
+        "top": 0,
+        "bottom": 1122.515625,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 1122.515625
+      },
+      "footer": {
+        "top": 1086.625,
+        "bottom": 1122.515625,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 35.890625
+      },
+      "hero": {
+        "top": 0,
+        "bottom": 287.234375,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 287.234375
+      },
+      "heroLabelCount": 4,
+      "heroLabelGap": 3.1,
+      "footerActionGap": 102,
+      "textRanges": 122,
+      "textClips": [],
+      "textClipCount": 0,
+      "pageClips": [],
+      "pageClipCount": 0,
+      "footerCollisions": [],
+      "footerCollisionCount": 0,
+      "qrCount": 3,
+      "qrIssues": [],
+      "brokenImages": [],
+      "brokenImageCount": 0,
+      "pageScrollHeight": 1123,
+      "pageClientHeight": 1123,
+      "trimRisk": true,
+      "viewportWidth": 1550
+    },
+    "issues": [],
+    "warnings": [
+      "PRINT_EDGE_RISK_NON_BORDERLESS_PRINTER"
+    ],
+    "status": "REVIEW",
+    "originalPdf": {
+      "pages": 1,
+      "widthPt": 595.0,
+      "heightPt": 841.9,
+      "a4": true
+    },
+    "renderedPdf": {
+      "pages": 1,
+      "widthPt": 595.0,
+      "heightPt": 841.9,
+      "a4": true
+    }
+  },
+  {
+    "file": "flyer-salon.html",
+    "stem": "flyer-salon",
+    "screen": {
+      "page": {
+        "top": 107.34375,
+        "bottom": 1229.859375,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 1122.515625
+      },
+      "footer": {
+        "top": 1193.96875,
+        "bottom": 1229.859375,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 35.890625
+      },
+      "hero": {
+        "top": 107.34375,
+        "bottom": 394.578125,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 287.234375
+      },
+      "heroLabelCount": 4,
+      "heroLabelGap": 7.6,
+      "footerActionGap": 13.9,
+      "textRanges": 116,
+      "textClips": [],
+      "textClipCount": 0,
+      "pageClips": [],
+      "pageClipCount": 0,
+      "footerCollisions": [],
+      "footerCollisionCount": 0,
+      "qrCount": 3,
+      "qrIssues": [],
+      "brokenImages": [],
+      "brokenImageCount": 0,
+      "pageScrollHeight": 1123,
+      "pageClientHeight": 1123,
+      "trimRisk": true,
+      "viewportWidth": 1550
+    },
+    "print": {
+      "page": {
+        "top": 0,
+        "bottom": 1122.515625,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 1122.515625
+      },
+      "footer": {
+        "top": 1086.625,
+        "bottom": 1122.515625,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 35.890625
+      },
+      "hero": {
+        "top": 0,
+        "bottom": 287.234375,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 287.234375
+      },
+      "heroLabelCount": 4,
+      "heroLabelGap": 7.6,
+      "footerActionGap": 13.9,
+      "textRanges": 116,
+      "textClips": [],
+      "textClipCount": 0,
+      "pageClips": [],
+      "pageClipCount": 0,
+      "footerCollisions": [],
+      "footerCollisionCount": 0,
+      "qrCount": 3,
+      "qrIssues": [],
+      "brokenImages": [],
+      "brokenImageCount": 0,
+      "pageScrollHeight": 1123,
+      "pageClientHeight": 1123,
+      "trimRisk": true,
+      "viewportWidth": 1550
+    },
+    "issues": [],
+    "warnings": [
+      "PRINT_EDGE_RISK_NON_BORDERLESS_PRINTER"
+    ],
+    "status": "REVIEW",
+    "originalPdf": {
+      "pages": 1,
+      "widthPt": 595.0,
+      "heightPt": 841.9,
+      "a4": true
+    },
+    "renderedPdf": {
+      "pages": 1,
+      "widthPt": 595.0,
+      "heightPt": 841.9,
+      "a4": true
+    }
+  },
+  {
+    "file": "flyer-school.html",
+    "stem": "flyer-school",
+    "screen": {
+      "page": {
+        "top": 107.34375,
+        "bottom": 1229.859375,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 1122.515625
+      },
+      "footer": {
+        "top": 1193.96875,
+        "bottom": 1229.859375,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 35.890625
+      },
+      "hero": {
+        "top": 107.34375,
+        "bottom": 394.578125,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 287.234375
+      },
+      "heroLabelCount": 4,
+      "heroLabelGap": 7.3,
+      "footerActionGap": -3.8,
+      "textRanges": 119,
+      "textClips": [],
+      "textClipCount": 0,
+      "pageClips": [],
+      "pageClipCount": 0,
+      "footerCollisions": [],
+      "footerCollisionCount": 0,
+      "qrCount": 3,
+      "qrIssues": [],
+      "brokenImages": [],
+      "brokenImageCount": 0,
+      "pageScrollHeight": 1123,
+      "pageClientHeight": 1123,
+      "trimRisk": true,
+      "viewportWidth": 1550
+    },
+    "print": {
+      "page": {
+        "top": 0,
+        "bottom": 1122.515625,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 1122.515625
+      },
+      "footer": {
+        "top": 1086.625,
+        "bottom": 1122.515625,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 35.890625
+      },
+      "hero": {
+        "top": 0,
+        "bottom": 287.234375,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 287.234375
+      },
+      "heroLabelCount": 4,
+      "heroLabelGap": 7.3,
+      "footerActionGap": -3.8,
+      "textRanges": 119,
+      "textClips": [],
+      "textClipCount": 0,
+      "pageClips": [],
+      "pageClipCount": 0,
+      "footerCollisions": [],
+      "footerCollisionCount": 0,
+      "qrCount": 3,
+      "qrIssues": [],
+      "brokenImages": [],
+      "brokenImageCount": 0,
+      "pageScrollHeight": 1123,
+      "pageClientHeight": 1123,
+      "trimRisk": true,
+      "viewportWidth": 1550
+    },
+    "issues": [
+      "print:ACTION_FOOTER_OVERLAP",
+      "screen:ACTION_FOOTER_OVERLAP"
+    ],
+    "warnings": [
+      "PRINT_EDGE_RISK_NON_BORDERLESS_PRINTER"
+    ],
+    "status": "FAIL",
+    "originalPdf": {
+      "pages": 1,
+      "widthPt": 595.0,
+      "heightPt": 841.9,
+      "a4": true
+    },
+    "renderedPdf": {
+      "pages": 1,
+      "widthPt": 595.0,
+      "heightPt": 841.9,
+      "a4": true
+    }
+  },
+  {
+    "file": "flyer-seitai.html",
+    "stem": "flyer-seitai",
+    "screen": {
+      "page": {
+        "top": 107.34375,
+        "bottom": 1229.859375,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 1122.515625
+      },
+      "footer": {
+        "top": 1193.96875,
+        "bottom": 1229.859375,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 35.890625
+      },
+      "hero": {
+        "top": 107.34375,
+        "bottom": 394.578125,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 287.234375
+      },
+      "heroLabelCount": 4,
+      "heroLabelGap": 7.4,
+      "footerActionGap": 10.7,
+      "textRanges": 131,
+      "textClips": [],
+      "textClipCount": 0,
+      "pageClips": [],
+      "pageClipCount": 0,
+      "footerCollisions": [],
+      "footerCollisionCount": 0,
+      "qrCount": 3,
+      "qrIssues": [],
+      "brokenImages": [],
+      "brokenImageCount": 0,
+      "pageScrollHeight": 1123,
+      "pageClientHeight": 1123,
+      "trimRisk": true,
+      "viewportWidth": 1550
+    },
+    "print": {
+      "page": {
+        "top": 0,
+        "bottom": 1122.515625,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 1122.515625
+      },
+      "footer": {
+        "top": 1086.625,
+        "bottom": 1122.515625,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 35.890625
+      },
+      "hero": {
+        "top": 0,
+        "bottom": 287.234375,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 287.234375
+      },
+      "heroLabelCount": 4,
+      "heroLabelGap": 7.4,
+      "footerActionGap": 10.7,
+      "textRanges": 131,
+      "textClips": [],
+      "textClipCount": 0,
+      "pageClips": [],
+      "pageClipCount": 0,
+      "footerCollisions": [],
+      "footerCollisionCount": 0,
+      "qrCount": 3,
+      "qrIssues": [],
+      "brokenImages": [],
+      "brokenImageCount": 0,
+      "pageScrollHeight": 1123,
+      "pageClientHeight": 1123,
+      "trimRisk": true,
+      "viewportWidth": 1550
+    },
+    "issues": [],
+    "warnings": [
+      "PRINT_EDGE_RISK_NON_BORDERLESS_PRINTER"
+    ],
+    "status": "REVIEW",
+    "originalPdf": {
+      "pages": 1,
+      "widthPt": 595.0,
+      "heightPt": 841.9,
+      "a4": true
+    },
+    "renderedPdf": {
+      "pages": 1,
+      "widthPt": 595.0,
+      "heightPt": 841.9,
+      "a4": true
+    }
+  },
+  {
+    "file": "flyer-sharoushi.html",
+    "stem": "flyer-sharoushi",
+    "screen": {
+      "page": {
+        "top": 107.34375,
+        "bottom": 1229.859375,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 1122.515625
+      },
+      "footer": {
+        "top": 1193.96875,
+        "bottom": 1229.859375,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 35.890625
+      },
+      "hero": {
+        "top": 107.34375,
+        "bottom": 394.578125,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 287.234375
+      },
+      "heroLabelCount": 4,
+      "heroLabelGap": 6.1,
+      "footerActionGap": 1.1,
+      "textRanges": 120,
+      "textClips": [],
+      "textClipCount": 0,
+      "pageClips": [],
+      "pageClipCount": 0,
+      "footerCollisions": [],
+      "footerCollisionCount": 0,
+      "qrCount": 3,
+      "qrIssues": [],
+      "brokenImages": [],
+      "brokenImageCount": 0,
+      "pageScrollHeight": 1123,
+      "pageClientHeight": 1123,
+      "trimRisk": true,
+      "viewportWidth": 1550
+    },
+    "print": {
+      "page": {
+        "top": 0,
+        "bottom": 1122.515625,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 1122.515625
+      },
+      "footer": {
+        "top": 1090.390625,
+        "bottom": 1122.515625,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 32.125
+      },
+      "hero": {
+        "top": 0,
+        "bottom": 257,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 257
+      },
+      "heroLabelCount": 4,
+      "heroLabelGap": -24.1,
+      "footerActionGap": 138.3,
+      "textRanges": 120,
+      "textClips": [
+        {
+          "text": "労務相談",
+          "element": "SPAN.pill",
+          "ancestor": "HEADER.hero",
+          "lossY": 17.2,
+          "lossX": 0
+        },
+        {
+          "text": "手続き依頼",
+          "element": "SPAN.pill",
+          "ancestor": "HEADER.hero",
+          "lossY": 17.2,
+          "lossX": 0
+        },
+        {
+          "text": "面談予約",
+          "element": "SPAN.pill",
+          "ancestor": "HEADER.hero",
+          "lossY": 17.2,
+          "lossX": 0
+        },
+        {
+          "text": "顧問先対応",
+          "element": "SPAN.pill",
+          "ancestor": "HEADER.hero",
+          "lossY": 17.2,
+          "lossX": 0
+        },
+        {
+          "text": "CONSULT / 社労士・顧問先対応",
+          "element": "DIV.photo-label",
+          "ancestor": "HEADER.hero",
+          "lossY": 25,
+          "lossX": 0
+        }
+      ],
+      "textClipCount": 5,
+      "pageClips": [],
+      "pageClipCount": 0,
+      "footerCollisions": [],
+      "footerCollisionCount": 0,
+      "qrCount": 3,
+      "qrIssues": [],
+      "brokenImages": [],
+      "brokenImageCount": 0,
+      "pageScrollHeight": 1123,
+      "pageClientHeight": 1123,
+      "trimRisk": true,
+      "viewportWidth": 1550
+    },
+    "issues": [
+      "print:HERO_LABEL_CLIP",
+      "print:TEXT_CLIP(5)",
+      "screen:ACTION_FOOTER_OVERLAP"
+    ],
+    "warnings": [
+      "PRINT_EDGE_RISK_NON_BORDERLESS_PRINTER"
+    ],
+    "status": "FAIL",
+    "originalPdf": {
+      "pages": 1,
+      "widthPt": 595.0,
+      "heightPt": 841.9,
+      "a4": true
+    },
+    "renderedPdf": {
+      "pages": 1,
+      "widthPt": 595.0,
+      "heightPt": 841.9,
+      "a4": true
+    }
+  },
+  {
+    "file": "flyer-shiho.html",
+    "stem": "flyer-shiho",
+    "screen": {
+      "page": {
+        "top": 107.34375,
+        "bottom": 1229.859375,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 1122.515625
+      },
+      "footer": {
+        "top": 1193.96875,
+        "bottom": 1229.859375,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 35.890625
+      },
+      "hero": {
+        "top": 107.34375,
+        "bottom": 394.578125,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 287.234375
+      },
+      "heroLabelCount": 4,
+      "heroLabelGap": 6.1,
+      "footerActionGap": 1.1,
+      "textRanges": 122,
+      "textClips": [],
+      "textClipCount": 0,
+      "pageClips": [],
+      "pageClipCount": 0,
+      "footerCollisions": [],
+      "footerCollisionCount": 0,
+      "qrCount": 3,
+      "qrIssues": [],
+      "brokenImages": [],
+      "brokenImageCount": 0,
+      "pageScrollHeight": 1123,
+      "pageClientHeight": 1123,
+      "trimRisk": true,
+      "viewportWidth": 1550
+    },
+    "print": {
+      "page": {
+        "top": 0,
+        "bottom": 1122.515625,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 1122.515625
+      },
+      "footer": {
+        "top": 1086.625,
+        "bottom": 1122.515625,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 35.890625
+      },
+      "hero": {
+        "top": 0,
+        "bottom": 287.234375,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 287.234375
+      },
+      "heroLabelCount": 4,
+      "heroLabelGap": 6.1,
+      "footerActionGap": 1.1,
+      "textRanges": 122,
+      "textClips": [],
+      "textClipCount": 0,
+      "pageClips": [],
+      "pageClipCount": 0,
+      "footerCollisions": [],
+      "footerCollisionCount": 0,
+      "qrCount": 3,
+      "qrIssues": [],
+      "brokenImages": [],
+      "brokenImageCount": 0,
+      "pageScrollHeight": 1123,
+      "pageClientHeight": 1123,
+      "trimRisk": true,
+      "viewportWidth": 1550
+    },
+    "issues": [
+      "print:ACTION_FOOTER_OVERLAP",
+      "screen:ACTION_FOOTER_OVERLAP"
+    ],
+    "warnings": [
+      "PRINT_EDGE_RISK_NON_BORDERLESS_PRINTER"
+    ],
+    "status": "FAIL",
+    "originalPdf": {
+      "pages": 1,
+      "widthPt": 595.0,
+      "heightPt": 841.9,
+      "a4": true
+    },
+    "renderedPdf": {
+      "pages": 1,
+      "widthPt": 595.0,
+      "heightPt": 841.9,
+      "a4": true
+    }
+  },
+  {
+    "file": "flyer-sodan.html",
+    "stem": "flyer-sodan",
+    "screen": {
+      "page": {
+        "top": 107.34375,
+        "bottom": 1229.859375,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 1122.515625
+      },
+      "footer": {
+        "top": 1193.96875,
+        "bottom": 1229.859375,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 35.890625
+      },
+      "hero": {
+        "top": 107.34375,
+        "bottom": 394.578125,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 287.234375
+      },
+      "heroLabelCount": 4,
+      "heroLabelGap": 6.1,
+      "footerActionGap": 1.1,
+      "textRanges": 127,
+      "textClips": [],
+      "textClipCount": 0,
+      "pageClips": [],
+      "pageClipCount": 0,
+      "footerCollisions": [],
+      "footerCollisionCount": 0,
+      "qrCount": 3,
+      "qrIssues": [],
+      "brokenImages": [],
+      "brokenImageCount": 0,
+      "pageScrollHeight": 1123,
+      "pageClientHeight": 1123,
+      "trimRisk": true,
+      "viewportWidth": 1550
+    },
+    "print": {
+      "page": {
+        "top": 0,
+        "bottom": 1122.515625,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 1122.515625
+      },
+      "footer": {
+        "top": 1090.390625,
+        "bottom": 1122.515625,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 32.125
+      },
+      "hero": {
+        "top": 0,
+        "bottom": 257,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 257
+      },
+      "heroLabelCount": 4,
+      "heroLabelGap": -24.1,
+      "footerActionGap": 137.4,
+      "textRanges": 127,
+      "textClips": [
+        {
+          "text": "初回相談",
+          "element": "SPAN.pill",
+          "ancestor": "HEADER.hero",
+          "lossY": 17.2,
+          "lossX": 0
+        },
+        {
+          "text": "本人・家族ポータル",
+          "element": "SPAN.pill",
+          "ancestor": "HEADER.hero",
+          "lossY": 17.2,
+          "lossX": 0
+        },
+        {
+          "text": "案件・計画",
+          "element": "SPAN.pill",
+          "ancestor": "HEADER.hero",
+          "lossY": 17.2,
+          "lossX": 0
+        },
+        {
+          "text": "モニタリング",
+          "element": "SPAN.pill",
+          "ancestor": "HEADER.hero",
+          "lossY": 17.2,
+          "lossX": 0
+        },
+        {
+          "text": "相談支援事業所向け",
+          "element": "DIV.photo-label",
+          "ancestor": "HEADER.hero",
+          "lossY": 25,
+          "lossX": 0
+        }
+      ],
+      "textClipCount": 5,
+      "pageClips": [],
+      "pageClipCount": 0,
+      "footerCollisions": [],
+      "footerCollisionCount": 0,
+      "qrCount": 3,
+      "qrIssues": [],
+      "brokenImages": [],
+      "brokenImageCount": 0,
+      "pageScrollHeight": 1123,
+      "pageClientHeight": 1123,
+      "trimRisk": true,
+      "viewportWidth": 1550
+    },
+    "issues": [
+      "print:HERO_LABEL_CLIP",
+      "print:TEXT_CLIP(5)",
+      "screen:ACTION_FOOTER_OVERLAP"
+    ],
+    "warnings": [
+      "PRINT_EDGE_RISK_NON_BORDERLESS_PRINTER"
+    ],
+    "status": "FAIL",
+    "originalPdf": {
+      "pages": 1,
+      "widthPt": 595.0,
+      "heightPt": 841.9,
+      "a4": true
+    },
+    "renderedPdf": {
+      "pages": 1,
+      "widthPt": 595.0,
+      "heightPt": 841.9,
+      "a4": true
+    }
+  },
+  {
+    "file": "flyer-stay.html",
+    "stem": "flyer-stay",
+    "screen": {
+      "page": {
+        "top": 107.34375,
+        "bottom": 1229.859375,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 1122.515625
+      },
+      "footer": {
+        "top": 1193.96875,
+        "bottom": 1229.859375,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 35.890625
+      },
+      "hero": {
+        "top": 107.34375,
+        "bottom": 394.578125,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 287.234375
+      },
+      "heroLabelCount": 4,
+      "heroLabelGap": 7.3,
+      "footerActionGap": -2.7,
+      "textRanges": 117,
+      "textClips": [],
+      "textClipCount": 0,
+      "pageClips": [],
+      "pageClipCount": 0,
+      "footerCollisions": [],
+      "footerCollisionCount": 0,
+      "qrCount": 3,
+      "qrIssues": [],
+      "brokenImages": [],
+      "brokenImageCount": 0,
+      "pageScrollHeight": 1123,
+      "pageClientHeight": 1123,
+      "trimRisk": true,
+      "viewportWidth": 1550
+    },
+    "print": {
+      "page": {
+        "top": 0,
+        "bottom": 1122.515625,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 1122.515625
+      },
+      "footer": {
+        "top": 1086.625,
+        "bottom": 1122.515625,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 35.890625
+      },
+      "hero": {
+        "top": 0,
+        "bottom": 287.234375,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 287.234375
+      },
+      "heroLabelCount": 4,
+      "heroLabelGap": 7.3,
+      "footerActionGap": -2.7,
+      "textRanges": 117,
+      "textClips": [],
+      "textClipCount": 0,
+      "pageClips": [],
+      "pageClipCount": 0,
+      "footerCollisions": [],
+      "footerCollisionCount": 0,
+      "qrCount": 3,
+      "qrIssues": [],
+      "brokenImages": [],
+      "brokenImageCount": 0,
+      "pageScrollHeight": 1123,
+      "pageClientHeight": 1123,
+      "trimRisk": true,
+      "viewportWidth": 1550
+    },
+    "issues": [
+      "print:ACTION_FOOTER_OVERLAP",
+      "screen:ACTION_FOOTER_OVERLAP"
+    ],
+    "warnings": [
+      "PRINT_EDGE_RISK_NON_BORDERLESS_PRINTER"
+    ],
+    "status": "FAIL",
+    "originalPdf": {
+      "pages": 1,
+      "widthPt": 595.0,
+      "heightPt": 841.9,
+      "a4": true
+    },
+    "renderedPdf": {
+      "pages": 1,
+      "widthPt": 595.0,
+      "heightPt": 841.9,
+      "a4": true
+    }
+  },
+  {
+    "file": "flyer-takeout.html",
+    "stem": "flyer-takeout",
+    "screen": {
+      "page": {
+        "top": 107.34375,
+        "bottom": 1229.859375,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 1122.515625
+      },
+      "footer": {
+        "top": 1193.96875,
+        "bottom": 1229.859375,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 35.890625
+      },
+      "hero": {
+        "top": 107.34375,
+        "bottom": 394.578125,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 287.234375
+      },
+      "heroLabelCount": 4,
+      "heroLabelGap": 6.1,
+      "footerActionGap": 8.7,
+      "textRanges": 121,
+      "textClips": [],
+      "textClipCount": 0,
+      "pageClips": [],
+      "pageClipCount": 0,
+      "footerCollisions": [],
+      "footerCollisionCount": 0,
+      "qrCount": 3,
+      "qrIssues": [],
+      "brokenImages": [],
+      "brokenImageCount": 0,
+      "pageScrollHeight": 1123,
+      "pageClientHeight": 1123,
+      "trimRisk": true,
+      "viewportWidth": 1550
+    },
+    "print": {
+      "page": {
+        "top": 0,
+        "bottom": 1122.515625,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 1122.515625
+      },
+      "footer": {
+        "top": 1086.625,
+        "bottom": 1122.515625,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 35.890625
+      },
+      "hero": {
+        "top": 0,
+        "bottom": 287.234375,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 287.234375
+      },
+      "heroLabelCount": 4,
+      "heroLabelGap": 6.1,
+      "footerActionGap": 8.7,
+      "textRanges": 121,
+      "textClips": [],
+      "textClipCount": 0,
+      "pageClips": [],
+      "pageClipCount": 0,
+      "footerCollisions": [],
+      "footerCollisionCount": 0,
+      "qrCount": 3,
+      "qrIssues": [],
+      "brokenImages": [],
+      "brokenImageCount": 0,
+      "pageScrollHeight": 1123,
+      "pageClientHeight": 1123,
+      "trimRisk": true,
+      "viewportWidth": 1550
+    },
+    "issues": [],
+    "warnings": [
+      "PRINT_EDGE_RISK_NON_BORDERLESS_PRINTER"
+    ],
+    "status": "REVIEW",
+    "originalPdf": {
+      "pages": 1,
+      "widthPt": 595.3,
+      "heightPt": 841.9,
+      "a4": true
+    },
+    "renderedPdf": {
+      "pages": 1,
+      "widthPt": 595.0,
+      "heightPt": 841.9,
+      "a4": true
+    }
+  },
+  {
+    "file": "flyer-tax.html",
+    "stem": "flyer-tax",
+    "screen": {
+      "page": {
+        "top": 107.34375,
+        "bottom": 1229.859375,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 1122.515625
+      },
+      "footer": {
+        "top": 1193.96875,
+        "bottom": 1229.859375,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 35.890625
+      },
+      "hero": {
+        "top": 107.34375,
+        "bottom": 394.578125,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 287.234375
+      },
+      "heroLabelCount": 3,
+      "heroLabelGap": 41,
+      "footerActionGap": 1.1,
+      "textRanges": 124,
+      "textClips": [],
+      "textClipCount": 0,
+      "pageClips": [],
+      "pageClipCount": 0,
+      "footerCollisions": [],
+      "footerCollisionCount": 0,
+      "qrCount": 3,
+      "qrIssues": [],
+      "brokenImages": [],
+      "brokenImageCount": 0,
+      "pageScrollHeight": 1123,
+      "pageClientHeight": 1123,
+      "trimRisk": true,
+      "viewportWidth": 1550
+    },
+    "print": {
+      "page": {
+        "top": 0,
+        "bottom": 1122.515625,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 1122.515625
+      },
+      "footer": {
+        "top": 1086.625,
+        "bottom": 1122.515625,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 35.890625
+      },
+      "hero": {
+        "top": 0,
+        "bottom": 287.234375,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 287.234375
+      },
+      "heroLabelCount": 3,
+      "heroLabelGap": 41,
+      "footerActionGap": 1.1,
+      "textRanges": 124,
+      "textClips": [],
+      "textClipCount": 0,
+      "pageClips": [],
+      "pageClipCount": 0,
+      "footerCollisions": [],
+      "footerCollisionCount": 0,
+      "qrCount": 3,
+      "qrIssues": [],
+      "brokenImages": [],
+      "brokenImageCount": 0,
+      "pageScrollHeight": 1123,
+      "pageClientHeight": 1123,
+      "trimRisk": true,
+      "viewportWidth": 1550
+    },
+    "issues": [
+      "print:ACTION_FOOTER_OVERLAP",
+      "screen:ACTION_FOOTER_OVERLAP"
+    ],
+    "warnings": [
+      "PRINT_EDGE_RISK_NON_BORDERLESS_PRINTER"
+    ],
+    "status": "FAIL",
+    "originalPdf": {
+      "pages": 1,
+      "widthPt": 595.3,
+      "heightPt": 841.9,
+      "a4": true
+    },
+    "renderedPdf": {
+      "pages": 1,
+      "widthPt": 595.0,
+      "heightPt": 841.9,
+      "a4": true
+    }
+  },
+  {
+    "file": "flyer-vet.html",
+    "stem": "flyer-vet",
+    "screen": {
+      "page": {
+        "top": 107.34375,
+        "bottom": 1229.859375,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 1122.515625
+      },
+      "footer": {
+        "top": 1193.96875,
+        "bottom": 1229.859375,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 35.890625
+      },
+      "hero": {
+        "top": 107.34375,
+        "bottom": 394.578125,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 287.234375
+      },
+      "heroLabelCount": 4,
+      "heroLabelGap": -28.8,
+      "footerActionGap": 1.1,
+      "textRanges": 128,
+      "textClips": [
+        {
+          "text": "LINE診察券",
+          "element": "SPAN.pill",
+          "ancestor": "HEADER.hero",
+          "lossY": 21.9,
+          "lossX": 0
+        },
+        {
+          "text": "当日順番受付",
+          "element": "SPAN.pill",
+          "ancestor": "HEADER.hero",
+          "lossY": 21.9,
+          "lossX": 0
+        },
+        {
+          "text": "30分日時予約",
+          "element": "SPAN.pill",
+          "ancestor": "HEADER.hero",
+          "lossY": 21.9,
+          "lossX": 0
+        },
+        {
+          "text": "QR来院受付",
+          "element": "SPAN.pill",
+          "ancestor": "HEADER.hero",
+          "lossY": 21.9,
+          "lossX": 0
+        },
+        {
+          "text": "動物病院向け",
+          "element": "DIV.photo-label",
+          "ancestor": "HEADER.hero",
+          "lossY": 29.7,
+          "lossX": 0
+        }
+      ],
+      "textClipCount": 5,
+      "pageClips": [],
+      "pageClipCount": 0,
+      "footerCollisions": [],
+      "footerCollisionCount": 0,
+      "qrCount": 3,
+      "qrIssues": [],
+      "brokenImages": [],
+      "brokenImageCount": 0,
+      "pageScrollHeight": 1123,
+      "pageClientHeight": 1123,
+      "trimRisk": true,
+      "viewportWidth": 1550
+    },
+    "print": {
+      "page": {
+        "top": 0,
+        "bottom": 1122.515625,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 1122.515625
+      },
+      "footer": {
+        "top": 1086.625,
+        "bottom": 1122.515625,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 35.890625
+      },
+      "hero": {
+        "top": 0,
+        "bottom": 287.234375,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 287.234375
+      },
+      "heroLabelCount": 4,
+      "heroLabelGap": -28.8,
+      "footerActionGap": 1.1,
+      "textRanges": 128,
+      "textClips": [
+        {
+          "text": "LINE診察券",
+          "element": "SPAN.pill",
+          "ancestor": "HEADER.hero",
+          "lossY": 21.9,
+          "lossX": 0
+        },
+        {
+          "text": "当日順番受付",
+          "element": "SPAN.pill",
+          "ancestor": "HEADER.hero",
+          "lossY": 21.9,
+          "lossX": 0
+        },
+        {
+          "text": "30分日時予約",
+          "element": "SPAN.pill",
+          "ancestor": "HEADER.hero",
+          "lossY": 21.9,
+          "lossX": 0
+        },
+        {
+          "text": "QR来院受付",
+          "element": "SPAN.pill",
+          "ancestor": "HEADER.hero",
+          "lossY": 21.9,
+          "lossX": 0
+        },
+        {
+          "text": "動物病院向け",
+          "element": "DIV.photo-label",
+          "ancestor": "HEADER.hero",
+          "lossY": 29.7,
+          "lossX": 0
+        }
+      ],
+      "textClipCount": 5,
+      "pageClips": [],
+      "pageClipCount": 0,
+      "footerCollisions": [],
+      "footerCollisionCount": 0,
+      "qrCount": 3,
+      "qrIssues": [],
+      "brokenImages": [],
+      "brokenImageCount": 0,
+      "pageScrollHeight": 1123,
+      "pageClientHeight": 1123,
+      "trimRisk": true,
+      "viewportWidth": 1550
+    },
+    "issues": [
+      "print:ACTION_FOOTER_OVERLAP",
+      "print:HERO_LABEL_CLIP",
+      "print:TEXT_CLIP(5)",
+      "screen:ACTION_FOOTER_OVERLAP",
+      "screen:HERO_LABEL_CLIP",
+      "screen:TEXT_CLIP(5)"
+    ],
+    "warnings": [
+      "PRINT_EDGE_RISK_NON_BORDERLESS_PRINTER"
+    ],
+    "status": "FAIL",
+    "originalPdf": {
+      "pages": 1,
+      "widthPt": 595.0,
+      "heightPt": 841.9,
+      "a4": true
+    },
+    "renderedPdf": {
+      "pages": 1,
+      "widthPt": 595.0,
+      "heightPt": 841.9,
+      "a4": true
+    }
+  },
+  {
+    "file": "flyer-welfare-shuttle.html",
+    "stem": "flyer-welfare-shuttle",
+    "screen": {
+      "page": {
+        "top": 107.34375,
+        "bottom": 1229.859375,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 1122.515625
+      },
+      "footer": {
+        "top": 1193.96875,
+        "bottom": 1229.859375,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 35.890625
+      },
+      "hero": {
+        "top": 107.34375,
+        "bottom": 394.578125,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 287.234375
+      },
+      "heroLabelCount": 4,
+      "heroLabelGap": 6.1,
+      "footerActionGap": 2.7,
+      "textRanges": 125,
+      "textClips": [],
+      "textClipCount": 0,
+      "pageClips": [],
+      "pageClipCount": 0,
+      "footerCollisions": [],
+      "footerCollisionCount": 0,
+      "qrCount": 3,
+      "qrIssues": [],
+      "brokenImages": [],
+      "brokenImageCount": 0,
+      "pageScrollHeight": 1123,
+      "pageClientHeight": 1123,
+      "trimRisk": true,
+      "viewportWidth": 1550
+    },
+    "print": {
+      "page": {
+        "top": 0,
+        "bottom": 1122.515625,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 1122.515625
+      },
+      "footer": {
+        "top": 1086.625,
+        "bottom": 1122.515625,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 35.890625
+      },
+      "hero": {
+        "top": 0,
+        "bottom": 287.234375,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 287.234375
+      },
+      "heroLabelCount": 4,
+      "heroLabelGap": 6.1,
+      "footerActionGap": 2.7,
+      "textRanges": 125,
+      "textClips": [],
+      "textClipCount": 0,
+      "pageClips": [],
+      "pageClipCount": 0,
+      "footerCollisions": [],
+      "footerCollisionCount": 0,
+      "qrCount": 3,
+      "qrIssues": [],
+      "brokenImages": [],
+      "brokenImageCount": 0,
+      "pageScrollHeight": 1123,
+      "pageClientHeight": 1123,
+      "trimRisk": true,
+      "viewportWidth": 1550
+    },
+    "issues": [],
+    "warnings": [
+      "PRINT_EDGE_RISK_NON_BORDERLESS_PRINTER"
+    ],
+    "status": "REVIEW",
+    "originalPdf": {
+      "pages": 1,
+      "widthPt": 595.0,
+      "heightPt": 841.9,
+      "a4": true
+    },
+    "renderedPdf": {
+      "pages": 1,
+      "widthPt": 595.0,
+      "heightPt": 841.9,
+      "a4": true
+    }
+  },
+  {
+    "file": "flyer-welfare.html",
+    "stem": "flyer-welfare",
+    "screen": {
+      "page": {
+        "top": 107.34375,
+        "bottom": 1229.859375,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 1122.515625
+      },
+      "footer": {
+        "top": 1193.96875,
+        "bottom": 1229.859375,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 35.890625
+      },
+      "hero": {
+        "top": 107.34375,
+        "bottom": 394.578125,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 287.234375
+      },
+      "heroLabelCount": 4,
+      "heroLabelGap": 24.3,
+      "footerActionGap": 14,
+      "textRanges": 123,
+      "textClips": [],
+      "textClipCount": 0,
+      "pageClips": [],
+      "pageClipCount": 0,
+      "footerCollisions": [],
+      "footerCollisionCount": 0,
+      "qrCount": 3,
+      "qrIssues": [],
+      "brokenImages": [],
+      "brokenImageCount": 0,
+      "pageScrollHeight": 1123,
+      "pageClientHeight": 1123,
+      "trimRisk": true,
+      "viewportWidth": 1550
+    },
+    "print": {
+      "page": {
+        "top": 0,
+        "bottom": 1122.515625,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 1122.515625
+      },
+      "footer": {
+        "top": 1086.625,
+        "bottom": 1122.515625,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 35.890625
+      },
+      "hero": {
+        "top": 0,
+        "bottom": 287.234375,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 287.234375
+      },
+      "heroLabelCount": 4,
+      "heroLabelGap": 24.3,
+      "footerActionGap": 14,
+      "textRanges": 123,
+      "textClips": [],
+      "textClipCount": 0,
+      "pageClips": [],
+      "pageClipCount": 0,
+      "footerCollisions": [],
+      "footerCollisionCount": 0,
+      "qrCount": 3,
+      "qrIssues": [],
+      "brokenImages": [],
+      "brokenImageCount": 0,
+      "pageScrollHeight": 1123,
+      "pageClientHeight": 1123,
+      "trimRisk": true,
+      "viewportWidth": 1550
+    },
+    "issues": [],
+    "warnings": [
+      "PRINT_EDGE_RISK_NON_BORDERLESS_PRINTER"
+    ],
+    "status": "REVIEW",
+    "originalPdf": {
+      "pages": 1,
+      "widthPt": 595.0,
+      "heightPt": 841.9,
+      "a4": true
+    },
+    "renderedPdf": {
+      "pages": 1,
+      "widthPt": 595.0,
+      "heightPt": 841.9,
+      "a4": true
+    }
+  },
+  {
+    "file": "flyer-yakiniku.html",
+    "stem": "flyer-yakiniku",
+    "screen": {
+      "page": {
+        "top": 107.34375,
+        "bottom": 1229.859375,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 1122.515625
+      },
+      "footer": {
+        "top": 1193.96875,
+        "bottom": 1229.859375,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 35.890625
+      },
+      "hero": {
+        "top": 107.34375,
+        "bottom": 387.015625,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 279.671875
+      },
+      "heroLabelCount": 4,
+      "heroLabelGap": 22,
+      "footerActionGap": 52.4,
+      "textRanges": 118,
+      "textClips": [],
+      "textClipCount": 0,
+      "pageClips": [],
+      "pageClipCount": 0,
+      "footerCollisions": [],
+      "footerCollisionCount": 0,
+      "qrCount": 3,
+      "qrIssues": [],
+      "brokenImages": [],
+      "brokenImageCount": 0,
+      "pageScrollHeight": 1123,
+      "pageClientHeight": 1123,
+      "trimRisk": true,
+      "viewportWidth": 1550
+    },
+    "print": {
+      "page": {
+        "top": 18.141733169555664,
+        "bottom": 1089.0216159820557,
+        "left": 18.141733169555664,
+        "right": 775.3195896148682,
+        "width": 757.1778564453125,
+        "height": 1070.8798828125
+      },
+      "footer": {
+        "top": 1054.781982421875,
+        "bottom": 1089.0216064453125,
+        "left": 18.141733169555664,
+        "right": 775.3195896148682,
+        "width": 757.1778564453125,
+        "height": 34.2396240234375
+      },
+      "hero": {
+        "top": 18.141733169555664,
+        "bottom": 284.94870948791504,
+        "left": 18.141733169555664,
+        "right": 775.3195896148682,
+        "width": 757.1778564453125,
+        "height": 266.8069763183594
+      },
+      "heroLabelCount": 4,
+      "heroLabelGap": 21,
+      "footerActionGap": 50,
+      "textRanges": 118,
+      "textClips": [],
+      "textClipCount": 0,
+      "pageClips": [],
+      "pageClipCount": 0,
+      "footerCollisions": [],
+      "footerCollisionCount": 0,
+      "qrCount": 3,
+      "qrIssues": [],
+      "brokenImages": [],
+      "brokenImageCount": 0,
+      "pageScrollHeight": 1123,
+      "pageClientHeight": 1123,
+      "trimRisk": true,
+      "viewportWidth": 1550
+    },
+    "issues": [],
+    "warnings": [
+      "PRINT_EDGE_RISK_NON_BORDERLESS_PRINTER"
+    ],
+    "status": "REVIEW",
+    "originalPdf": {
+      "pages": 1,
+      "widthPt": 595.0,
+      "heightPt": 841.9,
+      "a4": true
+    },
+    "renderedPdf": {
+      "pages": 1,
+      "widthPt": 595.0,
+      "heightPt": 841.9,
+      "a4": true
+    }
+  },
+  {
+    "file": "flyer-yoga.html",
+    "stem": "flyer-yoga",
+    "screen": {
+      "page": {
+        "top": 93.34375,
+        "bottom": 1215.859375,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 1122.515625
+      },
+      "footer": {
+        "top": 1179.96875,
+        "bottom": 1215.859375,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 35.890625
+      },
+      "hero": {
+        "top": 93.34375,
+        "bottom": 378.6875,
+        "left": 378.15625,
+        "right": 1171.84375,
+        "width": 793.6875,
+        "height": 285.34375
+      },
+      "heroLabelCount": 0,
+      "heroLabelGap": null,
+      "footerActionGap": 48.6,
+      "textRanges": 107,
+      "textClips": [],
+      "textClipCount": 0,
+      "pageClips": [],
+      "pageClipCount": 0,
+      "footerCollisions": [],
+      "footerCollisionCount": 0,
+      "qrCount": 3,
+      "qrIssues": [],
+      "brokenImages": [],
+      "brokenImageCount": 0,
+      "pageScrollHeight": 1123,
+      "pageClientHeight": 1123,
+      "trimRisk": true,
+      "viewportWidth": 1550
+    },
+    "print": {
+      "page": {
+        "top": 0,
+        "bottom": 1122.515625,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 1122.515625
+      },
+      "footer": {
+        "top": 1086.625,
+        "bottom": 1122.515625,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 35.890625
+      },
+      "hero": {
+        "top": 0,
+        "bottom": 285.34375,
+        "left": 0,
+        "right": 793.6875,
+        "width": 793.6875,
+        "height": 285.34375
+      },
+      "heroLabelCount": 0,
+      "heroLabelGap": null,
+      "footerActionGap": 48.6,
+      "textRanges": 107,
+      "textClips": [],
+      "textClipCount": 0,
+      "pageClips": [],
+      "pageClipCount": 0,
+      "footerCollisions": [],
+      "footerCollisionCount": 0,
+      "qrCount": 3,
+      "qrIssues": [],
+      "brokenImages": [],
+      "brokenImageCount": 0,
+      "pageScrollHeight": 1123,
+      "pageClientHeight": 1123,
+      "trimRisk": true,
+      "viewportWidth": 1550
+    },
+    "issues": [],
+    "warnings": [
+      "PRINT_EDGE_RISK_NON_BORDERLESS_PRINTER"
+    ],
+    "status": "REVIEW",
+    "originalPdf": {
+      "pages": 1,
+      "widthPt": 595.0,
+      "heightPt": 841.9,
+      "a4": true
+    },
+    "renderedPdf": {
+      "pages": 1,
+      "widthPt": 595.0,
+      "heightPt": 841.9,
+      "a4": true
+    }
+  }
+]

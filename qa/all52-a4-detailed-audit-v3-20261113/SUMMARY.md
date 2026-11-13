@@ -1,0 +1,127 @@
+# DPRO A4 52種類・詳細印刷検査 V3
+
+- 実行日: 2026-11-13
+- 実行対象: GitHub main / flyer-*.html / 現行PDF
+
+- 対象: 52種類
+- **PASS: 1**
+- **FAIL（見切れ等を検出）: 25**
+- **REVIEW（印刷リスク等）: 26**
+- フチなし非対応プリンターの端欠けリスク: 49種類
+- 現行PDFのA4・1ページ確認: 52 / 52
+- 現行HTMLから生成したPDFのA4・1ページ確認: 51 / 52
+
+## 判定の限界
+- FAILはレイアウト・文字・QRの幾何学的な問題。修正にはスクリーンショットの目視確認も必要。
+- REVIEWの印刷端リスクは、プリンターの非印刷領域による物理的な欠けの可能性であり、確定した欠陥ではない。
+- PASSでも全てのプリンター・PDF印刷設定での完全表示は保証しない。
+- 前回の51件PASSは、ヒーロー内部の文字切れを検出しない旧基準なので本検査で再評価。
+
+## FAIL（優先確認）
+- flyer-bakery: print:ACTION_FOOTER_OVERLAP, screen:ACTION_FOOTER_OVERLAP
+- flyer-buyback: print:ACTION_FOOTER_OVERLAP, screen:ACTION_FOOTER_OVERLAP
+- flyer-careplan: print:ACTION_FOOTER_OVERLAP, screen:ACTION_FOOTER_OVERLAP
+- flyer-caretaxi: print:ACTION_FOOTER_OVERLAP, screen:ACTION_FOOTER_OVERLAP
+- flyer-cleaning: print:ACTION_FOOTER_OVERLAP, screen:ACTION_FOOTER_OVERLAP
+- flyer-cosmetics: print:ACTION_FOOTER_OVERLAP, screen:ACTION_FOOTER_OVERLAP
+- flyer-estate: print:ACTION_FOOTER_OVERLAP, print:HERO_LABEL_CLIP, print:TEXT_CLIP(5), screen:ACTION_FOOTER_OVERLAP, screen:HERO_LABEL_CLIP, screen:TEXT_CLIP(5)
+- flyer-esthe: print:ACTION_FOOTER_OVERLAP, screen:ACTION_FOOTER_OVERLAP
+- flyer-eye: print:ACTION_FOOTER_OVERLAP, screen:ACTION_FOOTER_OVERLAP
+- flyer-gym: print:ACTION_FOOTER_OVERLAP, screen:ACTION_FOOTER_OVERLAP
+- flyer-gyosei: print:TEXT_CLIP(1), screen:TEXT_CLIP(1)
+- flyer-haishoku: print:QR_CLIPPED(3), screen:QR_CLIPPED(3)
+- flyer-homecare: print:ACTION_FOOTER_OVERLAP, screen:ACTION_FOOTER_OVERLAP
+- flyer-izakaya: print:ACTION_FOOTER_OVERLAP, screen:ACTION_FOOTER_OVERLAP
+- flyer-medical: renderedPdf:PAGES=2
+- flyer-nail: print:ACTION_FOOTER_OVERLAP, screen:ACTION_FOOTER_OVERLAP
+- flyer-pet-salon: print:ACTION_FOOTER_OVERLAP, screen:ACTION_FOOTER_OVERLAP
+- flyer-reform: print:ACTION_FOOTER_OVERLAP, screen:ACTION_FOOTER_OVERLAP
+- flyer-school: print:ACTION_FOOTER_OVERLAP, screen:ACTION_FOOTER_OVERLAP
+- flyer-sharoushi: print:HERO_LABEL_CLIP, print:TEXT_CLIP(5), screen:ACTION_FOOTER_OVERLAP
+- flyer-shiho: print:ACTION_FOOTER_OVERLAP, screen:ACTION_FOOTER_OVERLAP
+- flyer-sodan: print:HERO_LABEL_CLIP, print:TEXT_CLIP(5), screen:ACTION_FOOTER_OVERLAP
+- flyer-stay: print:ACTION_FOOTER_OVERLAP, screen:ACTION_FOOTER_OVERLAP
+- flyer-tax: print:ACTION_FOOTER_OVERLAP, screen:ACTION_FOOTER_OVERLAP
+- flyer-vet: print:ACTION_FOOTER_OVERLAP, print:HERO_LABEL_CLIP, print:TEXT_CLIP(5), screen:ACTION_FOOTER_OVERLAP, screen:HERO_LABEL_CLIP, screen:TEXT_CLIP(5)
+
+## REVIEW
+- flyer-btype: PRINT_EDGE_RISK_NON_BORDERLESS_PRINTER
+- flyer-cake: PRINT_EDGE_RISK_NON_BORDERLESS_PRINTER
+- flyer-car-service: PRINT_EDGE_RISK_NON_BORDERLESS_PRINTER
+- flyer-car: PRINT_EDGE_RISK_NON_BORDERLESS_PRINTER
+- flyer-chosashi: PRINT_EDGE_RISK_NON_BORDERLESS_PRINTER
+- flyer-clinic-shuttle: PRINT_EDGE_RISK_NON_BORDERLESS_PRINTER
+- flyer-daycare: PRINT_EDGE_RISK_NON_BORDERLESS_PRINTER
+- flyer-dental: PRINT_EDGE_RISK_NON_BORDERLESS_PRINTER
+- flyer-disposal: PRINT_EDGE_RISK_NON_BORDERLESS_PRINTER
+- flyer-flower: PRINT_EDGE_RISK_NON_BORDERLESS_PRINTER
+- flyer-funeral: PRINT_EDGE_RISK_NON_BORDERLESS_PRINTER
+- flyer-gakudo: PRINT_EDGE_RISK_NON_BORDERLESS_PRINTER
+- flyer-green-rental: PRINT_EDGE_RISK_NON_BORDERLESS_PRINTER
+- flyer-hair: PRINT_EDGE_RISK_NON_BORDERLESS_PRINTER
+- flyer-houkago: PRINT_EDGE_RISK_NON_BORDERLESS_PRINTER
+- flyer-housekeep: PRINT_EDGE_RISK_NON_BORDERLESS_PRINTER
+- flyer-photo: PRINT_EDGE_RISK_NON_BORDERLESS_PRINTER
+- flyer-repair: PRINT_EDGE_RISK_NON_BORDERLESS_PRINTER
+- flyer-salesnavi: PRINT_EDGE_RISK_NON_BORDERLESS_PRINTER
+- flyer-salon: PRINT_EDGE_RISK_NON_BORDERLESS_PRINTER
+- flyer-seitai: PRINT_EDGE_RISK_NON_BORDERLESS_PRINTER
+- flyer-takeout: PRINT_EDGE_RISK_NON_BORDERLESS_PRINTER
+- flyer-welfare-shuttle: PRINT_EDGE_RISK_NON_BORDERLESS_PRINTER
+- flyer-welfare: PRINT_EDGE_RISK_NON_BORDERLESS_PRINTER
+- flyer-yakiniku: PRINT_EDGE_RISK_NON_BORDERLESS_PRINTER
+- flyer-yoga: PRINT_EDGE_RISK_NON_BORDERLESS_PRINTER
+
+## 全件
+- flyer-bakery: FAIL
+- flyer-btype: REVIEW
+- flyer-buyback: FAIL
+- flyer-cake: REVIEW
+- flyer-car-service: REVIEW
+- flyer-car: REVIEW
+- flyer-careplan: FAIL
+- flyer-caretaxi: FAIL
+- flyer-chosashi: REVIEW
+- flyer-cleaning: FAIL
+- flyer-clinic-shuttle: REVIEW
+- flyer-cosmetics: FAIL
+- flyer-daycare: REVIEW
+- flyer-dental: REVIEW
+- flyer-disposal: REVIEW
+- flyer-estate: FAIL
+- flyer-esthe: FAIL
+- flyer-eye: FAIL
+- flyer-flower: REVIEW
+- flyer-funeral: REVIEW
+- flyer-gakudo: REVIEW
+- flyer-green-rental: REVIEW
+- flyer-gym: FAIL
+- flyer-gyosei: FAIL
+- flyer-hair: REVIEW
+- flyer-haishoku: FAIL
+- flyer-homecare: FAIL
+- flyer-homenursing: PASS
+- flyer-houkago: REVIEW
+- flyer-housekeep: REVIEW
+- flyer-izakaya: FAIL
+- flyer-medical: FAIL
+- flyer-nail: FAIL
+- flyer-pet-salon: FAIL
+- flyer-photo: REVIEW
+- flyer-reform: FAIL
+- flyer-repair: REVIEW
+- flyer-salesnavi: REVIEW
+- flyer-salon: REVIEW
+- flyer-school: FAIL
+- flyer-seitai: REVIEW
+- flyer-sharoushi: FAIL
+- flyer-shiho: FAIL
+- flyer-sodan: FAIL
+- flyer-stay: FAIL
+- flyer-takeout: REVIEW
+- flyer-tax: FAIL
+- flyer-vet: FAIL
+- flyer-welfare-shuttle: REVIEW
+- flyer-welfare: REVIEW
+- flyer-yakiniku: REVIEW
+- flyer-yoga: REVIEW
