@@ -1,0 +1,56 @@
+[
+  {
+    "name": "flyer-bakery",
+    "type": "photo",
+    "status": "FIXED_AND_VERIFIED",
+    "details": {
+      "screen": {
+        "gap": 38.140625,
+        "label": 4.125,
+        "image": 0
+      },
+      "print": {
+        "gap": 36.38616943359375,
+        "label": 3.935281753540039,
+        "inset": 18.141733169555664
+      },
+      "errors": []
+    }
+  },
+  {
+    "name": "flyer-cosmetics",
+    "type": "photo",
+    "status": "FIXED_AND_VERIFIED",
+    "details": {
+      "screen": {
+        "gap": 32.140625,
+        "label": 3.125,
+        "image": 0
+      },
+      "print": {
+        "gap": 30.662109375,
+        "label": 2.981271743774414,
+        "inset": 18.141733169555664
+      },
+      "errors": []
+    }
+  },
+  {
+    "name": "flyer-homecare",
+    "type": "photo",
+    "status": "FIXED_AND_VERIFIED",
+    "details": {
+      "screen": {
+        "gap": 33.890625,
+        "label": 3.125,
+        "image": 0
+      },
+      "print": {
+        "gap": 32.3316650390625,
+        "label": 2.981271743774414,
+        "inset": 18.141733169555664
+      },
+      "errors": []
+    }
+  }
+]
