@@ -99,6 +99,33 @@ h1{margin:2.4mm 0 2.3mm;font-size:8.25mm;line-height:1.12;letter-spacing:-.04em}
 .action-qr img{width:18mm;height:18mm}
 .footer{height:8.5mm}
 }
+
+/* DPRO_A4_PRIORITY_SAFE_V3_3_20261113 : reversible verified layout patch */
+.main { padding-top:3.8mm; }
+.section-title { margin-bottom:2.0mm; }
+.feature-grid { gap:1.9mm; }
+.feature { min-height:23.4mm; padding-top:2.2mm; padding-bottom:2.0mm; }
+.ecosystem { margin-top:2.4mm; padding-top:2.8mm; padding-bottom:2.6mm; }
+.cost-check { margin-top:2.4mm; }
+.price { margin-top:2.4mm; }
+.contact { margin-top:1.8mm; padding-top:1.8mm; }
+@media print {
+  .toolbar {display:none!important;}
+  .sheet { margin:0!important;box-shadow:none!important;
+    transform: translate(4.8mm,4.8mm) scale(.954)!important;
+    transform-origin:top left!important; }
+}
+
+@media print {
+  .hero{height:76mm!important;grid-template-rows:minmax(0,1fr);}
+  .hero-copy{min-height:0;padding-top:6.2mm;padding-bottom:2mm;}
+  .hero-photo{min-height:0;}
+  .hero .eyebrow{margin-top:2.7mm;}
+  .hero h1{margin-bottom:1.5mm;}
+  .hero .pillrow{margin-top:1.7mm;}
+  .hero .pill{padding-top:.9mm;padding-bottom:.9mm;}
+}
+
 </style>
 </head>
 <body>

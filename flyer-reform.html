@@ -27,6 +27,23 @@ h1{margin:2.4mm 0 2.3mm;font-size:8.05mm;line-height:1.12;letter-spacing:-.04em}
 .action-grid{display:grid;grid-template-columns:.94fr 1.12fr .94fr;gap:2.2mm}.action-card{border:1px solid #cfe0d8;border-radius:3mm;padding:1.8mm 2mm;min-height:35.5mm;display:grid;grid-template-columns:minmax(0,1fr) 20.5mm;gap:1.6mm;align-items:center;background:#fff;overflow:hidden}.action-card.line{background:linear-gradient(135deg,#eefbf5 0%,#fff 78%)}.action-card.site{border-color:#64bc99;background:linear-gradient(135deg,#f1fcf7 0%,#fff 72%);box-shadow:inset 0 0 0 .35mm rgba(24,201,138,.07)}.action-card.demo{background:linear-gradient(135deg,#f5f8f6 0%,#fff 78%)}.action-copy{min-width:0;align-self:stretch;display:flex;flex-direction:column;justify-content:center}.action-kicker{display:flex;align-items:center;gap:1.2mm;margin-bottom:1mm;color:#0b7557;font-size:1.65mm;font-weight:900;letter-spacing:.06em}.action-num{width:5.1mm;height:5.1mm;border-radius:50%;display:grid;place-items:center;background:var(--deep);color:#fff;font-size:1.7mm;letter-spacing:0;flex:0 0 auto}.action-card h4{font-size:3.12mm;line-height:1.16;margin:0 0 1mm;font-weight:900}.action-card p{font-size:1.72mm;line-height:1.36;color:var(--muted);margin:0;font-weight:650}.action-note{margin-top:1.1mm;font-size:1.35mm;font-weight:900;letter-spacing:.08em;color:#0b8c64}.site-url-label{margin-top:auto;padding-top:1.4mm;border-top:1px solid #d3e7de;font-size:1.45mm;letter-spacing:.04em;font-weight:900;color:#52766b}.site-url{margin-top:.55mm;font-size:3.92mm;line-height:1.05;font-weight:900;color:#063f30;letter-spacing:-.045em;white-space:nowrap;background:#e9f8f2;border:1px solid #b9e4d2;border-radius:1.5mm;padding:1mm 1.2mm}.action-qr{display:flex;flex-direction:column;align-items:center;justify-content:center;min-width:0}.action-qr img{width:20.5mm;height:20.5mm;object-fit:contain;background:#fff;padding:.5mm;border-radius:1.3mm;border:1px solid #d8e4df}.qlabel{font-size:1.53mm;font-weight:900;margin-top:.55mm;white-space:nowrap}.qmini{font-size:1.05mm;color:#6c7e76;font-weight:800;margin-top:.2mm;white-space:nowrap}
 .footer{position:absolute;left:10mm;right:10mm;bottom:4.1mm;height:6.6mm;border-top:1px solid var(--line);display:flex;align-items:flex-end;justify-content:space-between;padding-top:1.4mm}.fbrand{font-size:1.55mm;font-weight:900;letter-spacing:.08em}.fbrand .shop{color:#0b8c64;margin-left:2mm}.footer .note{text-align:right;font-size:1.27mm;line-height:1.25;color:#6a7a74;font-weight:700}
 @page{size:A4 portrait;margin:0}@media print{html,body{background:#fff}.toolbar{display:none!important}.sheet{margin:0;box-shadow:none}}@media screen and (max-width:900px){.sheet{transform-origin:top center;transform:scale(.72);margin-bottom:-72mm}}
+
+/* DPRO_A4_PRIORITY_SAFE_V3_3_20261113 : reversible verified layout patch */
+.main { padding-top:3.8mm; }
+.section-title { margin-bottom:2.0mm; }
+.feature-grid { gap:1.9mm; }
+.feature { min-height:23.4mm; padding-top:2.2mm; padding-bottom:2.0mm; }
+.ecosystem { margin-top:2.4mm; padding-top:2.8mm; padding-bottom:2.6mm; }
+.cost-check { margin-top:2.4mm; }
+.price { margin-top:2.4mm; }
+.contact { margin-top:1.8mm; padding-top:1.8mm; }
+@media print {
+  .toolbar {display:none!important;}
+  .sheet { margin:0!important;box-shadow:none!important;
+    transform: translate(4.8mm,4.8mm) scale(.954)!important;
+    transform-origin:top left!important; }
+}
+
 </style>
 <style id="final-master-v2-normalize">
 

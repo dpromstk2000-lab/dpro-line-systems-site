@@ -21,6 +21,24 @@
 .footer{position:absolute;left:14mm;right:14mm;bottom:6mm;display:flex;justify-content:space-between;font-size:6.5pt;color:#6b7f8d}
 .actions{margin-top:3mm;text-align:right}.actions a{font-size:8pt;color:#1769aa;font-weight:800}
 @media screen and (max-width:900px){.page{width:100%;min-height:auto;padding:24px 18px}.stats,.flow,.models,.points,.qrs{grid-template-columns:1fr}.footer{position:static;margin-top:18px}}
+
+/* DPRO_A4_PRIORITY_SAFE_V3_3_20261113 : medical print pagination only */
+@media print {
+  html,body{width:210mm;height:297mm;overflow:hidden;background:white;margin:0;padding:0;}
+  .page{width:210mm!important;height:297mm!important;min-height:297mm!important;
+    box-sizing:border-box!important;overflow:hidden!important;
+    padding:10mm 12mm 8mm!important;margin:0!important;
+    transform:translate(4.2mm,4.2mm) scale(.962)!important;
+    transform-origin:top left!important;break-inside:avoid-page;}
+  .lead{margin-bottom:3mm;line-height:1.5;}
+  .stats{margin-bottom:3mm;}
+  .band{margin:3mm 0;}
+  .models{margin-top:3mm;}
+  .points{margin-top:3mm;}
+  .qrs{margin-top:3mm;padding-top:3mm;}
+  .note{margin-top:2.2mm;}
+}
+
 </style>
 </head><body><main class="page">
 <div class="kicker">DPRO MEDICAL / A4 SALES SHEET V1.0</div>

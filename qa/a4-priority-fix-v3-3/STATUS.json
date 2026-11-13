@@ -1,0 +1,443 @@
+[
+  {
+    "name": "flyer-bakery",
+    "type": "bottom",
+    "status": "NEEDS_MANUAL_REVIEW",
+    "details": {
+      "screen": {
+        "gap": 38.140625,
+        "label": 4.125,
+        "image": 1
+      },
+      "print": {
+        "gap": 36.38616943359375,
+        "label": 3.935281753540039,
+        "inset": 18.141733169555664
+      },
+      "errors": [
+        "photo label clipped",
+        "photo label clipped"
+      ]
+    }
+  },
+  {
+    "name": "flyer-buyback",
+    "type": "bottom",
+    "status": "FIXED_AND_VERIFIED",
+    "details": {
+      "screen": {
+        "gap": 38.140625,
+        "label": 10.546875,
+        "image": 0
+      },
+      "print": {
+        "gap": 36.38616943359375,
+        "label": 10.061746597290039,
+        "inset": 18.141733169555664
+      },
+      "errors": []
+    }
+  },
+  {
+    "name": "flyer-careplan",
+    "type": "bottom",
+    "status": "FIXED_AND_VERIFIED",
+    "details": {
+      "screen": {
+        "gap": 32.421875,
+        "label": 5.890625,
+        "image": 0
+      },
+      "print": {
+        "gap": 30.93048095703125,
+        "label": 5.619668960571289,
+        "inset": 18.141733169555664
+      },
+      "errors": []
+    }
+  },
+  {
+    "name": "flyer-caretaxi",
+    "type": "bottom",
+    "status": "FIXED_AND_VERIFIED",
+    "details": {
+      "screen": {
+        "gap": 38.140625,
+        "label": 6.125,
+        "image": 0
+      },
+      "print": {
+        "gap": 36.38616943359375,
+        "label": 5.843271255493164,
+        "inset": 18.141733169555664
+      },
+      "errors": []
+    }
+  },
+  {
+    "name": "flyer-cleaning",
+    "type": "bottom",
+    "status": "FIXED_AND_VERIFIED",
+    "details": {
+      "screen": {
+        "gap": 38.140625,
+        "label": 6.125,
+        "image": 0
+      },
+      "print": {
+        "gap": 36.38616943359375,
+        "label": 5.843271255493164,
+        "inset": 18.141733169555664
+      },
+      "errors": []
+    }
+  },
+  {
+    "name": "flyer-cosmetics",
+    "type": "bottom",
+    "status": "NEEDS_MANUAL_REVIEW",
+    "details": {
+      "screen": {
+        "gap": 32.140625,
+        "label": 3.125,
+        "image": 1
+      },
+      "print": {
+        "gap": 30.662109375,
+        "label": 2.981271743774414,
+        "inset": 18.141733169555664
+      },
+      "errors": [
+        "photo label clipped",
+        "photo label clipped"
+      ]
+    }
+  },
+  {
+    "name": "flyer-estate",
+    "type": "estate",
+    "status": "FIXED_AND_VERIFIED",
+    "details": {
+      "screen": {
+        "gap": 38.140625,
+        "label": 42.390625,
+        "image": 0
+      },
+      "print": {
+        "gap": 36.38616943359375,
+        "label": 40.4406681060791,
+        "inset": 18.141733169555664
+      },
+      "errors": []
+    }
+  },
+  {
+    "name": "flyer-esthe",
+    "type": "bottom",
+    "status": "FIXED_AND_VERIFIED",
+    "details": {
+      "screen": {
+        "gap": 38.140625,
+        "label": 6.125,
+        "image": 0
+      },
+      "print": {
+        "gap": 36.38616943359375,
+        "label": 5.843271255493164,
+        "inset": 18.141733169555664
+      },
+      "errors": []
+    }
+  },
+  {
+    "name": "flyer-eye",
+    "type": "bottom",
+    "status": "FIXED_AND_VERIFIED",
+    "details": {
+      "screen": {
+        "gap": 35.21875,
+        "label": 6.125,
+        "image": 0
+      },
+      "print": {
+        "gap": 33.59869384765625,
+        "label": 5.843271255493164,
+        "inset": 18.141733169555664
+      },
+      "errors": []
+    }
+  },
+  {
+    "name": "flyer-gym",
+    "type": "bottom",
+    "status": "FIXED_AND_VERIFIED",
+    "details": {
+      "screen": {
+        "gap": 38.140625,
+        "label": 6.125,
+        "image": 0
+      },
+      "print": {
+        "gap": 36.38616943359375,
+        "label": 5.843271255493164,
+        "inset": 18.141733169555664
+      },
+      "errors": []
+    }
+  },
+  {
+    "name": "flyer-gyosei",
+    "type": "gyosei",
+    "status": "FIXED_AND_VERIFIED",
+    "details": {
+      "screen": {
+        "gap": 42.0625,
+        "label": 6.609375,
+        "image": 0
+      },
+      "print": {
+        "gap": 40.12762451171875,
+        "label": 6.305368423461914,
+        "inset": 18.141733169555664
+      },
+      "errors": []
+    }
+  },
+  {
+    "name": "flyer-homecare",
+    "type": "bottom",
+    "status": "NEEDS_MANUAL_REVIEW",
+    "details": {
+      "screen": {
+        "gap": 33.890625,
+        "label": 3.125,
+        "image": 1
+      },
+      "print": {
+        "gap": 32.3316650390625,
+        "label": 2.981271743774414,
+        "inset": 18.141733169555664
+      },
+      "errors": [
+        "photo label clipped",
+        "photo label clipped"
+      ]
+    }
+  },
+  {
+    "name": "flyer-izakaya",
+    "type": "bottom",
+    "status": "FIXED_AND_VERIFIED",
+    "details": {
+      "screen": {
+        "gap": 35.21875,
+        "label": 6.125,
+        "image": 0
+      },
+      "print": {
+        "gap": 33.59869384765625,
+        "label": 5.843271255493164,
+        "inset": 18.141733169555664
+      },
+      "errors": []
+    }
+  },
+  {
+    "name": "flyer-medical",
+    "type": "medical",
+    "status": "FIXED_AND_VERIFIED",
+    "details": {
+      "screen": {
+        "gap": 93.984375,
+        "label": null,
+        "image": 0
+      },
+      "print": {
+        "gap": 127.029052734375,
+        "label": null,
+        "inset": 15.874015808105469
+      },
+      "errors": []
+    }
+  },
+  {
+    "name": "flyer-nail",
+    "type": "bottom",
+    "status": "FIXED_AND_VERIFIED",
+    "details": {
+      "screen": {
+        "gap": 33.046875,
+        "label": 6.609375,
+        "image": 0
+      },
+      "print": {
+        "gap": 31.5267333984375,
+        "label": 6.305368423461914,
+        "inset": 18.141733169555664
+      },
+      "errors": []
+    }
+  },
+  {
+    "name": "flyer-pet-salon",
+    "type": "bottom",
+    "status": "FIXED_AND_VERIFIED",
+    "details": {
+      "screen": {
+        "gap": 38.140625,
+        "label": 6.125,
+        "image": 0
+      },
+      "print": {
+        "gap": 36.38616943359375,
+        "label": 5.843271255493164,
+        "inset": 18.141733169555664
+      },
+      "errors": []
+    }
+  },
+  {
+    "name": "flyer-reform",
+    "type": "bottom",
+    "status": "FIXED_AND_VERIFIED",
+    "details": {
+      "screen": {
+        "gap": 34.296875,
+        "label": 7.296875,
+        "image": 0
+      },
+      "print": {
+        "gap": 32.71923828125,
+        "label": 6.961252212524414,
+        "inset": 18.141733169555664
+      },
+      "errors": []
+    }
+  },
+  {
+    "name": "flyer-school",
+    "type": "bottom",
+    "status": "FIXED_AND_VERIFIED",
+    "details": {
+      "screen": {
+        "gap": 33.234375,
+        "label": 7.296875,
+        "image": 0
+      },
+      "print": {
+        "gap": 31.70562744140625,
+        "label": 6.961252212524414,
+        "inset": 18.141733169555664
+      },
+      "errors": []
+    }
+  },
+  {
+    "name": "flyer-sharoushi",
+    "type": "print-hero",
+    "status": "FIXED_AND_VERIFIED",
+    "details": {
+      "screen": {
+        "gap": 38.140625,
+        "label": 6.125,
+        "image": 0
+      },
+      "print": {
+        "gap": 87.54443359375,
+        "label": 31.809946060180664,
+        "inset": 18.141733169555664
+      },
+      "errors": []
+    }
+  },
+  {
+    "name": "flyer-shiho",
+    "type": "bottom",
+    "status": "FIXED_AND_VERIFIED",
+    "details": {
+      "screen": {
+        "gap": 38.140625,
+        "label": 6.125,
+        "image": 0
+      },
+      "print": {
+        "gap": 36.38616943359375,
+        "label": 5.843271255493164,
+        "inset": 18.141733169555664
+      },
+      "errors": []
+    }
+  },
+  {
+    "name": "flyer-sodan",
+    "type": "print-hero",
+    "status": "FIXED_AND_VERIFIED",
+    "details": {
+      "screen": {
+        "gap": 38.140625,
+        "label": 6.125,
+        "image": 0
+      },
+      "print": {
+        "gap": 87.54443359375,
+        "label": 31.809946060180664,
+        "inset": 18.141733169555664
+      },
+      "errors": []
+    }
+  },
+  {
+    "name": "flyer-stay",
+    "type": "bottom",
+    "status": "FIXED_AND_VERIFIED",
+    "details": {
+      "screen": {
+        "gap": 34.296875,
+        "label": 7.296875,
+        "image": 0
+      },
+      "print": {
+        "gap": 32.71923828125,
+        "label": 6.961252212524414,
+        "inset": 18.141733169555664
+      },
+      "errors": []
+    }
+  },
+  {
+    "name": "flyer-tax",
+    "type": "bottom",
+    "status": "FIXED_AND_VERIFIED",
+    "details": {
+      "screen": {
+        "gap": 38.140625,
+        "label": 41.046875,
+        "image": 0
+      },
+      "print": {
+        "gap": 36.38616943359375,
+        "label": 39.15873146057129,
+        "inset": 18.141733169555664
+      },
+      "errors": []
+    }
+  },
+  {
+    "name": "flyer-vet",
+    "type": "estate",
+    "status": "FIXED_AND_VERIFIED",
+    "details": {
+      "screen": {
+        "gap": 38.140625,
+        "label": 42.390625,
+        "image": 0
+      },
+      "print": {
+        "gap": 36.38616943359375,
+        "label": 40.4406681060791,
+        "inset": 18.141733169555664
+      },
+      "errors": []
+    }
+  }
+]
