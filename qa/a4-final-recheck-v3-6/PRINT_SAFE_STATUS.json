@@ -1,0 +1,30 @@
+[
+  {
+    "stem": "flyer-dental",
+    "status": "FIXED_AND_VERIFIED",
+    "error": [],
+    "screenFooterGap": null,
+    "printFooterGap": null,
+    "printHeroGap": null,
+    "printInsetLeftPx": 18.14,
+    "printInsetTopPx": 18.14,
+    "printedPdf": {
+      "pages": 1,
+      "A4": true
+    }
+  },
+  {
+    "stem": "flyer-salesnavi",
+    "status": "FIXED_AND_VERIFIED",
+    "error": [],
+    "screenFooterGap": 102.046875,
+    "printFooterGap": 97.35272216796875,
+    "printHeroGap": 2.981271743774414,
+    "printInsetLeftPx": 18.14,
+    "printInsetTopPx": 18.14,
+    "printedPdf": {
+      "pages": 1,
+      "A4": true
+    }
+  }
+]
