@@ -1,0 +1,154 @@
+name: DPRO YAKINIKU A4 hero labels V2.2
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/dpro-yakiniku-hero-visibility-v2_2.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: dpro-yakiniku-a4-print-safe-main
+  cancel-in-progress: false
+
+jobs:
+  fix-and-verify:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout latest product-site source
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+
+      - name: Correct hero label clipping without changing the lower half
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          file = Path('flyer-yakiniku.html')
+          source = file.read_text(encoding='utf-8')
+          before_marker = 'DPRO_YAKINIKU_A4_PRINT_SAFE_V2_1_20261113'
+          marker = 'DPRO_YAKINIKU_HERO_LABELS_V2_2_20261113'
+
+          if marker in source:
+              print('V2.2 is already installed; no duplicate CSS.')
+              raise SystemExit(0)
+          assert before_marker in source, 'Expected V2.1 A4 print-safe correction; refusing to alter an unknown version'
+          assert 'DPRO YAKINIKU A4 FLYER MASTER V2.0' in source, 'Wrong flyer source'
+          assert source.count('</style>') == 1, 'Unexpected CSS structure'
+          assert 'class="pillrow"' in source and 'class="hero-copy"' in source, 'Hero label structure not found'
+          assert source.count('class="action-card ') == 3, 'Unexpected lower contact cards'
+
+          # V2.1 made the hero 2mm shorter, accidentally hiding the bottom of four
+          # feature labels. Restore clearance *inside* the hero, not by shifting
+          # the whole A4 sheet or making the hero taller (which would put the
+          # repaired QR/footer clearance at risk).
+          patch = r'''
+          /* DPRO_YAKINIKU_HERO_LABELS_V2_2_20261113
+             Keep all four hero tags entirely visible on screen and on A4 print.
+             Deliberately leave V2.1 footer, QR, 1-page A4 scale and page margins untouched. */
+          .hero-copy { padding-top: 6.6mm; }
+          .eyebrow { margin-top: 3.2mm; }
+          .hero h1 { margin-bottom: 1.6mm; }
+          .pillrow { margin-top: 1.7mm; }
+          .pill { padding-top: .9mm; padding-bottom: .9mm; }
+          '''
+          output = source.replace('</style>', patch + '\n</style>', 1)
+          assert output.count(marker) == 1
+          assert output.count('DPRO_YAKINIKU_A4_PRINT_SAFE_V2_1_20261113') == 1
+          assert output.count('<footer class="footer">') == 1
+          file.write_text(output, encoding='utf-8')
+          print('Applied V2.2 hero-only correction; other flyer contents retained.')
+          PY
+
+      - name: Install Chrome and Japanese fonts
+        uses: browser-actions/setup-chrome@v1
+        with:
+          chrome-version: stable
+
+      - name: Install A4 PDF verification dependencies
+        shell: bash
+        run: |
+          python3 -m pip install --quiet playwright pypdf
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq fonts-noto-cjk >/dev/null
+
+      - name: Test hero label visibility, lower QR clearance and A4 PDF
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import json, shutil
+          from playwright.sync_api import sync_playwright
+          from pypdf import PdfReader
+
+          chrome = (shutil.which('google-chrome') or shutil.which('google-chrome-stable')
+                    or shutil.which('chrome') or shutil.which('chromium'))
+          assert chrome, 'Chrome missing; no flyer committed'
+
+          with sync_playwright() as p:
+              browser = p.chromium.launch(executable_path=chrome, headless=True,
+                                          args=['--no-sandbox','--disable-dev-shm-usage'])
+              page = browser.new_page(viewport={'width': 1500, 'height': 1800}, device_scale_factor=1)
+              page.set_content(Path('flyer-yakiniku.html').read_text(encoding='utf-8'), wait_until='load')
+              page.evaluate('() => document.fonts.ready.then(() => true)')
+              boxes = page.evaluate('''() => {
+                const rect = s => {const r=document.querySelector(s).getBoundingClientRect();
+                  return {left:r.left,right:r.right,top:r.top,bottom:r.bottom,width:r.width,height:r.height};};
+                const pills = [...document.querySelectorAll('.pillrow .pill')].map(el=>{
+                  const r=el.getBoundingClientRect();return {top:r.top,bottom:r.bottom,left:r.left,right:r.right};});
+                return { hero:rect('.hero'), heroCopy:rect('.hero-copy'),
+                         pills, actionGrid:rect('.action-grid'), footer:rect('.footer'),
+                         sheet:rect('.sheet') }; }''')
+              assert len(boxes['pills']) == 4, f'Expected 4 hero labels; found {len(boxes["pills"])}'
+              gap = boxes['hero']['bottom'] - max(x['bottom'] for x in boxes['pills'])
+              clearance = boxes['footer']['top'] - boxes['actionGrid']['bottom']
+              print('Screen hero-label bottom clearance:', round(gap, 2), 'px')
+              print('Screen QR-card / footer clearance:', round(clearance, 2), 'px')
+              assert gap >= 2.0, f'HERO LABELS STILL CLIPPED: {gap:.2f}px'
+              assert clearance >= 7.0, f'QR/footer overlap risk: {clearance:.2f}px'
+              assert all(x['right'] <= boxes['hero']['right'] + 1 for x in boxes['pills']), 'Hero labels overflow right side'
+
+              page.emulate_media(media='print')
+              print_boxes = page.evaluate('''() => {
+                const r=s=>document.querySelector(s).getBoundingClientRect();
+                const h=r('.hero'),f=r('.footer'),a=r('.action-grid'),s=r('.sheet');
+                const pills=[...document.querySelectorAll('.pillrow .pill')].map(x=>x.getBoundingClientRect());
+                return {gap:h.bottom-Math.max(...pills.map(x=>x.bottom)),
+                        bottomGap:f.top-a.bottom, sheetLeft:s.left,sheetTop:s.top,
+                        sheetRight:s.right,sheetBottom:s.bottom}; }''')
+              print('Print-mode geometry:', json.dumps(print_boxes, ensure_ascii=False))
+              assert print_boxes['gap'] >= 1.5, 'Hero labels clip in print mode'
+              assert print_boxes['bottomGap'] >= 5.0, 'Contact cards overlap footer in print mode'
+              assert print_boxes['sheetLeft'] >= 5 and print_boxes['sheetTop'] >= 5, 'Printed page has insufficient top/left margin'
+              assert print_boxes['sheetRight'] < 795 and print_boxes['sheetBottom'] < 1122, 'A4 artwork extends beyond the print page'
+              page.pdf(path='flyer-yakiniku.pdf',prefer_css_page_size=True,
+                       print_background=True,display_header_footer=False,scale=1)
+              browser.close()
+
+          doc=PdfReader('flyer-yakiniku.pdf')
+          assert len(doc.pages)==1, f'Expected one A4 page, got {len(doc.pages)}'
+          pg=doc.pages[0]
+          width,height=float(pg.mediabox.width),float(pg.mediabox.height)
+          assert abs(width-595.28)<2.0 and abs(height-841.89)<2.0, f'Wrong PDF size: {width} x {height}'
+          print('PASS: four visible hero labels, intact bottom cards, inset one-page A4 PDF.')
+          PY
+
+      - name: Commit verified updated flyer HTML and PDF
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -- flyer-yakiniku.html flyer-yakiniku.pdf
+          if git diff --cached --quiet; then
+            echo 'V2.2 already current; no commit needed.'
+          else
+            git commit -m 'fix: fully show yakiniku hero labels while retaining A4 footer clearance'
+            git push origin HEAD:main
+          fi
