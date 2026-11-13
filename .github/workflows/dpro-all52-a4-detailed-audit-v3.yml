@@ -1,0 +1,331 @@
+name: DPRO A4 ALL52 Detailed Print & Clip Audit V3
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/dpro-all52-a4-detailed-audit-v3.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: dpro-a4-detailed-audit-v3
+  cancel-in-progress: false
+
+jobs:
+  audit-only:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout all flyer files without editing production
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - name: Prepare Japanese text browser rendering
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Install Chrome and pdf QA dependencies
+        run: |
+          npm install --no-save playwright@1.55.0
+          npx playwright install --with-deps chromium
+          python3 -m pip install --quiet --break-system-packages pillow pypdf pymupdf
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq fonts-noto-cjk >/dev/null
+      - name: Audit every current A4 flyer in screen and print mode
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m http.server 8000 >/tmp/dpro-a4-audit-http.log 2>&1 &
+          SERVER_PID=$!
+          trap 'kill "$SERVER_PID" || true; rm -f .dpro-a4-visual-v3.mjs' EXIT
+          sleep 2
+          cat > .dpro-a4-visual-v3.mjs <<'NODE_SCRIPT'
+          import fs from 'node:fs';
+          import path from 'node:path';
+          import { chromium } from 'playwright';
+          
+          const OUTPUT = 'qa/all52-a4-detailed-audit-v3-20261113';
+          const screensDir = path.join(OUTPUT, 'screens');
+          const pdfDir = path.join(OUTPUT, 'temp-pdf');
+          for(const p of [OUTPUT,screensDir,pdfDir]) fs.mkdirSync(p,{recursive:true});
+          const files=fs.readdirSync('.').filter(f=>/^flyer-[^/]+\.html$/i.test(f)).sort();
+          const browser=await chromium.launch({headless:true,args:['--no-sandbox','--disable-dev-shm-usage']});
+          const context=await browser.newContext({viewport:{width:1550,height:1870},deviceScaleFactor:1,locale:'ja-JP'});
+          const page=await context.newPage();
+          page.setDefaultTimeout(12000);
+          page.setDefaultNavigationTimeout(15000);
+          await page.route('**/*',async route=>{
+            const req=route.request(),url=req.url(),type=req.resourceType();
+            if(!url.startsWith('http://127.0.0.1:8000/')&&!url.startsWith('data:')&&!url.startsWith('blob:')&&['script','font','media','websocket','eventsource'].includes(type)) return route.abort();
+            return route.continue();
+          });
+          
+          const analyze = () => {
+           const pageEl=document.querySelector('.sheet,.page,article[aria-label*="A4"]')||document.querySelector('main')||document.body;
+           const footer=pageEl.querySelector('.footer,footer');
+           const hero=pageEl.querySelector('.hero,.top');
+           const q=(sel)=>pageEl.querySelector(sel);
+           const rect=(el)=>{if(!el)return null;const r=el.getBoundingClientRect();return {top:r.top,bottom:r.bottom,left:r.left,right:r.right,width:r.width,height:r.height};};
+           const rects={page:rect(pageEl),footer:rect(footer),hero:rect(hero),action:rect(q('.action-grid,.cta,.qrs'))};
+           const visible=(el)=>{if(!el)return false; const s=getComputedStyle(el);const r=el.getBoundingClientRect();return s.display!=='none'&&s.visibility!=='hidden'&&Number(s.opacity||'1')>.02&&r.width>=1&&r.height>=1};
+           const intersect=(a,b)=>a&&b&&Math.max(0,Math.min(a.right,b.right)-Math.max(a.left,b.left))>=2&&Math.max(0,Math.min(a.bottom,b.bottom)-Math.max(a.top,b.top))>=2;
+           const ruler= document.createTreeWalker(pageEl, NodeFilter.SHOW_TEXT);
+           const textClips=[],footerCollisions=[],pageClips=[];
+           let totalText=0;
+           while(ruler.nextNode()){
+             const n=ruler.currentNode;const txt=(n.nodeValue||'').replace(/\s+/g,' ').trim();if(!txt)continue;
+             const el=n.parentElement;if(!el || el.closest('svg,script,style,noscript,template'))continue;
+             if(!visible(el))continue;
+             const range=document.createRange();range.selectNodeContents(n);const br=[...range.getClientRects()];
+             for(const r of br){if(r.width<1.5 || r.height<1.5)continue;totalText++;
+              if(rects.page && (r.left<rects.page.left-2.5||r.right>rects.page.right+2.5||r.top<rects.page.top-2.5||r.bottom>rects.page.bottom+2.5))
+                 pageClips.push({text:txt.slice(0,52),element:el.tagName+'.'+String(el.className||'').slice(0,35),y:Math.round(r.top-rects.page.top)});
+              if(footer && !footer.contains(el) && intersect(r,rects.footer))
+                 footerCollisions.push({text:txt.slice(0,52),element:el.tagName+'.'+String(el.className||'').slice(0,35),overlapPx:+(Math.min(r.bottom,rects.footer.bottom)-Math.max(r.top,rects.footer.top)).toFixed(1)});
+              let a=el;
+              while(a && a!==pageEl.parentElement){
+                if(a===el && a.nodeName==='IMG'){a=a.parentElement;continue;}
+                const cs=getComputedStyle(a), ar=a.getBoundingClientRect();
+                const oy=cs.overflowY,ox=cs.overflowX;
+                if(['hidden','clip','scroll','auto'].includes(oy)||['hidden','clip','scroll','auto'].includes(ox)){
+                  const lossY= Math.max(0,ar.top-r.top)+Math.max(0,r.bottom-ar.bottom);
+                  const lossX= Math.max(0,ar.left-r.left)+Math.max(0,r.right-ar.right);
+                  if((['hidden','clip'].includes(oy)&&lossY>2.6 && lossY/r.height>.09) ||
+                     (['hidden','clip'].includes(ox)&&lossX>3.6 && lossX/r.width>.07)){
+                     textClips.push({text:txt.slice(0,64),element:el.tagName+'.'+String(el.className||'').slice(0,30),ancestor:a.tagName+'.'+String(a.className||'').slice(0,35),lossY:+lossY.toFixed(1),lossX:+lossX.toFixed(1)});
+                     break;
+                  }
+                }
+                if(a===pageEl)break;
+                a=a.parentElement;
+              }
+             }
+           }
+           const labels=[...pageEl.querySelectorAll('.pillrow .pill')].filter(visible).map(el=>rect(el));
+           const heroLabelGap=labels.length&&rects.hero?+(rects.hero.bottom-Math.max(...labels.map(r=>r.bottom))).toFixed(1):null;
+           const footerActionGap=rects.footer&&rects.action?+(rects.footer.top-rects.action.bottom).toFixed(1):null;
+           const qrImgs=[...pageEl.querySelectorAll('img')].filter(visible).filter(img=>{
+               const key=`${img.alt||''} ${img.className||''}`.toLowerCase(),r=img.getBoundingClientRect();
+               return key.includes('qr')||(r.width>=45&&r.width<=200&&r.height>=45&&r.height<=200&&r.width/r.height>=.87&&r.width/r.height<=1.13);
+           });
+           const qrIssues=[];
+           for(const img of qrImgs){let r=rect(img);
+             if((rects.footer&&intersect(r,rects.footer))||
+                (rects.page&&(r.left<rects.page.left-2||r.right>rects.page.right+2||r.top<rects.page.top-2||r.bottom>rects.page.bottom+2)))
+                qrIssues.push({alt:img.alt||'',at:+(r.top-rects.page.top).toFixed(1),reason:'outside page or overlaps footer'});
+           }
+           const brokenImages=[...pageEl.querySelectorAll('img')].filter(img=>!img.complete || img.naturalWidth===0).map(img=>({alt:img.alt||'',src:(img.getAttribute('src')||'').slice(0,100)}));
+           const el=rects.page;
+           const trimRisk=!!(el&&rects.footer&&(rects.footer.bottom>el.bottom-9 ||rects.footer.left<el.left+9 ||rects.footer.right>el.right-9));
+           const pw=window.innerWidth;
+           return {page:rects.page,footer:rects.footer,hero:rects.hero,heroLabelCount:labels.length,heroLabelGap,footerActionGap,
+                  textRanges:totalText,textClips:textClips.slice(0,12),textClipCount:textClips.length,
+                  pageClips:pageClips.slice(0,12),pageClipCount:pageClips.length,
+                  footerCollisions:footerCollisions.slice(0,12),footerCollisionCount:footerCollisions.length,
+                  qrCount:qrImgs.length,qrIssues,brokenImages:brokenImages.slice(0,5),brokenImageCount:brokenImages.length,
+                  pageScrollHeight:pageEl.scrollHeight,pageClientHeight:pageEl.clientHeight,
+                  trimRisk,viewportWidth:pw};
+          };
+          
+          const results=[];
+          for(const file of files){
+           const stem=file.replace(/\.html$/i,'');const d={file,stem};
+           try{
+             await page.goto(`http://127.0.0.1:8000/${encodeURIComponent(file)}`,{waitUntil:'domcontentloaded',timeout:15000});
+             await page.evaluate(()=>document.fonts.ready);
+             await page.waitForTimeout(180);
+             d.screen=await page.evaluate(analyze);
+             try{
+               await page.locator('.sheet,.page,article[aria-label*="A4"],main').first().screenshot({path:path.join(screensDir,stem+'.png'),animations:'disabled',timeout:15000});
+             }catch(e){d.screenshotError=String(e.message||e).slice(0,200);}
+             await page.emulateMedia({media:'print'});
+             d.print=await page.evaluate(analyze);
+             try{
+               await page.pdf({path:path.join(pdfDir,stem+'.pdf'),preferCSSPageSize:true,printBackground:true,displayHeaderFooter:false,timeout:20000});
+             }catch(e){d.printError=String(e.message||e).slice(0,200);}
+             await page.emulateMedia({media:'screen'});
+           }catch(e){d.navigationError=String(e.message||e).slice(0,220);}
+           finally { try { await page.emulateMedia({media:'screen'}); } catch (_) {} }
+           const issues=[],warnings=[];
+           if(d.navigationError)issues.push('NAVIGATION_ERROR');
+           if(d.printError)issues.push('PRINT_PDF_ERROR');
+           for(const mode of ['screen','print']){
+             const g=d[mode];if(!g)continue;
+             if(g.heroLabelGap!==null && g.heroLabelGap<1.7)issues.push(mode+':HERO_LABEL_CLIP');
+             if(g.textClipCount>0)issues.push(mode+':TEXT_CLIP('+g.textClipCount+')');
+             if(g.footerCollisionCount>0)issues.push(mode+':FOOTER_COLLISION('+g.footerCollisionCount+')');
+             if(g.pageClipCount>0)issues.push(mode+':OUTSIDE_PAGE('+g.pageClipCount+')');
+             if(g.qrIssues.length>0)issues.push(mode+':QR_CLIPPED('+g.qrIssues.length+')');
+             if(g.footerActionGap!==null&&g.footerActionGap<2)issues.push(mode+':ACTION_FOOTER_OVERLAP');
+             if(g.brokenImageCount>0)warnings.push(mode+':BROKEN_IMAGES('+g.brokenImageCount+')');
+             if(g.pageScrollHeight>g.pageClientHeight+4)warnings.push(mode+':SCROLL_OVERFLOW');
+           }
+           if(d.print?.trimRisk)warnings.push('PRINT_EDGE_RISK_NON_BORDERLESS_PRINTER');
+           d.issues=[...new Set(issues)];d.warnings=[...new Set(warnings)];d.status=issues.length?'FAIL':warnings.length?'REVIEW':'PASS';
+           results.push(d);
+           console.log(`[${results.length}/${files.length}] ${stem} ${d.status} ${d.issues.join(',')} ${d.warnings.join(',')}`);
+          }
+          await browser.close();
+          fs.writeFileSync(path.join(OUTPUT,'AUDIT.json'),JSON.stringify(results,null,2));
+          const rows=[['flyer','status','issues','warnings','screen_hero_gap_px','print_hero_gap_px','screen_footer_gap_px','print_footer_gap_px','screen_text_clips','print_text_clips','screen_footer_collisions','print_footer_collisions','screen_qr_issues','print_qr_issues','print_edge_risk']];
+          for(const r of results) rows.push([r.stem,r.status,r.issues.join(';'),r.warnings.join(';'),r.screen?.heroLabelGap,r.print?.heroLabelGap,r.screen?.footerActionGap,r.print?.footerActionGap,r.screen?.textClipCount,r.print?.textClipCount,r.screen?.footerCollisionCount,r.print?.footerCollisionCount,r.screen?.qrIssues?.length,r.print?.qrIssues?.length,r.print?.trimRisk]);
+          fs.writeFileSync(path.join(OUTPUT,'AUDIT.csv'),'\ufeff'+rows.map(row=>row.map(v=>'"'+String(v??'').replace(/"/g,'""')+'"').join(',')).join('\n')+'\n');
+          const fail=results.filter(r=>r.status==='FAIL'),review=results.filter(r=>r.status==='REVIEW');
+          const lines=[
+           '# DPRO A4全52チラシ詳細検査 V3（2026-11-13）','',
+           '対象：GitHub mainにある flyer-*.html（実際のファイル数を採用）','',
+           `- 対象HTML: ${files.length}件`,
+           `- PASS: ${results.filter(r=>r.status==='PASS').length}件`,
+           `- 要修正/検証 (FAIL): ${fail.length}件`,
+           `- 印刷機種などによる追加確認 (REVIEW): ${review.length}件`,
+           `- 印刷端の非フチなしプリンターでの欠けリスク: ${results.filter(r=>r.print?.trimRisk).length}件`,
+           '',
+           '## 判定上の注意','- PASSはブラウザ画面と印刷CSSの幾何検査です。実機の印刷を保証しません。',
+           '- REVIEWの端リスクは物理プリンターの非印刷領域の可能性を示します。実際の切れは機種依存です。',
+           '- FAILは文字・画像がボックス外へ出ている等を検出したもので、修正前にサムネイルと本文の照合が必要です。',
+           '- 既存PDFのページ数と現在HTMLから生成したPDFのページ数は別の検査ステップでAUDIT.jsonに反映します。',
+           '', '## FAIL',...(fail.length?fail.map(r=>`- ${r.stem}: ${r.issues.join(', ')}`):['- なし']),
+           '', '## REVIEW',...(review.length?review.map(r=>`- ${r.stem}: ${r.warnings.join(', ')}`):['- なし']),
+           '', '## 全件概要', ...results.map(r=>`- ${r.stem}: ${r.status} / screen-label-gap=${r.screen?.heroLabelGap??'-'}px / print-label-gap=${r.print?.heroLabelGap??'-'}px / print-edge-risk=${!!r.print?.trimRisk}`)
+           ];
+          fs.writeFileSync(path.join(OUTPUT,'SUMMARY.md'),lines.join('\n')+'\n');
+          if(process.env.GITHUB_STEP_SUMMARY)fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY,lines.slice(0,24).join('\n')+'\n');
+          console.log(`FINAL: ${files.length} files, ${fail.length} FAIL, ${review.length} REVIEW, ${results.length-fail.length-review.length} PASS`);
+          NODE_SCRIPT
+          node .dpro-a4-visual-v3.mjs
+      - name: Validate current and newly rendered PDFs and build contact sheets
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat > /tmp/dpro-a4-finalize-v3.py <<'PY_AUDIT'
+          from pathlib import Path
+          import json,csv,io
+          from PIL import Image,ImageDraw,ImageFont
+          from pypdf import PdfReader
+          try:
+              import fitz
+          except ImportError:
+              fitz=None
+          OUT=Path('qa/all52-a4-detailed-audit-v3-20261113')
+          entries=json.loads((OUT/'AUDIT.json').read_text(encoding='utf-8'))
+          for e in entries:
+              stem=e['stem']; src=Path(stem+'.pdf'); now=OUT/'temp-pdf'/(stem+'.pdf')
+              for name,p in [('originalPdf',src),('renderedPdf',now)]:
+                  try:
+                      assert p.exists(), 'PDF_MISSING'
+                      pdf=PdfReader(p,strict=False)
+                      pages=len(pdf.pages)
+                      box=pdf.pages[0].mediabox
+                      w,h=float(box.width),float(box.height)
+                      valid=abs(w-595.28)<2 and abs(h-841.89)<2
+                      e[name]={'pages':pages,'widthPt':round(w,1),'heightPt':round(h,1),'a4':valid}
+                      if pages!=1:e['issues'].append(name+':PAGES='+str(pages))
+                      if not valid:e['issues'].append(name+':NOT_A4')
+                  except Exception as ex:
+                      e[name]={'error':str(ex)[:160]};e['issues'].append(name+':ERROR')
+              e['issues']=sorted(set(e['issues']))
+              e['warnings']=sorted(set(e['warnings']))
+              e['status']='FAIL' if e['issues'] else ('REVIEW' if e['warnings'] else 'PASS')
+          
+          (OUT/'AUDIT.json').write_text(json.dumps(entries,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
+          with (OUT/'AUDIT.csv').open('w',encoding='utf-8-sig',newline='') as f:
+              w=csv.writer(f)
+              w.writerow(['flyer','status','issues','warnings','screen_hero_gap_px','print_hero_gap_px','screen_footer_gap_px','print_footer_gap_px','screen_text_clips','print_text_clips','screen_footer_collisions','print_footer_collisions','print_qr_issues','trim_edge_risk','original_pdf_pages','rendered_pdf_pages'])
+              for e in entries:
+                  s=e.get('screen') or {};p=e.get('print') or {}
+                  w.writerow([e['stem'],e['status'],'; '.join(e['issues']),'; '.join(e['warnings']),s.get('heroLabelGap'),p.get('heroLabelGap'),s.get('footerActionGap'),p.get('footerActionGap'),s.get('textClipCount'),p.get('textClipCount'),s.get('footerCollisionCount'),p.get('footerCollisionCount'),len(p.get('qrIssues',[])),p.get('trimRisk'),e.get('originalPdf',{}).get('pages'),e.get('renderedPdf',{}).get('pages')])
+          
+          fail=[e for e in entries if e['status']=='FAIL']; rev=[e for e in entries if e['status']=='REVIEW'];passing=[e for e in entries if e['status']=='PASS']
+          lines=['# DPRO A4 52種類・詳細印刷検査 V3','',
+                 '- 実行日: 2026-11-13','- 実行対象: GitHub main / flyer-*.html / 現行PDF','',
+                 f'- 対象: {len(entries)}種類', f'- **PASS: {len(passing)}**', f'- **FAIL（見切れ等を検出）: {len(fail)}**', f'- **REVIEW（印刷リスク等）: {len(rev)}**',
+                 f'- フチなし非対応プリンターの端欠けリスク: {sum(bool((e.get("print") or {}).get("trimRisk")) for e in entries)}種類',
+                 f'- 現行PDFのA4・1ページ確認: {sum(e.get("originalPdf",{}).get("pages")==1 and e.get("originalPdf",{}).get("a4") for e in entries)} / {len(entries)}',
+                 f'- 現行HTMLから生成したPDFのA4・1ページ確認: {sum(e.get("renderedPdf",{}).get("pages")==1 and e.get("renderedPdf",{}).get("a4") for e in entries)} / {len(entries)}',
+                 '', '## 判定の限界','- FAILはレイアウト・文字・QRの幾何学的な問題。修正にはスクリーンショットの目視確認も必要。',
+                 '- REVIEWの印刷端リスクは、プリンターの非印刷領域による物理的な欠けの可能性であり、確定した欠陥ではない。',
+                 '- PASSでも全てのプリンター・PDF印刷設定での完全表示は保証しない。',
+                 '- 前回の51件PASSは、ヒーロー内部の文字切れを検出しない旧基準なので本検査で再評価。',
+                 '', '## FAIL（優先確認）',*( [f'- {e["stem"]}: {", ".join(e["issues"])}' for e in fail] or ['- なし']),
+                 '', '## REVIEW',*([f'- {e["stem"]}: {", ".join(e["warnings"])}' for e in rev] or ['- なし']),
+                 '', '## 全件',*[f'- {e["stem"]}: {e["status"]}' for e in entries]]
+          (OUT/'SUMMARY.md').write_text('\n'.join(lines)+'\n',encoding='utf-8')
+          
+          # Contact sheets for eyeballing full paper or screen at a glance.
+          font=None
+          for p in ['/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf','/usr/share/fonts/truetype/liberation2/LiberationSans-Regular.ttf']:
+              if Path(p).exists():
+                  font=ImageFont.truetype(p,18);break
+          for typ in ('screen','print'):
+              previews=[]
+              for e in entries:
+                  stem=e['stem']
+                  try:
+                      if typ=='screen':
+                          source=OUT/'screens'/(stem+'.png')
+                          im=Image.open(source).convert('RGB')
+                      else:
+                          source=OUT/'temp-pdf'/(stem+'.pdf')
+                          if fitz and source.exists():
+                              doc=fitz.open(source)
+                              page=doc.load_page(0)
+                              pix=page.get_pixmap(matrix=fitz.Matrix(1.25,1.25),alpha=False)
+                              im=Image.frombytes('RGB',[pix.width,pix.height],pix.samples)
+                              doc.close()
+                          else:
+                              continue
+                      im.thumbnail((380,540))
+                      previews.append((stem,e['status'],im))
+                  except Exception:
+                      continue
+              for batchid in range(0,len(previews),12):
+                  pack=previews[batchid:batchid+12]
+                  sheet=Image.new('RGB',(1230,1740),'#eef2f0')
+                  draw=ImageDraw.Draw(sheet)
+                  for i,(stem,status,im) in enumerate(pack):
+                      col,row=i%3,i//3
+                      x,y=14+col*406,14+row*432
+                      draw.rounded_rectangle((x,y,x+392,y+418),radius=9,fill='white',outline='#b7c4bd',width=2)
+                      draw.text((x+10,y+7),f'{stem} [{status}]',fill='#141f1b',font=font)
+                      scale=min(375/im.width,380/im.height)
+                      if scale<1:
+                          im=im.resize((int(im.width*scale),int(im.height*scale)),Image.Resampling.LANCZOS)
+                      sheet.paste(im,(x+(392-im.width)//2,y+35))
+                  sheet.save(OUT/f'CONTACT_{typ.upper()}_{batchid//12+1:02d}.jpg',quality=83,optimize=True)
+          print('FINAL AUDIT:', len(entries),'FILES,',len(fail),'FAIL,',len(rev),'REVIEW,',len(passing),'PASS')
+          PY_AUDIT
+          python3 /tmp/dpro-a4-finalize-v3.py
+      - name: Commit only QA results (no production flyer changes)
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -- qa/all52-a4-detailed-audit-v3-20261113/AUDIT.json \
+                     qa/all52-a4-detailed-audit-v3-20261113/AUDIT.csv \
+                     qa/all52-a4-detailed-audit-v3-20261113/SUMMARY.md
+          git add -- qa/all52-a4-detailed-audit-v3-20261113/CONTACT_*.jpg || true
+          if git diff --cached --quiet; then
+            echo 'QA already current; no commit needed.'
+          else
+            git commit -m 'qa: comprehensive screen and A4 print audit of 52 product flyers'
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
+      - name: Upload full QA visual report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: DPRO_ALL52_A4_DETAILED_AUDIT_V3
+          path: |
+            qa/all52-a4-detailed-audit-v3-20261113/AUDIT.json
+            qa/all52-a4-detailed-audit-v3-20261113/AUDIT.csv
+            qa/all52-a4-detailed-audit-v3-20261113/SUMMARY.md
+            qa/all52-a4-detailed-audit-v3-20261113/CONTACT_*.jpg
+            qa/all52-a4-detailed-audit-v3-20261113/screens/*.png
+          retention-days: 14
