@@ -1,0 +1,180 @@
+name: DPRO DENTAL Restore A4 Print Toolbar V3.7
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/dpro-dental-print-toolbar-v3_7.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: dpro-dental-print-toolbar-v3-7
+  cancel-in-progress: false
+
+jobs:
+  dental-toolbar:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Checkout original live source
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: true
+      - name: Prepare browser and A4 PDF verification
+        run: |
+          set -euo pipefail
+          python3 -m pip install --quiet --break-system-packages playwright pypdf pymupdf pillow
+          python3 -m playwright install --with-deps chromium
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq fonts-noto-cjk >/dev/null
+      - name: Add dental toolbar and assert printed artwork unchanged
+        run: |
+          cat > /tmp/dpro_dental_toolbar_v37.py <<'PYCODE'
+          from pathlib import Path
+          from io import BytesIO
+          import json
+          from playwright.sync_api import sync_playwright
+          from pypdf import PdfReader
+          from PIL import Image
+          import fitz
+
+          ROOT=Path.cwd()
+          HTML=ROOT/'flyer-dental.html'
+          OUT=ROOT/'qa/dental-print-toolbar-v3-7'
+          OUT.mkdir(parents=True, exist_ok=True)
+          MARK='dpro-dental-print-toolbar-v3-7'
+          CSS='<style id="dpro-dental-print-toolbar-v3-7">\n/* DPRO DENTAL V3.7: screen-only toolbar. A4 artwork and existing print rules remain intact. */\n@media screen {\n  body { flex-direction: column !important; align-items: center !important; justify-content: flex-start !important; }\n  .toolbar { position: sticky; top: 0; z-index: 1000; width: 100%; min-height: 48px;\n    display: flex; align-items: center; justify-content: center; gap: 10px;\n    padding: 9px 12px; background: rgba(7,26,21,.96); box-shadow: 0 6px 22px rgba(0,0,0,.18); }\n  .toolbar button { border: 0; border-radius: 999px; padding: 10px 17px;\n    font: 800 12px/1.2 "Noto Sans JP", "Yu Gothic", Meiryo, sans-serif; cursor: pointer; }\n  .toolbar .primary { background: #18c98a; color: #052018; }\n  .toolbar .secondary { background: #fff; color: #071a15; }\n  .sheet { flex: 0 0 auto; margin: 12mm auto 20mm; }\n}\n@media print { .toolbar { display: none !important; } }\n</style>'
+          BAR='<div class="toolbar" role="toolbar" aria-label="印刷操作"><button id="dpro-dental-print-button" class="primary" type="button" onclick="window.print()">A4で印刷 / PDF保存</button><button id="dpro-dental-to-top" class="secondary" type="button" onclick="window.scrollTo({top:0,behavior:\'smooth\'})">先頭へ</button></div>'
+          original=HTML.read_text(encoding='utf-8')
+          assert MARK not in original, 'Already applied; no duplicate toolbar'
+          assert original.count('<body>')==1 and original.lower().count('</head>')==1, 'Unexpected HTML tags'
+          assert 'class="sheet"' in original and '<article' in original, 'Dental flyer structure changed'
+          assert 'class="toolbar"' not in original, 'Toolbar already exists; needs manual inspection'
+
+          beforepath=OUT/'before_a4.pdf'
+          afterpath=OUT/'after_a4.pdf'
+
+          JS_RECT=r'''() => {
+            const sel=['.sheet','.hero','.footer','.contact'];
+            const o={};
+            for(const selector of sel){
+              const el=document.querySelector(selector);
+              if(!el){o[selector]=null;continue;}
+              const r=el.getBoundingClientRect();
+              o[selector]=[r.left,r.top,r.right,r.bottom].map(x=>Number(x.toFixed(2)));
+            }
+            return o;
+          }'''
+
+          def load(page):
+              page.goto(HTML.as_uri(),wait_until='load',timeout=30000)
+              page.evaluate('() => document.fonts.ready')
+
+          def inspect_pdf(path):
+              reader=PdfReader(str(path))
+              assert len(reader.pages)==1, f'Print is {len(reader.pages)} pages, expected 1'
+              mb=reader.pages[0].mediabox
+              assert abs(float(mb.width)-595.28)<2 and abs(float(mb.height)-841.89)<2, 'Not A4 portrait'
+
+          def render(path):
+              doc=fitz.open(str(path))
+              pix=doc[0].get_pixmap(matrix=fitz.Matrix(.8,.8),alpha=False,colorspace=fitz.csRGB)
+              data=bytes(pix.samples)
+              shape=(pix.width,pix.height,pix.n)
+              doc.close()
+              return shape,data
+
+          try:
+              with sync_playwright() as pw:
+                  browser=pw.chromium.launch(headless=True,args=['--no-sandbox','--disable-dev-shm-usage'])
+                  page=browser.new_page(viewport={'width':1350,'height':1800},locale='ja-JP')
+                  page.set_default_timeout(30000)
+                  load(page)
+                  page.emulate_media(media='print')
+                  baseline=page.evaluate(JS_RECT)
+                  page.pdf(path=str(beforepath),prefer_css_page_size=True,print_background=True,display_header_footer=False,scale=1)
+                  inspect_pdf(beforepath)
+
+                  modified=original.replace('</head>',CSS+'\n</head>',1).replace('<body>','<body>\n'+BAR+'\n',1)
+                  HTML.write_text(modified,encoding='utf-8')
+                  load(page)
+                  page.emulate_media(media='screen')
+                  visible=page.evaluate('''() => {
+                    const b=document.getElementById('dpro-dental-print-button');
+                    const bar=document.querySelector('.toolbar');
+                    const paper=document.querySelector('.sheet');
+                    if(!b||!bar||!paper) return {ok:false,reason:'missing DOM controls'};
+                    const r=b.getBoundingClientRect(),t=bar.getBoundingClientRect(),s=paper.getBoundingClientRect();
+                    return {ok:getComputedStyle(b).display!='none' && getComputedStyle(bar).display!='none' &&
+                            r.width>80 && r.height>20 && t.top<=1 && s.top>=t.bottom+2,
+                            text:b.textContent,buttonWidth:r.width,buttonHeight:r.height,
+                            toolbarTop:t.top,paperTop:s.top,toolbarBottom:t.bottom};
+                  }''')
+                  assert visible['ok'], f'Toolbar invisible or overlaps flyer: {visible}'
+                  assert 'A4で印刷 / PDF保存' in visible['text'], 'Incorrect print button label'
+                  page.evaluate('''() => { window.__DPRO_PRINT_TEST=0; window.print=()=>{window.__DPRO_PRINT_TEST++} }''')
+                  page.locator('#dpro-dental-print-button').click()
+                  assert page.evaluate('window.__DPRO_PRINT_TEST')==1, 'Print button does not invoke window.print()'
+                  page.screenshot(path=str(OUT/'dental-toolbar-screen.png'),full_page=True,animations='disabled')
+
+                  page.emulate_media(media='print')
+                  assert page.locator('.toolbar').evaluate('(el)=>getComputedStyle(el).display')=='none', 'Toolbar appears on printed PDF'
+                  after=page.evaluate(JS_RECT)
+                  for item in baseline:
+                      if baseline[item] is None or after[item] is None: continue
+                      distances=[abs(x-y) for x,y in zip(baseline[item],after[item])]
+                      assert max(distances)<.9, f'Print layout shifted for {item}: {baseline[item]} vs {after[item]}'
+                  page.pdf(path=str(afterpath),prefer_css_page_size=True,print_background=True,display_header_footer=False,scale=1)
+                  inspect_pdf(afterpath)
+                  browser.close()
+
+              shape_before,pixels_before=render(beforepath)
+              shape_after,pixels_after=render(afterpath)
+              assert shape_before==shape_after, f'PDF raster shape changed: {shape_before} => {shape_after}'
+              # Every pixel should be identical, apart from rare rasterizer subpixel noise.
+              differs=sum(x!=y for x,y in zip(pixels_before,pixels_after))
+              difference_rate=differs/len(pixels_before)
+              assert difference_rate<.002, f'Printed content changed: differing channel fraction {difference_rate:.5%}'
+
+              report={'ok':True,'file':'flyer-dental.html','print_button_visible':True,
+                      'print_handler_test':'PASS','printed_toolbar_hidden':True,'A4_pages':1,
+                      'print_layout_unchanged':True,'PDF_raster_difference_rate':difference_rate,
+                      'baseline_geometry':baseline,'updated_geometry':after}
+              (OUT/'STATUS.json').write_text(json.dumps(report,ensure_ascii=False,indent=2),encoding='utf-8')
+              (OUT/'SUMMARY.md').write_text('# DPRO DENTAL print button V3.7\n\n- Print/PDF button: PASS\n- Back to top button: present\n- A4 1-page print: PASS\n- Print toolbar hidden: PASS\n- Existing PDF flyer layout preserved: PASS\n- Modified production file: flyer-dental.html ONLY\n',encoding='utf-8')
+              print('PASS: dental toolbar and print contract validated. Raster difference rate:',difference_rate,flush=True)
+          finally:
+              beforepath.unlink(missing_ok=True)
+              afterpath.unlink(missing_ok=True)
+
+          PYCODE
+          python3 /tmp/dpro_dental_toolbar_v37.py
+      - name: Commit only dental HTML and QA result
+        if: success()
+        run: |
+          set -euo pipefail
+           git config user.name 'github-actions[bot]'
+           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+           git add -- flyer-dental.html qa/dental-print-toolbar-v3-7/STATUS.json qa/dental-print-toolbar-v3-7/SUMMARY.md
+           if git diff --cached --quiet; then
+             echo 'No new dental toolbar changes.'
+           else
+             git commit -m 'fix: restore print and PDF toolbar on dental A4 flyer without altering printed layout'
+             git pull --rebase origin main
+             git push origin HEAD:main
+           fi
+      - name: Upload toolbar screenshot and test status
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: DPRO_DENTAL_A4_PRINT_TOOLBAR_V3_7_QA
+          path: |
+            qa/dental-print-toolbar-v3-7/STATUS.json
+            qa/dental-print-toolbar-v3-7/SUMMARY.md
+            qa/dental-print-toolbar-v3-7/dental-toolbar-screen.png
+          if-no-files-found: warn
+          retention-days: 14
