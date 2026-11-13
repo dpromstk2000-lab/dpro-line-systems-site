@@ -1,0 +1,194 @@
+[
+  {
+    "name": "flyer-bakery",
+    "type": "bottom",
+    "status": "NEEDS_MANUAL_REVIEW",
+    "details": {
+      "error": "Page.pdf() got an unexpected keyword argument 'timeout'"
+    }
+  },
+  {
+    "name": "flyer-buyback",
+    "type": "bottom",
+    "status": "NEEDS_MANUAL_REVIEW",
+    "details": {
+      "error": "CSS style block not uniquely found"
+    }
+  },
+  {
+    "name": "flyer-careplan",
+    "type": "bottom",
+    "status": "NEEDS_MANUAL_REVIEW",
+    "details": {
+      "error": "Page.pdf() got an unexpected keyword argument 'timeout'"
+    }
+  },
+  {
+    "name": "flyer-caretaxi",
+    "type": "bottom",
+    "status": "NEEDS_MANUAL_REVIEW",
+    "details": {
+      "error": "Page.pdf() got an unexpected keyword argument 'timeout'"
+    }
+  },
+  {
+    "name": "flyer-cleaning",
+    "type": "bottom",
+    "status": "NEEDS_MANUAL_REVIEW",
+    "details": {
+      "error": "Page.pdf() got an unexpected keyword argument 'timeout'"
+    }
+  },
+  {
+    "name": "flyer-cosmetics",
+    "type": "bottom",
+    "status": "NEEDS_MANUAL_REVIEW",
+    "details": {
+      "error": "Page.pdf() got an unexpected keyword argument 'timeout'"
+    }
+  },
+  {
+    "name": "flyer-estate",
+    "type": "estate",
+    "status": "NEEDS_MANUAL_REVIEW",
+    "details": {
+      "error": "Page.pdf() got an unexpected keyword argument 'timeout'"
+    }
+  },
+  {
+    "name": "flyer-esthe",
+    "type": "bottom",
+    "status": "NEEDS_MANUAL_REVIEW",
+    "details": {
+      "error": "Page.pdf() got an unexpected keyword argument 'timeout'"
+    }
+  },
+  {
+    "name": "flyer-eye",
+    "type": "bottom",
+    "status": "NEEDS_MANUAL_REVIEW",
+    "details": {
+      "error": "Page.pdf() got an unexpected keyword argument 'timeout'"
+    }
+  },
+  {
+    "name": "flyer-gym",
+    "type": "bottom",
+    "status": "NEEDS_MANUAL_REVIEW",
+    "details": {
+      "error": "Page.pdf() got an unexpected keyword argument 'timeout'"
+    }
+  },
+  {
+    "name": "flyer-gyosei",
+    "type": "gyosei",
+    "status": "NEEDS_MANUAL_REVIEW",
+    "details": {
+      "error": "Page.pdf() got an unexpected keyword argument 'timeout'"
+    }
+  },
+  {
+    "name": "flyer-homecare",
+    "type": "bottom",
+    "status": "NEEDS_MANUAL_REVIEW",
+    "details": {
+      "error": "Page.pdf() got an unexpected keyword argument 'timeout'"
+    }
+  },
+  {
+    "name": "flyer-izakaya",
+    "type": "bottom",
+    "status": "NEEDS_MANUAL_REVIEW",
+    "details": {
+      "error": "Page.pdf() got an unexpected keyword argument 'timeout'"
+    }
+  },
+  {
+    "name": "flyer-medical",
+    "type": "medical",
+    "status": "NEEDS_MANUAL_REVIEW",
+    "details": {
+      "error": "Page.pdf() got an unexpected keyword argument 'timeout'"
+    }
+  },
+  {
+    "name": "flyer-nail",
+    "type": "bottom",
+    "status": "NEEDS_MANUAL_REVIEW",
+    "details": {
+      "error": "CSS style block not uniquely found"
+    }
+  },
+  {
+    "name": "flyer-pet-salon",
+    "type": "bottom",
+    "status": "NEEDS_MANUAL_REVIEW",
+    "details": {
+      "error": "Page.pdf() got an unexpected keyword argument 'timeout'"
+    }
+  },
+  {
+    "name": "flyer-reform",
+    "type": "bottom",
+    "status": "NEEDS_MANUAL_REVIEW",
+    "details": {
+      "error": "CSS style block not uniquely found"
+    }
+  },
+  {
+    "name": "flyer-school",
+    "type": "bottom",
+    "status": "NEEDS_MANUAL_REVIEW",
+    "details": {
+      "error": "CSS style block not uniquely found"
+    }
+  },
+  {
+    "name": "flyer-sharoushi",
+    "type": "print-hero",
+    "status": "NEEDS_MANUAL_REVIEW",
+    "details": {
+      "error": "Page.pdf() got an unexpected keyword argument 'timeout'"
+    }
+  },
+  {
+    "name": "flyer-shiho",
+    "type": "bottom",
+    "status": "NEEDS_MANUAL_REVIEW",
+    "details": {
+      "error": "Page.pdf() got an unexpected keyword argument 'timeout'"
+    }
+  },
+  {
+    "name": "flyer-sodan",
+    "type": "print-hero",
+    "status": "NEEDS_MANUAL_REVIEW",
+    "details": {
+      "error": "Page.pdf() got an unexpected keyword argument 'timeout'"
+    }
+  },
+  {
+    "name": "flyer-stay",
+    "type": "bottom",
+    "status": "NEEDS_MANUAL_REVIEW",
+    "details": {
+      "error": "CSS style block not uniquely found"
+    }
+  },
+  {
+    "name": "flyer-tax",
+    "type": "bottom",
+    "status": "NEEDS_MANUAL_REVIEW",
+    "details": {
+      "error": "Page.pdf() got an unexpected keyword argument 'timeout'"
+    }
+  },
+  {
+    "name": "flyer-vet",
+    "type": "estate",
+    "status": "NEEDS_MANUAL_REVIEW",
+    "details": {
+      "error": "Page.pdf() got an unexpected keyword argument 'timeout'"
+    }
+  }
+]
