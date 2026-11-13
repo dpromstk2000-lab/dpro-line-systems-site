@@ -69,6 +69,41 @@
 }
 @media print { .toolbar { display: none !important; } }
 </style>
+
+<style id="dpro-dental-real-print-fidelity-v3-9">
+/* DPRO_DENTAL_REAL_PRINT_FIDELITY_V3_9_20261113: PRINT MODE ONLY. */
+@media print {
+  @page { size:A4 portrait; margin:0; }
+  html,body,.sheet,.sheet * {
+    -webkit-print-color-adjust:exact!important;
+    print-color-adjust:exact!important;
+  }
+  .hero { grid-template-rows:minmax(0,1fr)!important; }
+  .photo { position:relative!important; min-width:0!important; min-height:0!important; overflow:hidden!important; }
+  .photo img { position:absolute!important; inset:0!important;
+    width:100%!important; height:100%!important; object-fit:cover!important;
+    object-position:center!important; display:block!important; z-index:1!important; }
+  .photo::after { z-index:2!important; }
+  .photo-tag { z-index:3!important; }
+  .main { padding-top:3.5mm!important; }
+  .section-title { margin-bottom:1.6mm!important; }
+  .features { gap:1.8mm!important; }
+  .feature { min-height:21.8mm!important; padding:2.2mm 2.6mm!important; }
+  .ecosystem { margin-top:2.0mm!important; padding:2.4mm 2.8mm!important; }
+  .eco-head { margin-bottom:1.5mm!important; }
+  .flowbox { padding:2.2mm!important; }
+  .strengths { margin-top:1.9mm!important; }
+  .strength { padding:2.2mm 2.7mm!important; }
+  .cost { margin-top:1.9mm!important; }
+  .cost-copy { padding:2.7mm 3.2mm!important; }
+  .contact { margin-top:1.5mm!important; gap:2.0mm!important; }
+  .action { min-height:26mm!important; padding:1.8mm!important;
+    grid-template-columns:20.5mm minmax(0,1fr)!important; gap:2mm!important; }
+  .action img { width:20.5mm!important; height:20.5mm!important; }
+  .toolbar { display:none!important; }
+}
+</style>
+
 </head><body>
 <div class="toolbar" role="toolbar" aria-label="印刷操作"><button id="dpro-dental-print-button" class="primary" type="button" onclick="window.print()">A4で印刷 / PDF保存</button><button id="dpro-dental-to-top" class="secondary" type="button" onclick="window.scrollTo({top:0,behavior:'smooth'})">先頭へ</button></div>
 <article class="sheet">
