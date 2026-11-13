@@ -1,0 +1,62 @@
+{
+  "ok": true,
+  "file": "flyer-dental.html",
+  "print_button_visible": true,
+  "print_handler_test": "PASS",
+  "printed_toolbar_hidden": true,
+  "A4_pages": 1,
+  "print_layout_unchanged": true,
+  "PDF_raster_difference_rate": 0.0,
+  "baseline_geometry": {
+    ".sheet": [
+      18.14,
+      18.14,
+      775.32,
+      1089.02
+    ],
+    ".hero": [
+      18.14,
+      18.14,
+      775.32,
+      299.38
+    ],
+    ".footer": [
+      18.14,
+      1054.78,
+      775.32,
+      1089.02
+    ],
+    ".contact": [
+      54.19,
+      942.55,
+      739.28,
+      1043.5
+    ]
+  },
+  "updated_geometry": {
+    ".sheet": [
+      18.14,
+      18.14,
+      775.32,
+      1089.02
+    ],
+    ".hero": [
+      18.14,
+      18.14,
+      775.32,
+      299.38
+    ],
+    ".footer": [
+      18.14,
+      1054.78,
+      775.32,
+      1089.02
+    ],
+    ".contact": [
+      54.19,
+      942.55,
+      739.28,
+      1043.5
+    ]
+  }
+}
