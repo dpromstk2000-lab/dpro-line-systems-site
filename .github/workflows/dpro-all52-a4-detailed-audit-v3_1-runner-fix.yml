@@ -1,0 +1,119 @@
+name: DPRO A4 ALL52 Detailed Audit V3.1 Ubuntu24 Runner Fix
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/dpro-all52-a4-detailed-audit-v3_1-runner-fix.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: dpro-all52-a4-audit-v3-1
+  cancel-in-progress: false
+
+jobs:
+  audit-52:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    steps:
+      - name: Checkout production repository without altering flyer files
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Setup Node for the existing Playwright audit
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install browsers and Japanese-font PDF inspection tools on supported Ubuntu 24.04
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "Running on: $(lsb_release -ds)"
+          npm install --no-save playwright@1.55.0
+          npx playwright install --with-deps chromium
+          python3 -m pip install --quiet --break-system-packages pillow pypdf pymupdf pyyaml
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq fonts-noto-cjk >/dev/null
+
+      - name: Run existing V3 screen-plus-print audit and build 52-flyer report
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          import os, subprocess, sys, yaml
+
+          source = Path('.github/workflows/dpro-all52-a4-detailed-audit-v3.yml')
+          if not source.is_file():
+              raise SystemExit(f'Missing existing V3 audit source: {source}')
+          workflow = yaml.safe_load(source.read_text(encoding='utf-8'))
+          steps = workflow['jobs']['audit-only']['steps']
+          wanted = [
+              'Audit every current A4 flyer in screen and print mode',
+              'Validate current and newly rendered PDFs and build contact sheets',
+          ]
+          for step_name in wanted:
+              matches = [step for step in steps if step.get('name') == step_name]
+              if len(matches) != 1 or not isinstance(matches[0].get('run'), str):
+                  raise SystemExit(f'Cannot locate exactly one valid V3 step: {step_name}')
+              print(f'>>> Begin V3 audit step: {step_name}', flush=True)
+              run = subprocess.run(['bash', '-e', '-o', 'pipefail', '-c', matches[0]['run']],
+                                   env=os.environ.copy(), check=False)
+              if run.returncode:
+                  raise SystemExit(f'V3 audit step FAILED [{run.returncode}]: {step_name}')
+              print(f'>>> PASS V3 audit step: {step_name}', flush=True)
+
+          out = Path('qa/all52-a4-detailed-audit-v3-20261113')
+          required = ['AUDIT.json', 'AUDIT.csv', 'SUMMARY.md']
+          missing = [name for name in required if not (out/name).is_file()]
+          if missing:
+              raise SystemExit(f'Audit outputs missing: {missing}')
+
+          import json
+          report = json.loads((out/'AUDIT.json').read_text(encoding='utf-8'))
+          if not isinstance(report, list) or len(report) != 52:
+              raise SystemExit(f'Expected 52 current A4 flyer records; got {len(report) if isinstance(report,list) else type(report)}')
+          print('Audit complete: 52 report records produced; no production flyer modified.', flush=True)
+          PY
+
+      - name: Publish inspection results only, never edit live HTML or PDF flyers
+        shell: bash
+        if: success()
+        run: |
+          set -euo pipefail
+          OUT=qa/all52-a4-detailed-audit-v3-20261113
+          test -s "$OUT/AUDIT.json"
+          test -s "$OUT/AUDIT.csv"
+          test -s "$OUT/SUMMARY.md"
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -- "$OUT/AUDIT.json" "$OUT/AUDIT.csv" "$OUT/SUMMARY.md"
+          git add -- "$OUT"/CONTACT_*.jpg || true
+          if git diff --cached --quiet; then
+            echo 'No new audit results to publish.'
+          else
+            git commit -m 'qa: all 52 A4 flyers visual and print audit under Ubuntu 24.04'
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
+
+      - name: Upload full QA report and screenshots even if report commit is blocked
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: DPRO_ALL52_A4_DETAILED_AUDIT_V3_1
+          path: |
+            qa/all52-a4-detailed-audit-v3-20261113/AUDIT.json
+            qa/all52-a4-detailed-audit-v3-20261113/AUDIT.csv
+            qa/all52-a4-detailed-audit-v3-20261113/SUMMARY.md
+            qa/all52-a4-detailed-audit-v3-20261113/CONTACT_*.jpg
+            qa/all52-a4-detailed-audit-v3-20261113/screens/*.png
+          if-no-files-found: warn
+          retention-days: 14
