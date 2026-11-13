@@ -1,0 +1,162 @@
+name: DPRO YAKINIKU A4 print-safe V2.1
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/dpro-yakiniku-a4-print-safe-v2_1.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: dpro-yakiniku-a4-print-safe-main
+  cancel-in-progress: false
+
+jobs:
+  correct-and-verify:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout current production files
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+
+      - name: Insert isolated print and layout correction
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          file = Path('flyer-yakiniku.html')
+          original = file.read_text(encoding='utf-8')
+          marker = 'DPRO_YAKINIKU_A4_PRINT_SAFE_V2_1_20261113'
+          if marker in original:
+              print('Already patched. No duplicate stylesheet added.')
+              raise SystemExit(0)
+
+          assert 'DPRO YAKINIKU A4 FLYER MASTER V2.0' in original, 'Unexpected flyer version: aborting'
+          assert original.count('</style>') == 1, 'Unexpected HTML style blocks: aborting'
+          assert '<section aria-label="DPRO 焼肉店 A4営業チラシ" class="sheet">' in original, 'Unexpected sheet structure: aborting'
+          assert '<footer class="footer">' in original, 'Unexpected footer structure: aborting'
+          assert original.count('class="action-card ') == 3, 'Unexpected action-card count: aborting'
+
+          # Compact only the vertical whitespace that causes contact cards to overlap the footer.
+          # No text, QR data, navigation, pricing, images or public demos are replaced.
+          patch = r'''
+          /* DPRO_YAKINIKU_A4_PRINT_SAFE_V2_1_20261113
+             Screen: fit all three contact cards above the bottom ribbon.
+             Paper: inset the complete A4 artwork so non-borderless printers do not crop it. */
+          .hero { height: 74mm; }
+          .main { padding-top: 3.8mm; }
+          .section-title { margin-bottom: 2.0mm; }
+          .feature-grid { gap: 1.8mm; }
+          .feature { min-height: 23.2mm; padding-top: 2.3mm; padding-bottom: 2.0mm; }
+          .ecosystem { margin-top: 2.4mm; padding-top: 2.9mm; padding-bottom: 2.5mm; }
+          .cost-check { margin-top: 2.3mm; padding-top: 2.6mm; padding-bottom: 2.6mm; }
+          .price { margin-top: 2.3mm; padding-top: 2.7mm; padding-bottom: 2.7mm; }
+          .contact { margin-top: 1.9mm; padding-top: 1.9mm; }
+          .contact-head { margin-bottom: 1.35mm; }
+
+          @media print {
+            @page { size: A4 portrait; margin: 0; }
+            html, body {
+              width: 210mm !important;
+              height: 297mm !important;
+              overflow: hidden !important;
+              margin: 0 !important;
+              padding: 0 !important;
+              background: white !important;
+              -webkit-print-color-adjust: exact;
+              print-color-adjust: exact;
+            }
+            .toolbar { display: none !important; }
+            .sheet {
+              width: 210mm !important;
+              height: 297mm !important;
+              margin: 0 !important;
+              box-shadow: none !important;
+              overflow: hidden !important;
+              transform: translate(4.8mm, 4.8mm) scale(.954) !important;
+              transform-origin: top left !important;
+              page-break-before: avoid !important;
+              page-break-after: avoid !important;
+              break-before: avoid-page !important;
+              break-after: avoid-page !important;
+            }
+          }
+          '''
+
+          output = original.replace('</style>', patch + '\n</style>', 1)
+          assert output.count(marker) == 1
+          assert output.count('<footer class="footer">') == 1
+          file.write_text(output, encoding='utf-8')
+          print('Patched flyer-yakiniku.html, preserving all existing source content.')
+          PY
+
+      - name: Install Chrome and Japanese fonts
+        uses: browser-actions/setup-chrome@v1
+        with:
+          chrome-version: stable
+
+      - name: Install QA dependencies
+        shell: bash
+        run: |
+          python3 -m pip install --quiet playwright pypdf
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq fonts-noto-cjk >/dev/null
+
+      - name: Verify on-screen footer clearance, render A4 PDF and verify page count
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import shutil
+          from playwright.sync_api import sync_playwright
+          from pypdf import PdfReader
+
+          chrome = (shutil.which('google-chrome') or shutil.which('google-chrome-stable')
+                    or shutil.which('chrome') or shutil.which('chromium'))
+          assert chrome, 'Chrome not found: aborting without changing the PDF'
+
+          with sync_playwright() as p:
+              browser = p.chromium.launch(executable_path=chrome, headless=True,
+                                          args=['--no-sandbox','--disable-dev-shm-usage'])
+              page = browser.new_page(viewport={'width': 1500, 'height': 1600}, device_scale_factor=1)
+              page.set_content(Path('flyer-yakiniku.html').read_text(encoding='utf-8'), wait_until='load')
+              page.evaluate('() => document.fonts.ready.then(() => true)')
+              action = page.locator('.action-grid').bounding_box()
+              footer = page.locator('.footer').bounding_box()
+              assert action and footer, 'Contact section/footer missing'
+              clearance = footer['y'] - (action['y'] + action['height'])
+              print(f'Contact cards to footer clearance: {clearance:.1f} CSS px')
+              assert clearance >= 7.0, f'Contact cards still overlap / too close to footer ({clearance:.1f}px)'
+              page.emulate_media(media='print')
+              page.pdf(path='flyer-yakiniku.pdf', prefer_css_page_size=True,
+                       print_background=True, display_header_footer=False,
+                       scale=1)
+              browser.close()
+
+          document = PdfReader('flyer-yakiniku.pdf')
+          assert len(document.pages) == 1, f'Expected one A4 page; got {len(document.pages)}'
+          first = document.pages[0]
+          w, h = float(first.mediabox.width), float(first.mediabox.height)
+          assert abs(w - 595.28) < 2.0 and abs(h - 841.89) < 2.0, f'Wrong PDF paper size: {w} x {h}'
+          print(f'PASS: one-page A4 PDF, {w:.2f} x {h:.2f} pt. HTML and PDF ready.')
+          PY
+
+      - name: Commit only verified flyer HTML and PDF
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -- flyer-yakiniku.html flyer-yakiniku.pdf
+          if git diff --cached --quiet; then
+            echo 'Already current; no changes required.'
+          else
+            git commit -m 'fix: keep yakiniku A4 flyer footer and QR cards fully printable'
+            git push origin HEAD:main
+          fi
