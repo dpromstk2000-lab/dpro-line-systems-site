@@ -1,0 +1,232 @@
+name: DPRO DENTAL A4 Actual Print Preview Fix V3.8
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/dpro-dental-actual-print-preview-fix-v3_8.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: dpro-dental-actual-print-preview-fix-v3-8
+  cancel-in-progress: false
+
+jobs:
+  fix-dental-print:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - name: Checkout production source
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: true
+      - name: Install PDF screenshot and browser QA tools
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m pip install --quiet --break-system-packages playwright pypdf pymupdf pillow
+          python3 -m playwright install --with-deps chromium
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq fonts-noto-cjk >/dev/null
+      - name: Fix dental default-print background, photo, and QR clearance
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat > /tmp/dpro_dental_v38.py <<'PYCODE'
+          from pathlib import Path
+          from collections import Counter
+          import json, os, traceback
+          from playwright.sync_api import sync_playwright
+          from pypdf import PdfReader
+          import fitz
+          from PIL import Image, ImageStat
+
+          ROOT=Path.cwd()
+          HTML=ROOT/'flyer-dental.html'
+          PDF=ROOT/'flyer-dental.pdf'
+          OUT=ROOT/'qa/dental-print-fidelity-v3-8'
+          OUT.mkdir(parents=True,exist_ok=True)
+          MARK='DPRO_DENTAL_REAL_PRINT_FIDELITY_V3_8_20261113'
+          CSS=r"""
+          <style id="dpro-dental-real-print-fidelity-v3-8">
+          /* DPRO_DENTAL_REAL_PRINT_FIDELITY_V3_8_20261113: PRINT MODE ONLY. */
+          @media print {
+            @page { size:A4 portrait; margin:0; }
+            html,body,.sheet,.sheet * {
+              -webkit-print-color-adjust:exact!important;
+              print-color-adjust:exact!important;
+            }
+            .hero { grid-template-rows:minmax(0,1fr)!important; }
+            .photo { position:relative!important; min-width:0!important; min-height:0!important; overflow:hidden!important; }
+            .photo img { position:absolute!important; inset:0!important;
+              width:100%!important; height:100%!important; object-fit:cover!important;
+              object-position:center!important; display:block!important; z-index:1!important; }
+            .photo::after { z-index:2!important; }
+            .photo-tag { z-index:3!important; }
+            .main { padding-top:3.5mm!important; }
+            .section-title { margin-bottom:1.6mm!important; }
+            .features { gap:1.8mm!important; }
+            .feature { min-height:21.8mm!important; padding:2.2mm 2.6mm!important; }
+            .ecosystem { margin-top:2.0mm!important; padding:2.4mm 2.8mm!important; }
+            .eco-head { margin-bottom:1.5mm!important; }
+            .flowbox { padding:2.2mm!important; }
+            .strengths { margin-top:1.9mm!important; }
+            .strength { padding:2.2mm 2.7mm!important; }
+            .cost { margin-top:1.9mm!important; }
+            .cost-copy { padding:2.7mm 3.2mm!important; }
+            .contact { margin-top:1.5mm!important; gap:2.0mm!important; }
+            .action { min-height:26mm!important; padding:1.8mm!important;
+              grid-template-columns:20.5mm minmax(0,1fr)!important; gap:2mm!important; }
+            .action img { width:20.5mm!important; height:20.5mm!important; }
+            .toolbar { display:none!important; }
+          }
+          </style>
+          """
+          original=HTML.read_text(encoding='utf-8')
+          assert MARK not in original, 'Already patched: no duplicate print CSS'
+          assert original.count('</head>')==1 and original.count('<body>')==1
+          assert 'dpro-dental-print-toolbar-v3-7' in original,'V3.7 print button missing; use exact current file'
+          assert 'DPRO_A4_LAST_TWO_FINAL_V3_6' in original,'Previous A4 safe-print patch missing'
+          assert 'class="photo"' in original and 'class="contact"' in original
+
+          Q=r"""() => {
+           const box=(sel)=>{let el=document.querySelector(sel);if(!el)return null;
+             let r=el.getBoundingClientRect();return {left:r.left,top:r.top,right:r.right,bottom:r.bottom,width:r.width,height:r.height};};
+           const imgs=[...document.images].map(x=>({alt:x.alt,naturalWidth:x.naturalWidth,naturalHeight:x.naturalHeight,complete:x.complete}));
+           const qrs=[...document.querySelectorAll('.contact img')].map(x=>{let r=x.getBoundingClientRect();return {top:r.top,bottom:r.bottom,left:r.left,right:r.right};});
+           const contact=box('.contact'), footer=box('.footer');
+           const sheet=box('.sheet');
+           return {sheet,hero:box('.hero'),photo:box('.hero .photo'),photoImg:box('.hero .photo img'),
+            cost:box('.cost'),contact,footer,qrs,images:imgs,
+            footerGap:contact&&footer?footer.top-contact.bottom:null,
+            paperOverflow:document.querySelector('.sheet').scrollHeight-document.querySelector('.sheet').clientHeight,
+            bg:window.getComputedStyle(document.querySelector('.cost')).backgroundColor,
+            toolbar:window.getComputedStyle(document.querySelector('.toolbar')).display};
+          }"""
+
+          def qa_measure(path,geometry):
+              d=fitz.open(str(path));p=d[0]; A4=(abs(float(p.rect.width)-595.28)<2 and abs(float(p.rect.height)-841.89)<2)
+              pix=p.get_pixmap(matrix=fitz.Matrix(1.35,1.35),alpha=False)
+              img=Image.frombytes('RGB',(pix.width,pix.height),pix.samples)
+              img.save(str(path).replace('.pdf','.png'))
+              def region(name, box, left=.12, top=.15, right=.78, bottom=.77):
+                  if not box:return None
+                  ratio=.75*1.35
+                  coords=((box['left']+box['width']*left)*ratio, (box['top']+box['height']*top)*ratio,
+                    (box['left']+box['width']*right)*ratio,(box['top']+box['height']*bottom)*ratio)
+                  z=img.crop(tuple(round(v) for v in coords))
+                  stats=ImageStat.Stat(z)
+                  pixdata=z.resize((min(z.width,110), min(z.height,90))).getdata()
+                  nonwhite=sum(max(q)<233 for q in pixdata)/len(pixdata)
+                  return {'std':[round(q,2) for q in stats.std],'mean':[round(q,2) for q in stats.mean], 'nonwhite':round(nonwhite,3)}
+              photo=region('photo',geometry['photo'],.11,.06,.91,.70)
+              cost=region('cost',geometry['cost'],.05,.08,.42,.84)
+              d.close()
+              return {'A4':A4,'photo':photo,'cost':cost,'bytes':path.stat().st_size}
+
+          def check_page(g):
+              errors=[]
+              if not g['sheet'] or not g['contact'] or not g['footer'] or not g['photo']:
+                  errors.append('required section missing');return errors
+              if g['footerGap'] is None or g['footerGap']<26:
+                  errors.append('contact to footer gap below 26 CSS px')
+              if g['paperOverflow']>3:errors.append('sheet overflow')
+              if g['toolbar']!='none':errors.append('print toolbar visible')
+              if any(not x['complete'] or x['naturalWidth']==0 for x in g['images']):errors.append('missing image pixels')
+              for q in g['qrs']:
+                  if q['bottom']>=g['footer']['top']-6:errors.append('QR overlaps footer')
+              if g['photoImg']['width']<90 or g['photoImg']['height']<90:
+                  errors.append('photo rendered too small')
+              return sorted(set(errors))
+
+          before_pdf=OUT/'before-background-off.pdf'
+          after_off_pdf=OUT/'after-background-off.pdf'
+          after_on_pdf=OUT/'after-background-on.pdf'
+          report={'ok':False,'file':'flyer-dental.html','changes':'print-only CSS: print ink, photo sizing, footer clearance','errors':[]}
+          try:
+            with sync_playwright() as p:
+              browser=p.chromium.launch(headless=True,args=['--no-sandbox','--disable-dev-shm-usage'])
+              page=browser.new_page(viewport={'width':1350,'height':1800},device_scale_factor=1,locale='ja-JP')
+              page.set_default_timeout(30000)
+              def load():
+                page.goto(HTML.as_uri(),wait_until='load',timeout=30000)
+                page.evaluate('() => document.fonts.ready')
+                page.wait_for_function('() => [...document.images].every(x=>x.complete && x.naturalWidth>0)',timeout=20000)
+              load()
+              page.emulate_media(media='screen')
+              pre_screen=page.evaluate(Q)
+              page.emulate_media(media='print')
+              pre_print=page.evaluate(Q)
+              page.pdf(path=str(before_pdf),prefer_css_page_size=True,print_background=False,display_header_footer=False,scale=1)
+              before=qa_measure(before_pdf,pre_print)
+              updated=original.replace('</head>',CSS+'\n</head>',1)
+              HTML.write_text(updated,encoding='utf-8')
+              load()
+              page.emulate_media(media='screen')
+              screen=page.evaluate(Q)
+              # The screen content must remain visually positioned the same: print-only changes.
+              for key in ('sheet','hero','photo','contact','footer'):
+                if pre_screen.get(key) is not None and screen.get(key) is not None:
+                  deltas=[abs(pre_screen[key][d]-screen[key][d]) for d in ('left','right','top','bottom')]
+                  assert max(deltas)<1.1, f'Screen layout unexpectedly changed at {key}: {deltas}'
+              page.emulate_media(media='print')
+              after=page.evaluate(Q)
+              errs=check_page(after)
+              page.pdf(path=str(after_off_pdf),prefer_css_page_size=True,print_background=False,display_header_footer=False,scale=1)
+              page.pdf(path=str(after_on_pdf),prefer_css_page_size=True,print_background=True,display_header_footer=False,scale=1)
+              off=qa_measure(after_off_pdf,after)
+              on=qa_measure(after_on_pdf,after)
+              if not off['A4'] or not on['A4']:errs.append('PDF not single A4')
+              if off['cost']['nonwhite']<.48:errs.append(f'background graphics missing from print with background checkbox OFF: {off["cost"]}')
+              if off['photo']['nonwhite']<.10 or max(off['photo']['std'])<10:errs.append(f'photo missing on print with background OFF: {off["photo"]}')
+              if on['photo']['nonwhite']<.10:errs.append('photo missing from background ON')
+              if not HTML.read_text(encoding='utf-8').count(MARK)==1:errs.append('marker duplication')
+              report.update({'errors':errs,'screen_unchanged':True,'beforePrint':pre_print,'afterPrint':after,
+                 'beforePdf':before,'afterPdfBackgroundOff':off,'afterPdfBackgroundOn':on,
+                 'printButtonRemains':bool(page.locator('#dpro-dental-print-button').count())})
+              assert not errs, 'Print QA did not pass: '+str(errs)
+              PDF.write_bytes(after_on_pdf.read_bytes())
+              report['ok']=True
+              browser.close()
+          finally:
+            if not report['ok']:
+              HTML.write_text(original,encoding='utf-8')
+            (OUT/'STATUS.json').write_text(json.dumps(report,ensure_ascii=False,indent=2),encoding='utf-8')
+            (OUT/'SUMMARY.md').write_text('# DPRO DENTAL real printer preview fix V3.8\n\n'+
+             f'- QA: {"PASS" if report["ok"] else "FAIL / NO PRODUCTION CHANGE"}\n'+
+             '- Verified printer option: Background graphics OFF (default Chrome print).\n'+
+             '- Photo: must remain visible in rendered default PDF.\n'+
+             '- Dark green cost block: must print even when background checkbox is off.\n'+
+             '- QR cards and footer: require >26 CSS px clearance.\n'+
+             '- A4 / 1 page; print toolbar still visible on website.\n'+
+             '- Only flyer-dental.html + flyer-dental.pdf may be updated.\n'+
+             f'- Errors: {report.get("errors",[])}\n',encoding='utf-8')
+            # Keep the screenshots and small status data; do not upload PDFs to QA artifact.
+            for extra in [before_pdf,after_off_pdf,after_on_pdf]:extra.unlink(missing_ok=True)
+          print('DPRO DENTAL PRINT FIDELITY QA',json.dumps({'ok':report['ok'],'gap':report.get('afterPrint',{}).get('footerGap'), 'pdf_bg_off':report.get('afterPdfBackgroundOff',{})},ensure_ascii=False),flush=True)
+          PYCODE
+          python3 /tmp/dpro_dental_v38.py
+      - name: Commit only verified dental HTML PDF and QA
+        if: success()
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -- flyer-dental.html flyer-dental.pdf qa/dental-print-fidelity-v3-8/STATUS.json qa/dental-print-fidelity-v3-8/SUMMARY.md
+          git diff --cached --quiet || (git commit -m 'fix: dental printable photo, green backgrounds and QR footer clearance' && git pull --rebase origin main && git push origin HEAD:main)
+      - name: Upload photo and print-preview verification evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: DPRO_DENTAL_PRINT_FIDELITY_V3_8
+          path: |
+            qa/dental-print-fidelity-v3-8/STATUS.json
+            qa/dental-print-fidelity-v3-8/SUMMARY.md
+            qa/dental-print-fidelity-v3-8/*.png
+          if-no-files-found: warn
+          retention-days: 21
