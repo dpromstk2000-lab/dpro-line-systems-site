@@ -1,0 +1,53 @@
+name: DPRO Construction 59 - Product Catalog Card
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: dpro-construction59-product-catalog
+  cancel-in-progress: false
+jobs:
+  update-catalog:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout existing site
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - name: Add catalog card without editing legacy 55 products
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          path = Path('systems.html')
+          detail = Path('systems/construction.html')
+          assert path.is_file(), "Catalog page missing. No changes made."
+          assert detail.is_file(), "#59 detail page missing. No changes made."
+          original = path.read_text(encoding="utf-8")
+          marker = '<section class="p36-section" id="catalog">\n <div class="p36-shell">'
+          entry = '\n<!-- DPRO_CONSTRUCTION_59_CATALOG_LINK_START -->\n<div id="dpro-construction-59-entry" style="margin-bottom:48px">\n  <div class="p36-catalog-head">\n    <div>\n      <p class="p36-eyebrow">NEW SYSTEM / #59 / COMING SOON</p>\n      <h2>新規システム｜専門工事・現場管理</h2>\n      <p>架空データで基本機能を検証済み。商用本番は公開準備中です。既存55製品とは区別してご案内しています。</p>\n    </div>\n  </div>\n  <div class="p36-system-grid">\n    <article class="p36-system-card" aria-label="DPRO CONSTRUCTION #59 製品情報">\n      <div class="p36-system-card__top"><span class="p36-code">CONSTRUCTION #59</span><span class="p36-available" style="background:#fff2e5;color:#8c4a00">公開準備中</span></div>\n      <p class="p36-system-card__category">住まい・建築 / 専門工事</p>\n      <h3>専門工事・現場管理</h3>\n      <p class="p36-system-card__tagline">現場・工期・進捗・検査・是正を、使いやすく一元管理。</p>\n      <ul class="p36-feature-list"><li>現場一覧と工期カレンダー</li><li>進捗・変更履歴</li><li>検査・要是正・是正完了</li></ul>\n      <div class="p36-card-actions">\n        <a class="is-product" href="systems/construction.html">製品ページを見る</a>\n        <span style="display:inline-flex;align-items:center;font-size:12px;color:#805420">公開LIVE DEMOは準備中</span>\n        <a class="is-official" href="https://dpro-shop.com/systems/construction.html" target="_blank" rel="noopener">DPRO SHOPで詳しく ↗</a>\n      </div>\n    </article>\n  </div>\n</div>\n<!-- DPRO_CONSTRUCTION_59_CATALOG_LINK_END -->\n'
+          if 'id="dpro-construction-59-entry"' in original:
+              print("#59 navigation already present; no change required")
+          else:
+              assert original.count(marker) == 1, "Catalog structure changed. Refusing unsafe edit."
+              updated = original.replace(marker, marker + "\n" + entry, 1)
+              assert updated.count('id="dpro-construction-59-entry"') == 1
+              assert updated.count('data-p36-catalog') == original.count('data-p36-catalog')
+              assert updated.count('data-system-category=') == original.count('data-system-category=')
+              assert updated.count('data-p36-system-card') == original.count('data-p36-system-card')
+              path.write_text(updated,encoding="utf-8")
+              print(f"Added #59 catalog card to {path}. Original catalog data untouched.")
+          PY
+      - name: Commit only the updated catalog page
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+              git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+              git add -- systems.html
+              if git diff --cached --quiet; then
+                echo "Nothing to commit (already applied)."
+              else
+                git diff --cached --check
+                git commit -m "DPRO #59: add catalog navigation card (prelaunch)"
+                git push origin HEAD:main
+              fi
