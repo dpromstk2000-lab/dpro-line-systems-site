@@ -70,8 +70,28 @@ h1{font-size:17.8pt;line-height:1.25;letter-spacing:-.045em;margin:0 0 2.5mm;col
 <!-- DPRO PRODUCT JAPANESE MOBILE WRAP V1.0 -->
 <link rel="stylesheet" href="japanese-wrap-v1.css?v=1.0">
 <script defer src="japanese-wrap-v1.js?v=1.0"></script>
+<style id="dpro-houkago-a4-toolbar-v1">
+/* DPRO A4 FLYER MASTER V2.0. Existing embedded photos and QR images remain unchanged. */
+body{min-height:100vh}
+.toolbar{position:sticky;top:0;z-index:1000;min-height:49px;display:flex;align-items:center;justify-content:center;gap:10px;padding:8px 15px;background:#0b211b;color:#fff;box-shadow:0 4px 18px rgba(0,0,0,.15);font-family:"Yu Gothic","Noto Sans JP",Meiryo,sans-serif}
+.toolbar .toolbar-label{font-size:11px;letter-spacing:.06em;font-weight:800;margin-right:3px;color:#eafaf3}
+.toolbar button{appearance:none;border:0;border-radius:999px;padding:9px 17px;font-size:12px;line-height:1.25;font-weight:900;cursor:pointer;transition:filter .15s ease}
+.toolbar button:hover{filter:brightness(.94)}
+.toolbar button:focus-visible{outline:3px solid #fff;outline-offset:3px}
+.toolbar .primary{background:#18c98a;color:#05251b}
+.toolbar .secondary{background:#fff;color:#0b211b}
+@media screen and (min-width:901px){.sheet{margin:12mm auto}}
+@media screen and (max-width:900px){.toolbar{gap:7px;flex-wrap:wrap;padding:8px}.toolbar .toolbar-label{font-size:10px}.toolbar button{padding:8px 12px;font-size:11px}}
+@media print{.toolbar{display:none!important}.sheet{margin:0!important;box-shadow:none!important}html,body{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}}
+</style>
 </head>
 <body>
+<div class="toolbar" role="toolbar" aria-label="DPRO 放課後等デイサービス チラシ印刷操作">
+  <span class="toolbar-label">DPRO A4 FLYER / HOUKAGO</span>
+  <button type="button" class="primary" onclick="window.print()" aria-label="A4用紙に印刷、またはPDFとして保存">A4で印刷 / PDF保存</button>
+  <button type="button" class="secondary" onclick="window.scrollTo({top:0,behavior:'smooth'})">先頭へ</button>
+</div>
+
 <main class="sheet">
 <header class="topbar"><div class="brand"><div class="brandmark">D</div><div><div class="brandname">DPRO LINE SYSTEMS</div></div></div><div class="industry">HOUKAGO / A4 SALES FLYER</div></header>
 <section class="hero">
