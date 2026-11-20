@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow"><meta name="theme-color" content="#104550">
+<title>DPRO CONSTRUCTION #59 | 操作体験デモ</title>
+<style>
+:root{font-family:system-ui,-apple-system,"Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;color:#142c37;background:#eff4f5;font-synthesis:none}
+*{box-sizing:border-box}body{margin:0;min-height:100vh}button,input,textarea,select{font:inherit}button{cursor:pointer;border:0}button:disabled{opacity:.4;cursor:not-allowed}
+.hidden{display:none!important}.auth{max-width:510px;margin:11vh auto 0;padding:30px;border-radius:25px;background:white;box-shadow:0 14px 48px #12374418}
+.brand{display:inline-block;border-radius:10px;padding:8px 13px;background:#104550;color:white;font-weight:800;letter-spacing:.06em}
+h1{font-size:clamp(24px,4vw,31px);line-height:1.4}h2{font-size:23px}p{line-height:1.65}.muted{color:#54717b}.warn{padding:10px 13px;background:#fff6df;border-radius:10px;color:#705213;font-weight:650}
+label{display:block;font-size:15px;font-weight:700;margin:12px 0 6px}input,textarea,select{width:100%;font-size:17px;padding:11px;border:1px solid #b4c7cb;border-radius:10px;background:white;color:#17323b}
+.primary{background:#00727b;color:white;padding:13px 18px;border-radius:10px;font-weight:800}.secondary{background:#dcebed;color:#124650;padding:11px 14px;border-radius:9px;font-weight:700}.danger{background:#fce1df;color:#943b37}
+.wide{width:100%;margin-top:18px}.app{display:grid;grid-template-columns:240px 1fr;min-height:100vh}
+.sidebar{background:#123b48;color:#eff;display:flex;flex-direction:column;gap:8px;padding:23px 14px}.sidebar .brand{background:#fff;color:#163a46}
+.nav{background:transparent;color:#ecfcff;text-align:left;border-radius:9px;padding:13px 16px;font-weight:700;font-size:17px}.nav.active,.nav:hover{background:#2f6a75}.nav:focus-visible,button:focus-visible{outline:3px solid #ffcd57;outline-offset:2px}
+.main{min-width:0;padding:26px min(4vw,45px) 50px}.top{display:flex;gap:14px;flex-wrap:wrap;justify-content:space-between;align-items:center}
+.banner{background:#e0f0f3;border:1px solid #c9e0e5;border-radius:11px;padding:10px 15px;margin:16px 0 24px}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px;margin:18px 0 26px}.stat{background:white;border:1px solid #d8e3e5;border-radius:14px;padding:18px}.stat b{font-size:29px;display:block;color:#0c5962;margin-top:9px}
+.card{background:white;border:1px solid #dce5e7;border-radius:14px;padding:19px;margin:15px 0}.card h3{margin:0;font-size:20px}.meta{color:#54717b;font-size:15px}.bar{background:#d9e7e9;border-radius:10px;height:13px;overflow:hidden;margin:14px 0 6px}.bar>div{height:100%;background:#16848a;border-radius:10px}.actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:13px}
+.pill{background:#e7f3f3;border-radius:999px;padding:5px 9px;color:#11606a;font-size:14px;font-weight:700}
+.content{max-width:1050px}.cols{display:grid;grid-template-columns:1fr 1fr;gap:16px}.info{padding:15px;border-radius:10px;background:#f0f6f7}
+.small{font-size:14px}.fieldrow{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:800px){.app{display:block}.sidebar{position:static;flex-direction:row;align-items:center;overflow-x:auto;padding:10px;white-space:nowrap}.sidebar .brand{font-size:13px}.nav{font-size:15px;padding:10px}.main{padding:16px}.stats{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.stat{padding:12px}.stat b{font-size:24px}.cols{grid-template-columns:1fr}.auth{margin:4vh 15px}.fieldrow{grid-template-columns:1fr}}
+</style></head>
+<body><div id="auth" class="auth"><span class="brand">DPRO CONSTRUCTION</span><h1>現場管理システムを体験</h1><p>現場管理・顧客管理・会社設定・LINE受付の画面操作を体験できます。</p>
+<p class="warn">公開デモです。入力内容は保存されず、ページを閉じると消去されます。実際の会社情報・個人情報は入力しないでください。</p>
+<form id="loginForm"><label for="demoCode">体験用コード</label><input type="password" id="demoCode" required inputmode="numeric" maxlength="8" autocomplete="off" placeholder="4桁の体験用コード"><p id="loginError" aria-live="polite" class="muted"></p><button class="primary wide" type="submit">体験デモに入る</button></form>
+<p class="small muted">※ コード1234は画面表示用であり、認証情報・本番データへのアクセス権ではありません。</p></div>
+<div id="app" class="app hidden"><aside class="sidebar"><span class="brand">DPRO #59</span><button type="button" class="nav active" data-view="home">ホーム</button><button type="button" class="nav" data-view="sites">現場一覧</button><button type="button" class="nav" data-view="checks">検査・是正</button><button type="button" class="nav" data-view="customers">顧客管理</button><button type="button" class="nav" data-view="office">会社設定</button><button type="button" class="nav" data-view="line">LINE公式連携</button><button type="button" class="nav" data-view="inquiry">LINE受付体験</button><button type="button" class="nav" data-view="about">デモの説明</button></aside>
+<main class="main"><div class="top"><div><h1 style="margin:0">DPRO CONSTRUCTION</h1><div class="muted">現場管理｜操作体験デモ</div></div><button type="button" id="reset" class="secondary danger">デモを初期化</button></div>
+<div class="banner">これは独立した架空データの操作体験です。ネットワーク通信・DB保存・LINE通知は行いません。</div><div id="content" class="content" aria-live="polite"></div></main></div>
+<script>
+'use strict';
+// No fetch, cookies, localStorage, or external scripts: all data lives in RAM.
+const seeds=[
+ {id:1,code:'DEMO-001',name:'福岡オフィス 内装工事（架空）',trade:'内装',start:'2026-11-15',end:'2026-12-15',progress:40,status:'施工中',checks:[{item:'下地確認',result:'合格',note:'',done:true},{item:'ボード仕上げ',result:'要是正',note:'架空の確認事項',done:false}]},
+ {id:2,code:'DEMO-002',name:'集合住宅 電気設備工事（架空）',trade:'電気',start:'2026-11-20',end:'2027-01-10',progress:15,status:'施工中',checks:[]},
+ {id:3,code:'DEMO-003',name:'店舗 空調更新工事（架空）',trade:'設備',start:'2026-10-20',end:'2026-11-30',progress:90,status:'検査中',checks:[{item:'試運転',result:'合格',note:'',done:true}]}
+];
+const customerSeeds=[
+ {id:1,code:'C-001',name:'架空の元請 建設株式会社',type:'元請会社',contact:'架空 太郎',phone:'000-0000-0000',note:'架空データ'},
+ {id:2,code:'C-002',name:'架空の店舗オーナー',type:'施主',contact:'架空 花子',phone:'000-0000-0000',note:'架空データ'}
+];
+const officeSeed={name:'DPRO建設デモ（架空）',phone:'000-0000-0000',email:'',address:'福岡県・架空所在地',hours:'平日 9:00〜18:00',holiday:'日曜日・祝日'};
+let customers=structuredClone(customerSeeds);let office=structuredClone(officeSeed);let inquiryItems=[];let lastDemoContact=null;
+let sites=structuredClone(seeds);let view='home';
+const $=id=>document.getElementById(id);
+function node(tag,text,cls){const el=document.createElement(tag);if(text!==undefined)el.textContent=String(text);if(cls)el.className=cls;return el;}
+function b(text,fn,cls='secondary'){const el=node('button',text,cls);el.type='button';el.addEventListener('click',fn);return el;}
+function card(title,txt){const el=node('section',undefined,'card');el.append(node('h3',title));if(txt)el.append(node('p',txt,'meta'));return el;}
+function render(){document.querySelectorAll('[data-view]').forEach(n=>{n.classList.toggle('active',n.dataset.view===view);n.setAttribute('aria-current',n.dataset.view===view?'page':'false')});const root=$('content');root.replaceChildren();if(view==='home'){
+ root.append(node('h2','現場の状況'));const stats=node('div',undefined,'stats');for(const [title,num] of [['登録現場',sites.length],['顧客台帳',customers.length],['進捗50％未満',sites.filter(s=>s.progress<50).length],['未完了の是正',sites.flatMap(s=>s.checks).filter(c=>c.result==='要是正'&&!c.done).length]]){const x=node('div',undefined,'stat');x.append(node('span',title),node('b',num));stats.append(x);}root.append(stats);const links=card('DPRO標準メニュー','顧客・会社設定・LINE連携は左メニューから確認できます。すべて架空データです。');
+ const navs=node('div',undefined,'actions');for(const [title,target] of [['顧客を確認','customers'],['会社設定を開く','office'],['LINE連携状況','line'],['問い合わせ受付','inquiry']])navs.append(b(title,()=>{view=target;render()}));links.append(navs);root.append(links);root.append(node('h2','現場の一覧'));for(const s of sites)root.append(siteCard(s));
+ }else if(view==='sites'){root.append(node('h2','現場登録・進捗管理'));const add=card('新しい現場を作成','架空の現場名を入力します。内容はこの画面でだけ保持されます。');const f=node('form');const lab=node('label','現場名');const input=node('input');input.required=true;input.maxLength=80;input.placeholder='例：架空の店舗 改修工事';lab.append(input);f.append(lab,b('登録する',()=>{const name=input.value.trim();if(!name||name.length>80)return;sites.push({id:Date.now(),code:'DEMO-'+String(sites.length+1).padStart(3,'0'),name,trade:'一般',start:'2026-11-20',end:'2026-12-31',progress:0,status:'準備中',checks:[]});input.value='';render()},'primary'));f.addEventListener('submit',e=>e.preventDefault());add.append(f);root.append(add);for(const s of sites)root.append(siteCard(s,true));
+ }else if(view==='checks'){root.append(node('h2','検査・是正管理'));for(const s of sites){const c=card(s.name,'是正は「完了」にしても画面の更新だけです。実際の監査記録ではありません。');const pending=s.checks.filter(x=>x.result==='要是正'&&!x.done);c.append(node('p',`未完了：${pending.length} 件`,'pill'));for(const check of s.checks){const box=node('div',undefined,'info');box.style.marginTop='10px';box.append(node('strong',`${check.item}：${check.result}${check.done?'（完了）':''}`));if(check.note)box.append(node('p',check.note));if(check.result==='要是正'&&!check.done)box.append(b('是正完了にする',()=>{check.done=true;render()},'primary'));c.append(box);}const form=node('form');const l=node('label','検査項目（架空データ）');const input=node('input');input.required=true;input.maxLength=50;input.placeholder='例：仕上げ確認';l.append(input);const choice=node('select');for(const text of ['合格','要是正','経過観察']){const op=node('option',text);op.value=text;choice.append(op);}const btn=b('検査を記録',()=>{if(!input.value.trim())return;s.checks.push({item:input.value.trim(),result:choice.value,note:choice.value==='要是正'?'デモ用の要是正記録':'',done:choice.value!=='要是正'});render()},'primary');form.addEventListener('submit',e=>e.preventDefault());form.append(l,choice,btn);c.append(form);root.append(c);}
+ }else if(view==='customers'){
+ root.append(node('h2','顧客管理｜元請・施主台帳'));
+ const c=card('顧客登録・編集','LINEユーザーIDの手入力は不可。LINE本人確認後にサーバー側で紐付ける設計です。');
+ const f=node('form'),nameL=node('label','会社名・顧客名（架空）'),name=node('input');name.required=true;name.maxLength=100;name.placeholder='例：架空の元請会社';nameL.append(name);
+ const contactL=node('label','担当者名（架空）'),contact=node('input');contact.maxLength=80;contactL.append(contact);
+ const typeL=node('label','顧客区分'),kind=node('select');for(const option of ['元請会社','施主','その他']){const op=node('option',option);kind.append(op);}typeL.append(kind);
+ const note=node('p','実在する個人情報は入力しないでください。','warn');let edit=null;
+ const save=b('顧客を登録',()=>{if(!name.value.trim())return;const val={name:name.value.trim().slice(0,100),contact:contact.value.trim().slice(0,80),type:kind.value};if(edit){Object.assign(customers.find(x=>x.id===edit),val);}else{customers.push({id:Date.now(),code:'C-'+String(customers.length+1).padStart(3,'0'),...val,phone:'',note:'デモ用'});}render();},'primary');
+ f.addEventListener('submit',e=>e.preventDefault());f.append(nameL,contactL,typeL,note,save);c.append(f);root.append(c);
+ const list=card('顧客一覧',customers.length+'件（架空）');
+ for(const x of customers){const entry=node('div',undefined,'info');entry.style.marginTop='12px';entry.append(node('strong',x.code+'｜'+x.name),node('p',x.type+' ／ 担当：'+(x.contact||'未登録'),'meta'));entry.append(b('編集',()=>{edit=x.id;name.value=x.name;contact.value=x.contact;kind.value=x.type;save.textContent='変更を保存';name.focus();}));list.append(entry);}root.append(list);
+ }else if(view==='office'){
+ root.append(node('h2','会社・営業所設定'));
+ const c=card('会社情報を編集','顧客向け受付画面に表示する基本情報です。会社名・所在地・電話・営業時間・休業日を設定できます。');
+ const form=node('form');const fields=[['name','会社名／営業所名'],['phone','電話番号'],['email','メール'],['address','所在地'],['hours','営業時間'],['holiday','休業日']];const inputs={};
+ for(const [key,title] of fields){const label=node('label',title),input=node('input');input.value=office[key];input.maxLength=100;label.append(input);form.append(label);inputs[key]=input;}
+ form.append(b('会社設定を保存',()=>{for(const [key] of fields)office[key]=inputs[key].value.slice(0,100);render();},'primary'));form.addEventListener('submit',e=>e.preventDefault());c.append(form);root.append(c);
+ root.append(node('p','これは体験画面で、保存はブラウザの一時メモリのみです。','warn'));
+ }else if(view==='line'){
+ root.append(node('h2','LINE公式アカウント連携'));
+ const status=card('連携状態：未接続','実際のLINEチャンネル、Webhook、LIFF ID、顧客へのメッセージ送信は接続していません。');status.append(node('p','LINE公式アカウント：未設定','pill'),node('p','Webhook署名検証：候補コードを準備済み（接続前）','meta'),node('p','LIFF受付：未接続（体験用の入力画面のみ）','meta'));
+ root.append(status);
+ const steps=card('導入時の基本フロー');for(const s of ['① 会社ごとのLINE公式アカウントを登録','② LINEチャネルシークレット等はWorkerの秘密設定で管理','③ 署名を検証してLINE利用者の本人確認を行う','④ 顧客台帳とLINE利用者を会社内で安全に紐付ける','⑤ 同意した相手だけへ必要な進捗・検査・是正通知を送る'])steps.append(node('p',s));root.append(steps);
+ const preview=card('通知文プレビュー（送信しません）');preview.append(node('p','【DPRO建設デモ】工事の進捗状況が更新されました。対象現場：架空の店舗改修工事。確認ページから詳細をご覧ください。','info'));preview.append(b('問い合わせ受付の体験へ',()=>{view='inquiry';render()},'primary'));root.append(preview);
+ }else if(view==='inquiry'){
+ root.append(node('h2','LINE受付体験（LIFF風・未接続）'));
+ const info=card('お客様からの工事相談','初回は架空の氏名・電話番号を入力します。2回目はこのデモ画面内でのみ自動入力します（本物のLINE ID認証ではありません）。');const form=node('form');
+ const nameL=node('label','お名前（架空）'),name=node('input');name.maxLength=60;name.placeholder='例：架空 太郎';name.required=true;nameL.append(name);
+ const phoneL=node('label','電話番号（架空・初回のみ）'),phone=node('input');phone.type='tel';phone.maxLength=25;phone.placeholder='例：000-0000-0000';phone.required=true;if(lastDemoContact){name.value=lastDemoContact.name;phone.value=lastDemoContact.phone;name.readOnly=true;phone.readOnly=true;}phoneL.append(phone);
+ const topicL=node('label','ご相談内容（架空）'),topic=node('textarea');topic.rows=3;topic.maxLength=300;topic.placeholder='例：架空店舗の改修について相談';topic.required=true;topicL.append(topic);
+ const consentL=node('label',undefined);const consent=node('input');consent.type='checkbox';consent.style.width='auto';consent.required=true;consentL.append(consent,node('span',' デモ内容の確認に同意する（外部送信なし）'));
+ const feedback=node('p','実在するお名前・電話番号・住所は入力しないでください。','warn');
+ form.append(nameL,phoneL,topicL,consentL,feedback,b('相談内容を登録（デモ）',()=>{if(!name.value.trim()||!phone.value.trim()||!topic.value.trim()||!consent.checked){feedback.textContent='入力と同意を確認してください';return;}lastDemoContact={name:name.value.trim(),phone:phone.value.trim()};inquiryItems.push({name:name.value.trim(),topic:topic.value.trim()});render();},'primary'));
+ form.addEventListener('submit',e=>e.preventDefault());info.append(form);root.append(info);
+ const list=card('今回の相談（ブラウザ内のみ）',inquiryItems.length+'件');for(const item of inquiryItems)list.append(node('p',item.name+'：'+item.topic,'info'));root.append(list);
+ }else{root.append(node('h2','このデモの仕様'));const about=card('公開デモと実契約の違い');for(const s of ['コード1234はデモ画面の入口のみであり、本物の認証ではありません。','現場・検査のデータは全て架空です。入力情報はブラウザのメモリ内だけで保持し、再読込で消えます。','このデモからCloudflare Worker、D1、LINE公式、顧客本番へアクセスしません。','担当者・会社別の権限を含む本番機能は別途実機検証が必要です。'])about.append(node('p',s));root.append(about);}
+}
+function siteCard(s,editable=false){const el=card(`${s.code}｜${s.name}`,`${s.trade}　工期 ${s.start} 〜 ${s.end}`);el.append(node('div',`${s.status}　進捗 ${s.progress}%`,'pill'));const bar=node('div',undefined,'bar');const fill=node('div');fill.style.width=s.progress+'%';bar.append(fill);el.append(bar);if(editable){const controls=node('div',undefined,'actions');controls.append(b('進捗＋10％',()=>{s.progress=Math.min(100,s.progress+10);s.status=s.progress===100?'完了':s.progress>=90?'検査中':'施工中';render()},'primary'),b('進捗－10％',()=>{s.progress=Math.max(0,s.progress-10);s.status=s.progress===0?'準備中':'施工中';render()}),b('この現場を検査',()=>{view='checks';render()}));el.append(controls);}else{el.append(b('現場を開く',()=>{view='sites';render()}));}return el;}
+$('loginForm').addEventListener('submit',e=>{e.preventDefault();if($('demoCode').value!=='1234'){$('loginError').textContent='体験用コードを確認してください。';return;}$('demoCode').value='';$('auth').classList.add('hidden');$('app').classList.remove('hidden');view='home';render();});
+document.querySelectorAll('[data-view]').forEach(el=>el.addEventListener('click',()=>{view=el.dataset.view;render();}));
+$('reset').addEventListener('click',()=>{sites=structuredClone(seeds);customers=structuredClone(customerSeeds);office=structuredClone(officeSeed);inquiryItems=[];lastDemoContact=null;view='home';render();});
+</script></body></html>
