@@ -1,0 +1,169 @@
+name: DPRO COSMETICS A4 ELEGANT FIX V2.1
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/dpro-cosmetics-elegant-a4-v2-1.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  fix-and-verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Checkout existing DPRO Product Site
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install QR, verification and PDF tools
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install 'qrcode[pil]>=7.4' 'opencv-python-headless>=4.8' 'numpy>=1.24' 'playwright>=1.48' 'pypdf>=5.0'
+          python -m playwright install --with-deps chromium
+
+      - name: Replace Japanese cosmetics photo, redesign and generate working QR codes
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          import io
+          import base64
+          import qrcode
+          import cv2
+          import numpy as np
+          
+          flyer_path = Path('flyer-cosmetics.html')
+          lp_path = Path('lp-cosmetics.html')
+          if not flyer_path.exists() or not lp_path.exists():
+              raise RuntimeError('必要な既存ファイルが見つかりません。リポジトリ直下を確認してください。')
+          flyer = flyer_path.read_text(encoding='utf-8')
+          lp = lp_path.read_text(encoding='utf-8')
+          
+          # このリポジトリ内のコスメLP正式写真を再使用。外部画像の無断転用・画像URL依存なし。
+          photo = re.search(r'<img class="dpro-embedded-photo" src="(data:image/[^\"]+)" alt="化粧品・コスメ販売 P10正式写真"', lp)
+          if not photo:
+              raise RuntimeError('既存LPのP10正式写真が見つかりません。未変更のまま停止します。')
+          photo_src = photo.group(1)
+          assert photo_src.startswith('data:image/')
+          
+          # QRのリンク先は本番公式サイトと、プロダクトの現行DEMOガイドと一致。
+          target_urls = [
+              'https://lin.ee/YxJGXV6D',
+              'https://dpro-shop.com/',
+              'https://dpromstk2000-lab.github.io/dpro-cosmetics-line-liff/demo-guide.html'
+          ]
+          
+          def make_verified_qr(url):
+              qr = qrcode.QRCode(version=None, error_correction=qrcode.constants.ERROR_CORRECT_M, box_size=12, border=4)
+              qr.add_data(url)
+              qr.make(fit=True)
+              img = qr.make_image(fill_color='black', back_color='white').convert('RGB')
+              out = io.BytesIO()
+              img.save(out, format='PNG', optimize=True)
+              png = out.getvalue()
+              picture = cv2.imdecode(np.frombuffer(png, dtype=np.uint8), cv2.IMREAD_COLOR)
+              decoded, points, _ = cv2.QRCodeDetector().detectAndDecode(picture)
+              if decoded != url or points is None:
+                  raise RuntimeError('QR読取QA不一致: ' + url + ' => ' + decoded)
+              return 'data:image/png;base64,' + base64.b64encode(png).decode('ascii')
+          
+          qr_images = list(map(make_verified_qr, target_urls))
+          print('QR読取テスト 3/3 PASS:', *target_urls, sep='\n - ')
+          
+          # ２回目の実行でも同じ画像とQRを保持（繰り返し実行に安全）。
+          hero_pattern = r'(<div class="hero-photo"><img src=")data:image/[^\"]+(" alt=")[^\"]+("[^>]*>)'
+          if not re.search(hero_pattern, flyer):
+              raise RuntimeError('チラシの写真構造が基準と異なります。未変更で停止します。')
+          flyer, hero_count = re.subn(hero_pattern,
+              lambda m: m.group(1) + photo_src + m.group(2) + '日本人女性スタッフがコスメ店舗でお客様に商品を案内する接客風景' + m.group(3),
+              flyer, count=1)
+          assert hero_count == 1
+          
+          qr_pattern = r'(<div class="action-qr"><img src=")data:image/png;base64,[^\"]+'
+          qr_count = len(re.findall(qr_pattern, flyer))
+          if qr_count != 3:
+              raise RuntimeError(f'既存QRが3件ではありません ({qr_count})。未変更で停止します。')
+          index = [0]
+          def replace_qr(match):
+              i = index[0]
+              index[0] += 1
+              return match.group(1) + qr_images[i]
+          flyer = re.sub(qr_pattern, replace_qr, flyer)
+          assert index[0] == 3
+          
+          css = '/* DPRO COSMETICS ELEGANT JAPANESE RETAIL V2.1 */\n:root{--ink:#18291f;--deep:#09231a;--deep2:#143629;--mint:#1cbd86;--mint2:#e9f7ef;--line:#dbe6db;--warm:#fbf8f2;--gold:#b99b68}\n.hero{background:linear-gradient(118deg,#071d16 0%,#10382b 100%)}\n.hero-photo img{object-position:55% center;filter:saturate(.88) contrast(1.03) sepia(.045)}\n.hero-photo:after{background:linear-gradient(90deg,rgba(7,29,22,.76) 0%,rgba(7,29,22,.15) 30%,rgba(7,29,22,0) 66%)}\n.hero-copy:after{content:"";position:absolute;left:12mm;bottom:6.7mm;width:57mm;height:1px;background:linear-gradient(90deg,#b9a06c,rgba(185,160,108,0));opacity:.55;pointer-events:none}\n.brandmark{background:#18b981;box-shadow:0 0 0 1px rgba(244,223,183,.23)}\n.eyebrow{color:#e5cfa0;letter-spacing:.14em}\n.hero h1{font-family:"Noto Serif CJK JP","Yu Mincho","Hiragino Mincho ProN",serif;font-weight:700;font-size:8mm;letter-spacing:-.034em;line-height:1.14;text-shadow:0 1px 2px rgba(0,0,0,.1)}\n.lead{font-weight:650;color:#e7f0e9}\n.pill{border-color:rgba(226,198,151,.42);background:rgba(236,224,200,.075);color:#f3ead8}\n.photo-label{background:rgba(9,35,26,.79);border:1px solid rgba(224,199,147,.55);color:#fff5e2}\n.section-title{color:#1c3026;letter-spacing:-.02em}\n.section-title span{color:#13976e}\n.feature{border-color:#dce7df;background:linear-gradient(145deg,#fff 0%,#fbfcfa 100%);box-shadow:0 1px 2px rgba(16,52,38,.025)}\n.feature h3{color:#1f3b2d}\n.feature p{color:#526b5d}\n.icon{background:#e8f5ed;border-radius:2.2mm}\n.ecosystem{background:linear-gradient(130deg,#082319 0%,#164031 100%);border:1px solid rgba(197,169,115,.22)}\n.eco-kicker,.strength span{color:#ddc391}\n.cost-check{background:linear-gradient(100deg,#fcf9f4 0%,#fff 100%);border-color:#e6dccb}\n.price{background:linear-gradient(125deg,#eff9f1,#fff 84%);border-color:#c4ddc9}\n.action-card{border-color:#d6e3d8;background:linear-gradient(135deg,#fff,#fbfcfa)}\n.action-card.site{border-color:#9fc6aa;background:linear-gradient(135deg,#f5faf5,#fff)}\n.action-card.line,.action-card.demo{background:linear-gradient(135deg,#f7faf6,#fff)}\n.action-qr img{image-rendering:auto;filter:none}\n@media print{.hero-photo img{-webkit-print-color-adjust:exact;print-color-adjust:exact}.action-qr img{print-color-adjust:exact}}\n'
+          marker = '/* DPRO COSMETICS ELEGANT JAPANESE RETAIL V2.1 */'
+          if marker not in flyer:
+              if '</style>' not in flyer:
+                  raise RuntimeError('CSSの終了タグが見つかりません。')
+              flyer = flyer.replace('</style>', '\n' + css + '\n</style>', 1)
+          flyer = flyer.replace('<title>DPRO COSMETICS A4 FLYER MASTER V2.0</title>',
+                                '<title>DPRO COSMETICS A4 FLYER MASTER V2.1</title>')
+          flyer = flyer.replace('化粧品・コスメ販売向け営業A4チラシ MASTER V2.0',
+                                '化粧品・コスメ販売向け営業A4チラシ MASTER V2.1')
+          assert 'onclick="window.print()"' in flyer
+          assert 'MASTER V2.1' in flyer
+          assert marker in flyer
+          flyer_path.write_text(flyer, encoding='utf-8')
+          print('HTML更新PASS: 日本人女性接客写真 / 高級感ある配色 / QR3件 / 印刷機能を維持')
+          PY
+
+      - name: Print updated A4 PDF and verify output
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          from playwright.sync_api import sync_playwright
+          from pypdf import PdfReader
+          
+          source = Path('flyer-cosmetics.html').resolve()
+          with sync_playwright() as p:
+              browser = p.chromium.launch(headless=True)
+              page = browser.new_page(viewport={'width': 1500, 'height': 2100}, device_scale_factor=1)
+              page.goto(source.as_uri(), wait_until='load')
+              page.wait_for_timeout(300)
+              imgs = page.locator('.hero-photo img, .action-qr img')
+              if imgs.count() != 4:
+                  raise RuntimeError(f'画像数が4件ではありません: {imgs.count()}')
+              for i in range(imgs.count()):
+                  status = imgs.nth(i).evaluate('(img) => img.complete && img.naturalWidth > 0')
+                  if not status:
+                      raise RuntimeError(f'画像{i+1}の表示検査に失敗')
+              page.pdf(path='flyer-cosmetics.pdf', format='A4', print_background=True, prefer_css_page_size=True)
+              browser.close()
+          pdf = PdfReader('flyer-cosmetics.pdf')
+          if len(pdf.pages) != 1:
+              raise RuntimeError(f'A4 PDFが1ページではありません: {len(pdf.pages)}')
+          media = pdf.pages[0].mediabox
+          width_pt, height_pt = float(media.width), float(media.height)
+          if not (594 < width_pt < 597 and 841 < height_pt < 844):
+              raise RuntimeError(f'A4サイズのPDFではありません: {width_pt} x {height_pt}')
+          print(f'PDF検査 PASS: A4 / 1ページ / {width_pt:.1f}x{height_pt:.1f}pt')
+          PY
+
+      - name: Commit only cosmetics flyer HTML and PDF
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -- flyer-cosmetics.html flyer-cosmetics.pdf
+          if git diff --cached --quiet; then
+            echo "Already at latest cosmetics flyer V2.1"
+          else
+            git commit -m "COSMETICS: premium Japanese flyer and verified QR PDF V2.1"
+            git push origin HEAD:main
+          fi
+          echo "## DPRO COSMETICS V2.1" >> "$GITHUB_STEP_SUMMARY"
+          echo "- HTML: https://dpromstk2000-lab.github.io/dpro-line-systems-site/flyer-cosmetics.html" >> "$GITHUB_STEP_SUMMARY"
+          echo "- PDF: https://dpromstk2000-lab.github.io/dpro-line-systems-site/flyer-cosmetics.pdf" >> "$GITHUB_STEP_SUMMARY"
+          echo "- QR 3件: LINE / 公式サイト / DEMO / 全件Pythonで読取検査済" >> "$GITHUB_STEP_SUMMARY"
