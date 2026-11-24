@@ -1,0 +1,52 @@
+name: DPRO R57 product catalog one-shot apply
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/r57-maintenance-catalog-once.yml']
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: r57-product-catalog
+  cancel-in-progress: false
+jobs:
+  install-r57:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - name: Validate R57 pages and inject only the new catalog entry
+        shell: bash
+        run: |
+          node <<'NODE'
+          const fs=require('fs');
+          const target="systems.html";
+          const marker='<!-- DPRO_ORDER_58_CATALOG_LINK_START -->';
+          const start='<!-- DPRO_MAINTENANCE_57_CATALOG_LINK_START -->';
+          const snippet="<!-- DPRO_MAINTENANCE_57_CATALOG_LINK_START -->\n<div id=\"dpro-maintenance-57-entry\" style=\"margin-bottom:44px\">\n <div class=\"p36-catalog-head\"><div><p class=\"p36-eyebrow\">NEW SYSTEM / #57 / PUBLIC DEMO AVAILABLE</p>\n  <h2>DPRO MAINTENANCE｜設備点検・是正管理</h2><p>点検予定・担当・結果・是正対応を一括管理。顧客管理とLINE公式連携は商用受入準備中です。</p></div></div>\n <div class=\"p36-system-grid\"><article class=\"p36-system-card\" aria-label=\"DPRO MAINTENANCE #57 公開DEMO\">\n  <div class=\"p36-system-card__top\"><span class=\"p36-code\">MAINTENANCE #57</span><span class=\"p36-available\">DEMO公開中</span></div>\n  <h3>設備保守・定期点検</h3><p>施設と設備の台帳、点検カレンダー、担当の点検結果、是正・期限超過をひとつに。</p><p style=\"font-size:12px\">商用本番は準備中。DEMOは架空データで、共通コード1234。</p>\n  <div class=\"p36-system-card__actions\" style=\"display:flex;gap:8px;flex-wrap:wrap;margin-top:16px\">\n   <a class=\"is-product\" href=\"maintenance.html\">製品ページを見る</a>\n   <a class=\"is-demo\" href=\"https://dpro-maintenance-r57-prod.dpromstk2000.workers.dev/try/\" target=\"_blank\" rel=\"noopener noreferrer\">LIVE DEMO ↗</a>\n   <a class=\"is-official\" href=\"https://dpro-shop.com/systems/maintenance.html\" target=\"_blank\" rel=\"noopener noreferrer\">青OFFICIALで詳しく ↗</a>\n  </div>\n </article></div>\n</div>\n<!-- DPRO_MAINTENANCE_57_CATALOG_LINK_END -->\n";
+          const original=fs.readFileSync(target,'utf8');
+          if(!original.includes(start)){
+           const hits=original.split(marker).length-1;
+           if(hits!==1)throw Error('Cannot safely patch catalog: ORDER anchor must occur exactly once, got '+hits);
+           fs.writeFileSync(target,original.replace(marker,snippet+marker));
+          }
+          // Keep the existing canonical 55 records and counts unchanged.
+          const fixed=fs.readFileSync(target,'utf8');
+          if(!fixed.includes(start)||!fixed.includes('MAINTENANCE #57'))throw Error('R57 catalog entry missing');
+          const sitemap='sitemap.xml';
+          if(fs.existsSync(sitemap)){
+           let xml=fs.readFileSync(sitemap,'utf8');
+           const add=["https://dpromstk2000-lab.github.io/dpro-line-systems-site/maintenance.html", "https://dpromstk2000-lab.github.io/dpro-line-systems-site/flyer-maintenance.html"].filter(u=>!xml.includes('<loc>'+u+'</loc>'));
+           if(add.length){if(!xml.includes('</urlset>'))throw Error('Sitemap has no closing urlset');xml=xml.replace('</urlset>',add.map(u=>'<url><loc>'+u+'</loc></url>').join('\n')+'\n</urlset>');fs.writeFileSync(sitemap,xml)}
+          }
+          NODE
+      - name: Commit catalog update (idempotent, no application runtime changes)
+        shell: bash
+        run: |
+          git config user.name "dpro-r57-catalog-bot"
+          git config user.email "dpro-r57-catalog-bot@users.noreply.github.com"
+          git add systems.html sitemap.xml
+          if git diff --cached --quiet; then echo "Catalog already updated"; exit 0; fi
+          git commit -m "feat(r57): list DPRO MAINTENANCE #57 in product catalog"
+          git push origin HEAD:main
