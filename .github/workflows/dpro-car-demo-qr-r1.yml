@@ -1,0 +1,181 @@
+name: DPRO CAR DEMO QR R1
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/dpro-car-demo-qr-r1.yml']
+permissions:
+  contents: write
+concurrency:
+  group: car-demo-qr-r1
+  cancel-in-progress: false
+jobs:
+  repair:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install QA tools
+        run: |
+          python -m pip install 'qrcode[pil]' playwright pymupdf zxing-cpp requests
+          python -m playwright install --with-deps chromium
+          sudo apt-get update -qq
+          sudo apt-get install -y fonts-noto-cjk
+      - name: Repair QR and verify A4 print
+        run: |
+          python - <<'PY'
+          import base64, io, json, pathlib, re, html
+          import qrcode, requests, fitz, zxingcpp
+          from PIL import Image
+          from playwright.sync_api import sync_playwright
+          root = pathlib.Path.cwd()
+          path = root / 'flyer-car.html'
+          pdf = root / 'flyer-car.pdf'
+          qa = root / 'car-qr-qa'
+          qa.mkdir(exist_ok=True)
+          base = 'https://dpromstk2000-lab.github.io/dpro-used-car-line-liff/'
+          demo = base + '?demo=1'
+          targets = {'LINE相談QR':'https://lin.ee/YxJGXV6D', 'DPRO SHOP QR':'https://dpro-shop.com/', 'LIVE DEMO QR':demo}
+          source = path.read_text(encoding='utf-8')
+          product = (root/'systems/used-car.html').read_text(encoding='utf-8')
+          assert demo in html.unescape(product), 'DEMO path not found in product page'
+          assert 'USED CAR PURCHASE &amp; SALES' in source and '5,500円' in source
+          updated = source
+          old_qr = {}
+          new_qr = {}
+          def decode(img):
+              return {r.text for r in zxingcpp.read_barcodes(img)}
+          for i, (alt, url) in enumerate(targets.items(), 1):
+              pat = re.compile(r'<img\b[^>]*\balt="'+re.escape(alt)+r'"[^>]*>')
+              matches = list(pat.finditer(updated))
+              assert len(matches)==1, (alt,len(matches))
+              old = matches[0].group()
+              src = re.search(r'src="data:image/[^;]+;base64,([^"]+)"',old)
+              assert src, alt
+              try:
+                  old_qr[alt] = sorted(decode(Image.open(io.BytesIO(base64.b64decode(src.group(1))))))
+              except Exception as e:
+                  old_qr[alt] = [type(e).__name__]
+              q = qrcode.QRCode(error_correction=qrcode.constants.ERROR_CORRECT_M, box_size=16, border=4)
+              q.add_data(url); q.make(fit=True)
+              img = q.make_image(fill_color='black',back_color='white').convert('RGB')
+              assert decode(img)=={url}, alt
+              img.save(qa/f'qr-{i}.png')
+              buf=io.BytesIO(); img.save(buf,format='PNG')
+              uri='data:image/png;base64,'+base64.b64encode(buf.getvalue()).decode('ascii')
+              tag=f'<img src="{uri}" alt="{alt}" data-target="{html.escape(url,quote=True)}">'
+              if 'CAR_DEMO_QR_R1' not in source:
+                  tag=f'<a href="{html.escape(url,quote=True)}" target="_blank" rel="noopener" aria-label="{alt}">{tag}</a>'
+              updated=updated[:matches[0].start()]+tag+updated[matches[0].end():]
+              new_qr[alt]={'url':url,'modules':q.modules_count,'version':q.version,'quiet_zone_modules':4}
+          if 'CAR_DEMO_QR_R1' not in updated:
+              css='''
+          /* CAR_DEMO_QR_R1: preserve hero and A4 master, improve scan contrast. */
+          .main{padding-top:4mm}
+          .feature{min-height:24mm;padding-top:2.4mm;padding-bottom:2.2mm}
+          .contact{margin-top:2mm;padding-top:1.8mm}
+          .action-grid{grid-template-columns:.94fr 1.12fr 1fr}
+          .action-card{grid-template-columns:minmax(0,1fr) 21mm;gap:1.2mm;padding:1.6mm 1.8mm}
+          .action-card.demo{grid-template-columns:minmax(0,1fr) 24mm;gap:1.2mm}
+          .action-card h4{overflow-wrap:anywhere}
+          .action-card .site-url{font-size:3.1mm;padding:.8mm .7mm;white-space:normal;overflow-wrap:anywhere}
+          .action-card .site-url-label{font-size:1.25mm}
+          .action-qr a{display:block;line-height:0;text-decoration:none}
+          .action-qr img{padding:0;border:0;border-radius:0;background:#fff;image-rendering:pixelated;display:block;width:20.5mm;height:20.5mm;max-width:100%}
+          .action-card.demo .action-qr img{width:24mm;height:24mm;max-width:none;max-height:none}
+          .action-card.demo .action-qr .qlabel{font-size:1.95mm}
+          .action-card.demo .action-qr .qmini{font-size:1.15mm}
+          '''
+              assert '</head>' in updated
+              updated=updated.replace('</head>','<style>'+css+'</style>\n</head>',1)
+          # Clarify the operational DEMO without implying a live LINE connection.
+          edits = [
+              ('買取・販売の入口画面を、公開中のデモ環境で確認できます。', '買取・下取り、在庫・試乗相談の入口をDEMOで確認。'),
+              ('外装やメーター写真を送って、来店前に概算査定の相談ができます。', '外装・メーター写真で概算査定を相談。査定写真は非公開で管理。'),
+          ]
+          for old, new in edits:
+              if new not in updated:
+                  assert updated.count(old)==1, old
+                  updated=updated.replace(old,new,1)
+          # Existing hero and non-QR images must remain exactly the same.
+          def other_images(s):
+              return [m for m in re.findall(r'<img\b[^>]*>',s) if not any(f'alt="{a}"' in m for a in targets)]
+          assert other_images(source)==other_images(updated)
+          assert len(other_images(source))>=1
+          assert 'window.print()' in updated
+          assert 'data-target="'+html.escape(demo,quote=True)+'"' in updated
+          path.write_text(updated,encoding='utf-8')
+          expected=set(targets.values())
+          with sync_playwright() as pw:
+              browser=pw.chromium.launch(args=['--no-sandbox'])
+              page=browser.new_page(viewport={'width':1440,'height':1200},device_scale_factor=2)
+              page.goto(path.as_uri(),wait_until='load')
+              page.evaluate('document.fonts.ready')
+              assert page.locator('.feature-grid .feature').count()==6
+              assert page.locator('.action-grid .action-card').count()==3
+              for alt,url in targets.items():
+                  qr=page.locator(f'img[alt="{alt}"]')
+                  assert qr.evaluate('(e)=>e.complete && e.naturalWidth>0'),alt
+                  assert qr.locator('..').get_attribute('href')==url,alt
+              assert page.locator('.hero-photo img').evaluate('(e)=>e.complete && e.naturalWidth>0')
+              page.locator('.sheet').screenshot(path=str(qa/'screen.png'))
+              screen_decoded=decode(Image.open(qa/'screen.png'))
+              assert expected<=screen_decoded, ('Screen QR',screen_decoded)
+              def check_layout():
+                  return page.evaluate('''() => {const r=s=>document.querySelector(s).getBoundingClientRect(); const grid=r('.action-grid'),f=r('.footer'),card=r('.action-card.demo'),qr=r('.action-card.demo img'),copy=r('.action-card.demo .action-copy'),url=r('.site-url'),site=r('.action-card.site');return {cardBottom:grid.bottom,footerTop:f.top,qrLeft:qr.left,qrRight:qr.right,cardLeft:card.left,cardRight:card.right,copyRight:copy.right,officialUrlRight:url.right,officialCardRight:site.right}}''')
+              def verify_layout(v):
+                  assert v['cardBottom']<=v['footerTop']+1,v
+                  assert v['qrLeft']>=v['cardLeft']-1 and v['qrRight']<=v['cardRight']+1,v
+                  assert v['copyRight']<=v['qrLeft']+1,v
+                  assert v['officialUrlRight']<=v['officialCardRight']+1,v
+              layout=check_layout(); verify_layout(layout)
+              page.emulate_media(media='print')
+              print_layout=check_layout(); verify_layout(print_layout)
+              page.pdf(path=str(pdf),prefer_css_page_size=True,print_background=True)
+              browser.close()
+          with fitz.open(pdf) as doc:
+              assert len(doc)==1, f'A4 expected 1 page, got {len(doc)}'
+              p=doc[0]; assert abs(p.rect.width-595.28)<3 and abs(p.rect.height-841.89)<3
+              p.get_pixmap(matrix=fitz.Matrix(3,3),alpha=False).save(str(qa/'print.png'))
+          printed=decode(Image.open(qa/'print.png'))
+          assert expected<=printed, ('Printed QR',printed)
+          # Public GET checks only. Never log in, submit requests, or mutate business records.
+          checks={}
+          api='https://cbknucemarcpbscirzyv.supabase.co/functions/v1/used-car-product-ready-adapter'
+          endpoints={'demo':demo,'owner':base+'owner.html?demo=1','sell':base+'sell.html?demo=1','inventory':base+'inventory.html?demo=1','member':base+'member.html?demo=1','ipad':base+'owner-ipad.html?demo=1','system_check':base+'system-check.html?demo=1','adapter_check':api+'/api/product-ready/check'}
+          for key,url in endpoints.items():
+              try:
+                  response=requests.get(url,timeout=15)
+                  item={'http':response.status_code,'ok':response.ok}
+                  if key == 'adapter_check' and response.ok:
+                      data=response.json()
+                      if isinstance(data,dict):
+                          item['api_ok']=data.get('ok')
+                          if data.get('ok') is False or not data: item['ok']=False
+                      else: item['ok']=False
+                  checks[key]=item
+              except Exception as e:
+                  checks[key]={'ok':False,'error':type(e).__name__}
+              if not checks[key]['ok']: print(f'::warning::Public GET check {key}: {checks[key]}')
+          report={'result':'FLYER_QA_PASS','old_qr_decoded':old_qr,'new_qr':new_qr,'screen_qr':sorted(screen_decoded),'print_qr':sorted(printed),'a4_pages':1,'screen_layout':layout,'print_layout':print_layout,'public_get':checks,'business_mutation':0,'note':'GET results are separate from flyer QA; they do not establish authenticated business-operation QA. LIFF ID is empty and contract-specific LINE, owner and staff bindings are deferred.'}
+          (qa/'RESULT.json').write_text(json.dumps(report,ensure_ascii=False,indent=2),encoding='utf-8')
+          print(json.dumps(report,ensure_ascii=False,indent=2))
+          PY
+      - name: Upload QA evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: CAR-DEMO-QR-R1-QA
+          path: car-qr-qa/
+          if-no-files-found: warn
+      - name: Commit only verified flyer and PDF
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -- flyer-car.html flyer-car.pdf
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m 'CAR: improve QR readability and refresh verified A4 PDF'
+          git push origin HEAD:main
