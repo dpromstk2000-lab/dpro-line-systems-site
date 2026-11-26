@@ -1,0 +1,130 @@
+name: DPRO HAISHOKU OFFICIAL CARD R2
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/dpro-haishoku-official-card-r2.yml']
+permissions:
+  contents: write
+concurrency:
+  group: haishoku-official-card-r2
+  cancel-in-progress: false
+jobs:
+  repair:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install QA tools
+        run: |
+          python -m pip install 'qrcode[pil]' playwright pymupdf zxing-cpp
+          python -m playwright install --with-deps chromium
+          sudo apt-get update -qq
+          sudo apt-get install -y fonts-noto-cjk
+      - name: Align official card and verify A4
+        run: |
+          python - <<'PY'
+          import base64, io, json, pathlib, re, html
+          import qrcode, fitz, zxingcpp
+          from PIL import Image
+          from playwright.sync_api import sync_playwright
+          root=pathlib.Path.cwd()
+          path=root/'flyer-haishoku.html'; pdf=root/'flyer-haishoku.pdf'
+          qa=root/'haishoku-official-r2-qa'; qa.mkdir(exist_ok=True)
+          site='https://dpro-shop.com/'
+          old_site='https://dpro-shop.com/systems/senior-meal-delivery'
+          line='https://lin.ee/YxJGXV6D'
+          demo='https://dpromstk2000-lab.github.io/dpro-senior-meal-delivery-line/owner.html?demo=1'
+          expected={line,site,demo}
+          source=path.read_text(encoding='utf-8')
+          assert 'HAISHOKU_DEMO_QR_R1' in source and 'window.print()' in source and '5,500円' in source
+          cards=re.findall(r'<a\b[^>]*\bclass="qr-card(?:\s+[^\"]*)?"[^>]*>.*?</a>',source,re.S)
+          assert len(cards)==3
+          assert f'href="{line}"' in cards[0] and f'href="{demo}"' in cards[2]
+          assert any(f'href="{u}"' in cards[1] for u in (old_site,site))
+          q=qrcode.QRCode(error_correction=qrcode.constants.ERROR_CORRECT_M,box_size=16,border=4)
+          q.add_data(site); q.make(fit=True); img=q.make_image(fill_color='black',back_color='white').convert('RGB')
+          def decode(im): return {r.text for r in zxingcpp.read_barcodes(im)}
+          assert decode(img)=={site}
+          buf=io.BytesIO(); img.save(buf,format='PNG'); img.save(qa/'official-qr.png')
+          uri='data:image/png;base64,'+base64.b64encode(buf.getvalue()).decode('ascii')
+          card=f'''<a class="qr-card official-card" href="{site}" target="_blank" rel="noopener noreferrer" data-qr-target="{site}" aria-label="DPRO SHOP公式サイトを開く"><div class="qr-copy official-copy"><span class="official-kicker"><span class="official-num">02</span> OFFICIAL SITE</span><b>詳しく見る。</b><small>DPRO SHOP公式サイトで、<br>サービス・料金・機能を確認。</small><span class="official-hint">PCから直接アクセス</span></div><img src="{uri}" alt="DPRO SHOP公式サイトQR"><span class="official-url">{site}</span></a>'''
+          css='''<style id="haishoku-official-r2">
+          /* HAISHOKU_OFFICIAL_CARD_R2 — center card only */
+          .qr-card.official-card{display:grid;grid-template-columns:minmax(0,1fr) 22mm;grid-template-rows:22mm 5mm;column-gap:1.4mm;row-gap:.45mm;align-content:center;align-items:center;padding:1.15mm 1.5mm;border-color:#70c5a3;background:linear-gradient(135deg,#f0faf5,#fff 76%);box-shadow:inset 0 0 0 .2mm #bce7d4}
+          .qr-card.official-card img{width:22mm;height:22mm;grid-column:2;grid-row:1;align-self:center;justify-self:center}
+          .official-copy{grid-column:1;grid-row:1;align-self:center;min-width:0}
+          .official-kicker{display:flex;align-items:center;gap:1mm;font-size:5.6pt;color:#357460;font-weight:900;white-space:nowrap;letter-spacing:.03em}
+          .official-num{display:inline-grid;place-items:center;flex:0 0 4.7mm;width:4.7mm;height:4.7mm;border-radius:50%;background:#092d23;color:#fff;font-size:5.5pt}
+          .official-card .official-copy b{font-size:9pt;margin-top:1mm;line-height:1.15}
+          .official-card .official-copy small{font-size:5.7pt;line-height:1.35;margin-top:.8mm}
+          .official-hint{display:block;color:#52766b;font-size:5.1pt;font-weight:800;margin-top:1mm}
+          .official-url{grid-column:1/-1;grid-row:2;display:flex;align-items:center;justify-content:center;white-space:nowrap;min-width:0;height:5mm;border:1px solid #b9e4d2;border-radius:1.3mm;background:#e9f8f2;color:#063f30;font-weight:900;font-size:10.5pt;line-height:1;letter-spacing:-.025em}
+          </style>'''
+          updated=source.replace(cards[1],card,1)
+          if 'HAISHOKU_OFFICIAL_CARD_R2' not in updated:
+              assert updated.count('</head>')==1
+              updated=updated.replace('</head>',css+'\n</head>',1)
+          assert updated.count(cards[0])==1 and updated.count(cards[2])==1
+          # Verify the only changes are the central card and the appended scoped stylesheet.
+          assert updated.replace(card,cards[1],1).replace(css+'\n','',1)==source or ('HAISHOKU_OFFICIAL_CARD_R2' in source and updated.replace(card,cards[1],1)==source)
+          path.write_text(updated,encoding='utf-8')
+          with sync_playwright() as pw:
+              browser=pw.chromium.launch(args=['--no-sandbox'])
+              page=browser.new_page(viewport={'width':1440,'height':1200},device_scale_factor=2)
+              page.goto(path.as_uri(),wait_until='load'); page.evaluate('document.fonts.ready')
+              assert page.locator('.feature-grid .feature').count()==6
+              assert page.locator('.qr-grid .qr-card').count()==3
+              assert page.locator('.official-url').inner_text()==site
+              assert page.locator('.official-card').get_attribute('href')==site
+              assert page.locator('.official-card').get_attribute('data-qr-target')==site
+              assert page.locator('.hero-photo img').evaluate('(e)=>e.complete && e.naturalWidth>0')
+              for i,url in enumerate([line,site,demo]):
+                  c=page.locator('.qr-card').nth(i); assert c.get_attribute('href')==url and c.get_attribute('data-qr-target')==url
+                  assert c.locator('img').evaluate('(e)=>e.complete && e.naturalWidth>0')
+              def layout():
+                  return page.evaluate('''() => {const r=e=>e.getBoundingClientRect(),paper=r(document.querySelector('.paper')),footer=r(document.querySelector('.footer')),grid=r(document.querySelector('.qr-grid'));return {paperBottom:paper.bottom,footerBottom:footer.bottom,footerTop:footer.top,gridBottom:grid.bottom,cards:[...document.querySelectorAll('.qr-card')].map(e=>{const c=r(e),q=r(e.querySelector('img')),t=r(e.querySelector('.qr-copy')),u=e.querySelector('.official-url'),z=u?r(u):null;return {left:c.left,right:c.right,top:c.top,bottom:c.bottom,qrLeft:q.left,qrRight:q.right,qrTop:q.top,qrBottom:q.bottom,copyLeft:t.left,copyRight:t.right,copyTop:t.top,copyBottom:t.bottom,scrollWidth:e.scrollWidth,clientWidth:e.clientWidth,url:z?{left:z.left,right:z.right,top:z.top,bottom:z.bottom,scrollWidth:u.scrollWidth,clientWidth:u.clientWidth}:null,copyOverflow:e.querySelector('.qr-copy').scrollWidth-e.querySelector('.qr-copy').clientWidth}})}}''')
+              def verify(v):
+                  assert v['gridBottom']<=v['footerTop']+1 and v['footerBottom']<=v['paperBottom']+1,v
+                  for i,c in enumerate(v['cards']):
+                      assert c['qrLeft']>=c['left']-1 and c['qrRight']<=c['right']+1 and c['qrTop']>=c['top']-1 and c['qrBottom']<=c['bottom']+1,c
+                      assert c['copyLeft']>=c['left']-1 and c['copyRight']<=c['right']+1 and c['copyTop']>=c['top']-1 and c['copyBottom']<=c['bottom']+1,c
+                      if i==1:
+                          z=c['url']; assert z and c['copyRight']<=c['qrLeft']+1 and max(c['copyBottom'],c['qrBottom'])<=z['top']+1,c
+                          assert z['left']>=c['left']-1 and z['right']<=c['right']+1 and z['bottom']<=c['bottom']+1 and z['scrollWidth']<=z['clientWidth']+1,c
+                          assert c['copyOverflow']<=1,c
+                      else: assert c['copyLeft']>=c['qrRight']-1,c
+                      assert c['scrollWidth']<=c['clientWidth']+1,c
+              screen_layout=layout(); verify(screen_layout)
+              page.locator('.paper').screenshot(path=str(qa/'screen.png'))
+              screen_decoded=decode(Image.open(qa/'screen.png')); assert expected<=screen_decoded,screen_decoded
+              page.emulate_media(media='print'); print_layout=layout(); verify(print_layout)
+              page.pdf(path=str(pdf),prefer_css_page_size=True,print_background=True)
+              browser.close()
+          with fitz.open(pdf) as doc:
+              assert len(doc)==1
+              p=doc[0]; assert abs(p.rect.width-595.28)<3 and abs(p.rect.height-841.89)<3
+              assert site in p.get_text().replace('\n','').replace(' ','')
+              p.get_pixmap(matrix=fitz.Matrix(3,3),alpha=False).save(str(qa/'print.png'))
+          printed=decode(Image.open(qa/'print.png')); assert expected<=printed,printed
+          report={'result':'PASS','center_target':site,'qr_modules':q.modules_count,'quiet_zone_modules':4,'screen_qr':sorted(screen_decoded),'print_qr':sorted(printed),'a4_pages':1,'other_cards_unchanged':True,'screen_layout':screen_layout,'print_layout':print_layout}
+          (qa/'RESULT.json').write_text(json.dumps(report,ensure_ascii=False,indent=2),encoding='utf-8'); print(json.dumps(report,ensure_ascii=False,indent=2))
+          PY
+      - name: Upload QA evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: HAISHOKU-OFFICIAL-CARD-R2-QA
+          path: haishoku-official-r2-qa/
+          if-no-files-found: warn
+      - name: Commit only verified HTML and PDF
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -- flyer-haishoku.html flyer-haishoku.pdf
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m 'HAISHOKU: align official site card with DPRO standard'
+          git push origin HEAD:main
