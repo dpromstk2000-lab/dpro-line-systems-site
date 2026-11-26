@@ -1,0 +1,152 @@
+name: DPRO HAISHOKU DEMO QR R1
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/dpro-haishoku-demo-qr-r1.yml']
+permissions:
+  contents: write
+concurrency:
+  group: haishoku-demo-qr-r1
+  cancel-in-progress: false
+jobs:
+  repair:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install QA tools
+        run: |
+          python -m pip install 'qrcode[pil]' playwright pymupdf zxing-cpp requests
+          python -m playwright install --with-deps chromium
+          sudo apt-get update -qq
+          sudo apt-get install -y fonts-noto-cjk
+      - name: Repair QR and verify A4 print
+        run: |
+          python - <<'PY'
+          import base64, io, json, pathlib, re, html
+          import qrcode, requests, fitz, zxingcpp
+          from PIL import Image
+          from playwright.sync_api import sync_playwright
+          root=pathlib.Path.cwd()
+          path=root/'flyer-haishoku.html'; pdf=root/'flyer-haishoku.pdf'
+          qa=root/'haishoku-qr-qa'; qa.mkdir(exist_ok=True)
+          base='https://dpromstk2000-lab.github.io/dpro-senior-meal-delivery-line/'
+          demo=base+'owner.html?demo=1'
+          old_demo=demo+'&v=HAISHOKU-12'
+          targets=[('LINE相談にアクセスする実QRコード','https://lin.ee/YxJGXV6D'),('DPRO高齢者配食の公式製品ページにアクセスする実QRコード','https://dpro-shop.com/systems/senior-meal-delivery'),('高齢者配食システムの公開デモにアクセスする実QRコード',demo)]
+          source=path.read_text(encoding='utf-8'); updated=source
+          product=(root/'systems/senior-meal-delivery.html').read_text(encoding='utf-8')
+          assert demo in html.unescape(product)
+          assert 'HAISHOKU' in source and '5,500円' in source and 'window.print()' in source
+          assert source.count('class="qr-card"')==3
+          assert html.unescape(source).count(old_demo)==2 or (old_demo not in html.unescape(source) and 'HAISHOKU_DEMO_QR_R1' in source)
+          updated=updated.replace(html.escape(old_demo,quote=True),demo).replace(old_demo,demo)
+          def decode(img):
+              return {r.text for r in zxingcpp.read_barcodes(img)}
+          old_qr={}; new_qr={}
+          for i,(alt,url) in enumerate(targets,1):
+              pat=re.compile(r'<img\b[^>]*\balt="'+re.escape(alt)+r'"[^>]*>')
+              matches=list(pat.finditer(updated)); assert len(matches)==1,alt
+              old=matches[0].group(); src=re.search(r'src="data:image/[^;]+;base64,([^"]+)"',old); assert src,alt
+              try: old_qr[alt]=sorted(decode(Image.open(io.BytesIO(base64.b64decode(src.group(1))))))
+              except Exception as e: old_qr[alt]=[type(e).__name__]
+              q=qrcode.QRCode(error_correction=qrcode.constants.ERROR_CORRECT_M,box_size=16,border=4)
+              q.add_data(url); q.make(fit=True); img=q.make_image(fill_color='black',back_color='white').convert('RGB')
+              assert decode(img)=={url},alt
+              img.save(qa/f'qr-{i}.png'); buf=io.BytesIO(); img.save(buf,format='PNG')
+              uri='data:image/png;base64,'+base64.b64encode(buf.getvalue()).decode('ascii')
+              tag=re.sub(r'src="[^"]+"',lambda m:'src="'+uri+'"',old,count=1)
+              updated=updated[:matches[0].start()]+tag+updated[matches[0].end():]
+              new_qr[alt]={'url':url,'modules':q.modules_count,'quiet_zone_modules':4,'version':q.version}
+          if 'HAISHOKU_DEMO_QR_R1' not in updated:
+              css='''<style id="haishoku-qr-r1">
+          /* HAISHOKU_DEMO_QR_R1 — preserve existing A4 and photo */
+          .qr-card{padding:1.15mm 1.5mm;gap:1.65mm;min-height:0;overflow:hidden}
+          .qr-card img{width:26mm;height:26mm;flex:0 0 26mm;image-rendering:pixelated;background:#fff;object-fit:contain}
+          .qr-card:last-child img{width:28mm;height:28mm;flex-basis:28mm}
+          .qr-copy b{font-size:8.1pt;overflow-wrap:anywhere}
+          .qr-copy small{font-size:5.6pt;line-height:1.5;margin-top:1.3mm}
+          .qr-copy .linkhint{font-size:5pt;margin-top:1.5mm}
+          </style>'''
+              assert '</head>' in updated; updated=updated.replace('</head>',css+'\n</head>',1)
+          for old,new in [
+          ('食数や食形態を共有し、調理・積込準備をサポート。','昼食・夕食の食数や食形態を共有。調理・温度・積込を記録。'),
+          ('手渡し・不在・要連絡を記録し、事業所へ共有。','手渡し・不在・受取辞退・配達不可を記録し、事業所へ共有。'),
+          ('デモ画面での操作を、<br>実際に体験できます。','事業所管理の操作を、<br>架空データで体験。'),
+          ('QRをスマホで読み込めます。 / 各カードはクリック可能','スマホでQRを読み取り / PCでは各カードをクリック')]:
+              if new not in updated:
+                  assert updated.count(old)==1,old; updated=updated.replace(old,new,1)
+          # Keep the hero and all non-QR image bytes, fee, and original destinations.
+          def other_images(s): return [m for m in re.findall(r'<img\b[^>]*>',s) if not any(f'alt="{a}"' in m for a,_ in targets)]
+          assert other_images(source)==other_images(updated) and len(other_images(source))>=1
+          assert '5,500円' in updated and 'window.print()' in updated
+          path.write_text(updated,encoding='utf-8')
+          expected={u for _,u in targets}
+          with sync_playwright() as pw:
+              browser=pw.chromium.launch(args=['--no-sandbox'])
+              page=browser.new_page(viewport={'width':1440,'height':1200},device_scale_factor=2)
+              page.goto(path.as_uri(),wait_until='load'); page.evaluate('document.fonts.ready')
+              assert page.locator('.feature-grid .feature').count()==6
+              assert page.locator('.qr-grid .qr-card').count()==3
+              for alt,url in targets:
+                  qr=page.locator(f'img[alt="{alt}"]')
+                  assert qr.evaluate('(e)=>e.complete && e.naturalWidth>0'),alt
+                  assert qr.locator('..').get_attribute('href')==url,alt
+                  assert qr.locator('..').get_attribute('data-qr-target')==url,alt
+              assert page.locator('.hero-photo img').evaluate('(e)=>e.complete && e.naturalWidth>0')
+              page.locator('.paper').screenshot(path=str(qa/'screen.png'))
+              screen_decoded=decode(Image.open(qa/'screen.png')); assert expected<=screen_decoded,('Screen QR',screen_decoded)
+              def layout():
+                  return page.evaluate('''() => {const r=e=>e.getBoundingClientRect(),paper=r(document.querySelector('.paper')),footer=r(document.querySelector('.footer')),grid=r(document.querySelector('.qr-grid'));return {paperBottom:paper.bottom,footerBottom:footer.bottom,footerTop:footer.top,gridBottom:grid.bottom,cards:[...document.querySelectorAll('.qr-card')].map(e=>{const c=r(e),q=r(e.querySelector('img')),t=r(e.querySelector('.qr-copy'));return {left:c.left,right:c.right,top:c.top,bottom:c.bottom,qrLeft:q.left,qrRight:q.right,qrTop:q.top,qrBottom:q.bottom,copyLeft:t.left,copyRight:t.right,copyTop:t.top,copyBottom:t.bottom,scrollWidth:e.scrollWidth,clientWidth:e.clientWidth}})}}''')
+              def verify(v):
+                  assert v['gridBottom']<=v['footerTop']+1 and v['footerBottom']<=v['paperBottom']+1,v
+                  for c in v['cards']:
+                      assert c['qrLeft']>=c['left'] and c['qrRight']<=c['right'] and c['qrTop']>=c['top'] and c['qrBottom']<=c['bottom'],c
+                      assert c['copyLeft']>=c['qrRight']-1 and c['copyRight']<=c['right']+1 and c['copyTop']>=c['top']-1 and c['copyBottom']<=c['bottom']+1,c
+                      assert c['scrollWidth']<=c['clientWidth']+1,c
+              screen_layout=layout(); verify(screen_layout)
+              page.emulate_media(media='print'); print_layout=layout(); verify(print_layout)
+              page.pdf(path=str(pdf),prefer_css_page_size=True,print_background=True)
+              browser.close()
+          with fitz.open(pdf) as doc:
+              assert len(doc)==1, f'A4 expected 1 page, got {len(doc)}'
+              p=doc[0]; assert abs(p.rect.width-595.28)<3 and abs(p.rect.height-841.89)<3
+              p.get_pixmap(matrix=fitz.Matrix(3,3),alpha=False).save(str(qa/'print.png'))
+          printed=decode(Image.open(qa/'print.png')); assert expected<=printed,('Printed QR',printed)
+          # Public GET only: no login, notification sending, demo reset, or business mutations.
+          api='https://dpro-senior-meal-delivery-line-api.dpromstk2000.workers.dev'
+          endpoints={'owner':demo,'member':base+'member.html?demo=1','kitchen':base+'owner-ipad.html?demo=1','reception':base+'reception.html?demo=1','staff':base+'staff.html?demo=1','system_check':base+'system-check.html','health':api+'/health','version':api+'/v1/system/version','official_product':targets[1][1]}
+          checks={}
+          for key,url in endpoints.items():
+              try:
+                  resp=requests.get(url,timeout=15)
+                  item={'http':resp.status_code,'ok':resp.ok}
+                  if key in ('health','version') and resp.ok:
+                      d=resp.json(); item['ok']=isinstance(d,dict) and d.get('ok') is True
+                      if key=='health' and isinstance(d,dict):
+                          item['status']=d.get('status'); item['ok']=item['ok'] and d.get('status')=='healthy'
+                  checks[key]=item
+              except Exception as e: checks[key]={'ok':False,'error':type(e).__name__}
+              if not checks[key]['ok']: print(f'::warning::Public GET check {key}: {checks[key]}')
+          report={'result':'FLYER_QA_PASS','old_qr_decoded':old_qr,'new_qr':new_qr,'screen_qr':sorted(screen_decoded),'print_qr':sorted(printed),'a4_pages':1,'screen_layout':screen_layout,'print_layout':print_layout,'public_get':checks,'business_mutation':0,'note':'Public GET results are separate from flyer QA and do not establish authenticated operation or real LINE notification QA.'}
+          (qa/'RESULT.json').write_text(json.dumps(report,ensure_ascii=False,indent=2),encoding='utf-8'); print(json.dumps(report,ensure_ascii=False,indent=2))
+          PY
+      - name: Upload QA evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: HAISHOKU-DEMO-QR-R1-QA
+          path: haishoku-qr-qa/
+          if-no-files-found: warn
+      - name: Commit only verified flyer and PDF
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -- flyer-haishoku.html flyer-haishoku.pdf
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m 'HAISHOKU: improve QR readability and refresh verified A4 PDF'
+          git push origin HEAD:main
