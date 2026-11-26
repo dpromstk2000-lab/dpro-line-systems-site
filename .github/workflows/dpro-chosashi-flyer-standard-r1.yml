@@ -1,0 +1,118 @@
+name: DPRO CHOSASHI FLYER STANDARD R1
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/dpro-chosashi-flyer-standard-r1.yml']
+permissions:
+  contents: write
+concurrency:
+  group: chosashi-flyer-standard-r1
+  cancel-in-progress: false
+jobs:
+  repair:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install QA tools
+        run: |
+          python -m pip install 'qrcode[pil]' playwright pymupdf zxing-cpp requests
+          python -m playwright install --with-deps chromium
+          sudo apt-get update -qq
+          sudo apt-get install -y fonts-noto-cjk
+      - name: Repair flyer and verify A4 and QR
+        run: |
+          python - <<'PY'
+          import base64, io, json, pathlib, re, html
+          import qrcode, requests, fitz, zxingcpp
+          from PIL import Image
+          from playwright.sync_api import sync_playwright
+          root=pathlib.Path.cwd(); path=root/'flyer-chosashi.html'; pdf=root/'flyer-chosashi.pdf'
+          qa=root/'chosashi-flyer-r1-qa'; qa.mkdir(exist_ok=True)
+          base='https://dpromstk2000-lab.github.io/dpro-chosashi-line-liff/'
+          line='https://lin.ee/YxJGXV6D'; official='https://dpro-shop.com/'; demo=base+'index.html?demo=1'
+          source=path.read_text(encoding='utf-8'); product=html.unescape((root/'systems/chosashi.html').read_text(encoding='utf-8'))
+          assert all(x in product for x in (demo,line,official)) and 'CHOSASHI' in source and 'window.print()' in source
+          assert source.count('class="feature"')==6 and '5,500円' in source
+
+          def decode(im): return {x.text for x in zxingcpp.read_barcodes(im)}
+          qrs={}; meta={}
+          for k,u in [('line',line),('site',official),('demo',demo)]:
+              q=qrcode.QRCode(error_correction=qrcode.constants.ERROR_CORRECT_M,box_size=16,border=4);q.add_data(u);q.make(fit=True)
+              im=q.make_image(fill_color='black',back_color='white').convert('RGB'); assert decode(im)=={u},k
+              im.save(qa/f'{k}.png'); b=io.BytesIO();im.save(b,format='PNG');qrs[k]='data:image/png;base64,'+base64.b64encode(b.getvalue()).decode('ascii');meta[k]={'url':u,'modules':q.modules_count,'quiet_zone':4}
+
+          def card(k,u,n,label,title,desc,alt,caption,tail):
+              return f'<a class="card {k}" href="{html.escape(u,quote=True)}" target="_blank" rel="noopener noreferrer" aria-label="{alt}"><div class="card-copy"><div class="num"><span>{n}</span> {label}</div><h3>{title}</h3><p>{desc}</p></div><div class="qr-wrap"><img src="{qrs[k]}" alt="{alt}"><small>{caption}</small></div>{tail}</a>'
+          contact='<section class="contact" aria-label="相談・公式サイト・デモ"><div class="section-head"><div><div class="kicker">DPRO SHOP / CHOOSE YOUR NEXT STEP</div><h2>相談する。知る。試す。DPROを、もっと近くに。</h2></div><small>スマホでQRを読み取り / PCでは各カードをクリック</small></div><div class="cards">'+card('line',line,'01','CONTACT','相談する。','導入・運用のご相談は、公式LINEへ。','LINE相談 QRコード','LINEで相談','')+card('site',official,'02','OFFICIAL SITE','詳しく見る。','サービス・料金・各業種のDPROを確認。','DPRO SHOP QRコード','公式サイト','<div class="official-address"><small>OFFICIAL WEB ADDRESS / PCから直接アクセス</small><strong>https://dpro-shop.com/</strong></div>')+card('demo',demo,'03','LIVE DEMO','体験する。','相談受付から案件管理まで、公開DEMOで確認。','土地家屋調査士デモ QRコード','DEMOを体験','')+'</div></section>'
+          updated,n=re.subn(r'<section class="contact"[^>]*>.*?</section>',lambda _:contact,source,flags=re.S);assert n==1
+          flow='''<div class="flow"><div class="flow-inputs"><div class="flow-node"><div><small>WEB</small><b>ホームページ</b><small>相談受付</small></div></div><div class="flow-node"><div><small>LINE OFFICIAL</small><b>LINE公式</b><small>相談・確認</small></div></div></div><div class="arr">→</div><div class="flow-node core"><div><small>DPRO SYSTEM</small><b>CHOSASHI</b><small>案件の一元管理</small></div></div><div class="arr">→</div><div class="flow-output"><small>ONE MANAGEMENT HUB</small><div><span>依頼者・物件</span><span>進捗・書類</span><span>境界・現場</span></div></div></div>'''
+          updated,n=re.subn(r'<div class="flow">.*?(?=<div class="strengths">)',lambda _:flow+'\n',updated,flags=re.S);assert n==1
+          price='''<section class="price"><div><div class="small">DPRO SHOP MONTHLY OPERATION</div><h3>3つまとめて月額 <strong>5,500円</strong><span class="tax">（税込）</span></h3><div class="fee-chips"><span>LINE公式運用 3,300円</span><span>ホームページ運用 1,100円</span><span>DPROシステム運用 1,100円</span></div></div><p>相談から現場報告まで、ひとつの運用へ。<br>LINE公式・ホームページ・DPROをつなぎます。</p></section>'''
+          updated,n=re.subn(r'<section class="price"[^>]*>.*?</section>',lambda _:price,updated,flags=re.S);assert n==1
+          icons=['<path d="M4 4h16v12H9l-5 4z"/>','<path d="m3 10 9-7 9 7v10H3zM9 20v-6h6v6"/>','<path d="M4 19h16M6 15v-4m6 4V7m6 8V4"/>','<path d="M6 3h8l4 4v14H6zM14 3v5h4M9 12h6m-6 4h6"/>','<path d="M3 5h18v14H3zM12 5v14M3 12h9"/>','<rect x="3" y="5" width="18" height="15" rx="2"/><circle cx="9" cy="10" r="2"/><path d="m4 18 5-5 4 4 3-3 5 5"/>']
+          for i,icon in enumerate(icons,1):
+              updated,n=re.subn(r'<span class="ico">'+f'{i:02}'+r'</span>',lambda _:f'<span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true">{icon}</svg></span>',updated,count=1);assert n==1 or f'<span class="ico"><svg' in updated
+          css='''<style id="chosashi-flyer-standard-r1">
+          /* CHOSASHI_FLYER_STANDARD_R1 */
+          a{color:inherit;text-decoration:none}.ico svg{width:3.8mm;height:3.8mm;stroke:#0b8c64;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+          .flow{grid-template-columns:49mm 5mm 33mm 5mm minmax(0,1fr);gap:1.4mm;align-items:stretch}.flow-inputs{display:grid;grid-template-columns:1fr 1fr;gap:1.2mm}.flow-node{min-width:0;min-height:15mm;padding:1.6mm;justify-content:center}.flow-node b{font-size:2.25mm;white-space:nowrap}.flow-node small{font-size:1.55mm;margin:.5mm 0}.flow-node.core{text-align:center}.flow-output{background:#e5faef;color:#123d2e;border-radius:2mm;padding:1.7mm;display:flex;flex-direction:column;justify-content:center;gap:1mm;min-width:0}.flow-output>small{font-size:1.45mm;letter-spacing:.03em;font-weight:900;color:#0b805b}.flow-output>div{display:grid;grid-template-columns:repeat(3,1fr);gap:.7mm}.flow-output span{background:white;border:1px solid #cfe7db;border-radius:1mm;padding:1mm .5mm;font-size:1.9mm;text-align:center;font-weight:850;white-space:nowrap}.strength{height:12.2mm;padding:1.4mm 1.8mm}.strength p{font-size:1.65mm}
+          .cost{height:17.5mm}.price{height:23mm;grid-template-columns:1fr 75mm;gap:3mm}.price h3{white-space:nowrap;font-size:3.6mm;line-height:1.1}.price strong{font-size:7.2mm}.fee-chips{display:flex;flex-wrap:wrap;gap:.65mm;margin-top:1.2mm}.fee-chips span{white-space:nowrap;font-size:1.65mm;font-weight:800;border:1px solid #d9e5df;border-radius:1mm;background:white;padding:.6mm .85mm}.price p{font-size:2mm}
+          .contact .section-head h2{font-size:3.6mm}.contact .section-head small{font-size:1.55mm}.contact .kicker{letter-spacing:.09em}.cards{grid-template-columns:.94fr 1.12fr .94fr;gap:2mm}.card{height:35mm;padding:1.6mm;grid-template-columns:minmax(0,1fr) 22mm;gap:1.3mm;align-items:center}.card.demo{grid-template-columns:minmax(0,1fr) 24mm}.card.site{grid-template-columns:minmax(0,1fr) 20mm;grid-template-rows:minmax(0,1fr) auto;gap:.7mm 1.2mm;border-color:#64bc99;background:linear-gradient(135deg,#f1fcf7,#fff)}.card-copy{min-width:0}.card .num{font-size:1.45mm;letter-spacing:.02em;display:flex;align-items:center;gap:.7mm}.card .num span{display:grid;place-items:center;width:4.8mm;height:4.8mm;border-radius:50%;background:#0b2c22;color:white;font-size:1.75mm;flex:none}.card h3{font-size:2.9mm;margin:.9mm 0}.card p{font-size:1.8mm;line-height:1.4}.qr-wrap{display:flex;flex-direction:column;align-items:center;min-width:0}.qr-wrap img{width:22mm;height:22mm;display:block;object-fit:contain;background:white;image-rendering:pixelated}.card.demo .qr-wrap img{width:24mm;height:24mm}.card.site .qr-wrap img{width:20mm;height:20mm}.qr-wrap small{font-size:1.55mm;font-weight:900;white-space:nowrap;margin-top:.5mm}.official-address{grid-column:1/-1;min-width:0;border-top:1px solid #d3e7de;padding-top:.55mm}.official-address small{font-size:1.25mm;display:block;line-height:1.1;font-weight:900;color:#52766b}.official-address strong{display:block;font-size:3.6mm;line-height:1.13;white-space:nowrap;background:#e9f8f2;border:1px solid #b9e4d2;border-radius:1.2mm;color:#063f30;padding:.55mm .9mm;margin-top:.35mm}.card:focus-visible{outline:2px solid #0b8c64;outline-offset:1px}
+          </style>'''
+          updated=re.sub(r'<style id="chosashi-flyer-standard-r1">.*?</style>','',updated,flags=re.S).replace('</head>',css+'\n</head>',1)
+          assert re.findall(r'<div class="hero-photo">.*?</header>',source,re.S)==re.findall(r'<div class="hero-photo">.*?</header>',updated,re.S)
+          assert 'window.print()' in updated and '5,500円' in updated and updated.count('CHOSASHI_FLYER_STANDARD_R1')==1
+          path.write_text(updated,encoding='utf-8'); expected={line,official,demo}
+          with sync_playwright() as pw:
+              browser=pw.chromium.launch(args=['--no-sandbox']); page=browser.new_page(viewport={'width':1440,'height':1300},device_scale_factor=2)
+              page.goto(path.as_uri(),wait_until='load');page.evaluate('document.fonts.ready')
+              assert page.locator('.features .feature').count()==6 and page.locator('.ico svg').count()==6 and page.locator('.cards .card').count()==3
+              assert page.locator('.hero-photo img').evaluate('(e)=>e.complete && e.naturalWidth>0')
+              for k,u in [('line',line),('site',official),('demo',demo)]:
+                  a=page.locator('.card.'+k);assert a.get_attribute('href')==u and a.locator('img').evaluate('(e)=>e.complete && e.naturalWidth>0')
+              def layout():
+                  v=page.evaluate('''() => {const r=e=>{const b=e.getBoundingClientRect();return {l:b.left,t:b.top,r:b.right,b:b.bottom}};return {sheet:r(document.querySelector('.sheet')),footer:r(document.querySelector('.foot')),grid:r(document.querySelector('.cards')),cards:[...document.querySelectorAll('.cards .card')].map(e=>({card:r(e),copy:r(e.querySelector('.card-copy')),qr:r(e.querySelector('.qr-wrap')),url:e.querySelector('.official-address')?r(e.querySelector('.official-address')):null,scroll:e.scrollWidth,client:e.clientWidth})),sections:[...document.querySelector('.inner').children].map(r)}}''')
+                  def inside(a,b):return a['l']>=b['l']-1 and a['r']<=b['r']+1 and a['t']>=b['t']-1 and a['b']<=b['b']+1
+                  assert v['grid']['b']<=v['footer']['t']+1 and inside(v['grid'],v['sheet']),v
+                  for c in v['cards']:
+                      assert inside(c['copy'],c['card']) and inside(c['qr'],c['card']) and c['copy']['r']<=c['qr']['l']+1 and c['scroll']<=c['client']+1,c
+                      if c['url']:assert inside(c['url'],c['card']) and c['url']['t']>=max(c['copy']['b'],c['qr']['b'])-1,c
+                  for s in v['sections']:assert inside(s,v['sheet']),s
+                  return v
+              screen_layout=layout();page.locator('.sheet').screenshot(path=str(qa/'screen.png'));screen=decode(Image.open(qa/'screen.png'));assert expected<=screen,screen
+              page.emulate_media(media='print');print_layout=layout();page.pdf(path=str(pdf),prefer_css_page_size=True,print_background=True);browser.close()
+          with fitz.open(pdf) as doc:
+              assert len(doc)==1,len(doc);p=doc[0];assert abs(p.rect.width-595.28)<3 and abs(p.rect.height-841.89)<3;p.get_pixmap(matrix=fitz.Matrix(3,3),alpha=False).save(str(qa/'print.png'))
+          printed=decode(Image.open(qa/'print.png'));assert expected<=printed,printed
+          checks={}
+          for k,u in {'demo':demo,'owner':base+'owner.html?demo=1','ipad':base+'owner-ipad.html?demo=1','staff':base+'staff.html?demo=1','member':base+'member.html?demo=1','system_check':base+'system-check.html?demo=1','health':'https://cbknucemarcpbscirzyv.supabase.co/functions/v1/chosashi-product-ready/health','official':official}.items():
+              try:
+                  resp=requests.get(u,timeout=15);item={'http':resp.status_code,'ok':resp.ok}
+                  if k=='health' and resp.ok:
+                      d=resp.json();item['ok']=isinstance(d,dict) and d.get('ok') is True;item['version']=d.get('version');item['versionsAligned']=d.get('versionsAligned')
+              except Exception as e:item={'ok':False,'error':type(e).__name__}
+              checks[k]=item
+              if not item['ok']:print(f'::warning::Read-only GET {k}: {item}')
+          report={'result':'FLYER_QA_PASS','qr':meta,'screen_qr':sorted(screen),'print_qr':sorted(printed),'a4_pages':1,'screen_layout':screen_layout,'print_layout':print_layout,'public_get':checks,'business_mutation':0,'note':'GET results do not establish authenticated operation or LINE delivery.'}
+          (qa/'RESULT.json').write_text(json.dumps(report,ensure_ascii=False,indent=2),encoding='utf-8');print(json.dumps(report,ensure_ascii=False,indent=2))
+          PY
+      - name: Upload QA evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: CHOSASHI-FLYER-STANDARD-R1-QA
+          path: chosashi-flyer-r1-qa/
+          if-no-files-found: warn
+      - name: Commit only verified flyer and PDF
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -- flyer-chosashi.html flyer-chosashi.pdf
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m 'CHOSASHI: standardize A4 flyer and regenerate verified QR PDF'
+          git push origin HEAD:main
