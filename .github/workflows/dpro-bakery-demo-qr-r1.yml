@@ -1,0 +1,128 @@
+name: DPRO BAKERY DEMO QR R1
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/dpro-bakery-demo-qr-r1.yml']
+permissions:
+  contents: write
+concurrency:
+  group: bakery-demo-qr-r1
+  cancel-in-progress: false
+jobs:
+  repair:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install QA tools
+        run: |
+          python -m pip install 'qrcode[pil]' playwright pymupdf zxing-cpp requests
+          python -m playwright install --with-deps chromium
+          sudo apt-get update -qq
+          sudo apt-get install -y fonts-noto-cjk
+      - name: Repair QR and verify A4 print
+        run: |
+          python - <<'PY'
+          import base64, html, io, json, pathlib, re
+          import qrcode, requests, fitz, zxingcpp
+          from PIL import Image
+          from playwright.sync_api import sync_playwright
+          from urllib.parse import urlsplit, parse_qs
+          root = pathlib.Path.cwd()
+          path = root / 'flyer-bakery.html'
+          pdf = root / 'flyer-bakery.pdf'
+          qa = root / 'bakery-qr-qa'
+          qa.mkdir(exist_ok=True)
+          url = 'https://dpromstk2000-lab.github.io/bakery-line-system/catalog.html'
+          source = path.read_text(encoding='utf-8')
+          # Only the BAKERY demo QR is replaced. Preserve all other images and copy.
+          target = re.compile(r'<img\b[^>]*\balt="ベーカリーDEMO QR"[^>]*\s*/?>')
+          matches = list(target.finditer(source))
+          assert len(matches) == 1, 'Expected exactly one BAKERY demo QR'
+          old = matches[0].group()
+          old_url = html.unescape(re.search(r'data-target="([^"]+)"', old).group(1))
+          assert old_url == url or old_url.startswith(url + '?'), old_url
+          if old_url != url:
+              params = parse_qs(urlsplit(old_url).query)
+              assert params.get('shop_code') == ['bakery_demo']
+              assert params.get('catalog_api') == ['https://dpro-bakery-catalog-api.dpromstk2000.workers.dev']
+              assert params.get('api') == ['https://dpro-bakery-wallet-api.dpromstk2000.workers.dev']
+          qr = qrcode.QRCode(error_correction=qrcode.constants.ERROR_CORRECT_M, box_size=16, border=4)
+          qr.add_data(url); qr.make(fit=True)
+          img = qr.make_image(fill_color='black', back_color='white').convert('RGB')
+          img.save(qa / 'demo-qr.png')
+          assert zxingcpp.read_barcode(img).text == url
+          buffer = io.BytesIO(); img.save(buffer, format='PNG')
+          uri = 'data:image/png;base64,' + base64.b64encode(buffer.getvalue()).decode('ascii')
+          tag = f'<img alt="ベーカリーDEMO QR" data-target="{url}" src="{uri}"/>'
+          updated = source[:matches[0].start()] + tag + source[matches[0].end():]
+          if 'BAKERY_DEMO_QR_R1' not in updated:
+              updated = updated.replace(tag, f'<a href="{url}" target="_blank" rel="noopener" aria-label="ベーカリーDEMOを開く">{tag}</a>', 1)
+              css = '''\n/* BAKERY_DEMO_QR_R1: shorter payload, larger modules, four-module quiet zone */
+          .action-card.demo{grid-template-columns:minmax(0,1fr) 25mm;gap:1.2mm}
+          .action-card.demo .action-qr a{display:block;text-decoration:none}
+          .action-card.demo .action-qr img{width:24mm;height:24mm;max-width:none;background:#fff;image-rendering:pixelated;display:block;margin:0 auto .8mm}
+          '''
+              assert updated.count('</style>') >= 1
+              updated = updated.replace('</style>',css+'\n</style>',1)
+          path.write_text(updated, encoding='utf-8')
+          # Existing QR targets, hero image and content remain unchanged.
+          before = re.findall(r'<img\b[^>]+>',source)
+          after = re.findall(r'<img\b[^>]+>',updated)
+          assert [x for x in before if 'ベーカリーDEMO QR' not in x] == [x for x in after if 'ベーカリーDEMO QR' not in x]
+          expected = {url, 'https://lin.ee/YxJGXV6D', 'https://dpro-shop.com/'}
+          with sync_playwright() as pw:
+              browser = pw.chromium.launch(args=['--no-sandbox'])
+              page = browser.new_page(viewport={'width': 1440, 'height': 1200}, device_scale_factor=2)
+              page.goto(path.as_uri(), wait_until='load')
+              page.evaluate('document.fonts.ready')
+              assert page.locator('.action-card.demo a').get_attribute('href') == url
+              assert page.locator('.action-card.demo img').evaluate('(e)=>e.complete && e.naturalWidth>0')
+              page.locator('.sheet').screenshot(path=str(qa/'screen.png'))
+              def decode(p): return {r.text for r in zxingcpp.read_barcodes(Image.open(p))}
+              assert expected <= decode(qa/'screen.png'), 'Screen QR decode failed'
+              # Ensure the bottom cards fit above the footer, and the QR fits in its card.
+              layout = page.evaluate('''() => {const c=document.querySelector('.action-card.demo').getBoundingClientRect(), q=document.querySelector('.action-card.demo img').getBoundingClientRect(), a=document.querySelector('.action-grid').getBoundingClientRect(), f=document.querySelector('.footer').getBoundingClientRect();return {cardBottom:a.bottom,footerTop:f.top,qrLeft:q.left,qrRight:q.right,cardLeft:c.left,cardRight:c.right}}''')
+              assert layout['cardBottom'] <= layout['footerTop'] + 1, layout
+              assert layout['qrLeft'] >= layout['cardLeft'] and layout['qrRight'] <= layout['cardRight'], layout
+              page.pdf(path=str(pdf), prefer_css_page_size=True, print_background=True)
+              browser.close()
+          with fitz.open(pdf) as doc:
+              assert len(doc)==1, f'Expected A4 one page, got {len(doc)}'
+              p = doc[0]; assert abs(p.rect.width-595.28)<3 and abs(p.rect.height-841.89)<3
+              p.get_pixmap(matrix=fitz.Matrix(3,3),alpha=False).save(str(qa/'print.png'))
+          assert expected <= decode(qa/'print.png'), 'Printed PDF QR decode failed'
+          # Public GET only; never create a reservation or modify the production database.
+          checks = {}
+          for name, endpoint in [('demo',url),('catalog_api','https://dpro-bakery-catalog-api.dpromstk2000.workers.dev/api/public/catalog?shop_code=bakery_demo')]:
+              try:
+                  r = requests.get(endpoint, timeout=25)
+                  checks[name] = {'http':r.status_code,'ok':r.ok}
+                  if name == 'catalog_api' and r.ok:
+                      data = r.json(); checks[name]['json_ok'] = data.get('ok') if isinstance(data,dict) else None
+              except Exception as e:
+                  checks[name] = {'ok':False,'error':type(e).__name__}
+              if not checks[name]['ok']:
+                  print(f'::warning::Public {name} verification did not pass: {checks[name]}')
+          report = {'qr_target':url,'qr_version':qr.version,'qr_modules':qr.modules_count,'old_url_length':len(old_url),'new_url_length':len(url),'screen_qr':'PASS','print_qr':'PASS','a4_pages':1,'layout':layout,'public_get':checks}
+          (qa/'RESULT.json').write_text(json.dumps(report,ensure_ascii=False,indent=2))
+          print(json.dumps(report,ensure_ascii=False,indent=2))
+          PY
+      - name: Upload QA evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: BAKERY-DEMO-QR-R1-QA
+          path: bakery-qr-qa/
+          if-no-files-found: warn
+      - name: Commit only verified flyer and PDF
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -- flyer-bakery.html flyer-bakery.pdf
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m 'BAKERY: improve demo QR readability and refresh A4 PDF'
+          git push origin HEAD:main
