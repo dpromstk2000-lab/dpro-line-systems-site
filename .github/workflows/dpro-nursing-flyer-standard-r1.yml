@@ -1,0 +1,154 @@
+name: DPRO NURSING FLYER STANDARD R1
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/dpro-nursing-flyer-standard-r1.yml']
+permissions:
+  contents: write
+concurrency:
+  group: nursing-flyer-standard-r1
+  cancel-in-progress: false
+jobs:
+  repair:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install QA tools
+        run: |
+          python -m pip install 'qrcode[pil]' playwright pymupdf zxing-cpp requests
+          python -m playwright install --with-deps chromium
+          sudo apt-get update -qq
+          sudo apt-get install -y fonts-noto-cjk
+      - name: Repair flyer and verify A4 and QR
+        run: |
+          python - <<'PY'
+          import base64, io, json, pathlib, re, html
+          import qrcode, requests, fitz, zxingcpp
+          from PIL import Image
+          from playwright.sync_api import sync_playwright
+          root=pathlib.Path.cwd()
+          path=root/'flyer-homenursing.html'; pdf=root/'flyer-homenursing.pdf'
+          qa=root/'nursing-flyer-r1-qa'; qa.mkdir(exist_ok=True)
+          base='https://dpromstk2000-lab.github.io/dpro-home-nursing-line/'
+          line='https://lin.ee/YxJGXV6D'; official='https://dpro-shop.com/'; demo=base
+          source=path.read_text(encoding='utf-8')
+          product=(root/'systems/home-nursing.html').read_text(encoding='utf-8')
+          assert demo in product and official in product and line in product
+          assert 'HOME NURSING' in source and '5,500円' in source and 'window.print()' in source
+          assert source.count('class="fcard"')==6
+          assert '法定の訪問看護記録' in source and '保険請求' in source
+
+          def decode(im): return {x.text for x in zxingcpp.read_barcodes(im)}
+          qrs={}; qr_meta={}
+          for key,url in [('line',line),('official',official),('demo',demo)]:
+              qr=qrcode.QRCode(error_correction=qrcode.constants.ERROR_CORRECT_M,box_size=16,border=4)
+              qr.add_data(url);qr.make(fit=True)
+              im=qr.make_image(fill_color='black',back_color='white').convert('RGB')
+              assert decode(im)=={url},key
+              im.save(qa/f'{key}.png');b=io.BytesIO();im.save(b,format='PNG')
+              qrs[key]='data:image/png;base64,'+base64.b64encode(b.getvalue()).decode('ascii')
+              qr_meta[key]={'url':url,'modules':qr.modules_count,'quiet_zone':4}
+
+          def card(key,url,num,label,title,desc,alt,caption,tail,extra=''):
+              return f'<a class="ctacard {key}" href="{html.escape(url,quote=True)}" target="_blank" rel="noopener noreferrer" aria-label="{alt}"><div class="cta-copy"><span class="ctaindex">{num}</span><span class="ctalabel">{label}</span><h3>{title}</h3><p>{desc}</p>{tail}</div><div class="qr"><img alt="{alt}" src="{qrs[key]}"><small>{caption}</small></div>{extra}</a>'
+          cta='''<section class="cta" aria-label="相談・公式サイト・デモ">
+           <p class="sectiontag">DPRO SHOP / CHOOSE YOUR NEXT STEP</p>
+           <div class="ctaheading"><h2>相談する。知る。試す。DPROを、もっと近くに。</h2><small>スマホでQRを読み取り / PCでは各カードをクリック</small></div>
+           <div class="ctagrid">'''+card('line',line,'01','CONTACT','相談する。','導入・運用のご相談は、DPRO SHOP公式LINEへ。','LINE相談QRコード','LINEで相談','<div class="cta-note">SCAN TO CONTACT</div>')+card('official',official,'02','OFFICIAL SITE','詳しく見る。','サービス・料金・各業種のDPROを公式サイトで確認。','DPRO SHOP公式サイトQRコード','公式サイト','','<div class="official-address"><span>OFFICIAL WEB ADDRESS / PCから直接アクセス</span><strong>https://dpro-shop.com/</strong></div>')+card('demo',demo,'03','LIVE DEMO','体験する。','訪問予定・現場連携・家族報告の流れを公開DEMOで確認。','LIVE DEMO QRコード','DEMOを体験','<div class="cta-note">SCAN TO TRY DEMO</div>')+'</div></section>'
+          updated,n=re.subn(r'<section class="cta"[^>]*>.*?</section>',lambda _:cta,source,flags=re.S); assert n==1
+          price='''<section class="price" aria-label="月額料金">
+           <div class="price-main"><div class="pricetitle">DPRO SHOP MONTHLY OPERATION</div><h2>3つまとめて月額 <strong>5,500円</strong><small>（税込）</small></h2>
+           <div class="fee-chips"><span>LINE公式運用 3,300円</span><span>ホームページ運用 1,100円</span><span>DPROシステム運用 1,100円</span></div></div>
+           <div class="price-message"><b>相談から訪問・家族報告まで、ひとつの運用へ。</b><p>LINE公式・ホームページ・DPROシステムを、つながる仕組みとして整えます。</p><small>ご利用内容・初期設定等の詳細はお問合せください。</small></div></section>'''
+          updated,n=re.subn(r'<section class="price"[^>]*>.*?</section>',lambda _:price,updated,flags=re.S);assert n==1
+          updated=updated.replace('入口は身近に。<span>管理は、ひとつ。','入口は自由。<span>管理は、ひとつ。')
+          css='''<style id="nursing-flyer-standard-r1">
+          /* NURSING_FLYER_STANDARD_R1: preserve the photo, six functions, and medical scope notice */
+          .price{display:grid;grid-template-columns:1.21fr 1fr;gap:3.4mm;align-items:center;padding:3mm 3.7mm}
+          .price-main{min-width:0}.price-main h2{font-size:4.1mm;line-height:1.2;margin:1.4mm 0 1.6mm;letter-spacing:-.04em;white-space:nowrap}
+          .price-main h2 strong{font-size:7mm;color:#07986d;line-height:1}.price-main h2 small{font-size:2.05mm}
+          .fee-chips{display:flex;flex-wrap:wrap;gap:.7mm}.fee-chips span{font-size:1.75mm;font-weight:800;padding:.65mm 1mm;border:1px solid #d8e9df;border-radius:1mm;background:#fff;white-space:nowrap}
+          .price-message{min-width:0;border-left:1px solid #cbe4d9;padding-left:3mm}.price-message b{font-size:2.5mm;color:#087d59;line-height:1.35;display:block}.price-message p{font-size:2mm;line-height:1.45;font-weight:750;margin:.9mm 0}.price-message small{font-size:1.7mm;color:#526960;display:block}
+          .cta{top:236mm;height:49.5mm}.ctaheading h2{font-size:3.65mm;white-space:nowrap;margin:0 0 2.3mm}.ctaheading small{font-size:1.55mm;text-align:right;margin-bottom:2.3mm}
+          .ctagrid{grid-template-columns:.94fr 1.12fr .94fr;gap:2.1mm}
+          .ctacard{height:36.8mm;padding:1.7mm;grid-template-columns:minmax(0,1fr) 22mm;grid-template-rows:1fr;gap:1.4mm;align-items:center}
+          .ctacard.line{background:linear-gradient(135deg,#effaf4,#fff)}.ctacard.demo{background:linear-gradient(135deg,#f5f8f6,#fff);grid-template-columns:minmax(0,1fr) 24mm}
+          .ctacard.official{grid-template-columns:minmax(0,1fr) 20mm;grid-template-rows:minmax(0,1fr) auto;gap:.9mm 1.4mm;border-color:#39b98e;background:linear-gradient(145deg,#f1fcf6,#fff)}
+          .cta-copy{min-width:0}.ctaindex{width:4.8mm;height:4.8mm;font-size:1.8mm;vertical-align:middle}.ctalabel{font-size:1.5mm;display:inline-block;margin:0 0 0 .7mm;vertical-align:middle;letter-spacing:.04em}
+          .ctacard h3{font-size:2.95mm;margin:1mm 0 .9mm;line-height:1.15}.ctacard p{font-size:1.8mm;line-height:1.4}.cta-note{font-size:1.4mm;font-weight:900;color:#07845e;margin-top:1.4mm}
+          .ctacard .qr{min-width:0;justify-content:center;align-self:center}.ctacard .qr img{width:22mm;height:22mm;background:white;image-rendering:pixelated;display:block;border:0;padding:0;flex:none}.ctacard.demo .qr img{width:24mm;height:24mm}.ctacard.official .qr img{width:20mm;height:20mm}.ctacard .qr small{font-size:1.5mm;white-space:nowrap;margin-top:.5mm}
+          .official-address{grid-column:1/-1;min-width:0;border-top:1px solid #d3e7de;padding-top:.65mm}.official-address span{font-size:1.25mm;color:#52766b;display:block;font-weight:900;line-height:1.15}.official-address strong{display:block;white-space:nowrap;font-size:3.5mm;letter-spacing:-.025em;line-height:1.15;color:#063f30;background:#e9f8f2;border:1px solid #b9e4d2;border-radius:1.2mm;padding:.6mm 1mm;margin-top:.35mm}
+          .ctacard:focus-visible{outline:2px solid #0c8c64;outline-offset:1px}
+          </style>'''
+          updated=re.sub(r'<style id="nursing-flyer-standard-r1">.*?</style>','',updated,flags=re.S)
+          updated=updated.replace('</head>',css+'\n</head>',1)
+          assert updated.count('NURSING_FLYER_STANDARD_R1')==1
+          assert re.findall(r'<div class="hero-photo">.*?</div>',source,re.S)==re.findall(r'<div class="hero-photo">.*?</div>',updated,re.S)
+          assert re.findall(r'<footer.*?</footer>',source,re.S)==re.findall(r'<footer.*?</footer>',updated,re.S)
+          assert '5,500円' in updated and 'window.print()' in updated
+          path.write_text(updated,encoding='utf-8')
+          expected={line,official,demo}
+          with sync_playwright() as pw:
+              browser=pw.chromium.launch(args=['--no-sandbox'])
+              page=browser.new_page(viewport={'width':1440,'height':1300},device_scale_factor=2)
+              page.goto(path.as_uri(),wait_until='load');page.evaluate('document.fonts.ready')
+              assert page.locator('.fcard').count()==6 and page.locator('.ctacard').count()==3
+              assert page.locator('.hero-photo img').evaluate('(e)=>e.complete && e.naturalWidth>0')
+              for k,u in [('line',line),('official',official),('demo',demo)]:
+                  a=page.locator(f'.ctacard.{k}');assert a.get_attribute('href')==u
+                  assert a.locator('img').evaluate('(e)=>e.complete && e.naturalWidth>0')
+              def check_layout():
+                  result=page.evaluate('''() => {const r=e=>{const b=e.getBoundingClientRect();return {l:b.left,t:b.top,r:b.right,b:b.bottom}};return {sheet:r(document.querySelector('.sheet')),footer:r(document.querySelector('.footer')),grid:r(document.querySelector('.ctagrid')),price:r(document.querySelector('.price')),cards:[...document.querySelectorAll('.ctacard')].map(e=>({card:r(e),qr:r(e.querySelector('.qr')),copy:r(e.querySelector('.cta-copy')),url:e.querySelector('.official-address')?r(e.querySelector('.official-address')):null,scroll:e.scrollWidth,client:e.clientWidth})),priceChildren:[...document.querySelector('.price').children].map(r)}}''')
+                  def inside(a,b):return a['l']>=b['l']-1 and a['r']<=b['r']+1 and a['t']>=b['t']-1 and a['b']<=b['b']+1
+                  assert result['grid']['b']<=result['footer']['t']+1,result
+                  assert inside(result['grid'],result['sheet']),result
+                  for c in result['cards']:
+                      assert inside(c['qr'],c['card']) and inside(c['copy'],c['card']),c
+                      assert c['copy']['r']<=c['qr']['l']+1 and c['scroll']<=c['client']+1,c
+                      if c['url']: assert inside(c['url'],c['card']) and c['url']['t']>=max(c['qr']['b'],c['copy']['b'])-1,c
+                  for c in result['priceChildren']:assert inside(c,result['price']),result
+                  return result
+              screen_layout=check_layout();page.locator('.sheet').screenshot(path=str(qa/'screen.png'))
+              screen=decode(Image.open(qa/'screen.png'));assert expected<=screen,('screen',screen)
+              page.emulate_media(media='print');print_layout=check_layout()
+              page.pdf(path=str(pdf),prefer_css_page_size=True,print_background=True)
+              browser.close()
+          with fitz.open(pdf) as doc:
+              assert len(doc)==1,len(doc)
+              p=doc[0];assert abs(p.rect.width-595.28)<3 and abs(p.rect.height-841.89)<3
+              p.get_pixmap(matrix=fitz.Matrix(3,3),alpha=False).save(str(qa/'print.png'))
+          printed=decode(Image.open(qa/'print.png'));assert expected<=printed,('print',printed)
+          # Read-only HTTP health and public entry checks; no personal records or mutations.
+          checks={}
+          for key,url in {'demo':demo,'owner':base+'owner.html','ipad':base+'owner-ipad.html','staff':base+'staff.html','member':base+'member.html','system_check':base+'system-check.html','health':'https://dpro-home-nursing-line-api.dpromstk2000.workers.dev/health','official':official}.items():
+              try:
+                  resp=requests.get(url,timeout=15);item={'http':resp.status_code,'ok':resp.ok}
+                  if key=='health' and resp.ok:
+                      data=resp.json();item['ok']=isinstance(data,dict) and data.get('ok') is True
+                      if isinstance(data,dict):item['version']=data.get('version');item['productionGuard']=data.get('productionGuard')
+              except Exception as e:item={'ok':False,'error':type(e).__name__}
+              checks[key]=item
+              if not item['ok']:print(f'::warning::Public GET {key}: {item}')
+          report={'result':'FLYER_QA_PASS','qr':qr_meta,'screen_qr':sorted(screen),'print_qr':sorted(printed),'a4_pages':1,'screen_layout':screen_layout,'print_layout':print_layout,'public_get':checks,'business_mutation':0,'note':'GET checks do not establish authenticated or LINE operations.'}
+          (qa/'RESULT.json').write_text(json.dumps(report,ensure_ascii=False,indent=2),encoding='utf-8');print(json.dumps(report,ensure_ascii=False,indent=2))
+          PY
+      - name: Upload QA evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: NURSING-FLYER-STANDARD-R1-QA
+          path: nursing-flyer-r1-qa/
+          if-no-files-found: warn
+      - name: Commit only verified flyer and PDF
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -- flyer-homenursing.html flyer-homenursing.pdf
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m 'NURSING: align official card and pricing with DPRO standard and verify QR'
+          git push origin HEAD:main
