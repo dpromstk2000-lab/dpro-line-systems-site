@@ -1,0 +1,169 @@
+name: DPRO CAREPLAN FLYER STANDARD R1
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/dpro-careplan-flyer-standard-r1.yml']
+permissions:
+  contents: write
+concurrency:
+  group: careplan-flyer-standard-r1
+  cancel-in-progress: false
+jobs:
+  repair:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install QA tools
+        run: |
+          python -m pip install 'qrcode[pil]' playwright pymupdf zxing-cpp requests
+          python -m playwright install --with-deps chromium
+          sudo apt-get update -qq
+          sudo apt-get install -y fonts-noto-cjk
+      - name: Repair flyer and verify A4 print
+        run: |
+          python - <<'PY'
+          import base64, io, json, pathlib, re, html
+          import qrcode, requests, fitz, zxingcpp
+          from PIL import Image
+          from playwright.sync_api import sync_playwright
+          root=pathlib.Path.cwd()
+          path=root/'flyer-careplan.html'; pdf=root/'flyer-careplan.pdf'
+          qa=root/'careplan-flyer-qa'; qa.mkdir(exist_ok=True)
+          base='https://dpromstk2000-lab.github.io/dpro-careplan-line/'
+          demo=base+'owner.html'; old_demo=demo+'?v=CAREPLAN-10'
+          targets={'LINE相談QR':'https://lin.ee/YxJGXV6D','DPRO SHOP公式サイトQR':'https://dpro-shop.com/','CAREPLAN LIVE DEMO QR':demo}
+          source=path.read_text(encoding='utf-8')
+          product=(root/'systems/careplan.html').read_text(encoding='utf-8')
+          assert old_demo in html.unescape(product) or 'href="'+demo+'"' in product
+          assert 'CAREPLAN / CARE MANAGEMENT' in source and '5,500円' in source and 'window.print()' in source
+          assert old_demo in source or 'CAREPLAN_FLYER_STANDARD_R1' in source
+          updated=source.replace(old_demo,demo)
+          def decode(img): return {r.text for r in zxingcpp.read_barcodes(img)}
+          old_qr={}; new_qr={}
+          for i,(alt,url) in enumerate(targets.items(),1):
+              pat=re.compile(r'<img\b[^>]*\balt="'+re.escape(alt)+r'"[^>]*>')
+              hits=list(pat.finditer(updated)); assert len(hits)==1,alt
+              m=hits[0]; src=re.search(r'src="data:image/[^;]+;base64,([^"]+)"',m.group()); assert src,alt
+              try: old_qr[alt]=sorted(decode(Image.open(io.BytesIO(base64.b64decode(src.group(1))))))
+              except Exception as e: old_qr[alt]=[type(e).__name__]
+              q=qrcode.QRCode(error_correction=qrcode.constants.ERROR_CORRECT_M,box_size=16,border=4)
+              q.add_data(url); q.make(fit=True); img=q.make_image(fill_color='black',back_color='white').convert('RGB')
+              assert decode(img)=={url},alt
+              img.save(qa/f'qr-{i}.png'); buf=io.BytesIO(); img.save(buf,format='PNG')
+              uri='data:image/png;base64,'+base64.b64encode(buf.getvalue()).decode('ascii')
+              tag=f'<img src="{uri}" alt="{alt}" data-target="{html.escape(url,quote=True)}">'
+              updated=updated[:m.start()]+tag+updated[m.end():]
+          if 'CAREPLAN_FLYER_STANDARD_R1' not in updated:
+              css='''<style id="careplan-flyer-r1">
+          /* CAREPLAN_FLYER_STANDARD_R1: preserve A4, photo and fee */
+          .icon svg{width:3.9mm;height:3.9mm;stroke:#0c8d64;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+          .action-card{grid-template-columns:minmax(0,1fr) 21mm;gap:1.3mm}
+          .action-card.demo{grid-template-columns:minmax(0,1fr) 24.5mm;gap:1.2mm}
+          .action-card h4{white-space:normal;font-size:3mm;line-height:1.18}
+          .action-qr{min-width:0}.action-qr img{width:20.5mm;height:20.5mm;max-width:none;padding:0;border:0;border-radius:0;background:#fff;image-rendering:pixelated}
+          .action-card.demo .action-qr img{width:24mm;height:24mm}
+          .action-card.site .site-url{font-size:3.55mm;letter-spacing:-.04em;padding:.8mm .9mm;max-width:100%}
+          .action-card.site .site-url-label{font-size:1.35mm;line-height:1.25}
+          .action-card .qmini{white-space:nowrap;font-size:1.35mm}
+          </style>'''
+              assert '</head>' in updated; updated=updated.replace('</head>',css+'\n</head>',1)
+              icons=[
+                '<path d="M4 4h16v12H9l-5 4z"/><path d="M8 8h8M8 12h5"/>',
+                '<circle cx="12" cy="7" r="3"/><path d="M5 21v-3a7 7 0 0 1 14 0v3"/>',
+                '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 3v4M17 3v4M3 10h18M8 15h3M14 15h2"/>',
+                '<rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/>',
+                '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+                '<circle cx="8" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M2 21v-3a6 6 0 0 1 12 0v3M15 15a5 5 0 0 1 7 5"/>'
+              ]
+              for i,icon in enumerate(icons,1):
+                  old=f'<div class="icon">{i:02d}</div>'; assert updated.count(old)==1,old
+                  updated=updated.replace(old,f'<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true">{icon}</svg></div>',1)
+              pairs=[
+                ('CAREPLANで、<span>6つの確認ポイント</span>をひとつの流れへ。','居宅介護支援の毎日を、<span>6つの仕組み</span>で整える。'),
+                ('<div class="top">LINE + WEB + DPRO CAREPLAN</div><h2>月額','<div class="top">DPRO SHOP MONTHLY OPERATION</div><h2>3つまとめて月額'),
+                ('<span>LINE 3,300円</span><span>HP 1,100円</span><span>DPRO 1,100円</span>','<span>LINE公式運用 3,300円</span><span>ホームページ運用 1,100円</span><span>DPROシステム運用 1,100円</span>'),
+                ('START WITH DPRO CAREPLAN','DPRO SHOP / CHOOSE YOUR NEXT STEP'),
+                ('まずは、実際の画面と運用イメージをご確認ください。','相談する。知る。試す。DPROを、もっと近くに。'),
+                ('LINE相談・DPRO SHOP公式サイト・CAREPLAN LIVE DEMOの3つから確認できます。','相談はLINE、詳しい情報は公式サイト、操作感はDEMOで。<br>パソコンからは公式サイトURLを直接入力できます。'),
+                ('</span>LINE相談</div><h4>導入・運用を相談</h4>','</span> CONTACT</div><h4>相談する。</h4>'),
+                ('SCAN TO CONSULT','SCAN TO CONTACT'),
+                ('<div class="qlabel">LINE</div><div class="qmini">相談はこちら</div>','<div class="qlabel">LINEで相談</div><div class="qmini">DPRO SHOP 公式LINE</div>'),
+                ('</span>OFFICIAL SITE</div><h4>DPRO SHOP公式サイト</h4>','</span> OFFICIAL SITE</div><h4>詳しく見る。</h4>'),
+                ('OFFICIAL SITE URL','OFFICIAL WEB ADDRESS / PCから直接アクセス'),
+                ('<div class="qlabel">WEB</div><div class="qmini">公式サイト</div>','<div class="qlabel">公式サイト</div><div class="qmini">DPRO SHOP OFFICIAL</div>'),
+                ('</span>LIVE DEMO</div><h4>CAREPLAN実画面</h4>','</span> LIVE DEMO</div><h4>体験する。</h4>'),
+                ('管理者PCの正式公開DEMOで画面構成を確認。','管理者PCの公開DEMOで、利用者・予定・期限管理を確認。'),
+                ('<div class="action-url">owner.html?v=CAREPLAN-10</div>','<div class="action-note">SCAN TO TRY DEMO</div>'),
+                ('<div class="qlabel">DEMO</div><div class="qmini">実画面を確認</div>','<div class="qlabel">DEMOを体験</div><div class="qmini">CAREPLAN SYSTEM</div>')]
+              for old,new in pairs:
+                  assert updated.count(old)==1,old; updated=updated.replace(old,new,1)
+          def other_images(s): return [m for m in re.findall(r'<img\b[^>]*>',s) if not any(f'alt="{a}"' in m for a in targets)]
+          assert other_images(source)==other_images(updated) and len(other_images(source))>=1
+          assert all(v in updated for v in ('5,500円','3,300円','1,100円','window.print()'))
+          path.write_text(updated,encoding='utf-8')
+          expected=set(targets.values())
+          with sync_playwright() as pw:
+              browser=pw.chromium.launch(args=['--no-sandbox'])
+              page=browser.new_page(viewport={'width':1440,'height':1250},device_scale_factor=2)
+              page.goto(path.as_uri(),wait_until='load'); page.evaluate('document.fonts.ready')
+              assert page.locator('.feature-grid .feature .icon svg').count()==6
+              assert page.locator('.action-grid .action-card').count()==3
+              for alt,url in targets.items():
+                  qr=page.locator(f'img[alt="{alt}"]')
+                  assert qr.evaluate('(e)=>e.complete && e.naturalWidth>0'),alt
+                  assert qr.locator('xpath=ancestor::a[1]').get_attribute('href')==url,alt
+              assert page.locator('.hero-photo img').evaluate('(e)=>e.complete && e.naturalWidth>0')
+              def layout():
+                  return page.evaluate('''() => {const r=e=>e.getBoundingClientRect(),grid=r(document.querySelector('.action-grid')),footer=r(document.querySelector('.footer'));return {gridBottom:grid.bottom,footerTop:footer.top,cards:[...document.querySelectorAll('.action-card')].map(e=>{const c=r(e),q=r(e.querySelector('.action-qr img')),t=r(e.querySelector('.action-copy'));const u=e.querySelector('.site-url');let ur=null;if(u){const range=document.createRange();range.selectNodeContents(u);ur=r(range)}return {left:c.left,right:c.right,top:c.top,bottom:c.bottom,qrLeft:q.left,qrRight:q.right,qrTop:q.top,qrBottom:q.bottom,copyRight:t.right,copyTop:t.top,copyBottom:t.bottom,urlRight:ur?.right??null,scrollWidth:e.scrollWidth,clientWidth:e.clientWidth}})}}''')
+              def verify(v):
+                  assert v['gridBottom']<=v['footerTop']+1,v
+                  for c in v['cards']:
+                      assert c['qrLeft']>=c['left']-1 and c['qrRight']<=c['right']+1 and c['qrTop']>=c['top']-1 and c['qrBottom']<=c['bottom']+1,c
+                      assert c['copyRight']<=c['qrLeft']+1 and c['copyTop']>=c['top']-1 and c['copyBottom']<=c['bottom']+1,c
+                      assert c['urlRight'] is None or c['urlRight']<=c['qrLeft']+1,c
+                      assert c['scrollWidth']<=c['clientWidth']+1,c
+              screen_layout=layout(); verify(screen_layout)
+              page.locator('.sheet').screenshot(path=str(qa/'screen.png'))
+              screen=decode(Image.open(qa/'screen.png')); assert expected<=screen,('screen',screen)
+              page.emulate_media(media='print'); print_layout=layout(); verify(print_layout)
+              page.pdf(path=str(pdf),prefer_css_page_size=True,print_background=True); browser.close()
+          with fitz.open(pdf) as doc:
+              assert len(doc)==1, f'A4 expected one page, got {len(doc)}'
+              p=doc[0]; assert abs(p.rect.width-595.28)<3 and abs(p.rect.height-841.89)<3
+              p.get_pixmap(matrix=fitz.Matrix(3,3),alpha=False).save(str(qa/'print.png'))
+          printed=decode(Image.open(qa/'print.png')); assert expected<=printed,('print',printed)
+          # Public GET only. Never authenticate, reset demo, write records or send LINE.
+          checks={}
+          api='https://dpro-careplan-line-api.dpromstk2000.workers.dev'
+          endpoints={'owner':demo,'customer':base,'member':base+'member.html','staff':base+'staff.html','ipad':base+'owner-ipad.html','system_check':base+'system-check.html','health':api+'/health','official':'https://dpro-shop.com/'}
+          for key,url in endpoints.items():
+              try:
+                  resp=requests.get(url,timeout=12,headers={'Origin':'https://dpromstk2000-lab.github.io'}); item={'http':resp.status_code,'ok':resp.ok}
+                  if key=='health' and resp.ok:
+                      d=resp.json(); item['ok']=d.get('ok') is True; item['version']=d.get('version')
+                  checks[key]=item
+              except Exception as e: checks[key]={'ok':False,'error':type(e).__name__}
+              if not checks[key]['ok']: print(f'::warning::Public GET {key}: {checks[key]}')
+          report={'result':'FLYER_QA_PASS','old_qr':old_qr,'new_qr':new_qr,'screen_qr':sorted(screen),'print_qr':sorted(printed),'a4_pages':1,'screen_layout':screen_layout,'print_layout':print_layout,'public_get':checks,'business_mutation':0,'note':'Public GET is separate from flyer QA; not authenticated or LINE delivery QA.'}
+          (qa/'RESULT.json').write_text(json.dumps(report,ensure_ascii=False,indent=2),encoding='utf-8'); print(json.dumps(report,ensure_ascii=False,indent=2))
+          PY
+      - name: Upload QA evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: CAREPLAN-FLYER-STANDARD-R1-QA
+          path: careplan-flyer-qa/
+          if-no-files-found: warn
+      - name: Commit only verified flyer and PDF
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -- flyer-careplan.html flyer-careplan.pdf
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m 'CAREPLAN: standardize flyer and refresh verified A4 PDF'
+          git push origin HEAD:main
