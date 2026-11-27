@@ -1,0 +1,90 @@
+name: DPRO CLINIC SHUTTLE FLYER R1
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/dpro-clinic-shuttle-flyer-r1.yml']
+permissions:
+  contents: write
+  pages: write
+concurrency:
+  group: dpro-clinic-shuttle-flyer-r1
+  cancel-in-progress: false
+jobs:
+  repair:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install QA tools
+        run: |
+          python -m pip install beautifulsoup4 playwright==1.57.0 'qrcode[pil]' zxing-cpp pymupdf
+          python -m playwright install --with-deps chromium
+          sudo apt-get update -qq
+          sudo apt-get install -y fonts-noto-cjk
+      - name: Patch and verify
+        run: |
+          python - <<'PYCODE'
+          from pathlib import Path
+          import re,io,json,base64,threading,http.server,functools
+          from bs4 import BeautifulSoup
+          from PIL import Image
+          import qrcode,zxingcpp,fitz
+          from playwright.sync_api import sync_playwright
+          p=Path('flyer-clinic-shuttle.html');pdf=Path('flyer-clinic-shuttle.pdf');qa=Path('/tmp/clinic-flyer-qa');qa.mkdir(exist_ok=True)
+          s=p.read_text();assert 'CLINIC SHUTTLE' in s and '5,500円' in s and 'window.print()' in s
+          base='https://dpromstk2000-lab.github.io/dpro-clinic-shuttle-line/'
+          urls=['https://lin.ee/YxJGXV6D','https://dpro-shop.com/',base+'?demo=1']
+          soup=BeautifulSoup(s,'html.parser');grid=soup.select_one('.action-grid');cards=grid.select('.action-card');assert len(cards)==3
+          for i,(card,url) in enumerate(zip(cards,urls)):
+              im=card.select_one('img');assert im
+              q=qrcode.QRCode(error_correction=qrcode.constants.ERROR_CORRECT_M,box_size=16,border=4);q.add_data(url);q.make(fit=True);img=q.make_image(fill_color='black',back_color='white').convert('RGB');assert {x.text for x in zxingcpp.read_barcodes(img)}=={url}
+              b=io.BytesIO();img.save(b,format='PNG');im['src']='data:image/png;base64,'+base64.b64encode(b.getvalue()).decode()
+              card.name='a';card['href']=url;card['target']='_blank';card['rel']='noopener';card['aria-label']=['LINE相談','DPRO SHOP公式サイト','公開DEMO'][i]
+              if i==2:card['class']=['action-card','demo'];card.select_one('p').string='患者・ご家族、管理・配車、iPad、運転員の公開DEMO。'
+              if i==1:
+                  official=card.select_one('.official-web');assert official;card.append(official.extract());official.select_one('.ow-url').string='https://dpro-shop.com/'
+          start=s.index('<div class="action-grid">');end=s.index('</section>',start);s=s[:start]+str(grid)+'\n'+s[end:]
+          css='''<style id="clinic-shuttle-flyer-r1">
+          .action-grid{grid-template-columns:1fr 1.12fr 1fr;gap:2mm}.action-grid .action-card{height:41mm;min-height:41mm;padding:2mm;grid-template-columns:minmax(0,1fr) 21mm;gap:1.2mm;text-decoration:none;color:inherit;align-items:center;min-width:0}.action-grid .action-card.demo{grid-template-columns:minmax(0,1fr) 24mm}.action-grid .action-card.site{grid-template-rows:minmax(0,1fr) auto}.action-grid .action-copy{min-width:0}.action-grid .action-qr img{width:21mm;height:21mm;margin:0 auto .6mm;max-width:none;image-rendering:pixelated;background:#fff}.action-grid .demo .action-qr img{width:24mm;height:24mm}.action-grid .action-kicker{font-size:1.5mm;gap:.7mm}.action-grid .action-card p{font-size:1.85mm;line-height:1.35}.action-grid .official-web{grid-column:1/-1;margin:0;padding-top:1mm;min-width:0}.action-grid .official-web .ow-url{font-size:3.65mm;min-height:6.4mm;padding:.7mm 1.2mm;white-space:nowrap;display:block}.action-grid .official-web .ow-label{font-size:1.45mm}.action-grid .action-qr{min-width:0}.action-grid .qlabel{font-size:2mm}
+          @media screen and (max-width:400px){.sheet{zoom:calc((100vw - 16px)/794px);}}
+          </style>'''
+          # Retain the established responsive zoom rules (CSS division has uneven support).
+          css=css.replace('@media screen and (max-width:400px){.sheet{zoom:calc((100vw - 16px)/794px);}}','')
+          s=re.sub(r'<style id="clinic-shuttle-flyer-r1">.*?</style>','',s,flags=re.S);s=s.replace('</head>',css+'\n</head>',1).replace('MASTER V2.2','MASTER V2.3');p.write_text(s)
+          assert all(x in s for x in ['5,500円','3,300円','1,100円','window.print()','clinic-care-bright.png'])
+          def dec(path):return {x.text for x in zxingcpp.read_barcodes(Image.open(path))}
+          server=http.server.ThreadingHTTPServer(('127.0.0.1',0),functools.partial(http.server.SimpleHTTPRequestHandler,directory=str(Path.cwd())));threading.Thread(target=server.serve_forever,daemon=True).start();local=f'http://127.0.0.1:{server.server_port}/'
+          with sync_playwright() as pw:
+              browser=pw.chromium.launch(args=['--no-sandbox']);page=browser.new_page(viewport={'width':1440,'height':1250},device_scale_factor=2);page.route('**/*',lambda r:r.continue_() if r.request.url.startswith(local) else r.abort());page.goto(local+p.name);page.evaluate('document.fonts.ready')
+              def layout():
+                  return page.evaluate('''() => {const r=e=>e.getBoundingClientRect(), inside=(a,b)=>a.left>=b.left-1&&a.right<=b.right+1&&a.top>=b.top-1&&a.bottom<=b.bottom+1;const grid=document.querySelector('.action-grid'),url=document.querySelector('.ow-url'),site=document.querySelector('.action-card.site');return {footer_clear:r(grid).bottom<=r(document.querySelector('.footer')).top+1,url_inside:inside(r(url),r(site)),url_fits:url.scrollWidth<=url.clientWidth+1,photo_loaded:document.querySelector('.hero-photo img').naturalWidth>0,cards:[...grid.querySelectorAll('.action-card')].every(e=>{const a=r(e),q=r(e.querySelector('img')),t=r(e.querySelector('.action-copy'));return inside(q,a)&&inside(t,a)&&t.right<=q.left+1&&e.scrollWidth<=e.clientWidth+1&&e.scrollHeight<=e.clientHeight+1})}}''')
+              screen=layout();assert all(screen.values()),screen;page.locator('.sheet').screenshot(path=str(qa/'screen.png'));assert set(urls)<=dec(qa/'screen.png')
+              page.set_viewport_size({'width':390,'height':900});mobile=layout();assert all(mobile.values()),mobile
+              page.set_viewport_size({'width':1440,'height':1250});page.emulate_media(media='print');printed=layout();assert all(printed.values()),printed;page.pdf(path=str(pdf),prefer_css_page_size=True,print_background=True);browser.close()
+          with fitz.open(pdf) as d:
+              assert len(d)==1 and abs(d[0].rect.width-595.28)<3 and abs(d[0].rect.height-841.89)<3;d[0].get_pixmap(matrix=fitz.Matrix(3,3),alpha=False).save(qa/'print.png')
+          assert set(urls)<=dec(qa/'print.png');server.shutdown();result={'screen_layout':screen,'mobile_layout':mobile,'print_layout':printed,'screen_qr':sorted(dec(qa/'screen.png')),'print_qr':sorted(dec(qa/'print.png')),'a4_pages':1,'business_mutations':0};(qa/'RESULT.json').write_text(json.dumps(result,ensure_ascii=False,indent=2));print(json.dumps(result,ensure_ascii=False))
+          PYCODE
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: dpro-clinic-shuttle-flyer-r1-evidence
+          path: /tmp/clinic-flyer-qa/
+          if-no-files-found: warn
+      - name: Commit verified files only
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -- flyer-clinic-shuttle.html flyer-clinic-shuttle.pdf
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m 'DPRO CLINIC SHUTTLE FLYER R1'
+          git push origin HEAD:main
+      - name: Request Pages build
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh api --method POST "repos/$GITHUB_REPOSITORY/pages/builds"
