@@ -1,0 +1,103 @@
+name: DPRO IZAKAYA FLYER R1
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/dpro-izakaya-flyer-qr-r1.yml']
+permissions:
+  contents: write
+concurrency:
+  group: dpro-izakaya-flyer-qr-r1
+  cancel-in-progress: false
+jobs:
+  repair:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install QA tools
+        run: |
+          python -m pip install 'qrcode[pil]' zxing-cpp pymupdf requests beautifulsoup4 playwright==1.57.0
+          python -m playwright install --with-deps chromium
+          sudo apt-get update -qq
+          sudo apt-get install -y fonts-noto-cjk
+      - name: Patch and verify
+        run: |
+          python - <<'PYCODE'
+          import base64,io,json,re,pathlib
+          import qrcode,zxingcpp,fitz,requests
+          from PIL import Image
+          from bs4 import BeautifulSoup
+          from playwright.sync_api import sync_playwright
+          p=pathlib.Path('flyer-izakaya.html'); pdf=pathlib.Path('flyer-izakaya.pdf'); qa=pathlib.Path('izakaya-flyer-qa');qa.mkdir(exist_ok=True)
+          base='https://izakaya-liff-demo.pages.dev/'
+          urls={'LINE公式QR':'https://lin.ee/YxJGXV6D','DPRO SHOP公式サイトQR':'https://dpro-shop.com/','IZAKAYA DEMO QR':base+'demo-guide.html'}
+          s=p.read_text();assert 'IZAKAYA' in s and '5,500円' in s and 'window.print()' in s
+          assert base+'demo-guide.html' in pathlib.Path('systems-data.js').read_text()
+          soup=BeautifulSoup(s,'html.parser');grid=soup.select_one('.action-grid');assert grid and len(grid.select('.action-card'))==3
+          old_photo=str(soup.select_one('.hero-photo img'));assert old_photo!='None'
+          for card,(alt,url) in zip(grid.select('.action-card'),urls.items()):
+              im=card.select_one('img');assert im and im['alt']==alt
+              q=qrcode.QRCode(error_correction=qrcode.constants.ERROR_CORRECT_M,box_size=16,border=4);q.add_data(url);q.make(fit=True)
+              img=q.make_image(fill_color='black',back_color='white').convert('RGB');assert {x.text for x in zxingcpp.read_barcodes(img)}=={url}
+              b=io.BytesIO();img.save(b,format='PNG');im['src']='data:image/png;base64,'+base64.b64encode(b.getvalue()).decode();img.save(qa/('qr-'+str(list(urls).index(alt)+1)+'.png'))
+              for a in card.select('a'):a.unwrap()
+              card.name='a';card['href']=url;card['target']='_blank';card['rel']='noopener';card['aria-label']=alt
+              if alt=='IZAKAYA DEMO QR':card.select_one('p').string='予約のお客様・店舗管理PC・iPad営業ボードを登録不要で体験。'
+              if alt=='DPRO SHOP公式サイトQR':
+                  u=card.select_one('.site-url')
+                  if u:u.string='dpro-shop.com'
+          # Replace the grid only; preserve all other source, including photo.
+          start=s.index('<div class="action-grid">'); match=re.search(r'</(?:article|a)>\s*</div>',s[start:]); assert match
+          # The third card closes immediately before the grid closes; use last match before footer.
+          stop=s.index('<footer',start) if '<footer' in s[start:] else s.index('class="footer"',start)
+          matches=list(re.finditer(r'</(?:article|a)>\s*</div>',s[start:stop]));assert matches
+          end=start+matches[-1].end();s=s[:start]+str(grid)+s[end:]
+          css='''<style id="izakaya-qr-r1">.action-grid .action-card{grid-template-columns:minmax(0,1fr) 21mm;gap:1.3mm;text-decoration:none;color:inherit;min-width:0}.action-grid .action-card.demo{grid-template-columns:minmax(0,1fr) 24mm;gap:1mm}.action-grid .action-copy{min-width:0}.action-grid .action-qr img{width:20.5mm;height:20.5mm;max-width:none;padding:0;border:0;border-radius:0;background:white;image-rendering:pixelated}.action-grid .demo .action-qr img{width:24mm;height:24mm}.action-grid .site-url{font-size:3.1mm;overflow-wrap:anywhere;max-width:100%}.action-grid .action-note{overflow-wrap:anywhere}.action-grid .action-card h4{white-space:normal}</style>'''
+          if 'id="izakaya-qr-r1"' not in s:s=s.replace('</head>',css+'\n</head>',1)
+          assert str(BeautifulSoup(s,'html.parser').select_one('.hero-photo img'))==old_photo
+          assert all(x in s for x in ['5,500円','3,300円','1,100円','window.print()']);p.write_text(s)
+          # Product previews open the actual customer demo; external link opens role guide.
+          prod=pathlib.Path('systems/izakaya.html');t=prod.read_text();assert 'data-system-code="IZAKAYA"' in t
+          for attr,target in [('data-src',base+'index.html?embed_demo=1'),('href',base+'demo-guide.html')]:
+              t=t.replace(attr+'="'+base+'"',attr+'="'+target+'"')
+          assert base+'index.html?embed_demo=1' in t and base+'demo-guide.html' in t
+          assert 'data-src="'+base+'"' not in t and 'href="'+base+'"' not in t;prod.write_text(t)
+          expected=set(urls.values())
+          def dec(path):return {x.text for x in zxingcpp.read_barcodes(Image.open(path))}
+          with sync_playwright() as pw:
+              browser=pw.chromium.launch(args=['--no-sandbox']);page=browser.new_page(viewport={'width':1440,'height':1250},device_scale_factor=2)
+              page.goto(p.resolve().as_uri());page.evaluate('document.fonts.ready');assert page.locator('.action-grid a.action-card').count()==3
+              assert page.locator('.hero-photo img').evaluate('(e)=>e.complete&&e.naturalWidth>0')
+              for alt,url in urls.items():assert page.locator('img[alt="'+alt+'"]').locator('xpath=ancestor::a[1]').get_attribute('href')==url
+              def verify():
+                  v=page.evaluate('''() => {const r=e=>e.getBoundingClientRect();return {bottom:r(document.querySelector('.action-grid')).bottom,footer:r(document.querySelector('.footer')).top,cards:[...document.querySelectorAll('.action-card')].map(e=>{const a=r(e),q=r(e.querySelector('img')),t=r(e.querySelector('.action-copy'));return [q.left>=a.left-1,q.right<=a.right+1,q.top>=a.top-1,q.bottom<=a.bottom+1,t.right<=q.left+1,t.top>=a.top-1,t.bottom<=a.bottom+1,e.scrollWidth<=e.clientWidth+1]})}}''');assert v['bottom']<=v['footer']+1 and all(all(x) for x in v['cards']),v;return v
+              screen_layout=verify();page.locator('.sheet').screenshot(path=str(qa/'screen.png'));assert expected<=dec(qa/'screen.png')
+              page.emulate_media(media='print');print_layout=verify();page.pdf(path=str(pdf),prefer_css_page_size=True,print_background=True);browser.close()
+          with fitz.open(pdf) as d:
+              assert len(d)==1 and abs(d[0].rect.width-595.28)<3 and abs(d[0].rect.height-841.89)<3
+              d[0].get_pixmap(matrix=fitz.Matrix(3,3),alpha=False).save(str(qa/'print.png'))
+          assert expected<=dec(qa/'print.png')
+          checks={}
+          for name in ['demo-guide.html','index.html?embed_demo=1','admin.html?embed_demo=1','owner-ipad.html?embed_demo=1','api/public/status']:
+              try:r=requests.get(base+name,timeout=15);checks[name]=r.status_code
+              except requests.RequestException as e:checks[name]=type(e).__name__
+          report={'result':'FLYER_QA_PASS','screen_qr':sorted(dec(qa/'screen.png')),'print_qr':sorted(dec(qa/'print.png')),'a4_pages':1,'screen_layout':screen_layout,'print_layout':print_layout,'public_get':checks,'business_mutation':0};(qa/'RESULT.json').write_text(json.dumps(report,ensure_ascii=False,indent=2));print(json.dumps(report,ensure_ascii=False))
+          PYCODE
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: DPRO-IZAKAYA-FLYER-R1-QA
+          path: izakaya-flyer-qa/
+          if-no-files-found: warn
+      - name: Commit verified files only
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -- flyer-izakaya.html flyer-izakaya.pdf systems/izakaya.html
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m 'DPRO IZAKAYA FLYER R1'
+          git push origin HEAD:main
