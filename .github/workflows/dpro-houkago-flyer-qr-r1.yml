@@ -1,0 +1,93 @@
+name: DPRO HOUKAGO FLYER QR R1
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/dpro-houkago-flyer-qr-r1.yml']
+permissions:
+  contents: write
+concurrency:
+  group: dpro-houkago-flyer-qr-r1
+  cancel-in-progress: false
+jobs:
+  repair:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install QA tools
+        run: |
+          python -m pip install 'qrcode[pil]' zxing-cpp pymupdf playwright==1.57.0 requests beautifulsoup4
+          python -m playwright install --with-deps chromium
+          sudo apt-get update -qq
+          sudo apt-get install -y fonts-noto-cjk
+      - name: Patch and verify
+        run: |
+
+          python - <<'PY'
+          import base64,io,json,re,pathlib
+          import qrcode,zxingcpp,fitz,requests
+          from PIL import Image
+          from bs4 import BeautifulSoup
+          from playwright.sync_api import sync_playwright
+          p=pathlib.Path('flyer-houkago.html'); pdf=pathlib.Path('flyer-houkago.pdf'); qa=pathlib.Path('houkago-qa'); qa.mkdir(exist_ok=True)
+          base='https://dpromstk2000-lab.github.io/dpro-houkago-dayservice-line/'
+          urls={'LINE相談QR':'https://lin.ee/YxJGXV6D','DPRO SHOP QR':'https://dpro-shop.com/','LIVE DEMO QR':base+'demo-guide.html'}
+          s=p.read_text(); assert 'HOUKAGO' in s and '5,500円' in s and 'window.print()' in s
+          assert base+'demo-guide.html' in pathlib.Path('systems-data.js').read_text()
+          soup=BeautifulSoup(s,'html.parser'); grid=soup.select_one('.actions'); assert grid and len(grid.select('.action'))==3
+          old_images=[str(x) for x in soup.select('img:not(.qr)')]; assert old_images
+          for card,(alt,url) in zip(grid.select('.action'),urls.items()):
+              im=card.select_one('img.qr'); assert im and im['alt']==alt
+              q=qrcode.QRCode(error_correction=qrcode.constants.ERROR_CORRECT_M,box_size=16,border=4);q.add_data(url);q.make(fit=True)
+              img=q.make_image(fill_color='black',back_color='white').convert('RGB');assert {x.text for x in zxingcpp.read_barcodes(img)}=={url}
+              b=io.BytesIO();img.save(b,format='PNG');im['src']='data:image/png;base64,'+base64.b64encode(b.getvalue()).decode();img.save(qa/('qr-'+str(list(urls).index(alt)+1)+'.png'))
+              card.name='a';card['href']=url;card['target']='_blank';card['rel']='noopener';card['aria-label']=alt
+              if alt=='LIVE DEMO QR':
+                  card['class']=['action','houkago-demo'];card.select_one('p').string='保護者・管理者PC・現場スタッフiPadの操作体験。';card.select_one('.url').string='公開DEMO / 登録不要'
+              if alt=='DPRO SHOP QR':card.select_one('.official-url').string='dpro-shop.com'
+          assert [str(x) for x in soup.select('img:not(.qr)')]==old_images
+          s,n=re.subn(r'<section class="actions">.*?</section>',lambda _:str(grid),s,count=1,flags=re.S);assert n==1
+          css='''<style id="houkago-qr-r1">.actions .action{display:grid!important;grid-template-columns:minmax(0,1fr) 20mm!important;gap:1.3mm!important;padding:2mm!important;align-items:center!important;text-decoration:none!important;color:inherit!important;min-width:0!important}.actions .action>div{width:auto!important;min-width:0!important}.actions .action .qr{width:20mm!important;height:20mm!important;max-width:none!important;image-rendering:pixelated!important;border:0!important;padding:0!important;border-radius:0!important;background:white!important}.actions .houkago-demo{grid-template-columns:minmax(0,1fr) 24mm!important;gap:1mm!important}.actions .houkago-demo .qr{width:24mm!important;height:24mm!important}.actions .action h3{font-size:8.2pt!important;overflow-wrap:anywhere}.actions .action .official-url{font-size:2.8mm!important;overflow-wrap:anywhere;padding:.6mm!important}.actions .action .url{font-size:6pt!important;overflow-wrap:anywhere}</style>'''
+          if 'id="houkago-qr-r1"' not in s:s=s.replace('</head>',css+'\n</head>',1)
+          assert all(x in s for x in ['5,500円','3,300円','1,100円','window.print()']);p.write_text(s)
+          expected=set(urls.values())
+          def dec(path):return {x.text for x in zxingcpp.read_barcodes(Image.open(path))}
+          with sync_playwright() as pw:
+              browser=pw.chromium.launch(args=['--no-sandbox']);page=browser.new_page(viewport={'width':1440,'height':1250},device_scale_factor=2)
+              page.goto(p.resolve().as_uri());page.evaluate('document.fonts.ready');assert page.locator('.actions a.action').count()==3
+              assert page.locator('.photo-slot img').evaluate('(e)=>e.complete&&e.naturalWidth>0')
+              def layout():
+                  return page.evaluate('''() => {const r=e=>e.getBoundingClientRect();return {bottom:r(document.querySelector('.actions')).bottom,footer:r(document.querySelector('.footer')).top,cards:[...document.querySelectorAll('.actions .action')].map(e=>{const a=r(e),q=r(e.querySelector('img')),t=r(e.querySelector('div'));return [q.left>=a.left-1,q.right<=a.right+1,q.top>=a.top-1,q.bottom<=a.bottom+1,t.right<=q.left+1,t.top>=a.top-1,t.bottom<=a.bottom+1,e.scrollWidth<=e.clientWidth+1]})}}''')
+              def verify():
+                  v=layout();assert v['bottom']<=v['footer']+1,v;assert all(all(x) for x in v['cards']),v;return v
+              screen_layout=verify();page.locator('.sheet').screenshot(path=str(qa/'screen.png'));assert expected<=dec(qa/'screen.png')
+              page.emulate_media(media='print');print_layout=verify();page.pdf(path=str(pdf),prefer_css_page_size=True,print_background=True);browser.close()
+          with fitz.open(pdf) as d:
+              assert len(d)==1 and abs(d[0].rect.width-595.28)<3 and abs(d[0].rect.height-841.89)<3
+              d[0].get_pixmap(matrix=fitz.Matrix(3,3),alpha=False).save(str(qa/'print.png'))
+          assert expected<=dec(qa/'print.png')
+          checks={}
+          for name in ['index.html?demo=1','member.html?demo=1','owner.html?demo=1','owner-ipad.html?demo=1','support-program.html?demo=1','demo-guide.html','system-check.html']:
+              try:r=requests.get(base+name,timeout=15);checks[name]=r.status_code
+              except requests.RequestException as e:checks[name]=type(e).__name__
+          report={'result':'FLYER_QA_PASS','screen_qr':sorted(dec(qa/'screen.png')),'print_qr':sorted(dec(qa/'print.png')),'a4_pages':1,'screen_layout':screen_layout,'print_layout':print_layout,'public_get':checks,'business_mutation':0};(qa/'RESULT.json').write_text(json.dumps(report,ensure_ascii=False,indent=2));print(json.dumps(report,ensure_ascii=False))
+
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: HOUKAGO-QA
+          path: houkago-qa/
+          if-no-files-found: warn
+      - name: Commit verified files only
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -- flyer-houkago.html flyer-houkago.pdf
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m 'DPRO HOUKAGO FLYER QR R1'
+          git push origin HEAD:main
